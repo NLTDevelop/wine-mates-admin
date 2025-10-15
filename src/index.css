@@ -1,42 +1,42 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* Primary colors - винна палітра */
   --color-primary: hsl(0 65% 55%);
   --color-primary-foreground: hsl(0 0% 98%);
-  
+
   /* Background colors - графит */
   --color-background: hsl(240 5% 6%);
   --color-foreground: hsl(0 0% 98%);
-  
+
   /* Card colors */
   --color-card: hsl(240 4% 10%);
   --color-card-foreground: hsl(0 0% 98%);
-  
+
   /* Secondary colors */
   --color-secondary: hsl(240 4% 16%);
   --color-secondary-foreground: hsl(0 0% 98%);
-  
+
   /* Muted colors */
   --color-muted: hsl(240 4% 16%);
   --color-muted-foreground: hsl(240 5% 65%);
-  
+
   /* Accent colors */
   --color-accent: hsl(240 4% 16%);
   --color-accent-foreground: hsl(0 0% 98%);
-  
+
   /* Border & Input colors */
   --color-border: hsl(240 4% 20%);
   --color-input: hsl(240 4% 20%);
-  
+
   /* Semantic colors */
   --color-success: hsl(142 76% 36%);
   --color-warning: hsl(38 92% 50%);
   --color-error: hsl(0 84% 60%);
   --color-info: hsl(221 83% 53%);
-  
+
   /* Radius */
   --radius: 0.5rem;
   --radius-lg: calc(var(--radius) + 2px);
@@ -51,13 +51,27 @@ body {
 }
 
 /* Утилітні класи для кастомних кольорів */
-.bg-primary { background-color: var(--color-primary); }
-.text-primary { color: var(--color-primary-foreground); }
+.bg-primary {
+  background-color: var(--color-primary);
+}
+.text-primary {
+  color: var(--color-primary-foreground);
+}
 
-.bg-secondary { background-color: var(--color-secondary); }
-.text-secondary { color: var(--color-secondary-foreground); }
+.bg-secondary {
+  background-color: var(--color-secondary);
+}
+.text-secondary {
+  color: var(--color-secondary-foreground);
+}
 
-.bg-card { background-color: var(--color-card); }
-.text-card { color: var(--color-card-foreground); }
+.bg-card {
+  background-color: var(--color-card);
+}
+.text-card {
+  color: var(--color-card-foreground);
+}
 
-.border-border { border-color: var(--color-border); }
+.border-border {
+  border-color: var(--color-border);
+}

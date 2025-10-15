@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
-import { useDebounce } from '@/hooks/useDebounce'
+import { useDebounce } from '@/hooks/ui/useDebounce'
 import { Popover, PopoverTrigger, PopoverContent } from './popover'
 import { Button } from './button'
 import {
@@ -240,7 +240,6 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     setPoliteMessage('Selection cleared')
     setTimeout(() => setPoliteMessage(''), 300)
   }
-
 
   const getPopoverAnimationClass = () => {
     if (animationConfig?.popoverAnimation) {

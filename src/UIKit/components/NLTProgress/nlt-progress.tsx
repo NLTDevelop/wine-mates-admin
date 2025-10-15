@@ -1,36 +1,33 @@
-import { cn } from "@/lib/utils";
-import { FC } from "react";
-import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from '@/lib/utils'
+import { FC } from 'react'
+import { cva, type VariantProps } from 'class-variance-authority'
 
-const progressVariants = cva(
-  "animate-spin",
-  {
-    variants: {
-      color: {
-        primary: 'text-primary',
-        default: ''
-      },
-      size: {
-        default: "",
-        sm: "",
-        lg: "w-20 h-20",
-      },
+const progressVariants = cva('animate-spin', {
+  variants: {
+    color: {
+      primary: 'text-primary',
+      default: '',
     },
-    defaultVariants: {
-      size: "default",
-      color: "default",
+    size: {
+      default: '',
+      sm: '',
+      lg: 'w-20 h-20',
     },
-  }
-);
+  },
+  defaultVariants: {
+    size: 'default',
+    color: 'default',
+  },
+})
 
 interface IPProps extends VariantProps<typeof progressVariants> {
-  wrapClassName?: string;
-  className?: string;
-  fullWidth?: boolean;
-};
+  wrapClassName?: string
+  className?: string
+  fullWidth?: boolean
+}
 
-export const NLTProgress: FC<IPProps> = (props) => {
-  const { className, fullWidth = false, size, color, wrapClassName } = props;
+export const NLTProgress: FC<IPProps> = props => {
+  const { className, fullWidth = false, size, color, wrapClassName } = props
   return (
     <div
       className={cn(
@@ -49,12 +46,10 @@ export const NLTProgress: FC<IPProps> = (props) => {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className={cn(
-          progressVariants({ size, color, className }),
-        )}
+        className={cn(progressVariants({ size, color, className }))}
       >
-        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
       </svg>
     </div>
-  );
-};
+  )
+}

@@ -23,5 +23,8 @@
       "@/*": ["./src/*"]
     }
   },
+
+  "types": ["vite/client"],
+
   "include": ["src", "src/locales/dictionaries/uk.ts", "tailwind.config.js"]
 }

@@ -39,7 +39,7 @@ interface AppState {
 
 export const useAppStore = create<AppState>()(
   persist(
-    (set) => ({
+    set => ({
       sidebarCollapsed: false,
       globalLoading: false,
       globalSearch: '',

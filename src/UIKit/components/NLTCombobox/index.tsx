@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 import { NLTProgress } from '../NLTProgress/nlt-progress'
 import { useEffect } from 'react'
-import { useDebounce } from '@/hooks/useDebounce'
+import { useDebounce } from '@/hooks/ui/useDebounce'
 
 interface IOption {
   value: string
