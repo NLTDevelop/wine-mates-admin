@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils'
 import { Label } from './label'
+import React from 'react'
 
 export const FormField = ({
   name,
@@ -15,10 +16,12 @@ export const FormField = ({
   className?: string
 }) => {
   return (
-    <div className={cn('space-y-2', className)}>
-      <Label htmlFor={name}>{label}</Label>
+    <div className={cn(!error && 'space-y-2', className)}>
+      <Label className="text-label" htmlFor={name}>
+        {label}
+      </Label>
+
       {children}
-      {error && <p className="text-sm font-medium text-destructive">{error}</p>}
     </div>
   )
 }

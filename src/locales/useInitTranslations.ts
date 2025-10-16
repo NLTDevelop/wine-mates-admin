@@ -5,8 +5,8 @@ import { uk } from './dictionaries/uk'
 export const useInitTranslations = () => {
   i18n.use(initReactI18next).init({
     resources: { uk },
-    lng: 'en',
-    fallbackLng: 'en',
+    lng: 'uk',
+    fallbackLng: 'uk',
     interpolation: {
       escapeValue: false,
     },

@@ -341,7 +341,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             }}
           >
             {mode === 'multiple' && selectedValues.length > 0 ? (
-              <div className="flex items-center justify-between w-full min-h-6">
+              <div className="flex items-center justify-between w-full max-h-6">
                 <div className="flex flex-wrap items-center gap-2 flex-1 overflow-hidden mr-2">
                   {selectedOptions.map(option => {
                     const IconComponent = option.icon

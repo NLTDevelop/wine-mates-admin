@@ -1,4 +1,4 @@
-import { toast } from '@/UIKit/shadcn/hooks/use-toast'
+import { toast } from '../shadcn/use-toast'
 
 export const useToast = () => {
   const notifyToast = (

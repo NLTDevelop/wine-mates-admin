@@ -1,3 +1,4 @@
+import { API_CONFIG } from '@/config'
 import { api } from './base-service'
 
 export interface LoginData {
@@ -17,7 +18,7 @@ export interface AuthResponse {
 
 export const authService = {
   login: (credentials: LoginData): Promise<AuthResponse> =>
-    api.post('/api/admin/login', credentials).then(res => res.data),
+    api.post(API_CONFIG.endpoints.auth, credentials).then(res => res.data),
 
   logout: (): void => {
     localStorage.removeItem('admin-token')
