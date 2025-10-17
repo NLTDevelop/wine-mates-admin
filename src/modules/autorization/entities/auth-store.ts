@@ -1,4 +1,5 @@
-import { User } from '@/entities/auth'
+import { ADMIN_TOKEN, ADMIN_USER } from '@/constatnts/locale-storage'
+import { User } from '@/modules/autorization/entities/types'
 import { create } from 'zustand'
 
 interface AuthState {
@@ -16,22 +17,22 @@ export const useAuthStore = create<AuthState>(set => ({
   isLoading: false,
 
   login: (token: string, user?: User) => {
-    localStorage.setItem('admin-token', token)
-    localStorage.setItem('admin-user', JSON.stringify(user))
+    localStorage.setItem(ADMIN_TOKEN, token)
+    localStorage.setItem(ADMIN_USER, JSON.stringify(user))
     set({ user, isAuthenticated: true, isLoading: false })
   },
 
   logout: () => {
-    localStorage.removeItem('admin-token')
-    localStorage.removeItem('admin-user')
+    localStorage.removeItem(ADMIN_TOKEN)
+    localStorage.removeItem(ADMIN_USER)
     set({ user: null, isAuthenticated: false, isLoading: false })
   },
 
   setLoading: (loading: boolean) => set({ isLoading: loading }),
 }))
 
-const storedToken = localStorage.getItem('admin-token')
-const storedUser = localStorage.getItem('admin-user')
+const storedToken = localStorage.getItem(ADMIN_TOKEN)
+const storedUser = localStorage.getItem(ADMIN_USER)
 
 if (storedToken && storedUser) {
   useAuthStore.setState({

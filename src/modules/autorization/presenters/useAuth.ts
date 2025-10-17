@@ -1,6 +1,6 @@
-import { authService } from '@/services'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuthStore } from '@/modules/autorization/entities/auth-store'
 import { useMutation } from '@tanstack/react-query'
+import { authService } from '../entities/auth-servise'
 
 export const useLogin = () => {
   const { login, setLoading } = useAuthStore()

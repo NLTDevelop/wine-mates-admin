@@ -1,17 +1,16 @@
 import { API_CONFIG } from '@/config'
+import { ADMIN_TOKEN } from '@/constatnts/locale-storage'
 
 import axios from 'axios'
 
 export const api = axios.create({
   baseURL: API_CONFIG.baseURL,
   timeout: API_CONFIG.timeout,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: API_CONFIG.headers,
 })
 
 api.interceptors.request.use(config => {
-  const token = localStorage.getItem('admin-token')
+  const token = localStorage.getItem(ADMIN_TOKEN)
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
