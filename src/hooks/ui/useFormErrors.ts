@@ -14,7 +14,7 @@ export const useFormErrors = (errors: any, showInToast = true) => {
 
       if (errorMessages.length > 0) {
         notifyToast(
-          `${t('found')} (${errorMessages.length}) : ${errorMessages.join(', ')}`,
+          `${t('found')} (${errorMessages.length}):\n${errorMessages.join('\n')}`,
           'destructive'
         )
       }

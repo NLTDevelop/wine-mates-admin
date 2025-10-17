@@ -22,8 +22,17 @@ const handleGlobalError = (error: any) => {
 
   if (status === undefined) {
     if (globalToast) {
-      const networkMessage = globalT ? globalT('errors.network') : 'Internet connection problems'
-      globalToast.notifyToast(networkMessage, 'destructive')
+      let message = 'Проблеми з інтернет-зʼєднанням. Перевірте підключення до мережі.'
+
+      if (error.code === 'ERR_NETWORK') {
+        message = 'Не вдалося підключитися до сервера'
+      } else if (error.code === 'ECONNABORTED') {
+        message = 'Час очікування вийшов. Спробуйте ще раз.'
+      } else if (error.message?.includes('Network Error')) {
+        message = 'Помилка мережі. Перевірте підключення до інтернету.'
+      }
+
+      globalToast.notifyToast(message, 'destructive')
     }
     return
   }
@@ -69,6 +78,7 @@ const getErrorMessage = (status: number, serverMessage?: string): string => {
     if (translated && translated !== `errors.${status}`) {
       return translated
     }
+
     return serverMessage || globalT('errors.default')
   }
 

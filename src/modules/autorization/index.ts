@@ -1,1 +1,1 @@
-export * from './autorization-form'
+export * from './autorization-view'

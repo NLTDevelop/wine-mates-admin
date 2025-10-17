@@ -1,8 +1,8 @@
 @import 'tailwindcss';
-@import url('https://fonts.cdnfonts.com/css/visuelt-pro');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @theme {
-  --font-sans: 'Visuelt Pro', sans-serif;
+  --font-sans: 'Inter', sans-serif;
 
   --color-primary: hsl(350 65% 45%);
   --color-primary-foreground: hsl(0 0% 98%);
@@ -25,6 +25,13 @@
   /* Border & Input colors */
   --color-border: hsl(45 20% 80%);
   --color-input: hsl(45 20% 85%);
+
+  /* Popover & Dropdown */
+  --color-popover: hsl(37, 35%, 93%);
+  --color-popover-foreground: hsl(240 10% 20%);
+  --color-accent: hsl(45 25% 85%);
+  --color-accent-foreground: hsl(240 10% 20%);
+  --color-sidebar-accent: hsl(45 20% 70%);
 
   /* Semantic colors */
   --color-success: hsl(142 76% 36%);
@@ -72,9 +79,42 @@ body {
   border-color: var(--color-border);
 }
 
+.bg-popover {
+  background-color: var(--color-popover);
+}
+
+.bg-accent {
+  background-color: var(--color-accent);
+}
+
+.border-sidebar-accent {
+  border-color: var(--color-sidebar-accent);
+}
+
+.multi-select-trigger {
+  border-color: var(--color-border) !important;
+}
+
+.multi-select-trigger:focus {
+  border-color: var(--color-sidebar-accent) !important;
+  outline: none;
+  box-shadow: 0 0 0 1px var(--color-sidebar-accent) !important;
+}
+
+.multi-select-badge {
+  background-color: var(--color-accent) !important;
+  color: var(--color-foreground) !important;
+  border-color: var(--color-border) !important;
+}
+
+.multi-select-badge:hover {
+  background-color: var(--color-error) !important;
+  color: white !important;
+}
+
 /* Крупный текст  */
 .text-head {
-  font-size: clamp(2.5rem, 5vw, 3rem);
+  font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 700;
   line-height: 1.2;
   color: var(--color-primary);
@@ -122,9 +162,9 @@ body {
   color: var(--color-error);
 }
 
-/* отступы для контейнеров */
-.section-spacing {
-  padding: clamp(1rem, 3vw, 2rem);
+/* отступы */
+.card-spacing {
+  padding: clamp(0.5rem, 2.5vw, 1.25rem);
 }
 
 .input-focus {

@@ -4,8 +4,8 @@ export interface LoginData {
 }
 
 export interface AuthResponse {
-  token: string
-  user: {
+  accessToken: string
+  user?: {
     id: string
     email: string
     name: string

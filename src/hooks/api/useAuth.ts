@@ -1,6 +1,6 @@
 import { authService } from '@/services'
 import { useAuthStore } from '@/stores/auth-store'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 
 export const useLogin = () => {
   const { login, setLoading } = useAuthStore()
@@ -9,7 +9,7 @@ export const useLogin = () => {
     mutationFn: authService.login,
     onMutate: () => setLoading(true),
     onSuccess: data => {
-      login(data.user, data.token)
+      login(data.accessToken, data.user)
     },
     onError: () => {
       setLoading(false)
@@ -27,13 +27,4 @@ export const useLogout = () => {
     authService.logout()
     logout()
   }
-}
-
-export const useValidateToken = () => {
-  return useQuery({
-    queryKey: ['validate-token'],
-    queryFn: authService.validateToken,
-    enabled: false,
-    retry: false,
-  })
 }

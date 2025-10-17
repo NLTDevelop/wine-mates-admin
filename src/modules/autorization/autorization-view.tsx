@@ -1,6 +1,5 @@
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useToast } from '@/hooks/ui/useToast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useLogin } from '@/hooks/api/useAuth'
@@ -11,30 +10,26 @@ import { Input } from '@/UIKit/shadcn/ui/input'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { useFormErrors } from '@/hooks/ui/useFormErrors'
 
-type AutorizationFormData = z.infer<typeof loginSchema>
+type AuthorizationViewData = z.infer<typeof loginSchema>
 
-export const AutorizationForm = () => {
+export const AuthorizationView = () => {
   const { t } = useTranslation('autorization')
   const loginMutation = useLogin()
-  const { notifyToast } = useToast()
 
-  
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<AutorizationFormData>({ resolver: zodResolver(loginSchema) })
+  } = useForm<AuthorizationViewData>({ resolver: zodResolver(loginSchema) })
 
   useFormErrors(errors)
 
-  const onSubmit = async (data: AutorizationFormData) => {
-    console.log(data)
+  const onSubmit = async (data: AuthorizationViewData) => {
     await loginMutation.mutateAsync(data)
-    notifyToast(t('success_entry'), 'success')
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-head">WineMates</CardTitle>
@@ -53,8 +48,8 @@ export const AutorizationForm = () => {
               />
             </FormField>
 
-            <Button type="submit" disabled={isSubmitting} fullWidth className='mt-2' size="lg">
-              {isSubmitting ? t('loading') : t('log_in')}
+            <Button type="submit" disabled={isSubmitting} fullWidth className="mt-2" size="lg">
+              {isSubmitting ? t('loading') : t('login')}
             </Button>
           </Form>
         </CardContent>

@@ -11,14 +11,12 @@ interface AppState {
   tableFilters: {
     users: Record<string, any>
     products: Record<string, any>
-    orders: Record<string, any>
   }
   setTableFilter: (table: keyof AppState['tableFilters'], filters: Record<string, any>) => void
 
   tableConfigs: {
     users: { pageSize: number; sortBy: 'createdAt' | string; sortOrder: 'asc' | 'desc' }
     products: { pageSize: number; sortBy: 'createdAt' | string; sortOrder: 'asc' | 'desc' }
-    orders: { pageSize: number; sortBy: 'createdAt' | string; sortOrder: 'asc' | 'desc' }
   }
   updateTableConfig: (
     table: keyof AppState['tableConfigs'],
@@ -47,13 +45,11 @@ export const useAppStore = create<AppState>()(
       tableFilters: {
         users: {},
         products: {},
-        orders: {},
       } as AppState['tableFilters'],
 
       tableConfigs: {
-        users: { pageSize: 20, sortBy: 'createdAt', sortOrder: 'desc' },
-        products: { pageSize: 20, sortBy: 'createdAt', sortOrder: 'desc' },
-        orders: { pageSize: 20, sortBy: 'createdAt', sortOrder: 'desc' },
+        users: { pageSize: 30, sortBy: 'createdAt', sortOrder: 'desc' },
+        products: { pageSize: 30, sortBy: 'createdAt', sortOrder: 'desc' },
       } as AppState['tableConfigs'],
 
       banner: null,

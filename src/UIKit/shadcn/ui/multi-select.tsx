@@ -1,6 +1,4 @@
 import * as React from 'react'
-import { useTranslation } from 'react-i18next'
-import { useDebounce } from '@/hooks/ui/useDebounce'
 import { Popover, PopoverTrigger, PopoverContent } from './popover'
 import { Button } from './button'
 import {
@@ -13,7 +11,10 @@ import {
 } from './command'
 import { Check, ChevronsUpDown, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+
 import { NLTProgress } from '@/UIKit/components/NLTProgress/nlt-progress'
+import { useDebounce } from '@/hooks/ui/useDebounce'
 
 interface MultiSelectOption {
   value: string
@@ -241,6 +242,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     setTimeout(() => setPoliteMessage(''), 300)
   }
 
+
   const getPopoverAnimationClass = () => {
     if (animationConfig?.popoverAnimation) {
       switch (animationConfig.popoverAnimation) {
@@ -259,24 +261,6 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
       }
     }
     return 'animate-scaleIn'
-  }
-
-  const getOptionHoverAnimation = () => {
-    if (animationConfig?.optionHoverAnimation) {
-      switch (animationConfig.optionHoverAnimation) {
-        case 'highlight':
-          return 'hover:bg-accent/50 transition-colors duration-200'
-        case 'scale':
-          return 'hover:scale-105 transition-transform duration-200'
-        case 'glow':
-          return 'hover:shadow-lg hover:shadow-primary/20 transition-all duration-200'
-        case 'none':
-          return ''
-        default:
-          return 'hover:bg-accent/50 transition-colors duration-200'
-      }
-    }
-    return 'hover:bg-accent/50 transition-colors duration-200'
   }
 
   const displayValue = React.useMemo(() => {
@@ -326,11 +310,10 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             aria-expanded={open}
             aria-haspopup="listbox"
             className={cn(
-              'inline-flex items-center whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 shadow-sm',
-              'flex px-3 py-2 rounded-md h-auto items-center justify-between bg-background hover:bg-inherit [&_svg]:pointer-events-auto placeholder:text-muted-foreground min-h-12',
+              'multi-select-trigger inline-flex items-center whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 shadow-sm',
+              'flex px-3 py-2 rounded-md h-auto items-center justify-between bg-background hover:bg-inherit [&_svg]:pointer-events-auto min-h-12',
               'w-full justify-between font-normal text-sm',
               open ? 'border-2 border-sidebar-accent' : 'border border-border',
-
               disabled && 'opacity-50 cursor-not-allowed',
               className
             )}
@@ -364,8 +347,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                           toggleOption(option.value)
                         }}
                         className={cn(
-                          'inline-flex items-center gap-1 px-3 py-2 rounded-md text-xs transition-all duration-500 ease-in-out',
-                          'bg-primary text-primary-foreground border border-primary',
+                          'multi-select-badge inline-flex items-center gap-1 px-3 py-2 rounded-md text-xs transition-all duration-500 ease-in-out',
                           'hover:bg-destructive/90 hover:text-destructive-foreground hover:border-destructive hover:shadow-md',
                           'focus:outline-none focus:ring-1 focus:ring-ring',
                           'group relative overflow-hidden',
@@ -419,9 +401,15 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
               </div>
             ) : (
               <div className="flex items-center justify-between w-full">
-                <span className="truncate max-w-[calc(100%-1.5rem)] overflow-hidden whitespace-nowrap">
-                  {displayValue}
+                <span
+                  className={cn(
+                    'truncate max-w-[calc(100%-1.5rem)] overflow-hidden whitespace-nowrap transition-all duration-300',
+                    (!displayValue || selectedValues.length === 0) && 'text-muted-foreground'
+                  )}
+                >
+                  {displayValue || placeholder || t('select.placeholder')}
                 </span>
+
                 {selectedValues.length > 0 ? (
                   <X
                     className={cn(
@@ -439,9 +427,10 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             )}
           </Button>
         </PopoverTrigger>
+
         <PopoverContent
           className={cn(
-            'w-[var(--radix-popper-anchor-width)] max-w-none p-0 shadow-xl border-2 bg-popover',
+            'w-[var(--radix-popper-anchor-width)] max-w-none p-0 shadow-xl border-2 border-popover bg-popover',
             getPopoverAnimationClass(),
             popoverClassName
           )}
@@ -502,10 +491,8 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                         value={option.value}
                         onSelect={() => !isDisabled && toggleOption(option.value)}
                         className={cn(
-                          'cursor-pointer rounded-md transition-all duration-200 px-2 py-1 flex items-center gap-2',
-                          getOptionHoverAnimation(),
-                          isDisabled && 'opacity-50 cursor-not-allowed',
-                          isSelected && 'bg-accent'
+                          'cursor-pointer rounded-md transition-colors duration-200 px-2 py-1 flex items-center gap-2 hover:bg-accent/50',
+                          isDisabled && 'opacity-50 cursor-not-allowed'
                         )}
                         disabled={isDisabled || false}
                         style={{
