@@ -10,6 +10,7 @@ import {
 } from '@/UIKit/shadcn/ui/dropdown-menu'
 import { Avatar } from '@/UIKit/shadcn/ui/avatar'
 import { useAuthStore } from '@/modules/autorization/entities/auth-store'
+import { useShallow } from '@/stores/useShallowStore'
 
 interface IProps {
   onOpenLogout: () => void
@@ -18,6 +19,10 @@ interface IProps {
 export const UserNav: FC<IProps> = ({ onOpenLogout }) => {
   const { t } = useTranslation('common')
   const { user } = useAuthStore()
+  // const { user } = useShallow(useAuthStore, (state) => ({
+  //   user: state.user,
+  // }))
+  
 
   return (
     <DropdownMenu>

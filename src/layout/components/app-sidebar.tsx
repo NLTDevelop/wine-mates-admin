@@ -5,7 +5,7 @@ import { NAV_LINKS } from '@/constatnts/navigation.ts'
 
 export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar  {...props}>
       <SidebarContent className="bg-secondary-foreground text-border">
         <NavMain items={NAV_LINKS} />
       </SidebarContent>

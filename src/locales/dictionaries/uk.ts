@@ -25,6 +25,12 @@ export const uk = {
     loading: 'Завантаження...',
     search: 'Пошук...',
     filter: 'Фільтр',
+    of: 'з',
+    back: 'Назад',
+    page: 'Сторінка',
+    previous: 'Попередня',
+    next: 'Наступна',
+    no_results: 'Нічого не знайдено',
     button: {
       save: 'Зберегти',
       cancel: 'Скасувати',
@@ -46,5 +52,18 @@ export const uk = {
     password: 'Пароль',
     email_plaseholder: 'Введіть e-mail...',
     password_plaseholder: 'Введіть пароль....',
+  },
+  users: {
+    users: 'Користувачі',
+    search_user: 'Пошук користувача...',
+    confirm: 'Підтвердити',
+    table: {
+      id: "ID",
+      username: "Ім'я",
+      phone: "Номер телефону",
+      country: "Країна",
+      category: "Категорія",
+      actions: "Дія",
+    },
   },
 }

@@ -1,19 +1,14 @@
 import { QueryClient } from '@tanstack/react-query'
+import i18n from 'i18next'
 
 let globalToast: {
   notifyToast: (message: string, variant?: 'default' | 'destructive' | 'success') => void
 } | null = null
 
-let globalT: ((key: string) => string) | null = null
-
 export const setGlobalToast = (toast: {
   notifyToast: (message: string, variant?: 'default' | 'destructive' | 'success') => void
 }) => {
   globalToast = toast
-}
-
-export const setGlobalTranslator = (t: (key: string) => string) => {
-  globalT = t
 }
 
 const handleGlobalError = (error: any) => {
@@ -38,7 +33,6 @@ const handleGlobalError = (error: any) => {
   }
 
   const skipToastErrors = [422, 409, 429]
-
   const skipToastFlags = [
     error.userFriendlyMessage,
     error.validationData,
@@ -53,6 +47,7 @@ const handleGlobalError = (error: any) => {
 
   const serverMessage = error.response?.data?.message
 
+  // ✅ Используем i18n.t напрямую вместо globalT
   const errorMessage = getErrorMessage(status, serverMessage)
   const variant = getToastVariant(status)
 
@@ -73,27 +68,13 @@ const handleGlobalError = (error: any) => {
 }
 
 const getErrorMessage = (status: number, serverMessage?: string): string => {
-  if (globalT) {
-    const translated = globalT(`errors.${status}`)
-    if (translated && translated !== `errors.${status}`) {
-      return translated
-    }
-
-    return serverMessage || globalT('errors.default')
+  // ✅ Используем i18n.t напрямую
+  const translated = i18n.t(`errors.${status}`)
+  if (translated && translated !== `errors.${status}`) {
+    return translated
   }
 
-  const fallbackMessages: { [key: number]: string } = {
-    400: 'Невірний запит. Перевірте введені дані.',
-    401: 'Сесія закінчилася. Будь ласка, увійдіть знову.',
-    403: 'Доступ заборонено. Недостатньо прав.',
-    404: 'Ресурс не знайдено.',
-    500: 'Внутрішня помилка сервера. Ми вже працюємо над цим.',
-    502: 'Проблеми з підключенням. Сервер тимчасово недоступний.',
-    503: 'Сервіс тимчасово недоступний. Проводяться технічні роботи.',
-    504: 'Таймаут підключення. Сервер не відповідає.',
-  }
-
-  return fallbackMessages[status] || serverMessage || 'Щось пішло не так. Спробуйте ще раз.'
+  return serverMessage || i18n.t('errors.default')
 }
 
 const getToastVariant = (status: number): 'default' | 'destructive' | 'success' => {

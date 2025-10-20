@@ -10,6 +10,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from '@/UIKit/shadcn/ui/sidebar'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -27,6 +28,13 @@ export function NavMain({
 }) {
   const location = useLocation()
   const { t } = useTranslation('nav')
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false); 
+    }
+}
 
   return (
     <SidebarGroup>
@@ -48,7 +56,7 @@ export function NavMain({
                     tooltip={t(item.titleKey)}
                     className={`h-10 relative transition-colors duration-300 hover:bg-primary hover:text-primary-foreground ${isActive ? 'bg-primary text-primary-foreground' : ''}`}
                   >
-                    <Link to={item.url}>
+                    <Link to={item.url} onClick={handleLinkClick}>
                       {item.icon && (
                         <item.icon
                           className={isActive ? 'text-primary-foreground' : 'text-foreground'}

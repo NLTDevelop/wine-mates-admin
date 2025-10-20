@@ -7,7 +7,7 @@ export const USER_CATEGORIES = {
 export type UserCategory = (typeof USER_CATEGORIES)[keyof typeof USER_CATEGORIES]
 
 export interface IUserTable {
-  id: number
+  id: string
   image: IFile | null
   firstName: string
   lastName: string

@@ -1,7 +1,27 @@
-import { SidebarProvider } from '@/UIKit/shadcn/ui/sidebar'
+import { SidebarProvider, SidebarTrigger, useSidebar } from '@/UIKit/shadcn/ui/sidebar'
 import { AppSidebar } from './components/app-sidebar'
 import { NLTSiteHeader } from '@/UIKit/components/NLTHeader'
 import { Outlet } from 'react-router'
+import { cn } from '@/lib/utils'
+
+const AppHeaderContent = () => {
+  const { isMobile } = useSidebar()
+
+  return (
+    <header
+      className={cn(
+        'flex z-40 h-16 shrink-0 items-center justify-between gap-2 px-4',
+        !isMobile && 'absolute right-0'
+      )}
+    >
+      <SidebarTrigger className="md:hidden" />
+
+      <div className="flex-1 text-right">
+        <NLTSiteHeader />
+      </div>
+    </header>
+  )
+}
 
 export default function Layout() {
   return (
@@ -9,14 +29,7 @@ export default function Layout() {
       <SidebarProvider>
         <AppSidebar className="bg-background" side="left" />
         <div className="flex-1 flex flex-col">
-          <header className="flex h-16 shrink-0 items-center justify-between gap-2 ">
-            {/* <div className="flex items-center gap-2">
-              <Separator orientation="vertical" className="mr-2 h-4" />
-            </div> */}
-            <div className="flex-1 text-right pr-4">
-              <NLTSiteHeader />
-            </div>
-          </header>
+          <AppHeaderContent />
           <div className="flex-1 overflow-auto">
             <div className="p-4">
               <Outlet />

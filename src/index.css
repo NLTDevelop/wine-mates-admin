@@ -1,6 +1,20 @@
 @import 'tailwindcss';
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+::-webkit-scrollbar {
+  width: 8px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: inherit;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 25px;
+}
+
 @theme {
   --font-sans: 'Inter', sans-serif;
 
@@ -167,6 +181,10 @@ body {
   padding: clamp(0.5rem, 2.5vw, 1.25rem);
 }
 
+.container {
+  max-width: 100% !important;
+}
+
 .input-focus {
   border-color: var(--color-border);
 }
@@ -207,5 +225,24 @@ input {
 @media (min-width: 1024px) {
   .btn-mobile {
     @apply text-lg px-6 h-12;
+  }
+}
+
+html {
+  overflow: hidden;
+}
+
+body[data-scroll-locked][data-scroll-locked] {
+  overflow: auto !important;
+  width: 100%;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

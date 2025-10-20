@@ -1,5 +1,6 @@
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
-import { create } from 'zustand'
+import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
+
 
 interface UserState {
   filters: {
@@ -11,12 +12,25 @@ interface UserState {
   resetFilters: () => void
 }
 
-export const useUserStore = create<UserState>(set => ({
-  filters: {
-    search: '',
-    limit: DEFAULT_PAGINATION_LIMIT,
-    offset: 0,
-  },
-  setFilters: newFilters => set(state => ({ filters: { ...state.filters, ...newFilters } })),
-  resetFilters: () => set({ filters: { search: '', limit: DEFAULT_PAGINATION_LIMIT, offset: 0 } }),
-}))
+export const useUserStore = createStoreDevToolsWrapper<UserState>(
+  (set) => ({
+    filters: {
+      search: '',
+      limit: DEFAULT_PAGINATION_LIMIT,
+      offset: 0,
+    },
+    setFilters: (newFilters) => 
+      set((state:UserState) => ({ 
+        filters: { ...state.filters, ...newFilters } 
+      }), false, 'user/setFilters'),
+    resetFilters: () => 
+      set({ 
+        filters: { 
+          search: '', 
+          limit: DEFAULT_PAGINATION_LIMIT, 
+          offset: 0 
+        } 
+      }, false, 'user/resetFilters'),
+  }),
+  "UserStore" 
+)
