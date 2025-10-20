@@ -47,7 +47,6 @@ const handleGlobalError = (error: any) => {
 
   const serverMessage = error.response?.data?.message
 
-  // ✅ Используем i18n.t напрямую вместо globalT
   const errorMessage = getErrorMessage(status, serverMessage)
   const variant = getToastVariant(status)
 
@@ -68,7 +67,6 @@ const handleGlobalError = (error: any) => {
 }
 
 const getErrorMessage = (status: number, serverMessage?: string): string => {
-  // ✅ Используем i18n.t напрямую
   const translated = i18n.t(`errors.${status}`)
   if (translated && translated !== `errors.${status}`) {
     return translated
