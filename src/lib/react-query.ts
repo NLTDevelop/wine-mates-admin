@@ -13,7 +13,6 @@ export const setGlobalToast = (toast: {
 
 const handleGlobalError = (error: any) => {
   const status = error.response?.status
-  const url = error.config?.url
 
   if (status === undefined) {
     if (globalToast) {
@@ -44,31 +43,18 @@ const handleGlobalError = (error: any) => {
   if (skipToastErrors.includes(status) || skipToastFlags.some(flag => !!flag)) {
     return
   }
-
   const serverMessage = error.response?.data?.message
 
   const errorMessage = getErrorMessage(status, serverMessage)
   const variant = getToastVariant(status)
-
   if (globalToast) {
     globalToast.notifyToast(errorMessage, variant)
-  }
-
-  if (status === 401 && url?.includes('/login')) {
-    return
-  }
-
-  if (status === 401) {
-    localStorage.removeItem('token')
-    setTimeout(() => {
-      window.location.href = '/login'
-    }, 2000)
   }
 }
 
 const getErrorMessage = (status: number, serverMessage?: string): string => {
-  const translated = i18n.t(`errors.${status}`)
-  if (translated && translated !== `errors.${status}`) {
+  const translated = i18n.t(`errors:${status.toString()}`)
+  if (translated && translated !== `errors.${status.toString()}`) {
     return translated
   }
 

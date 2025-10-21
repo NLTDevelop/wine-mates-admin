@@ -6,6 +6,11 @@ export const USER_CATEGORIES = {
 
 export type UserCategory = (typeof USER_CATEGORIES)[keyof typeof USER_CATEGORIES]
 
+export interface IUserResponse {
+  count: number
+  rows: IUserTable[]
+}
+
 export interface IUserTable {
   id: string
   image: IFile | null
@@ -16,12 +21,13 @@ export interface IUserTable {
   birthday: string
   email: string
   category: string
+  isConfirm?: boolean
+  userFullName?: string
 }
 
-export interface UpdateUserCategoryParams {
+export interface ConfirmUserCategoryParams {
   id: string | number
-  category: string
-  note?: string
+  isConfirm: boolean
 }
 
 export interface UserFilters {

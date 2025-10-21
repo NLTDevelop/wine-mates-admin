@@ -1,24 +1,37 @@
 import { useUserStore } from '@/modules/users/entity/user-store'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query'
 import { userQueries } from '../entity/user-queries'
 import { useCallback, useState } from 'react'
+import { useDebounce } from '@/hooks/ui/useDebounce'
+import { IUserResponse, IUserTable } from '../entity/IUser'
 
 export const useUsers = () => {
-  const { filters, setFilters } = useUserStore()
+  const { filters, setFilters, resetFilters } = useUserStore()
 
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false)
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
-  const [userStatusChangeNote, setUserStatusChangeNote] = useState('')
+  const [searchValue, setSearchValue] = useState<string>('')
+  const [user, setUser] = useState<Partial<IUserTable>>({})
 
-  const usersQuery = useQuery(userQueries.list(filters))
-  const updateCategoryMutation = useMutation(userQueries.updateCategory())
+  const usersQuery: UseQueryResult<IUserResponse, Error> = useQuery(userQueries.list(filters))
+  const confirmCategoryMutation = useMutation(userQueries.confirmCategory())
 
-  const onChangeSearch = useCallback(
-    (search: string) => {
-      setFilters({ search, offset: 0 })
+  const { debouncedWrapper } = useDebounce((searchValue: string) => {
+    setFilters({ search: searchValue, offset: 0 })
+  }, 500)
+
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchValue(e.target.value)
+      debouncedWrapper(e.target.value)
     },
-    [setFilters]
+    [debouncedWrapper]
   )
+
+  const handleClearSearch = useCallback(() => {
+    setSearchValue('')
+    resetFilters()
+  }, [setFilters])
 
   const onChangePagination = useCallback(
     (offset: number) => {
@@ -35,40 +48,56 @@ export const useUsers = () => {
   const closeChangeModal = useCallback(() => {
     setIsChangeModalOpen(false)
     setSelectedUserId(null)
-    setUserStatusChangeNote('')
   }, [])
 
-  const changeUserCategory = useCallback(
-    async (userId: string, category: string, note?: string) => {
-      await updateCategoryMutation.mutateAsync({ id: userId, category, note })
+  const parseUserInfo = (item: IUserTable) => ({
+    userFullName: `${item.firstName} ${item.lastName}`,
+    category: item.category,
+    isConfirm: item.isConfirm ?? false,
+  })
+
+  const confirmUserCategory = useCallback(
+    async (userId: string, isConfirm: boolean) => {
+      const userToConfirm = usersQuery.data?.rows.filter((user: any) => user.id === userId)
+      if (userToConfirm) setUser(parseUserInfo(userToConfirm[0]))
+      await confirmCategoryMutation.mutateAsync({ id: userId, isConfirm })
       usersQuery.refetch()
     },
-    [updateCategoryMutation, usersQuery]
+    [confirmCategoryMutation, usersQuery]
   )
 
-  const confirmCategoryChange = useCallback(async () => {
+  const confirmCategory = useCallback(async () => {
     if (selectedUserId) {
-      await changeUserCategory(selectedUserId, 'new_category', userStatusChangeNote)
+      await confirmUserCategory(selectedUserId, true)
       closeChangeModal()
     }
-  }, [selectedUserId, userStatusChangeNote, changeUserCategory, closeChangeModal])
+  }, [selectedUserId, confirmUserCategory, closeChangeModal])
+
+  const rejectCategory = useCallback(async () => {
+    if (selectedUserId) {
+      await confirmUserCategory(selectedUserId, false)
+      closeChangeModal()
+    }
+  }, [selectedUserId, confirmUserCategory, closeChangeModal])
 
   return {
-    users: usersQuery.data?.data,
+    users: usersQuery.data?.rows,
     isLoading: usersQuery.isLoading,
     filters,
-    onChangeSearch,
+    searchValue,
+    onChangeSearch: handleSearchChange,
+    handleClearSearch,
     onChangePagination,
-    changeUserCategory,
-    isChangingStatus: updateCategoryMutation.isPending,
+    confirmUserCategory,
+    userToConfirm: user,
+    isChangingStatus: confirmCategoryMutation.isPending,
     modal: {
       isOpen: isChangeModalOpen,
       selectedUserId,
-      note: userStatusChangeNote,
-      setNote: setUserStatusChangeNote,
       open: openChangeModal,
       close: closeChangeModal,
-      confirm: confirmCategoryChange,
-    }
+      reject: rejectCategory,
+      confirm: confirmCategory,
+    },
   }
 }

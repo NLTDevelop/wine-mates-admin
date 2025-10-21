@@ -12,7 +12,6 @@ function App() {
   useInitTranslations()
   useAuthInit()
 
-
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
       <ReactQueryProvider>

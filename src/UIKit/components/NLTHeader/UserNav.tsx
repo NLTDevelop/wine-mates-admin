@@ -22,7 +22,6 @@ export const UserNav: FC<IProps> = ({ onOpenLogout }) => {
   // const { user } = useShallow(useAuthStore, (state) => ({
   //   user: state.user,
   // }))
-  
 
   return (
     <DropdownMenu>

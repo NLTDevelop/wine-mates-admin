@@ -9,7 +9,7 @@ export const PrivateRoutes = ({ children }: { children: JSX.Element }) => {
   // const { isAuthenticated } = useShallow(useAuthStore, (state) => ({
   //   isAuthenticated: state.isAuthenticated,
   // }))
-  
+
   const location = useLocation()
 
   const token = localStorage.getItem(ADMIN_TOKEN)

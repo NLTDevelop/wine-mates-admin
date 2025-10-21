@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { ConfirmModal } from '@/modals/confirmModal'
-import { Input } from '@/UIKit/shadcn/ui/input.tsx'
 import { useUsers } from '../../presenters/useUsers'
 import { useUserColumns } from '../../presenters/useUserColumns'
 import { NLTDataTable } from '@/UIKit/components/NLTDataTable'
@@ -18,7 +17,15 @@ export const UsersView = () => {
 
   const users = MOCK_USERS
 
-  const { filters, onChangeSearch, onChangePagination, modal } = useUsers()
+  const {
+    filters,
+    onChangeSearch,
+    handleClearSearch,
+    onChangePagination,
+    modal,
+    searchValue,
+    userToConfirm,
+  } = useUsers()
   const columns = useUserColumns({ onConfirmCategory: modal.open })
   const { table } = useDataTable(users?.rows ?? [], columns)
 
@@ -30,7 +37,11 @@ export const UsersView = () => {
         table={table}
         rowClassname="hover:bg-muted/50 text-center"
         ToolBar={
-          <UserFilters filterSearch={filters.search} onChangeFilterSearch={onChangeSearch} />
+          <UserFilters
+            filterSearch={searchValue}
+            onChangeFilterSearch={onChangeSearch}
+            onClearSearch={handleClearSearch}
+          />
         }
         onRowClick={row => navigate(LINKS.users.detailUrl(row.id))}
       />
@@ -42,18 +53,20 @@ export const UsersView = () => {
       />
       <ConfirmModal
         title={t('modal.title')}
-        actionTitle={t('modal.change')}
+        actionTitle={t('modal.confirm')}
         variant="submit"
         isOpen={modal.isOpen}
         onClose={modal.close}
+        onReject={modal.reject}
         onSubmit={modal.confirm}
       >
         <div className="p-[1px]">
-          <Input
-            value={modal.note}
-            onChange={event => modal.setNote(event.target.value)}
-            placeholder={t('modal.reasonPlaceholder')}
-          />
+          <p>
+            {t('modal.confirm_actions', {
+              slug: userToConfirm.userFullName,
+              category: userToConfirm.category,
+            })}
+          </p>
         </div>
       </ConfirmModal>
     </ContentLayout>

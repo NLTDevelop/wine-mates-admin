@@ -12,9 +12,9 @@ export const userQueries = {
     queryFn: () => userService.get(id),
   }),
 
-  updateCategory: () => ({
-    mutationKey: ['users', 'updateCategory'],
-    mutationFn: ({ id, category, note }: { id: string; category: string; note?: string }) =>
-      userService.updateCategory({ id, category, note }),
+  confirmCategory: () => ({
+    mutationKey: ['users', 'confirmCategory'],
+    mutationFn: ({ id, isConfirm }: { id: string; isConfirm: boolean }) =>
+      userService.confirmCategory({ id, isConfirm }),
   }),
 }

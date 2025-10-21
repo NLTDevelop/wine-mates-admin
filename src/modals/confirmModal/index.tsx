@@ -10,6 +10,7 @@ interface IProps {
   variant: 'destructive' | 'submit'
   isOpen: boolean
   onClose: () => void
+  onReject: () => void
   onSubmit: () => void
   children?: ReactNode
 }
@@ -22,6 +23,7 @@ export const ConfirmModal: FC<IProps> = ({
   isOpen,
   onSubmit,
   onClose,
+  onReject,
   children,
 }) => {
   const { t } = useTranslation('common')
@@ -45,7 +47,7 @@ export const ConfirmModal: FC<IProps> = ({
           <Button
             type="button"
             className="w-full bg-muted text-foreground/90 hover:bg-muted/90"
-            onClick={onClose}
+            onClick={onReject}
           >
             {t('button.cancel')}
           </Button>

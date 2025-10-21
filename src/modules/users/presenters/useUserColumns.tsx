@@ -2,6 +2,7 @@ import { Button } from '@/UIKit/shadcn/ui/button'
 import { createColumnHelper } from '@tanstack/react-table'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { USER_CATEGORIES } from '../entity/IUser'
 
 interface IRow {
   id: string
@@ -27,12 +28,12 @@ export const useUserColumns = ({ onConfirmCategory }: UseUserColumnsProps) => {
         id: 'id',
         header: t('table.id'),
         cell: info => info.getValue(),
-        meta: {cellClassName: 'text-start'},
+        meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor(row => `${row.lastName} ${row.firstName}`, {
         header: t('table.username'),
         cell: info => info.getValue(),
-        meta: {cellClassName: 'text-start'},
+        meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor('phoneNumber', {
         header: t('table.phone'),
@@ -57,15 +58,19 @@ export const useUserColumns = ({ onConfirmCategory }: UseUserColumnsProps) => {
       columnHelper.display({
         id: 'actions',
         header: t('table.actions'),
-        cell: ({ row }) => (
-          <Button
-            variant="outline"
-            onClick={() => onConfirmCategory(row.original.id)}
-            className=""
-          >
-            {t("confirm") }
-          </Button>
-        ),
+        cell: ({ row }) => {
+          const handleConfirmCategory = (e: React.MouseEvent) => {
+            console.log('confirm category for userId:', row.original.id)
+            e.stopPropagation()
+            onConfirmCategory(row.original.id)
+          }
+          const isWineLower = row.original.category === USER_CATEGORIES.WINE_LOVER
+          return !isWineLower ? (
+            <Button variant="outline" size="sm" onClick={handleConfirmCategory} className="">
+              {t('confirm')}
+            </Button>
+          ) : null
+        },
       }),
     ],
     [columnHelper, onConfirmCategory]

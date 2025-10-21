@@ -4,7 +4,7 @@ import { authService } from '../entities/auth-servise'
 import { useShallow } from '@/stores/useShallowStore'
 
 export const useLogin = () => {
-  const { login, setLoading } =    useAuthStore()
+  const { login, setLoading } = useAuthStore()
   // const { login, setLoading } = useShallow(useAuthStore, (state) => ({
   //   login: state.login,
   //   setLoading: state.setLoading

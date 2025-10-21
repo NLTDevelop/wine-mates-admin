@@ -8,7 +8,6 @@ import { PATHS } from '@/navigation/paths'
 import { WarningModal } from '@/modals/warningModal'
 import { useShallow } from '@/stores/useShallowStore'
 
-
 export const NLTSiteHeader: FC = () => {
   const { t } = useTranslation('common')
   const navigate = useNavigate()
