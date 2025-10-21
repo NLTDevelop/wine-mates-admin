@@ -1,10 +1,11 @@
-import { API_CONFIG } from '@/config'
-import { api } from './base-service'
-import { AuthResponse, LoginData } from '@/entities/auth'
+import { AuthResponse, LoginData } from '@/modules/autorization/entities/types'
+import { ADMIN_TOKEN, ADMIN_USER } from '@/constatnts/locale-storage'
+import { api } from '@/services'
+import { AUTH_ENDPOINTS } from './auth-endpoints'
 
 export const authService = {
   login: (credentials: LoginData): Promise<AuthResponse> => {
-    return api.post(API_CONFIG.endpoints.auth, credentials).then(res => {
+    return api.post(AUTH_ENDPOINTS.AUTH, credentials).then(res => {
       if (res.data.accessToken && !res.data.user) {
         const userData = {
           id: 'temp-id',
@@ -23,7 +24,7 @@ export const authService = {
   },
 
   logout: (): void => {
-    localStorage.removeItem('admin-token')
-    localStorage.removeItem('admin-user')
+    localStorage.removeItem(ADMIN_TOKEN)
+    localStorage.removeItem(ADMIN_USER)
   },
 }

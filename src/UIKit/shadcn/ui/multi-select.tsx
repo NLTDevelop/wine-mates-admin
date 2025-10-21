@@ -242,7 +242,6 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     setTimeout(() => setPoliteMessage(''), 300)
   }
 
-
   const getPopoverAnimationClass = () => {
     if (animationConfig?.popoverAnimation) {
       switch (animationConfig.popoverAnimation) {

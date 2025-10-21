@@ -1,22 +1,42 @@
-import { Outlet } from 'react-router-dom'
-import { SidebarInset, SidebarProvider } from '@/UIKit/shadcn/ui/sidebar.tsx'
-import { AppSidebar } from '@/layout/components/app-sidebar.tsx'
-import { Separator } from '@radix-ui/react-separator'
+import { SidebarProvider, SidebarTrigger, useSidebar } from '@/UIKit/shadcn/ui/sidebar'
+import { AppSidebar } from './components/app-sidebar'
+import { NLTSiteHeader } from '@/UIKit/components/NLTHeader'
+import { Outlet } from 'react-router'
+import { cn } from '@/lib/utils'
+
+const AppHeaderContent = () => {
+  const { isMobile } = useSidebar()
+
+  return (
+    <header
+      className={cn(
+        'flex z-40 h-16 shrink-0 items-center justify-between gap-2 px-4 w-full',
+        !isMobile && 'absolute right-0 w-[80px]'
+      )}
+    >
+      <SidebarTrigger className="md:hidden" />
+
+      <div className="flex-1 text-right">
+        <NLTSiteHeader />
+      </div>
+    </header>
+  )
+}
 
 export default function Layout() {
   return (
-    <SidebarProvider>
-      <AppSidebar className="bg-background" side="left" />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2">
-            <Separator orientation="vertical" className="mr-2 h-4" />
+    <div className="flex h-screen">
+      <SidebarProvider>
+        <AppSidebar className="bg-background" side="left" />
+        <div className="flex-1 flex flex-col min-w-0">
+          <AppHeaderContent />
+          <div className="flex-1 !overflow-auto">
+            <div className="p-4">
+              <Outlet />
+            </div>
           </div>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <Outlet />
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+      </SidebarProvider>
+    </div>
   )
 }

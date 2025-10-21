@@ -6,6 +6,7 @@ import { PublicRoutes } from './publicRoutes'
 import { AuthorizationView } from '@/modules/autorization'
 import Layout from '@/layout'
 import { DashboardView } from '@/modules/dashboard'
+import { UsersView } from '@/modules/users/ui'
 
 // const brandsRoutes = [
 //   { path: PATHS.BRANDS, element: <BrandsView /> },
@@ -19,10 +20,7 @@ import { DashboardView } from '@/modules/dashboard'
 //   { path: PATHS.CATEGORIES_DETAIL, element: <UpdateCategoryView /> },
 // ];
 
-// const usersRoutes = [
-//   { path: PATHS.USERS, element: <UsersView /> },
-//   { path: PATHS.USERS_DETAIL, element: <UserView /> },
-// ];
+const usersRoutes = [{ path: PATHS.USERS, element: <UsersView /> }]
 
 export const Router: FC = () => {
   const routes = useRoutes([
@@ -33,7 +31,7 @@ export const Router: FC = () => {
           <Layout />
         </PrivateRoutes>
       ),
-      children: [{ path: PATHS.HOME, element: <DashboardView />, index: true }],
+      children: [{ path: PATHS.HOME, element: <DashboardView />, index: true }, ...usersRoutes],
     },
     {
       path: PATHS.LOGIN,

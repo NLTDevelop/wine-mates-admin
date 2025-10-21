@@ -2,13 +2,13 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useLogin } from '@/hooks/api/useAuth'
-import { loginSchema } from '@/lib/validators'
+import { useLogin } from '@/modules/autorization/presenters/useAuth'
 import { Card, CardContent, CardHeader, CardTitle } from '@/UIKit/shadcn/ui/card'
 import { Form, FormField } from '@/UIKit/shadcn/ui/form-field'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { useFormErrors } from '@/hooks/ui/useFormErrors'
+import { loginSchema } from './presenters/auth-schema'
 
 type AuthorizationViewData = z.infer<typeof loginSchema>
 

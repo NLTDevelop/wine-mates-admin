@@ -3,9 +3,9 @@ import { useIsMobile } from '@/hooks/shadcn/use-mobile'
 import { cn } from '@/lib/utils'
 import { VariantProps, cva } from 'class-variance-authority'
 import { Slot } from '@radix-ui/react-slot'
-import { PanelLeft } from 'lucide-react'
+import { Menu, PanelLeft } from 'lucide-react'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { Input } from '@/UIKit/shadcn/ui/input'
+import { Input, InputProps } from '@/UIKit/shadcn/ui/input'
 import { Separator } from '@/UIKit/shadcn/ui/separator'
 import { Sheet, SheetContent } from '@/UIKit/shadcn/ui/sheet'
 import { Skeleton } from '@/UIKit/shadcn/ui/skeleton'
@@ -208,7 +208,7 @@ const Sidebar = React.forwardRef<
         data-side={side}
       >
         {/* This is what handles the sidebar gap on desktop */}
-        <div
+        {/* <div
           className={cn(
             'duration-200 relative h-svh w-[--sidebar-width] bg-transparent transition-[width] ease-linear',
             'group-data-[collapsible=offcanvas]:w-0',
@@ -217,10 +217,10 @@ const Sidebar = React.forwardRef<
               ? 'group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4))]'
               : 'group-data-[collapsible=icon]:w-[--sidebar-width-icon]'
           )}
-        />
+        /> */}
         <div
           className={cn(
-            'duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear md:flex',
+            'duration-200 inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear md:flex',
             side === 'left'
               ? 'left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]'
               : 'right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]',
@@ -257,14 +257,14 @@ const SidebarTrigger = React.forwardRef<
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
-      className={cn('h-7 w-7', className)}
+      className={cn('h-10 w-10', className)}
       onClick={event => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-      <PanelLeft />
+      <Menu className="h-10 w-10" />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
@@ -322,22 +322,21 @@ const SidebarInset = React.forwardRef<HTMLDivElement, React.ComponentProps<'main
 )
 SidebarInset.displayName = 'SidebarInset'
 
-const SidebarInput = React.forwardRef<
-  React.ElementRef<typeof Input>,
-  React.ComponentProps<typeof Input>
->(({ className, ...props }, ref) => {
-  return (
-    <Input
-      ref={ref}
-      data-sidebar="input"
-      className={cn(
-        'h-8 w-full bg-background shadow-none focus-visible:ring-2 focus-visible:ring-sidebar-ring',
-        className
-      )}
-      {...props}
-    />
-  )
-})
+const SidebarInput = React.forwardRef<React.ComponentRef<typeof Input>, InputProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <Input
+        ref={ref}
+        data-sidebar="input"
+        className={cn(
+          'h-8 w-full bg-background shadow-none focus-visible:ring-2 focus-visible:ring-sidebar-ring',
+          className
+        )}
+        {...props}
+      />
+    )
+  }
+)
 SidebarInput.displayName = 'SidebarInput'
 
 const SidebarHeader = React.forwardRef<HTMLDivElement, React.ComponentProps<'div'>>(

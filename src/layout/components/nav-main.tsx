@@ -10,9 +10,11 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from '@/UIKit/shadcn/ui/sidebar'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { cn } from '@/lib/utils'
 
 export function NavMain({
   items,
@@ -26,14 +28,29 @@ export function NavMain({
   }[]
 }) {
   const location = useLocation()
-  const { t } = useTranslation('nav')
+  const { t } = useTranslation('navigation')
+  const { isMobile, setOpenMobile } = useSidebar()
 
+  const getIsActive = (itemUrl: string) => {
+    if (itemUrl === '/') {
+      return location.pathname === '/'
+    } else {
+      return location.pathname === itemUrl || location.pathname.startsWith(itemUrl + '/')
+    }
+  }
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false)
+    }
+  }
   return (
     <SidebarGroup>
       <SidebarMenu>
         {items.map(item => {
-          const isActive =
-            location.pathname === item.url || location.pathname.startsWith(item.url + '/')
+          const isDashboard = item.url === '/'
+          const isActive = getIsActive(item.url)
+
           return (
             <Collapsible
               key={item.titleKey}
@@ -41,14 +58,24 @@ export function NavMain({
               defaultOpen={item.isActive}
               className="group/collapsible"
             >
-              <SidebarMenuItem>
+              <SidebarMenuItem className={cn(isDashboard && 'border-b pt-4 border-primary mb-4')}>
                 {!item.items?.length ? (
                   <SidebarMenuButton
                     asChild
                     tooltip={t(item.titleKey)}
-                    className={`h-10 relative transition-colors duration-300 hover:bg-primary hover:text-primary-foreground ${isActive ? 'bg-primary text-primary-foreground' : ''}`}
+                    className={cn(
+                      'h-10 relative transition-colors duration-300',
+                      !isDashboard && [
+                        'hover:bg-primary hover:text-primary-foreground',
+                        isActive && 'bg-primary text-primary-foreground',
+                      ],
+                      isDashboard && [
+                        'title-sidebar text-background',
+                        'hover:!bg-transparent hover:!title-sidebar',
+                      ]
+                    )}
                   >
-                    <Link to={item.url}>
+                    <Link to={item.url} onClick={handleLinkClick}>
                       {item.icon && (
                         <item.icon
                           className={isActive ? 'text-primary-foreground' : 'text-foreground'}
@@ -63,7 +90,17 @@ export function NavMain({
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
                       tooltip={t(item.titleKey)}
-                      className={`h-10 relative transition-colors duration-300 hover:bg-primary hover:text-primary-foreground ${isActive ? 'bg-primary text-primary-foreground' : ''}`}
+                      className={cn(
+                        'h-10 relative transition-colors duration-300',
+                        !isDashboard && [
+                          'hover:bg-primary hover:text-primary-foreground',
+                          isActive && 'bg-primary text-primary-foreground',
+                        ],
+                        isDashboard && [
+                          'title-sidebar',
+                          'hover:!bg-transparent hover:!title-sidebar',
+                        ]
+                      )}
                     >
                       {item.icon && (
                         <item.icon
@@ -90,7 +127,7 @@ export function NavMain({
                             className={`transition-colors hover:text-background ${location.pathname === subItem.url ? 'text-primary-foreground bg-primary' : ''}`}
                           >
                             <Link to={subItem.url}>
-                              <span>{subItem.title}</span>
+                              <span>{t(`${subItem.title}`)}</span>
                               {location.pathname === subItem.url && (
                                 <span className={`w-2 h-2 bg-white rounded-full ml-auto `}></span>
                               )}

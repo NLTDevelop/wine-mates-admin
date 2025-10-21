@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Search, X, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-interface InputProps extends React.ComponentProps<'input'> {
+export interface InputProps extends React.ComponentProps<'input'> {
   showClearButton?: boolean
   onClear?: () => void
   variant?: 'default' | 'search'

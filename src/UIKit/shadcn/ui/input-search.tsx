@@ -3,7 +3,7 @@ import { Input } from './input'
 
 export type SearchInputProps = {
   value: string
-  onChange: (value: string) => void
+  onChange: (value: React.ChangeEvent<HTMLInputElement>) => void
   handleClear?: () => void
   placeholder?: string
   className?: string
@@ -23,7 +23,7 @@ export const SearchInput = ({
     <Input
       variant="search"
       value={value}
-      onChange={e => onChange(e.target.value)}
+      onChange={e => onChange(e)}
       placeholder={placeholder ?? t('search')}
       onClear={handleClear}
       isLoading={isLoading}
