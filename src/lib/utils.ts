@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -13,3 +14,4 @@ export const buildUrl = (url: string, params?: Record<string, string | number>):
     url
   )
 }
+

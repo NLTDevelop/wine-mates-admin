@@ -32,7 +32,7 @@ export const useFeatureColumns = ({ onToggle, isUpdating }: UseFeatureColumnsPro
           const isEnabled = info.getValue()
           return (
             <div className="text-center">
-              <Badge className={`font-semibold ${isEnabled ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-200 text-foreground'}`}>{t(isEnabled ? 'enabled' : 'disabled')}</Badge>
+              <Badge className={`font-semibold ${isEnabled ? 'bg-green-600 hover:bg-green-600' : 'bg-gray-200 hover:bg-green-600 text-foreground'}`}>{t(isEnabled ? 'enabled' : 'disabled')}</Badge>
             </div>
           )
         },
@@ -46,12 +46,18 @@ export const useFeatureColumns = ({ onToggle, isUpdating }: UseFeatureColumnsPro
           const feature = row.original
 
           const handleToggleChange = (checked: boolean) => {
+            console.log('Checked switch->', checked)
             onToggle(feature.key, checked)
           }
 
           return (
-            <div className="flex items-center justify-center space-x-2">
-              <Switch checked={feature.is_enabled} onCheckedChange={handleToggleChange} disabled={isUpdating} className={isUpdating ? 'opacity-60 cursor-not-allowed' : ''} />
+            <div className="flex items-center justify-center space-x-2 " style={{ pointerEvents: 'auto' }}>
+              <Switch
+                checked={feature.is_enabled}
+                onCheckedChange={handleToggleChange}
+                disabled={isUpdating}
+                className={isUpdating ? 'opacity-60 cursor-not-allowed' : ' cursor-pointer'}
+              />
             </div>
           )
         },

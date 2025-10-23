@@ -52,7 +52,7 @@ export const useUsers = () => {
 
   const parseUserInfo = (item: IUserTable) => ({
     userFullName: `${item.firstName} ${item.lastName}`,
-    category: item.category,
+    category: item.wineExperienceLevel,
     isConfirm: item.isConfirm ?? false,
   })
 

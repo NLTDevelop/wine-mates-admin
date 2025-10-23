@@ -6,15 +6,11 @@ import { useModal } from '../NLTModal/useModal'
 import { useAuthStore } from '@/modules/autorization/entities/auth-store'
 import { PATHS } from '@/navigation/paths'
 import { WarningModal } from '@/modals/warningModal'
-// import { useShallow } from '@/stores/useShallowStore'
 
 export const NLTSiteHeader: FC = () => {
   const { t } = useTranslation('common')
   const navigate = useNavigate()
   const { logout } = useAuthStore()
-  // const { logout } = useShallow(useAuthStore, (state) => ({
-  //   logout: state.logout,
-  // }))
 
   const { isOpen: isOpenLogout, onOpen: onOpenLogout, onClose: onCloseLogout } = useModal()
 

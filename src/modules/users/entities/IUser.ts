@@ -1,7 +1,7 @@
 export const USER_CATEGORIES = {
-  WINE_LOVER: 'wine_lover',
-  WINE_EXPERT: 'wine_expert',
-  WINEMAKER: 'winemaker',
+  WINE_LOVER: 'lover',
+  WINE_EXPERT: 'expert',
+  WINEMAKER: 'creator',
 } as const
 
 export type UserCategory = (typeof USER_CATEGORIES)[keyof typeof USER_CATEGORIES]
@@ -9,18 +9,19 @@ export type UserCategory = (typeof USER_CATEGORIES)[keyof typeof USER_CATEGORIES
 export interface IUserResponse {
   count: number
   rows: IUserTable[]
+  totalPages: number
 }
 
 export interface IUserTable {
   id: string
-  image: IFile | null
+  avatarUrl: IFile | null
   firstName: string
   lastName: string
   phoneNumber: string
   country: string
   birthday: string
   email: string
-  category: string
+  wineExperienceLevel: string
   isConfirm?: boolean
   userFullName?: string
 }

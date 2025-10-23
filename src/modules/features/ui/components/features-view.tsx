@@ -25,7 +25,7 @@ export const FeaturesView = () => {
 
   return (
     <ContentLayout title={t('feature_management')} description={ t('current_statuses')}>
-      <NLTDataTable table={table} rowClassname="hover:bg-transparent cursor-none text-center" ToolBar={null} />
+      <NLTDataTable table={table} rowClassname="hover:bg-transparent cursor-none pointer-events-none text-center" ToolBar={null} />
     </ContentLayout>
   )
 }
