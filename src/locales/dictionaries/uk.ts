@@ -48,7 +48,9 @@ export const uk = {
   navigation: {
     title: 'Wine Maters',
     users: 'Користувачі',
+    features: 'Управління',
     list: 'Список',
+    create: 'Створити',
     wines: 'Вина',
     reviews: 'Відгуки',
   },
@@ -76,6 +78,18 @@ export const uk = {
       confirm: 'Підтвердити',
       confirm_actions:
         'Будь ласка, підтвердьте категорію {{category}} для користувача {{slug}}. Зверніть увагу, що ця дія може вплинути на його права доступу та відображення даних у системі.',
+    },
+  },
+  features: {
+    feature_management: 'Управління',
+    current_statuses: 'Поточний статус усіх модулів сайту',
+    no_results: 'Нічого не знайдено',
+    enabled: 'Активно',
+    disabled: 'Заблоковано',
+   table: {
+      feature_name: 'Назва модулю',
+      status: "Статус",
+      action: 'Зміна статутсу',
     },
   },
 }

@@ -1,7 +1,7 @@
 import { useAuthStore } from '@/modules/autorization/entities/auth-store'
 import { useMutation } from '@tanstack/react-query'
 import { authService } from '../entities/auth-servise'
-import { useShallow } from '@/stores/useShallowStore'
+// import { useShallow } from '@/stores/useShallowStore'
 
 export const useLogin = () => {
   const { login, setLoading } = useAuthStore()

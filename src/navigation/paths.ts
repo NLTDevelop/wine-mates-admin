@@ -4,4 +4,6 @@ export const PATHS = {
   DASHBOARD: '/dashboard',
   USERS: '/users',
   USERS_DETAIL: '/users/:id',
+  FEATURES: '/features',
+  FEATURE_CREATE: '/features/create',
 }

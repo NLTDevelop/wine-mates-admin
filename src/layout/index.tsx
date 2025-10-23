@@ -10,7 +10,7 @@ const AppHeaderContent = () => {
   return (
     <header
       className={cn(
-        'flex z-40 h-16 shrink-0 items-center justify-between gap-2 px-4 w-full',
+        'flex z-40 h-16 shrink-0 items-center justify-between gap-2 px-4 w-full bg-gray-100',
         !isMobile && 'absolute right-0 w-[80px]'
       )}
     >
@@ -30,7 +30,7 @@ export default function Layout() {
         <AppSidebar className="bg-background" side="left" />
         <div className="flex-1 flex flex-col min-w-0">
           <AppHeaderContent />
-          <div className="flex-1 !overflow-auto">
+          <div className="flex-1 !overflow-auto bg-gray-100">
             <div className="p-4">
               <Outlet />
             </div>

@@ -2,7 +2,8 @@ import { Button } from '@/UIKit/shadcn/ui/button'
 import { createColumnHelper } from '@tanstack/react-table'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { USER_CATEGORIES } from '../entity/IUser'
+import { USER_CATEGORIES } from '../entities/IUser'
+
 
 interface IRow {
   id: string

@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from 'react-router-dom'
-import { useShallow } from '@/stores/useShallowStore'
+// import { useShallow } from '@/stores/useShallowStore'
 import { useAuthStore } from '@/modules/autorization/entities/auth-store'
 import { JSX } from 'react'
 import { ADMIN_TOKEN } from '@/constatnts/locale-storage'

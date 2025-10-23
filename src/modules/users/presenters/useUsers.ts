@@ -1,9 +1,9 @@
-import { useUserStore } from '@/modules/users/entity/user-store'
 import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query'
-import { userQueries } from '../entity/user-queries'
 import { useCallback, useState } from 'react'
 import { useDebounce } from '@/hooks/ui/useDebounce'
-import { IUserResponse, IUserTable } from '../entity/IUser'
+import { useUserStore } from '../entities/user-store'
+import { userQueries } from '../entities/user-queries'
+import { IUserResponse, IUserTable } from '../entities/IUser'
 
 export const useUsers = () => {
   const { filters, setFilters, resetFilters } = useUserStore()

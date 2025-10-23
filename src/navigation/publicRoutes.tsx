@@ -3,7 +3,7 @@ import { useAuthStore } from '@/modules/autorization/entities/auth-store'
 import { JSX } from 'react'
 import { PATHS } from './paths'
 import { ADMIN_TOKEN } from '@/constatnts/locale-storage'
-import { useShallow } from '@/stores/useShallowStore'
+// import { useShallow } from '@/stores/useShallowStore'
 
 export const PublicRoutes = ({ children }: { children: JSX.Element }) => {
   const { isAuthenticated } = useAuthStore()

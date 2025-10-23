@@ -1,5 +1,6 @@
-import { userService } from '@/modules/users/entity/user-service'
+
 import { UserFilters } from './IUser'
+import { userService } from './user-service';
 
 export const userQueries = {
   list: (filters: UserFilters) => ({

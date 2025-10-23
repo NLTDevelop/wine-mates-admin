@@ -1,16 +1,19 @@
 interface ContentLayoutProps {
   children: React.ReactNode
-  title?: string
+  title: string
+  description?: string | React.ReactNode
 }
 
-export const ContentLayout = ({ title, children }: ContentLayoutProps) => {
+export const ContentLayout = ({ title, description, children }: ContentLayoutProps) => {
   return (
     <div className="container mx-auto">
-      {title && (
-        <div className="flex justify-between items-center mb-4 bg-inherit">
-          <h1 className=" text-4xl font-bold">{title}</h1>
+      <div className="mb-1 md:mb-4 bg-inherit">
+        <div className="flex justify-between items-start">
+          <h1 className="text-section">{title}</h1>
         </div>
-      )}
+
+        {description && <div className="text-description">{description}</div>}
+      </div>
 
       {children}
     </div>
