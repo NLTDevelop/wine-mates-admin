@@ -1,13 +1,5 @@
 import React from 'react'
 import { type Table as ReactTable, flexRender } from '@tanstack/react-table'
-import { ChevronDown } from 'lucide-react'
-import { Button } from '@/UIKit/shadcn/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/UIKit/shadcn/ui/dropdown-menu'
 import {
   Table,
   TableBody,

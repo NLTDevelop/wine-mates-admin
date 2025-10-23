@@ -2,13 +2,13 @@ import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query'
 import { useFeatureStore } from '../enteties/feature-store'
 import { Feature } from '../enteties/types'
 import { featureQueries } from '../enteties/feature-queries'
-import { queryClient } from '@/lib/react-query'
-import { useState } from 'react'
-import { boolean } from 'zod'
+// import { queryClient } from '@/lib/react-query'
+// import { useState } from 'react'
+// import { boolean } from 'zod'
 
 export const useFeatures = () => {
   const setFeatures = useFeatureStore(state => state.setFeatures)
-  const setFeatureToggle = useFeatureStore(state => state.setFeatureToggle)
+  // const setFeatureToggle = useFeatureStore(state => state.setFeatureToggle)
 
   const featuresQuery: UseQueryResult<Feature[], Error> = useQuery(featureQueries.list())
 
