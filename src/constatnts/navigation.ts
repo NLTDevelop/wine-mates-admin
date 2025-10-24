@@ -30,6 +30,6 @@ export const NAV_LINKS = [
   { ...LINKS.dashboard, isActive: false },
   { ...LINKS.users.root, icon: Users, isActive: false, items: [LINKS.users.list] as NavSubItem[] },
   { ...LINKS.features.root, icon: Cog, isActive: false, items: [LINKS.features.list] as NavSubItem[] },
-  { ...LINKS.wines.root, icon: Wine, isActive: false, items: [LINKS.wines.list] as NavSubItem[] },
+  { ...LINKS.wines.root, icon: Wine, isActive: false, items: [ LINKS.wines.create] as NavSubItem[] },
   { ...LINKS.reviews.root, icon: Clipboard, isActive: false, items: [] as NavSubItem[] },
 ]
