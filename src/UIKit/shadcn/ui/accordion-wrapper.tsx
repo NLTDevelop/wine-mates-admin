@@ -3,7 +3,7 @@
 import { FC, useRef } from 'react'
 import { Card, CardContent } from './card'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@radix-ui/react-accordion'
-import {  ChevronDown, ChevronUp } from 'lucide-react'
+import {  ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface IProps {

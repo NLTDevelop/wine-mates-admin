@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { Plus } from 'lucide-react'
 import { useFoodCategories } from '../../../presenters/useFoodCategories'
 import { useTranslation } from 'react-i18next'
-import { PaletteItem } from './palette-item'
+import { PaletteItem } from './components/palette-item'
 
 export const FoodCategoriesManager = () => {
   const { t } = useTranslation('wines')

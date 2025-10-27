@@ -1,5 +1,5 @@
 import { featureService } from './feature-service'
-import { UpdateFeatureParams } from './types'
+// import { UpdateFeatureParams } from './types'
 
 export const featureQueries = {
   list: () => ({
@@ -7,9 +7,9 @@ export const featureQueries = {
     queryFn: () => featureService.list(),
   }),
 
-  updateToggle: () => ({
-    mutationKey: ['features', 'updateToggle'],
+  // updateToggle: () => ({
+  //   mutationKey: ['features', 'updateToggle'],
 
-    mutationFn: (params: UpdateFeatureParams) => featureService.updateToggle(params),
-  }),
+  //   mutationFn: (params: UpdateFeatureParams) => featureService.updateToggle(params),
+  // }),
 }

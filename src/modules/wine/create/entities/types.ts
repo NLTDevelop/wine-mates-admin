@@ -20,13 +20,51 @@ interface IWineBasicInfo {
   imageUrl: string
 }
 
-enum WineColor {
-  Red = 'red',
-  White = 'white',
-  Rose = 'rose',
-  Sparkling = 'sparkling',
-  Dessert = 'dessert',
-  Orange = 'orange',
+export interface WineColorTones {
+  pale: string
+  medium: string 
+  deep: string
+}
+
+export interface WineColorFormData {
+  category: string
+  colorName: string
+  tones: WineColorTones
+}
+
+export interface WineColorItem {
+  name: string;
+  tones: WineColorTones;
+}
+
+export interface WineColor {
+  value: string;
+  label: string;
+  labelEn?: string;
+  items?: WineColorItem[]; 
+  tones?: {
+    pale: string;
+    medium: string;
+    deep: string;
+  }
+}
+
+export interface WineCategoryFormData {
+  value: string;
+  label: string;
+  labelEn: string;
+  tones?: {
+    pale: string
+    medium: string
+    deep: string
+  }
+}
+
+export interface ColorInput {
+  name: string;
+  pale: string;
+  medium: string;
+  deep: string;
 }
 
 interface IWineTasteTags {
@@ -104,9 +142,15 @@ export type CreateWineFormData = {
 }
 
 export interface WineOption {
-  value: string
-  label: string
-  items?: string[]
+  value: string; 
+  label: string; 
+  items?: string[]; 
+  colorLabel?: string; 
+  tones?: {
+    pale?: string;
+    medium?: string;
+    deep?: string;
+  };
 }
 
 export interface WineTemplate {

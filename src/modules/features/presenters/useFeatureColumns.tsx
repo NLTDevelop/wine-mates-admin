@@ -55,8 +55,8 @@ export const useFeatureColumns = ({ onToggle, isUpdating }: UseFeatureColumnsPro
               <Switch
                 checked={feature.is_enabled}
                 onCheckedChange={handleToggleChange}
-                disabled={isUpdating}
-                className={isUpdating ? 'opacity-60 cursor-not-allowed' : ' cursor-pointer'}
+                // disabled={isUpdating}
+                // className={isUpdating ? 'opacity-60 cursor-not-allowed' : ' cursor-pointer'}
               />
             </div>
           )

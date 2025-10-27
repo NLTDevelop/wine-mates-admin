@@ -1,50 +1,54 @@
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useWineColors } from '../../../presenters/useWineColors'
-import { Button } from '@/UIKit/shadcn/ui/button'
-import { Input } from '@/UIKit/shadcn/ui/input'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
-import { Plus } from 'lucide-react'
-import { ColorPicker } from '../../../../../../UIKit/shadcn/ui/color-picker'
-import { PaletteItem } from './palette-item'
+import { useWineColors } from '../../../presenters/useWineColors'
+import { CreateCategorySection } from './components/create-category-section'
+import { PaletteItem } from './components/palette-item'
+import { mockWineColorCategories } from '../../../entities/color/mock'
+import { AddColorSection } from './components/add-color-section'
 
 export const ColorPaletteManager = () => {
-  const { t } = useTranslation('wines')
-  const { t: tc } = useTranslation('common')
-  const { colors, addColor, removeColor, isLoading } = useWineColors()
-  const [newColor, setNewColor] = useState('')
-  const [newLabel, setNewLabel] = useState('')
+  const categories = mockWineColorCategories
+  const { categoryFormData, selectedCategory, isLoading, canAddColor, addCategory, updateCategoryFormData, updateTone, selectCategory, handleDeleteCategory, handleAddColor, baseHex } = useWineColors()
 
-  const handleAddColor = () => {
-    if (newColor && newLabel && !colors.find(c => c.value === newColor)) {
-      addColor({ value: newColor, label: newLabel })
-      setNewColor('')
-      setNewLabel('')
-    }
+  const handleAddCategory = (categoryData: { value: string; label: string; labelEn: string }) => {
+    addCategory(categoryData)
+  }
+
+  const handleLabelChange = (value: string) => {
+    updateCategoryFormData({ label: value })
+  }
+
+  const handleLabelEnChange = (value: string) => {
+    updateCategoryFormData({ labelEn: value })
+  }
+
+  const handleCategoryClick = (category: string) => {
+    !selectedCategory ? selectCategory(category) : selectCategory('')
   }
 
   return (
     <Card>
-      <CardContent className="space-y-4">
-        <div className="flex gap-2 items-end">
-          <div className="flex-1">
-            <label className="text-sm font-medium mb-1 block">{t('color')}</label>
-            <ColorPicker value={newColor} onChange={setNewColor} />
-          </div>
-          <div className="flex-1">
-            <label className="text-sm font-medium mb-1 block">{t('title')}</label>
-            <Input value={newLabel} onChange={e => setNewLabel(e.target.value)} placeholder={t('entry_title')} />
-          </div>
-          <Button onClick={handleAddColor} disabled={!newColor || !newLabel || isLoading} className="h-11">
-            <Plus className="w-4 h-4" /> {tc('button.add')}
-          </Button>
+      <CardContent className="space-y-6 p-6">
+        <div>
+          <CreateCategorySection onCreateCategory={handleAddCategory} isLoading={isLoading} />
         </div>
-
-        <div className="flex flex-col w-full gap-2">
-          {colors.map(color => (
-            <PaletteItem key={color.value} data={color} onRemove={removeColor} isLoading={isLoading} isNeedCopy />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {categories.map(category => (
+            <PaletteItem key={category.value} data={category} handleClick={() => handleCategoryClick(category.value)} onRemove={() => handleDeleteCategory(category.value)} isLoading={isLoading} />
           ))}
         </div>
+
+        {selectedCategory && (
+          <AddColorSection
+            categoryFormData={categoryFormData}
+            baseHex={baseHex}
+            isLoading={isLoading}
+            canAddColor={!!canAddColor}
+            onLabelChange={handleLabelChange}
+            onLabelEnChange={handleLabelEnChange}
+            onToneChange={updateTone}
+            onAddColor={handleAddColor}
+          />
+        )}
       </CardContent>
     </Card>
   )

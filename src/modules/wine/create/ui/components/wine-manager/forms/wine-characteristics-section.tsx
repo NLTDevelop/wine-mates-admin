@@ -6,35 +6,37 @@ import { Slider } from '@/UIKit/shadcn/ui/slider'
 import { ToolCase } from 'lucide-react'
 import { useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 interface WineCharacteristicsSectionProps {
   form: UseFormReturn<CreateWineFormData>
 }
 export const WineCharacteristicsSection = ({ form }: WineCharacteristicsSectionProps) => {
+   const { t } = useTranslation('wines')
   const [isOpenAccordion, setIsOpenAccordion] = useState<boolean>(false)
 
   return (
     <AccordionWrapper
-      label="Визуальные характеристики"
+      label={t("visual_characteristics")}
       isOpen={isOpenAccordion}
       onToggle={setIsOpenAccordion}
       header={
         <div className="flex items-center gap-2">
           <ToolCase className="w-5 h-5" />
-          <p>Характеристики вина</p>
+          <p>{t("wine_characteristics")}</p>
         </div>
       }
     >
       <Card className="rounded-t-none bg-input/50">
         <CardContent className="space-y-6">
           {[
-            { name: 'sweetness', label: 'Сладость', description: 'От сухого к сладкому' },
-            { name: 'acidity', label: 'Кислотность', description: 'Уровень кислотности' },
-            { name: 'tanninLevel', label: 'Уровень танинов', description: 'Количество танинов' },
-            { name: 'tanninIntensity', label: 'Интенсивность танинов', description: 'Сила танинов' },
-            { name: 'alcohol', label: 'Алкоголь', description: 'Уровень алкоголя' },
-            { name: 'body', label: 'Тело', description: 'Насыщенность и плотность' },
-            { name: 'finish', label: 'Послевкусие', description: 'Длительность финиша' },
+            { name: 'sweetness', label: t('sweetness'), description: t("from_dry_to_sweet") },
+            { name: 'acidity', label: t("acidity"), description: t("acidity_level") },
+            { name: 'tanninLevel', label: t("tanninLevel"), description: t("qty_tannins") },
+            { name: 'tanninIntensity', label: t("tanninIntensity"), description: t("power_tannins") },
+            { name: 'alcohol', label: t("alcohol"), description: t("alcohol_level") },
+            { name: 'body', label: t("body"), description: t("saturation_density") },
+            { name: 'finish', label: t("finish"), description: t("finish_duration") },
           ].map(char => (
             <FormField
               key={char.name}

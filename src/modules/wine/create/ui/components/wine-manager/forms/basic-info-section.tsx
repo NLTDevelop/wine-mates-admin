@@ -1,5 +1,5 @@
 import { UseFormReturn } from 'react-hook-form'
-import { Card, CardContent} from '@/UIKit/shadcn/ui/card'
+import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/UIKit/shadcn/ui/form'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { Textarea } from '@/UIKit/shadcn/ui/textarea'
@@ -7,12 +7,16 @@ import { Wine } from 'lucide-react'
 import { CreateWineFormData } from '@/modules/wine/create/entities/types'
 import { useState } from 'react'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
+import { useTranslation } from 'react-i18next'
+import { NLTFormFilesDropZone } from '@/UIKit/components/NLTFormFilesDropZone'
+
 
 interface BasicInfoSectionProps {
   form: UseFormReturn<CreateWineFormData>
 }
 
 export const BasicInfoSection = ({ form }: BasicInfoSectionProps) => {
+  const { t } = useTranslation('wines')
   const [isOpenAccordion, setIsOpenAccordion] = useState<boolean>(false)
 
   return (
@@ -23,7 +27,7 @@ export const BasicInfoSection = ({ form }: BasicInfoSectionProps) => {
       header={
         <div className="flex items-center gap-2">
           <Wine className="w-5 h-5" />
-          <p>Основная информация</p>
+          <p>{t('main_info')}</p>
         </div>
       }
     >
@@ -35,9 +39,9 @@ export const BasicInfoSection = ({ form }: BasicInfoSectionProps) => {
               name="basicInfo.name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Название вина *</FormLabel>
+                  <FormLabel>{t('wine_name') + '*'}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Например: Château Margaux" />
+                    <Input {...field} placeholder={t('wine_name')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -49,9 +53,9 @@ export const BasicInfoSection = ({ form }: BasicInfoSectionProps) => {
               name="winery"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Винодельня *</FormLabel>
+                  <FormLabel>{t('winery') + '*'}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Название винодельни" />
+                    <Input {...field} placeholder={t('winery_name')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -64,9 +68,9 @@ export const BasicInfoSection = ({ form }: BasicInfoSectionProps) => {
             name="basicInfo.fullDescription"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Описание вина *</FormLabel>
+                <FormLabel>{t('wine_description') + '*'}</FormLabel>
                 <FormControl>
-                  <Textarea {...field} placeholder="Подробное описание вкуса, аромата и характеристик вина..." className="min-h-[100px] bg-background" />
+                  <Textarea {...field} placeholder={t('detailed_description')} className="min-h-[100px] bg-background" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -79,9 +83,9 @@ export const BasicInfoSection = ({ form }: BasicInfoSectionProps) => {
               name="basicInfo.region"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Регион *</FormLabel>
+                  <FormLabel>{t('region') + '*'}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Бордо, Тоскана и т.д." />
+                    <Input {...field} placeholder={t('region')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -93,9 +97,9 @@ export const BasicInfoSection = ({ form }: BasicInfoSectionProps) => {
               name="basicInfo.country"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Страна *</FormLabel>
+                  <FormLabel>{t('country') + '*'}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Франция, Италия и т.д." />
+                    <Input {...field} placeholder={t('country')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -107,7 +111,7 @@ export const BasicInfoSection = ({ form }: BasicInfoSectionProps) => {
               name="basicInfo.vintage"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Год урожая *</FormLabel>
+                  <FormLabel>{t('vintage') + '*'} </FormLabel>
                   <FormControl>
                     <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} min={1900} max={new Date().getFullYear()} />
                   </FormControl>
@@ -123,9 +127,9 @@ export const BasicInfoSection = ({ form }: BasicInfoSectionProps) => {
               name="grade"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Класс/Категория</FormLabel>
+                  <FormLabel>{t('grade')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Grand Cru, Reserva и т.д." />
+                    <Input {...field} placeholder={t('grade')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -137,9 +141,9 @@ export const BasicInfoSection = ({ form }: BasicInfoSectionProps) => {
               name="customName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Кастомное название</FormLabel>
+                  <FormLabel>{t('additional_title')}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Дополнительное название" />
+                    <Input {...field} placeholder={t('additional_title')} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -147,19 +151,13 @@ export const BasicInfoSection = ({ form }: BasicInfoSectionProps) => {
             />
           </div>
 
-          <FormField
-            control={form.control}
-            name="basicInfo.imageUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>URL изображения</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder="https://example.com/wine-image.jpg" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/* TODO добавить disabled */}
+           <Card className="mt-2 p-4 bg-background">
+             
+              <div className="grid grid-cols-1 mt-2">
+                <NLTFormFilesDropZone form={form} name="media"  />
+              </div>
+            </Card>
         </CardContent>
       </Card>
     </AccordionWrapper>

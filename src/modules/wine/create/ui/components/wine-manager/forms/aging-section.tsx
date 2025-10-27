@@ -6,23 +6,25 @@ import { Input } from '@/UIKit/shadcn/ui/input'
 import { Calendar } from 'lucide-react'
 import { useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 interface AgingSectionProps {
   form: UseFormReturn<CreateWineFormData>
 }
 
 export const AgingSection = ({ form }: AgingSectionProps) => {
+     const { t } = useTranslation('wines')
   const [isOpenAccordion, setIsOpenAccordion] = useState<boolean>(false)
 
   return (
     <AccordionWrapper
-      label="Сроки выдержки"
+      label={t("exposure_periods")}
       isOpen={isOpenAccordion}
       onToggle={setIsOpenAccordion}
       header={
         <div className="flex items-center gap-2">
           <Calendar className="w-5 h-5" />
-          <p>Сроки выдержки</p>
+          <p>{t("exposure_periods")}</p>
         </div>
       }
     >
@@ -34,7 +36,7 @@ export const AgingSection = ({ form }: AgingSectionProps) => {
               name="aging.peakStart"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Начало пика</FormLabel>
+                  <FormLabel>{t("peak_start")}</FormLabel>
                   <FormControl>
                     <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} min={form.getValues('basicInfo.vintage')} />
                   </FormControl>
@@ -48,7 +50,7 @@ export const AgingSection = ({ form }: AgingSectionProps) => {
               name="aging.peakEnd"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Конец пика</FormLabel>
+                  <FormLabel>{t("peak_end")}</FormLabel>
                   <FormControl>
                     <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} min={form.getValues('aging.peakStart')} />
                   </FormControl>

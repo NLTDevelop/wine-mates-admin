@@ -7,25 +7,27 @@ import { useWineColors } from '@/modules/wine/create/presenters/useWineColors'
 import { CreateWineFormData } from '@/modules/wine/create/entities/types'
 import { useState } from 'react'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
+import { useTranslation } from 'react-i18next'
 
 interface VisualCharacteristicsSectionProps {
   form: UseFormReturn<CreateWineFormData>
 }
 
 export const VisualCharacteristicsSection = ({ form }: VisualCharacteristicsSectionProps) => {
+  const { t } = useTranslation('wines')
   const [isOpenAccordion, setIsOpenAccordion] = useState<boolean>(false)
 
-  const { colors, isLoading } = useWineColors()
+  const { categories } = useWineColors()
 
   return (
     <AccordionWrapper
-      label="Визуальные характеристики"
+      label={t('visual_characteristics')}
       isOpen={isOpenAccordion}
       onToggle={setIsOpenAccordion}
       header={
         <div className="flex items-center gap-2">
           <Image className="w-5 h-5" />
-          <p>Визуальные характеристики</p>
+          <p>{t('visual_characteristics')}</p>
         </div>
       }
     >
@@ -36,11 +38,11 @@ export const VisualCharacteristicsSection = ({ form }: VisualCharacteristicsSect
             name="color"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Цвет вина *</FormLabel>
+                <FormLabel>{t('color') + '*'}</FormLabel>
                 <FormControl>
                   <SelectColorPicker
-                    placeholderText="Выберите цвет"
-                    options={colors} 
+                    placeholderText={t("chose_color")}
+                    options={categories}
                     selectedValue={field.value}
                     selectedItem={form.watch('colorVariety')}
                     onValueChange={field.onChange}

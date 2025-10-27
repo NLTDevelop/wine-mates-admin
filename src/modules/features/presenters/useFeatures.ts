@@ -1,4 +1,4 @@
-import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query'
+import {  useQuery, UseQueryResult } from '@tanstack/react-query'
 import { useFeatureStore } from '../enteties/feature-store'
 import { Feature } from '../enteties/types'
 import { featureQueries } from '../enteties/feature-queries'
@@ -16,7 +16,7 @@ export const useFeatures = () => {
     setFeatures(featuresQuery.data)
   }
 
-  const updateToggleMutation = useMutation(featureQueries.updateToggle())
+  // const updateToggleMutation = useMutation(featureQueries.updateToggle())
 
 
   const onToggle = async (key: Feature['key'], is_enabled: boolean) => {
@@ -34,7 +34,8 @@ export const useFeatures = () => {
   return {
     features: featuresQuery.data,
     isLoading: featuresQuery.isLoading,
-    isUpdating: updateToggleMutation.isPending,
+    isUpdating: false,
+    // isUpdating: updateToggleMutation.isPending,
     onToggle,
   }
 }
