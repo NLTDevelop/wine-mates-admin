@@ -1,12 +1,7 @@
 import { FC } from 'react'
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/UIKit/shadcn/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/UIKit/shadcn/ui/dropdown-menu'
 import { useTheme } from 'next-themes'
 import { useTranslation } from 'react-i18next'
 

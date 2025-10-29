@@ -1,6 +1,6 @@
 import { ADMIN_TOKEN, ADMIN_USER } from '@/constatnts/locale-storage'
 import { User } from '@/modules/autorization/entities/types'
-import { create } from 'zustand'
+import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
 
 interface AuthState {
   user: User | null
@@ -11,25 +11,28 @@ interface AuthState {
   setLoading: (loading: boolean) => void
 }
 
-export const useAuthStore = create<AuthState>(set => ({
-  user: null,
-  isAuthenticated: false,
-  isLoading: false,
+export const useAuthStore = createStoreDevToolsWrapper<AuthState>(
+  set => ({
+    user: null,
+    isAuthenticated: false,
+    isLoading: false,
 
-  login: (token: string, user?: User) => {
-    localStorage.setItem(ADMIN_TOKEN, token)
-    localStorage.setItem(ADMIN_USER, JSON.stringify(user))
-    set({ user, isAuthenticated: true, isLoading: false })
-  },
+    login: (token: string, user?: User) => {
+      localStorage.setItem(ADMIN_TOKEN, token)
+      localStorage.setItem(ADMIN_USER, JSON.stringify(user))
+      set({ user, isAuthenticated: true, isLoading: false }, false, 'auth/login')
+    },
 
-  logout: () => {
-    localStorage.removeItem(ADMIN_TOKEN)
-    localStorage.removeItem(ADMIN_USER)
-    set({ user: null, isAuthenticated: false, isLoading: false })
-  },
+    logout: () => {
+      localStorage.removeItem(ADMIN_TOKEN)
+      localStorage.removeItem(ADMIN_USER)
+      set({ user: null, isAuthenticated: false, isLoading: false }, false, 'auth/logout')
+    },
 
-  setLoading: (loading: boolean) => set({ isLoading: loading }),
-}))
+    setLoading: (loading: boolean) => set({ isLoading: loading }),
+  }),
+  'AuthStore'
+)
 
 const storedToken = localStorage.getItem(ADMIN_TOKEN)
 const storedUser = localStorage.getItem(ADMIN_USER)

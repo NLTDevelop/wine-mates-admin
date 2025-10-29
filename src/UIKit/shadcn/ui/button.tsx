@@ -10,25 +10,19 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary:
-          'bg-primary text-primary-foreground shadow hover:bg-primary/80! hover:shadow-lg active:bg-primary/70 focus-visible:ring-primary/40',
+        primary: 'bg-primary text-primary-foreground shadow hover:bg-primary/80! hover:shadow-lg active:bg-primary/70 focus-visible:ring-primary/40',
 
-        secondary:
-          'bg-secondary text-[var(--color-card)] shadow-sm hover:bg-secondary/90! hover:shadow-md active:bg-secondary/60 focus-visible:ring-secondary/40',
+        secondary: 'bg-secondary text-[var(--color-card)] shadow-sm hover:bg-secondary/90! hover:shadow-md active:bg-secondary/60 focus-visible:ring-secondary/40',
 
-        outline:
-          'border border-border bg-transparent text-foreground hover:bg-muted/50! hover:border-muted-foreground/40 active:bg-muted/30 focus-visible:ring-border',
+        outline: 'border border-border bg-transparent text-foreground hover:bg-muted/50! hover:border-muted-foreground/40 active:bg-muted/30 focus-visible:ring-border',
 
         edit: 'border border-primary text-primary bg-transparent hover:bg-primary/10! hover:border-primary/70 active:bg-primary/20 focus-visible:ring-primary/30',
 
-        delete:
-          'bg-error text-[var(--color-card)] shadow-sm hover:bg-destructive/80! hover:shadow-lg active:bg-destructive/70 focus-visible:ring-destructive/40',
+        delete: 'bg-error text-[var(--color-card)] shadow-sm hover:bg-destructive/80! hover:shadow-lg active:bg-destructive/70 focus-visible:ring-destructive/40',
 
-        archive:
-          'bg-muted text-muted-foreground shadow-sm hover:bg-muted/60 hover:text-foreground/90! active:bg-muted/50 focus-visible:ring-muted-foreground/30',
+        archive: 'bg-muted text-muted-foreground shadow-sm hover:bg-muted/60 hover:text-foreground/90! active:bg-muted/50 focus-visible:ring-muted-foreground/30',
 
-        ghost:
-          'hover:bg-accent/50 hover:text-accent-foreground active:bg-accent/40 focus-visible:ring-accent/30',
+        ghost: 'hover:bg-accent/50 hover:text-accent-foreground active:bg-accent/40 focus-visible:ring-accent/30',
 
         link: 'text-foreground underline-offset-4  hover:underline active:text-primary/60 focus-visible:ring-primary/30 focus-visible:underline',
       },
@@ -48,45 +42,20 @@ const buttonVariants = cva(
   }
 )
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   asChild?: boolean
   isLoading?: boolean
   fullWidth?: boolean
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      className,
-      variant,
-      size,
-      asChild = false,
-      isLoading = false,
-      fullWidth = false,
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    const Comp = asChild ? Slot : 'button'
-    return (
-      <Comp
-        className={cn(
-          buttonVariants({ variant, size, className }),
-          isLoading && 'cursor-wait',
-          fullWidth && 'w-full'
-        )}
-        ref={ref}
-        disabled={isLoading || props.disabled}
-        {...props}
-      >
-        {isLoading ? <Loader2 className="animate-spin" /> : children}
-      </Comp>
-    )
-  }
-)
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({ className, variant, size, asChild = false, isLoading = false, fullWidth = false, children, ...props }, ref) => {
+  const Comp = asChild ? Slot : 'button'
+  return (
+    <Comp className={cn(buttonVariants({ variant, size, className }), isLoading && 'cursor-wait', fullWidth && 'w-full')} ref={ref} disabled={isLoading || props.disabled} {...props}>
+      {isLoading ? <Loader2 className="animate-spin" /> : children}
+    </Comp>
+  )
+})
 Button.displayName = 'Button'
 
 export { Button, buttonVariants }

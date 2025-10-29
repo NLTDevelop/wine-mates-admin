@@ -6,15 +6,11 @@ import { useModal } from '../NLTModal/useModal'
 import { useAuthStore } from '@/modules/autorization/entities/auth-store'
 import { PATHS } from '@/navigation/paths'
 import { WarningModal } from '@/modals/warningModal'
-import { useShallow } from '@/stores/useShallowStore'
 
 export const NLTSiteHeader: FC = () => {
   const { t } = useTranslation('common')
   const navigate = useNavigate()
   const { logout } = useAuthStore()
-  // const { logout } = useShallow(useAuthStore, (state) => ({
-  //   logout: state.logout,
-  // }))
 
   const { isOpen: isOpenLogout, onOpen: onOpenLogout, onClose: onCloseLogout } = useModal()
 
@@ -24,7 +20,7 @@ export const NLTSiteHeader: FC = () => {
   }
 
   return (
-    <header className="sticky top-0 w-full border-border/40 bg-background/ backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 w-full border-border/40">
       <div className="w-full flex h-14 items-center justify-between">
         <div className="hidden md:flex"></div>
         <div className="container mx-auto flex flex-1 items-center justify-end space-x-4">
@@ -34,14 +30,7 @@ export const NLTSiteHeader: FC = () => {
           </nav>
         </div>
       </div>
-      <WarningModal
-        title={t('modal.wish_logout')}
-        description={t('modal.logout_desc')}
-        isOpen={isOpenLogout}
-        actionTitle={t('button.logout')}
-        onSubmit={onSubmit}
-        onClose={onCloseLogout}
-      />
+      <WarningModal title={t('modal.wish_logout')} description={t('modal.logout_desc')} isOpen={isOpenLogout} actionTitle={t('button.logout')} onSubmit={onSubmit} onClose={onCloseLogout} />
     </header>
   )
 }

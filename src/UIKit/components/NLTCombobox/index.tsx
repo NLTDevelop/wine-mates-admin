@@ -1,14 +1,7 @@
 import * as React from 'react'
 import { Popover, PopoverTrigger, PopoverContent } from '@/UIKit/shadcn/ui/popover'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/UIKit/shadcn/ui/command'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/UIKit/shadcn/ui/command'
 import { Check, ChevronsUpDown, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
@@ -31,15 +24,7 @@ interface NLTComboboxProps {
   itemOptions?: IOption[]
 }
 
-export const NLTCombobox: React.FC<NLTComboboxProps> = ({
-  value,
-  onChange,
-  placeholder,
-  disabled,
-  searchLabel,
-  fetchOptions,
-  itemOptions,
-}) => {
+export const NLTCombobox: React.FC<NLTComboboxProps> = ({ value, onChange, placeholder, disabled, searchLabel, fetchOptions, itemOptions }) => {
   const { t } = useTranslation('common')
   const [open, setOpen] = React.useState(false)
   const [searchTerm, setSearchTerm] = React.useState('')
@@ -110,18 +95,11 @@ export const NLTCombobox: React.FC<NLTComboboxProps> = ({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className={cn(
-              'w-full justify-between font-normal text-sm border bg-background',
-              open ? 'border-2 border-sidebar-accent' : 'border-border'
-            )}
+            className={cn('w-full justify-between font-normal text-sm border bg-background', open ? 'border-2 border-sidebar-accent' : 'border-border')}
             disabled={disabled}
           >
             <span className="truncate max-w-[calc(100%-1.5rem)] overflow-hidden whitespace-nowrap">
-              {value ? (
-                options.find(option => option.value === value)?.label || selectedOption?.label
-              ) : (
-                <span className="text-gray-400">{placeholder}</span>
-              )}
+              {value ? options.find(option => option.value === value)?.label || selectedOption?.label : <span className="text-gray-400">{placeholder}</span>}
             </span>
             {value ? (
               <X
@@ -136,16 +114,9 @@ export const NLTCombobox: React.FC<NLTComboboxProps> = ({
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent
-          className="w-[var(--radix-popper-anchor-width)] max-w-none p-0"
-          align="start"
-        >
+        <PopoverContent className="w-[var(--radix-popper-anchor-width)] max-w-none p-0" align="start">
           <Command shouldFilter={false}>
-            <CommandInput
-              placeholder={searchLabel}
-              value={searchTerm}
-              onValueChange={handleSearchChange}
-            />
+            <CommandInput placeholder={searchLabel} value={searchTerm} onValueChange={handleSearchChange} />
             <CommandList>
               {!loading && <CommandEmpty>{t('foundNothing')}</CommandEmpty>}
               <CommandGroup>
@@ -168,12 +139,7 @@ export const NLTCombobox: React.FC<NLTComboboxProps> = ({
                       }}
                     >
                       {option.label}
-                      <Check
-                        className={cn(
-                          'ml-auto',
-                          value === option.value ? 'opacity-100' : 'opacity-0'
-                        )}
-                      />
+                      <Check className={cn('ml-auto', value === option.value ? 'opacity-100' : 'opacity-0')} />
                     </CommandItem>
                   ))
                 )}

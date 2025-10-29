@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useFormErrors } from '@/hooks/ui/useFormErrors'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useLogin } from '@/modules/autorization/presenters/useAuth'
@@ -7,8 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/UIKit/shadcn/ui/card
 import { Form, FormField } from '@/UIKit/shadcn/ui/form-field'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { useFormErrors } from '@/hooks/ui/useFormErrors'
-import { loginSchema } from './presenters/auth-schema'
+import { loginSchema } from '../../presenters/auth-schema'
 
 type AuthorizationViewData = z.infer<typeof loginSchema>
 
@@ -41,11 +41,7 @@ export const AuthorizationView = () => {
             </FormField>
 
             <FormField name="password" label={t('password')} error={errors.password?.message}>
-              <Input
-                type="password"
-                placeholder={t('password_plaseholder')}
-                {...register('password')}
-              />
+              <Input type="password" placeholder={t('password_plaseholder')} {...register('password')} />
             </FormField>
 
             <Button type="submit" disabled={isSubmitting} fullWidth className="mt-2" size="lg">

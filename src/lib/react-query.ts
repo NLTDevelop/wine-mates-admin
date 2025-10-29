@@ -5,9 +5,7 @@ let globalToast: {
   notifyToast: (message: string, variant?: 'default' | 'destructive' | 'success') => void
 } | null = null
 
-export const setGlobalToast = (toast: {
-  notifyToast: (message: string, variant?: 'default' | 'destructive' | 'success') => void
-}) => {
+export const setGlobalToast = (toast: { notifyToast: (message: string, variant?: 'default' | 'destructive' | 'success') => void }) => {
   globalToast = toast
 }
 
@@ -32,13 +30,7 @@ const handleGlobalError = (error: any) => {
   }
 
   const skipToastErrors = [422, 409, 429]
-  const skipToastFlags = [
-    error.userFriendlyMessage,
-    error.validationData,
-    error.isHandledInComponent,
-    error.retryAfter,
-    error.showCustomModal,
-  ]
+  const skipToastFlags = [error.userFriendlyMessage, error.validationData, error.isHandledInComponent, error.retryAfter, error.showCustomModal]
 
   if (skipToastErrors.includes(status) || skipToastFlags.some(flag => !!flag)) {
     return

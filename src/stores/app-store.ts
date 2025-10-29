@@ -18,10 +18,7 @@ interface AppState {
     users: { pageSize: number; sortBy: 'createdAt' | string; sortOrder: 'asc' | 'desc' }
     products: { pageSize: number; sortBy: 'createdAt' | string; sortOrder: 'asc' | 'desc' }
   }
-  updateTableConfig: (
-    table: keyof AppState['tableConfigs'],
-    config: Partial<AppState['tableConfigs'][keyof AppState['tableConfigs']]>
-  ) => void
+  updateTableConfig: (table: keyof AppState['tableConfigs'], config: Partial<AppState['tableConfigs'][keyof AppState['tableConfigs']]>) => void
 
   globalSearch: string
   setGlobalSearch: (search: string) => void

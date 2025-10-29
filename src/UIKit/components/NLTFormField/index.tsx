@@ -20,18 +20,7 @@ interface IProps<T extends FieldValues> {
   required?: boolean
 }
 
-export function NLTFormField<T extends FieldValues>({
-  form,
-  formLabel,
-  type = 'text',
-  name,
-  placeholder,
-  textArea,
-  textAreaMinHeight = 150,
-  disabled,
-  maxLength,
-  required = false,
-}: IProps<T>) {
+export function NLTFormField<T extends FieldValues>({ form, formLabel, type = 'text', name, placeholder, textArea, textAreaMinHeight = 150, disabled, maxLength, required = false }: IProps<T>) {
   const [isPasswordVisible, setPasswordVisible] = useState(false)
 
   const togglePasswordVisibility = () => setPasswordVisible(prev => !prev)
@@ -48,14 +37,7 @@ export function NLTFormField<T extends FieldValues>({
           </FormLabel>
           <FormControl>
             {textArea ? (
-              <Textarea
-                className="font-normal text-base leading-5"
-                placeholder={placeholder}
-                disabled={disabled}
-                maxLength={maxLength}
-                style={{ height: textAreaMinHeight }}
-                {...field}
-              />
+              <Textarea className="font-normal text-base leading-5" placeholder={placeholder} disabled={disabled} maxLength={maxLength} style={{ height: textAreaMinHeight }} {...field} />
             ) : (
               <div className="relative">
                 <Input
@@ -71,13 +53,7 @@ export function NLTFormField<T extends FieldValues>({
                   {...field}
                 />
                 {type === 'password' && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={togglePasswordVisibility}
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-0 w-8 h-8"
-                  >
+                  <Button type="button" variant="ghost" size="icon" onClick={togglePasswordVisibility} className="absolute right-2 top-1/2 transform -translate-y-1/2 p-0 w-8 h-8">
                     {isPasswordVisible ? <EyeOff /> : <Eye />}
                   </Button>
                 )}

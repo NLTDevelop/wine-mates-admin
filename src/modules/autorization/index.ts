@@ -1,1 +1,1 @@
-export * from './autorization-view'
+export * from './ui/components/autorization-view'

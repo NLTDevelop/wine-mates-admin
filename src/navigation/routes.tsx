@@ -3,24 +3,18 @@ import { Navigate, Outlet, useRoutes } from 'react-router-dom'
 import { PATHS } from './paths'
 import { PrivateRoutes } from './privateRoutes'
 import { PublicRoutes } from './publicRoutes'
-import { AuthorizationView } from '@/modules/autorization'
 import Layout from '@/layout'
 import { DashboardView } from '@/modules/dashboard'
+import { AuthorizationView } from '@/modules/autorization'
 import { UsersView } from '@/modules/users/ui'
-
-// const brandsRoutes = [
-//   { path: PATHS.BRANDS, element: <BrandsView /> },
-//   { path: PATHS.BRANDS_CREATE, element: <CreateBrandView /> },
-//   { path: PATHS.BRANDS_DETAIL, element: <UpdateBrandView /> },
-// ];
-
-// const categoriesRoutes = [
-//   { path: PATHS.CATEGORIES, element: <CategoriesView /> },
-//   { path: PATHS.CATEGORIES_CREATE, element: <CreateCategoryView /> },
-//   { path: PATHS.CATEGORIES_DETAIL, element: <UpdateCategoryView /> },
-// ];
+import { FeaturesView } from '@/modules/features/ui'
+import { WineManagementView } from '@/modules/wine/create/ui'
 
 const usersRoutes = [{ path: PATHS.USERS, element: <UsersView /> }]
+
+const featuresRoutes = [{ path: PATHS.FEATURES, element: <FeaturesView /> }]
+
+const winesRoutes = [{ path: PATHS.WINE_CREATE, element: <WineManagementView /> }]
 
 export const Router: FC = () => {
   const routes = useRoutes([
@@ -31,7 +25,7 @@ export const Router: FC = () => {
           <Layout />
         </PrivateRoutes>
       ),
-      children: [{ path: PATHS.HOME, element: <DashboardView />, index: true }, ...usersRoutes],
+      children: [{ path: PATHS.HOME, element: <DashboardView />, index: true }, ...usersRoutes, ...featuresRoutes, ...winesRoutes],
     },
     {
       path: PATHS.LOGIN,

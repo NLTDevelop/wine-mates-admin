@@ -1,72 +1,49 @@
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { ConfirmModal } from '@/modals/confirmModal'
 import { useUsers } from '../../presenters/useUsers'
 import { useUserColumns } from '../../presenters/useUserColumns'
-import { NLTDataTable } from '@/UIKit/components/NLTDataTable'
-import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
 import { useDataTable } from '@/UIKit/components/NLTDataTable/useDataTable'
 import { UserFilters } from './user-filters'
 import { LINKS } from '@/constatnts/navigation'
-import { MOCK_USERS } from '../../entity/mock'
+import { ConfirmModal } from '@/modals/confirmModal'
+import { NLTDataTable } from '@/UIKit/components/NLTDataTable'
+import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
 import { ContentLayout } from '@/layout/components/content-layout'
 
 export const UsersView = () => {
   const { t } = useTranslation('users')
   const navigate = useNavigate()
 
-  const users = MOCK_USERS
-
-  const {
-    filters,
-    onChangeSearch,
-    handleClearSearch,
-    onChangePagination,
-    modal,
-    searchValue,
-    userToConfirm,
-  } = useUsers()
+  const { users, filters, onChangeSearch, handleClearSearch, onChangePagination, modal, searchValue, userToConfirm } = useUsers()
   const columns = useUserColumns({ onConfirmCategory: modal.open })
-  const { table } = useDataTable(users?.rows ?? [], columns)
+  const { table } = useDataTable(users ?? [], columns)
 
-  console.log(users)
+  const modalTitle = userToConfirm.isConfirm ? t('modal.cancel_title') : t('modal.confirm_title')
+
+  const modalActionTitle = userToConfirm.isConfirm ? t('modal.cancel_action') : t('modal.confirm_action')
+
+  const modalMessage = userToConfirm.isConfirm
+    ? t('modal.cancel_actions', {
+        slug: userToConfirm.userFullName,
+        category: userToConfirm.category,
+      })
+    : t('modal.confirm_actions', {
+        slug: userToConfirm.userFullName,
+        category: userToConfirm.category,
+      })
 
   return (
     <ContentLayout title={t('users')}>
       <NLTDataTable
         table={table}
         rowClassname="hover:bg-muted/50 text-center"
-        ToolBar={
-          <UserFilters
-            filterSearch={searchValue}
-            onChangeFilterSearch={onChangeSearch}
-            onClearSearch={handleClearSearch}
-          />
-        }
-        onRowClick={row => navigate(LINKS.users.detailUrl(row.id))}
+        ToolBar={<UserFilters filterSearch={searchValue} onChangeFilterSearch={onChangeSearch} onClearSearch={handleClearSearch} />}
+        onRowClick={row => navigate(LINKS.users.detailUrl!(row.id))}
       />
-      <NLTTablePagination
-        limit={filters.limit}
-        offset={filters.offset}
-        totalRows={users?.count || 0}
-        setOffset={onChangePagination}
-      />
-      <ConfirmModal
-        title={t('modal.title')}
-        actionTitle={t('modal.confirm')}
-        variant="submit"
-        isOpen={modal.isOpen}
-        onClose={modal.close}
-        onReject={modal.reject}
-        onSubmit={modal.confirm}
-      >
+      <NLTTablePagination limit={filters.limit} offset={filters.offset} totalRows={users?.length || 0} setOffset={onChangePagination} />
+      <ConfirmModal title={modalTitle} actionTitle={modalActionTitle} variant="submit" isOpen={modal.isOpen} onClose={modal.close} onSubmit={!userToConfirm.isConfirm ? modal.confirm : modal.reject}>
         <div className="p-[1px]">
-          <p>
-            {t('modal.confirm_actions', {
-              slug: userToConfirm.userFullName,
-              category: userToConfirm.category,
-            })}
-          </p>
+          <p>{modalMessage}</p>
         </div>
       </ConfirmModal>
     </ContentLayout>

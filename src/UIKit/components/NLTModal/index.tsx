@@ -1,10 +1,4 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/UIKit/shadcn/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/UIKit/shadcn/ui/dialog'
 import { ScrollArea } from '@/UIKit/shadcn/ui/scroll-area'
 import { FC, ReactNode } from 'react'
 
