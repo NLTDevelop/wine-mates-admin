@@ -1,5 +1,5 @@
 import { WineTemplate } from './types'
-import { Palette, Grape, Flower /*Wine*/ } from 'lucide-react'
+import { Palette, Grape, Flower, Wine, Tags } from 'lucide-react'
 import { TFunction } from 'i18next'
 
 export const getWineTemplates = (t: TFunction): WineTemplate[] => {
@@ -8,7 +8,7 @@ export const getWineTemplates = (t: TFunction): WineTemplate[] => {
       type: 'wine_type',
       name: t('wine_type'),
       description: t('settings_wine_type'),
-      icon: <Flower size={20} />,
+      icon: <Tags size={20} />,
     },
     {
       type: 'color_palette',
@@ -29,11 +29,11 @@ export const getWineTemplates = (t: TFunction): WineTemplate[] => {
       icon: <Flower size={20} />,
     },
 
-    // {
-    //   type: 'wine_creation',
-    //   name: t('wine_creation'),
-    //   description: t('add_wine'),
-    //   icon: <Wine size={20} />,
-    // },
+    {
+      type: 'wine_creation',
+      name: t('wine_creation'),
+      description: t('add_wine'),
+      icon: <Wine size={20} />,
+    },
   ]
 }

@@ -1,12 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ContentLayout } from '@/layout/components/content-layout'
-import { ColorPaletteManager } from '..'
-import { FlavorPaletteManager } from '..'
-import { WineTemplateSelector } from '..'
-import { CreateWineForm } from '..'
-import { SmellPaletteManager } from '..'
-import { FoodCategoriesManager } from '..'
+import { ColorPaletteManager, WineTypeManager, FlavorPaletteManager, WineTemplateSelector, CreateWineForm, SmellPaletteManager } from '..'
 
 export const WineManagementView = () => {
   const { t } = useTranslation('wines')
@@ -14,14 +9,14 @@ export const WineManagementView = () => {
 
   const renderContent = () => {
     switch (selectedTemplate) {
+      case 'wine_type':
+        return <WineTypeManager />
       case 'color_palette':
         return <ColorPaletteManager />
       case 'flavor_palette':
         return <FlavorPaletteManager />
       case 'smell_palette':
         return <SmellPaletteManager />
-      case 'food_categories':
-        return <FoodCategoriesManager />
       case 'wine_creation':
         return <CreateWineForm />
       default:
@@ -30,6 +25,8 @@ export const WineManagementView = () => {
   }
   const renderTitle = () => {
     switch (selectedTemplate) {
+      case 'wine_type':
+        return t('wine_type')
       case 'color_palette':
         return t('color_palette')
       case 'flavor_palette':
