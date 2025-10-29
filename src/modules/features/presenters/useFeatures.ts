@@ -17,7 +17,7 @@ export const useFeatures = () => {
   const updateToggleMutation = useMutation(featureQueries.updateToggle())
 
   const onToggle = async (key: Feature['key'], isEnabled: boolean) => {
-    console.log('Toggle clicked - Key:', key, 'New status:', isEnabled)
+    // console.log('Toggle clicked - Key:', key, 'New status:', isEnabled)
     await updateToggleMutation.mutateAsync({ key, isEnabled })
 
     const oldFeatures = queryClient.getQueryData<Feature[]>(['features', 'list'])

@@ -16,11 +16,11 @@ interface PaletteItemActionsProps {
 }
 
 export const PaletteItemActions = ({ copied, isNeedCopy, isLoading, handleMainClick, onRemove, dataValue, cardTextColorClass, onEdit, showEditButton = false }: PaletteItemActionsProps) => {
-  console.log('PaletteItemActions:', {
-    showEditButton,
-    hasOnEdit: !!onEdit,
-    dataValue,
-  })
+  // console.log('PaletteItemActions:', {
+  //   showEditButton,
+  //   hasOnEdit: !!onEdit,
+  //   dataValue,
+  // })
 
   return (
     <div className="flex gap-1 items-center">

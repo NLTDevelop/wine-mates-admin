@@ -46,7 +46,7 @@ export const useFeatureColumns = ({ onToggle, isUpdating }: UseFeatureColumnsPro
           const feature = row.original
 
           const handleToggleChange = (checked: boolean) => {
-            console.log('Checked switch->', checked)
+            // console.log('Checked switch->', checked)
             onToggle(feature.key, checked)
           }
 
