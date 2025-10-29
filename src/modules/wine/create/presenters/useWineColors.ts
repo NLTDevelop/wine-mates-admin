@@ -69,7 +69,6 @@ export const useWineColors = () => {
 
     createCategoryMutation.mutate(params, {
       onSuccess: () => {
-        // Не нужно сбрасывать, так как у нас теперь отдельные формы
       },
     })
   }
@@ -80,7 +79,6 @@ export const useWineColors = () => {
         if (selectedCategory === categoryId) {
           setSelectedCategory('')
         }
-        // Удаляем данные формы для удаленной категории
         setCategoryFormsData(prev => {
           const newData = { ...prev }
           delete newData[categoryId]
@@ -103,7 +101,6 @@ export const useWineColors = () => {
 
     createColorMutation.mutate(params, {
       onSuccess: () => {
-        // Сбрасываем форму только для этой категории
         resetCategoryFormData(categoryId)
       },
     })
@@ -120,7 +117,6 @@ export const useWineColors = () => {
 
   const selectCategory = (categoryId: string) => {
     setSelectedCategory(categoryId)
-    // Сбрасываем форму только для выбранной категории
     resetCategoryFormData(categoryId)
   }
 
@@ -132,13 +128,12 @@ export const useWineColors = () => {
     const formData = getCategoryFormData(categoryId)
     if (canAddColor(categoryId) && formData.tones) {
       addColorToCategory(categoryId, {
-        colorName: formData.label, // Используем label как colorName
+        colorName: formData.label, 
         tones: formData.tones,
       })
     }
   }
 
-  // canAddColor теперь для конкретной категории
   const canAddColor = (categoryId: string) => {
     const formData = getCategoryFormData(categoryId)
     return formData.label && formData.tones?.pale && formData.tones?.medium && formData.tones?.deep
@@ -167,19 +162,19 @@ export const useWineColors = () => {
   return {
     categories,
     categoryColors,
-    // Возвращаем функции для работы с формами категорий
+
     getCategoryFormData,
     updateCategoryFormData,
     resetCategoryFormData,
     updateTone,
     selectedCategory,
     isLoading: isLoadingState,
-    canAddColor, // Теперь это функция
+    canAddColor, 
     addCategory,
     addColorToCategory,
     selectCategory,
     handleDeleteCategory,
-    handleAddColor, // Теперь принимает categoryId
+    handleAddColor, 
     baseHex,
     selectedCategoryData,
   }
