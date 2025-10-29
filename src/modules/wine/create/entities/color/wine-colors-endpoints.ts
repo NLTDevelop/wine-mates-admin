@@ -11,5 +11,5 @@ export const WINE_COLORS_ENDPOINTS = {
   ADD_COLOR: '/wine-color-categories/:categoryId/colors',
   COLOR_DETAIL: '/wine-color-categories/:categoryId/colors/:colorId',
   UPDATE_COLOR: '/wine-color-categories/:categoryId/colors/:colorId',
-  DELETE_COLOR: '/wine-color-categories/:categoryId/colors/:colorId'
-} as const;
+  DELETE_COLOR: '/wine-color-categories/:categoryId/colors/:colorId',
+} as const

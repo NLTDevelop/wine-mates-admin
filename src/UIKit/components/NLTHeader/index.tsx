@@ -30,14 +30,7 @@ export const NLTSiteHeader: FC = () => {
           </nav>
         </div>
       </div>
-      <WarningModal
-        title={t('modal.wish_logout')}
-        description={t('modal.logout_desc')}
-        isOpen={isOpenLogout}
-        actionTitle={t('button.logout')}
-        onSubmit={onSubmit}
-        onClose={onCloseLogout}
-      />
+      <WarningModal title={t('modal.wish_logout')} description={t('modal.logout_desc')} isOpen={isOpenLogout} actionTitle={t('button.logout')} onSubmit={onSubmit} onClose={onCloseLogout} />
     </header>
   )
 }

@@ -1,3 +1,4 @@
 export const FEATURE_ENDPOINTS = {
-  LIST: '/admin/features',
-};
+  LIST: '/v1/admin/features',
+  UPDATE: '/v1/admin/features/{key}',
+}

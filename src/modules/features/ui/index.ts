@@ -1,1 +1,1 @@
-export * from "./components/features-view"
+export * from './components/features-view'

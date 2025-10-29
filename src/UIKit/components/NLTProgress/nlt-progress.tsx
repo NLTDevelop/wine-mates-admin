@@ -29,13 +29,7 @@ interface IPProps extends VariantProps<typeof progressVariants> {
 export const NLTProgress: FC<IPProps> = props => {
   const { className, fullWidth = false, size, color, wrapClassName } = props
   return (
-    <div
-      className={cn(
-        wrapClassName,
-        'w-fit h-auto',
-        Boolean(fullWidth) && 'flex grow w-full h-full items-center justify-center'
-      )}
-    >
+    <div className={cn(wrapClassName, 'w-fit h-auto', Boolean(fullWidth) && 'flex grow w-full h-full items-center justify-center')}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"

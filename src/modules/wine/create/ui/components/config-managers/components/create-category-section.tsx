@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { Card, CardContent, CardHeader } from '@/UIKit/shadcn/ui/card'
-import { Plus, Palette} from 'lucide-react'
+import { Plus, Palette } from 'lucide-react'
 import { ColorPicker } from '@/UIKit/shadcn/ui/color-picker'
 import { useState } from 'react'
 

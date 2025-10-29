@@ -18,6 +18,20 @@ export const UsersView = () => {
   const columns = useUserColumns({ onConfirmCategory: modal.open })
   const { table } = useDataTable(users ?? [], columns)
 
+  const modalTitle = userToConfirm.isConfirm ? t('modal.cancel_title') : t('modal.confirm_title')
+
+  const modalActionTitle = userToConfirm.isConfirm ? t('modal.cancel_action') : t('modal.confirm_action')
+
+  const modalMessage = userToConfirm.isConfirm
+    ? t('modal.cancel_actions', {
+        slug: userToConfirm.userFullName,
+        category: userToConfirm.category,
+      })
+    : t('modal.confirm_actions', {
+        slug: userToConfirm.userFullName,
+        category: userToConfirm.category,
+      })
+
   return (
     <ContentLayout title={t('users')}>
       <NLTDataTable
@@ -27,14 +41,9 @@ export const UsersView = () => {
         onRowClick={row => navigate(LINKS.users.detailUrl!(row.id))}
       />
       <NLTTablePagination limit={filters.limit} offset={filters.offset} totalRows={users?.length || 0} setOffset={onChangePagination} />
-      <ConfirmModal title={t('modal.title')} actionTitle={t('modal.confirm')} variant="submit" isOpen={modal.isOpen} onClose={modal.close} onReject={modal.reject} onSubmit={modal.confirm}>
+      <ConfirmModal title={modalTitle} actionTitle={modalActionTitle} variant="submit" isOpen={modal.isOpen} onClose={modal.close} onSubmit={!userToConfirm.isConfirm ? modal.confirm : modal.reject}>
         <div className="p-[1px]">
-          <p>
-            {t('modal.confirm_actions', {
-              slug: userToConfirm.userFullName,
-              category: userToConfirm.wineExperienceLevel,
-            })}
-          </p>
+          <p>{modalMessage}</p>
         </div>
       </ConfirmModal>
     </ContentLayout>

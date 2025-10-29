@@ -22,13 +22,13 @@ export interface IUserTable {
   birthday: string
   email: string
   wineExperienceLevel: string
-  isConfirm?: boolean
+  isConfirmed?: boolean
   userFullName?: string
 }
 
 export interface ConfirmUserCategoryParams {
   id: string | number
-  isConfirm: boolean
+  isConfirmed: boolean
 }
 
 export interface UserFilters {

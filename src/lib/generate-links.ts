@@ -17,10 +17,7 @@ interface GeneratorOptions {
   hasDetail?: boolean
 }
 
-export const generateLinks = (
-  entityName: string,
-  options: GeneratorOptions = {}
-): GeneratedLinks => {
+export const generateLinks = (entityName: string, options: GeneratorOptions = {}): GeneratedLinks => {
   const { hasList, hasCreate, hasDetail } = options
   const baseUrl = `/${entityName}`
 

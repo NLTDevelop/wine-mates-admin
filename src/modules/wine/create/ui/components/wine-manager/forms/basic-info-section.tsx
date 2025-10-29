@@ -10,7 +10,6 @@ import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
 import { useTranslation } from 'react-i18next'
 import { NLTFormFilesDropZone } from '@/UIKit/components/NLTFormFilesDropZone'
 
-
 interface BasicInfoSectionProps {
   form: UseFormReturn<CreateWineFormData>
 }
@@ -152,12 +151,11 @@ export const BasicInfoSection = ({ form }: BasicInfoSectionProps) => {
           </div>
 
           {/* TODO добавить disabled */}
-           <Card className="mt-2 p-4 bg-background">
-             
-              <div className="grid grid-cols-1 mt-2">
-                <NLTFormFilesDropZone form={form} name="media"  />
-              </div>
-            </Card>
+          <Card className="mt-2 p-4 bg-background">
+            <div className="grid grid-cols-1 mt-2">
+              <NLTFormFilesDropZone form={form} name="media" />
+            </div>
+          </Card>
         </CardContent>
       </Card>
     </AccordionWrapper>

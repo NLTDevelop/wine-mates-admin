@@ -1,7 +1,6 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -9,12 +8,11 @@ export function cn(...inputs: ClassValue[]) {
 export const buildUrl = (url: string, params?: Record<string, string | number>): string => {
   if (!params) return url
 
-  return Object.entries(params).reduce(
-    (result, [key, value]) => result.replace(`:${key}`, String(value)),
-    url
-  )
+  return Object.entries(params).reduce((result, [key, value]) => {
+    const regex = new RegExp(`[\\{:]${key}\\}?`, 'g')
+    return result.replace(regex, String(value))
+  }, url)
 }
-
 
 export const isDarkColor = (hexColor: string): boolean => {
   const hex = hexColor.replace('#', '')

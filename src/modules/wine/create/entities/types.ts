@@ -22,7 +22,7 @@ interface IWineBasicInfo {
 
 export interface WineColorTones {
   pale: string
-  medium: string 
+  medium: string
   deep: string
 }
 
@@ -33,26 +33,26 @@ export interface WineColorFormData {
 }
 
 export interface WineColorItem {
-  name: string;
-  tones: WineColorTones;
+  name: string
+  tones: WineColorTones
 }
 
 export interface WineColor {
-  value: string;
-  label: string;
-  labelEn?: string;
-  items?: WineColorItem[]; 
+  value: string
+  label: string
+  labelEn?: string
+  items?: WineColorItem[]
   tones?: {
-    pale: string;
-    medium: string;
-    deep: string;
+    pale: string
+    medium: string
+    deep: string
   }
 }
 
 export interface WineCategoryFormData {
-  value: string;
-  label: string;
-  labelEn: string;
+  value: string
+  label: string
+  labelEn: string
   tones?: {
     pale: string
     medium: string
@@ -61,10 +61,10 @@ export interface WineCategoryFormData {
 }
 
 export interface ColorInput {
-  name: string;
-  pale: string;
-  medium: string;
-  deep: string;
+  name: string
+  pale: string
+  medium: string
+  deep: string
 }
 
 interface IWineTasteTags {
@@ -142,19 +142,19 @@ export type CreateWineFormData = {
 }
 
 export interface WineOption {
-  value: string; 
-  label: string; 
-  items?: string[]; 
-  colorLabel?: string; 
+  value: string
+  label: string
+  items?: string[]
+  colorLabel?: string
   tones?: {
-    pale?: string;
-    medium?: string;
-    deep?: string;
-  };
+    pale?: string
+    medium?: string
+    deep?: string
+  }
 }
 
 export interface WineTemplate {
-  type: 'color_palette' | 'flavor_palette' | 'smell_palette' | 'food_categories' | 'wine_creation'
+  type: 'color_palette' | 'flavor_palette' | 'smell_palette' | 'wine_type' | 'wine_creation'
   name: string
   description: string
   icon?: React.ReactElement | string

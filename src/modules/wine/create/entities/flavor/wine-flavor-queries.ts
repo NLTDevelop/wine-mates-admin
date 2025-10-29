@@ -1,5 +1,5 @@
-import { wineFlavorService } from './wine-flavor-service';
-import { WineOption } from '../types';
+import { wineFlavorService } from './wine-flavor-service'
+import { WineOption } from '../types'
 
 export const wineFlavorQueries = {
   list: () => ({
@@ -14,12 +14,11 @@ export const wineFlavorQueries = {
 
   update: () => ({
     mutationKey: ['wine-flavors', 'update'],
-    mutationFn: (params: { oldValue: string; newFlavor: WineOption }) => 
-      wineFlavorService.update(params),
+    mutationFn: (params: { oldValue: string; newFlavor: WineOption }) => wineFlavorService.update(params),
   }),
 
   delete: () => ({
     mutationKey: ['wine-flavors', 'delete'],
     mutationFn: (flavorValue: string) => wineFlavorService.delete(flavorValue),
   }),
-};
+}

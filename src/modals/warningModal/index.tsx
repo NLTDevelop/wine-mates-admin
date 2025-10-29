@@ -12,14 +12,7 @@ interface IProps {
   onSubmit: () => void
 }
 
-export const WarningModal: FC<IProps> = ({
-  title,
-  actionTitle,
-  description,
-  isOpen,
-  onSubmit,
-  onClose,
-}) => {
+export const WarningModal: FC<IProps> = ({ title, actionTitle, description, isOpen, onSubmit, onClose }) => {
   const { t } = useTranslation('common')
 
   return (

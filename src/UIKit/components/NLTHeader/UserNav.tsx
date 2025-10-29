@@ -2,12 +2,7 @@ import { FC } from 'react'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { LogOut, User } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/UIKit/shadcn/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/UIKit/shadcn/ui/dropdown-menu'
 import { Avatar } from '@/UIKit/shadcn/ui/avatar'
 import { useAuthStore } from '@/modules/autorization/entities/auth-store'
 

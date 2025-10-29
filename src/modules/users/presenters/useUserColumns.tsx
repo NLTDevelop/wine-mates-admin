@@ -14,6 +14,7 @@ interface IRow {
   wineExperienceLevel: string
   firstName: string
   lastName: string
+  isConfirmed: boolean
 }
 
 interface UseUserColumnsProps {
@@ -58,7 +59,7 @@ export const useUserColumns = ({ onConfirmCategory }: UseUserColumnsProps) => {
       columnHelper.accessor('email', {
         header: t('table.email'),
         cell: info => info.getValue(),
-         meta: { cellClassName: 'text-start w-fit break-all' },
+        meta: { cellClassName: 'text-start w-fit break-all' },
       }),
       columnHelper.accessor('wineExperienceLevel', {
         header: t('table.category'),
@@ -77,14 +78,13 @@ export const useUserColumns = ({ onConfirmCategory }: UseUserColumnsProps) => {
         header: t('table.actions'),
         cell: ({ row }) => {
           const handleConfirmCategory = (e: React.MouseEvent) => {
-            console.log('confirm category for userId:', row.original.id)
             e.stopPropagation()
             onConfirmCategory(row.original.id)
           }
           const isWineLower = row.original.wineExperienceLevel === USER_CATEGORIES.WINE_LOVER
           return !isWineLower ? (
-            <Button variant="outline" size="sm" onClick={handleConfirmCategory} className="">
-              {t('confirm')}
+            <Button variant="outline" size="sm" onClick={handleConfirmCategory}>
+              {row.original.isConfirmed ? t('cancel_confirmation') : t('confirm')}
             </Button>
           ) : null
         },

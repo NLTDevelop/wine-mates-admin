@@ -4,7 +4,7 @@ import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapp
 interface FeatureStoreState {
   featuresState: Partial<FeatureStateMap>
   setFeatures: (featuresArray: Feature[]) => void
-  setFeatureToggle: (key: FeatureKey, is_enabled: boolean) => void
+  setFeatureToggle: (key: FeatureKey, isEnabled: boolean) => void
   isEnabled: (key: FeatureKey) => boolean
 }
 
@@ -14,18 +14,18 @@ export const useFeatureStore = createStoreDevToolsWrapper<FeatureStoreState>(
 
     setFeatures: featuresArray => {
       const featuresMap = featuresArray.reduce((acc, feature) => {
-        acc[feature.key] = feature.is_enabled
+        acc[feature.key] = feature.isEnabled
         return acc
       }, {} as FeatureStateMap)
       set({ featuresState: featuresMap }, false, 'feature/setFeatures')
     },
 
-    setFeatureToggle: (key, is_enabled) =>
+    setFeatureToggle: (key, isEnabled) =>
       set(
         (state: FeatureStoreState) => ({
           featuresState: {
             ...state.featuresState,
-            [key]: is_enabled,
+            [key]: isEnabled,
           },
         }),
         false,

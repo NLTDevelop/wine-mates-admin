@@ -3,7 +3,6 @@ import { fileService } from '../enteties/file-service'
 import { useToast } from '@/hooks/ui/useToast'
 import { downloadFile } from '@/UIKit/components/NLTFilesDropZone/imageList/useFileDownloadLogic'
 
-
 interface DownloadParams {
   id: string
   name: string

@@ -12,31 +12,31 @@ interface WineCharacteristicsSectionProps {
   form: UseFormReturn<CreateWineFormData>
 }
 export const WineCharacteristicsSection = ({ form }: WineCharacteristicsSectionProps) => {
-   const { t } = useTranslation('wines')
+  const { t } = useTranslation('wines')
   const [isOpenAccordion, setIsOpenAccordion] = useState<boolean>(false)
 
   return (
     <AccordionWrapper
-      label={t("visual_characteristics")}
+      label={t('visual_characteristics')}
       isOpen={isOpenAccordion}
       onToggle={setIsOpenAccordion}
       header={
         <div className="flex items-center gap-2">
           <ToolCase className="w-5 h-5" />
-          <p>{t("wine_characteristics")}</p>
+          <p>{t('wine_characteristics')}</p>
         </div>
       }
     >
       <Card className="rounded-t-none bg-input/50">
         <CardContent className="space-y-6">
           {[
-            { name: 'sweetness', label: t('sweetness'), description: t("from_dry_to_sweet") },
-            { name: 'acidity', label: t("acidity"), description: t("acidity_level") },
-            { name: 'tanninLevel', label: t("tanninLevel"), description: t("qty_tannins") },
-            { name: 'tanninIntensity', label: t("tanninIntensity"), description: t("power_tannins") },
-            { name: 'alcohol', label: t("alcohol"), description: t("alcohol_level") },
-            { name: 'body', label: t("body"), description: t("saturation_density") },
-            { name: 'finish', label: t("finish"), description: t("finish_duration") },
+            { name: 'sweetness', label: t('sweetness'), description: t('from_dry_to_sweet') },
+            { name: 'acidity', label: t('acidity'), description: t('acidity_level') },
+            { name: 'tanninLevel', label: t('tanninLevel'), description: t('qty_tannins') },
+            { name: 'tanninIntensity', label: t('tanninIntensity'), description: t('power_tannins') },
+            { name: 'alcohol', label: t('alcohol'), description: t('alcohol_level') },
+            { name: 'body', label: t('body'), description: t('saturation_density') },
+            { name: 'finish', label: t('finish'), description: t('finish_duration') },
           ].map(char => (
             <FormField
               key={char.name}

@@ -11,7 +11,15 @@ export const useUsers = () => {
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false)
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
   const [searchValue, setSearchValue] = useState<string>('')
-  const [user, setUser] = useState<Partial<IUserTable>>({})
+  const [user, setUser] = useState<{
+    userFullName: string
+    category: string
+    isConfirm: boolean
+  }>({
+    userFullName: '',
+    category: '',
+    isConfirm: false,
+  })
 
   const usersQuery: UseQueryResult<IUserResponse, Error> = useQuery(userQueries.list(filters))
   const confirmCategoryMutation = useMutation(userQueries.confirmCategory())
@@ -19,6 +27,13 @@ export const useUsers = () => {
   const { debouncedWrapper } = useDebounce((searchValue: string) => {
     setFilters({ search: searchValue, offset: 0 })
   }, 500)
+
+  const findUserById = useCallback(
+    (userId: string) => {
+      return usersQuery.data?.rows.find((user: IUserTable) => user.id === userId)
+    },
+    [usersQuery.data?.rows]
+  )
 
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,27 +55,33 @@ export const useUsers = () => {
     [setFilters]
   )
 
-  const openChangeModal = useCallback((userId: string) => {
-    setSelectedUserId(userId)
-    setIsChangeModalOpen(true)
-  }, [])
+  const openChangeModal = useCallback(
+    (userId: string) => {
+      setSelectedUserId(userId)
+
+      const userFound = findUserById(userId)
+      if (userFound) {
+        setUser({
+          userFullName: `${userFound.firstName} ${userFound.lastName}`,
+          category: userFound.wineExperienceLevel,
+          isConfirm: userFound.isConfirmed ?? false,
+        })
+      }
+
+      setIsChangeModalOpen(true)
+    },
+    [findUserById]
+  )
 
   const closeChangeModal = useCallback(() => {
     setIsChangeModalOpen(false)
     setSelectedUserId(null)
+    setUser({ userFullName: '', category: '', isConfirm: false })
   }, [])
 
-  const parseUserInfo = (item: IUserTable) => ({
-    userFullName: `${item.firstName} ${item.lastName}`,
-    category: item.wineExperienceLevel,
-    isConfirm: item.isConfirm ?? false,
-  })
-
   const confirmUserCategory = useCallback(
-    async (userId: string, isConfirm: boolean) => {
-      const userToConfirm = usersQuery.data?.rows.filter((user: any) => user.id === userId)
-      if (userToConfirm) setUser(parseUserInfo(userToConfirm[0]))
-      await confirmCategoryMutation.mutateAsync({ id: userId, isConfirm })
+    async (userId: string, isConfirmed: boolean) => {
+      await confirmCategoryMutation.mutateAsync({ id: userId, isConfirmed })
       usersQuery.refetch()
     },
     [confirmCategoryMutation, usersQuery]

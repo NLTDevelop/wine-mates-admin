@@ -41,7 +41,7 @@ export const VisualCharacteristicsSection = ({ form }: VisualCharacteristicsSect
                 <FormLabel>{t('color') + '*'}</FormLabel>
                 <FormControl>
                   <SelectColorPicker
-                    placeholderText={t("chose_color")}
+                    placeholderText={t('chose_color')}
                     options={categories}
                     selectedValue={field.value}
                     selectedItem={form.watch('colorVariety')}

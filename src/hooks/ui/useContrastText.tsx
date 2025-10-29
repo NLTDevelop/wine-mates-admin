@@ -10,7 +10,7 @@ export const useContrastText = (hexColor: string | undefined | null) => {
 
   const isDark = isDarkColor(hexColor)
 
-  const textColorClass = isDark ? 'text-white' : 'text-foreground'
+  const textColorClass = isDark ? 'text-input' : 'text-foreground'
 
   const mutedTextColorClass = isDark ? 'text-gray-300' : 'text-muted-foreground'
 

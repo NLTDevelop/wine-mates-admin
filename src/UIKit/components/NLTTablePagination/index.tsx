@@ -3,13 +3,7 @@
 import { FC } from 'react'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { useTranslation } from 'react-i18next'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/UIKit/shadcn/ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/UIKit/shadcn/ui/select'
 
 interface IProps {
   limit: number
@@ -19,13 +13,7 @@ interface IProps {
   setOffset: (offset: number) => void
 }
 
-export const NLTTablePagination: FC<IProps> = ({
-  offset,
-  limit,
-  totalRows,
-  setLimit,
-  setOffset,
-}) => {
+export const NLTTablePagination: FC<IProps> = ({ offset, limit, totalRows, setLimit, setOffset }) => {
   const { t } = useTranslation('common')
 
   const currentPage = Math.ceil(offset / limit) + 1

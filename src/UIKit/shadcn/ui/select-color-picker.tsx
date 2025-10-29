@@ -55,19 +55,19 @@ export const SelectColorPicker = ({ options, selectedValue, onValueChange, place
   }
 
   const handleSubItemClick = (parentValue: string, item: string) => {
-  const isAlreadySelected = selectedValue === parentValue && selectedItem === item
+    const isAlreadySelected = selectedValue === parentValue && selectedItem === item
 
-  if (isAlreadySelected) {
-    onValueChange('')
-    if (onItemChange) onItemChange('')
-  } else {
-    onValueChange(parentValue)
-    if (onItemChange) onItemChange(item)
+    if (isAlreadySelected) {
+      onValueChange('')
+      if (onItemChange) onItemChange('')
+    } else {
+      onValueChange(parentValue)
+      if (onItemChange) onItemChange(item)
+    }
+
+    setIsOpen(false)
+    setExpandedOption(null)
   }
-
-  setIsOpen(false)
-  setExpandedOption(null)
-}
 
   return (
     <div className="space-y-4">
@@ -128,7 +128,6 @@ export const SelectColorPicker = ({ options, selectedValue, onValueChange, place
                           >
                             {item}
                             {isSubItemSelected && <Check className={cn('w-4 h-4', textColorClass)} />}
-                      
                           </div>
                         )
                       })}

@@ -1,6 +1,5 @@
-
 import { UserFilters } from './IUser'
-import { userService } from './user-service';
+import { userService } from './user-service'
 
 export const userQueries = {
   list: (filters: UserFilters) => ({
@@ -10,12 +9,11 @@ export const userQueries = {
 
   detail: (id: string) => ({
     queryKey: ['users', 'detail', id],
-    queryFn: () => userService.get(id),
+    queryFn: () => userService.detail(id),
   }),
 
   confirmCategory: () => ({
     mutationKey: ['users', 'confirmCategory'],
-    mutationFn: ({ id, isConfirm }: { id: string; isConfirm: boolean }) =>
-      userService.confirmCategory({ id, isConfirm }),
+    mutationFn: ({ id, isConfirmed }: { id: string; isConfirmed: boolean }) => userService.confirmCategory({ id, isConfirmed }),
   }),
 }

@@ -13,18 +13,18 @@ interface AgingSectionProps {
 }
 
 export const AgingSection = ({ form }: AgingSectionProps) => {
-     const { t } = useTranslation('wines')
+  const { t } = useTranslation('wines')
   const [isOpenAccordion, setIsOpenAccordion] = useState<boolean>(false)
 
   return (
     <AccordionWrapper
-      label={t("exposure_periods")}
+      label={t('exposure_periods')}
       isOpen={isOpenAccordion}
       onToggle={setIsOpenAccordion}
       header={
         <div className="flex items-center gap-2">
           <Calendar className="w-5 h-5" />
-          <p>{t("exposure_periods")}</p>
+          <p>{t('exposure_periods')}</p>
         </div>
       }
     >
@@ -36,7 +36,7 @@ export const AgingSection = ({ form }: AgingSectionProps) => {
               name="aging.peakStart"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("peak_start")}</FormLabel>
+                  <FormLabel>{t('peak_start')}</FormLabel>
                   <FormControl>
                     <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} min={form.getValues('basicInfo.vintage')} />
                   </FormControl>
@@ -50,7 +50,7 @@ export const AgingSection = ({ form }: AgingSectionProps) => {
               name="aging.peakEnd"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("peak_end")}</FormLabel>
+                  <FormLabel>{t('peak_end')}</FormLabel>
                   <FormControl>
                     <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} min={form.getValues('aging.peakStart')} />
                   </FormControl>

@@ -1,19 +1,17 @@
-
-import { useForm } from "react-hook-form"
-import { useTranslation } from "react-i18next"
-import { Form } from "@/UIKit/shadcn/ui/form"
-import { Button } from "@/UIKit/shadcn/ui/button"
-import { CreateWineFormData } from "../../../entities/types"
-import { BasicInfoSection } from "./forms/basic-info-section"
-import { VisualCharacteristicsSection } from "./forms/visual-characteristics-section"
-import { TasteSmellSection } from "./forms/taste-smell-section"
-import { WineCharacteristicsSection } from "./forms/wine-characteristics-section"
-import { AgingSection } from "./forms/aging-section"
-
+import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { Form } from '@/UIKit/shadcn/ui/form'
+import { Button } from '@/UIKit/shadcn/ui/button'
+import { CreateWineFormData } from '../../../entities/types'
+import { BasicInfoSection } from './forms/basic-info-section'
+import { VisualCharacteristicsSection } from './forms/visual-characteristics-section'
+import { TasteSmellSection } from './forms/taste-smell-section'
+import { WineCharacteristicsSection } from './forms/wine-characteristics-section'
+import { AgingSection } from './forms/aging-section'
 
 export const CreateWineForm: React.FC = () => {
-  const { t } = useTranslation("common")
-  
+  const { t } = useTranslation('common')
+
   const form = useForm<CreateWineFormData>({
     defaultValues: {
       basicInfo: {
@@ -32,8 +30,13 @@ export const CreateWineForm: React.FC = () => {
       flavorVariety: '',
       smellVariety: '',
       characteristics: {
-        sweetness: 5, acidity: 5, tanninLevel: 5, tanninIntensity: 5,
-        alcohol: 5, body: 5, finish: 5,
+        sweetness: 5,
+        acidity: 5,
+        tanninLevel: 5,
+        tanninIntensity: 5,
+        alcohol: 5,
+        body: 5,
+        finish: 5,
       },
       aging: {
         peakStart: new Date().getFullYear(),
@@ -43,7 +46,7 @@ export const CreateWineForm: React.FC = () => {
       winery: '',
       grade: '',
       customName: '',
-    }
+    },
   })
 
   const onSubmit = (data: CreateWineFormData) => {
@@ -60,16 +63,14 @@ export const CreateWineForm: React.FC = () => {
         <WineCharacteristicsSection form={form} />
         <AgingSection form={form} />
 
-        
-          <div className="flex gap-4 justify-end pt-4">
-            <Button type="button" variant="outline" >
-              {t('button.cancel')}
-            </Button>
-            <Button type="submit"  className="min-w-32">
-              {t('button.save')}
-            </Button>
-          </div>
-
+        <div className="flex gap-4 justify-end pt-4">
+          <Button type="button" variant="outline">
+            {t('button.cancel')}
+          </Button>
+          <Button type="submit" className="min-w-32">
+            {t('button.save')}
+          </Button>
+        </div>
       </form>
     </Form>
   )

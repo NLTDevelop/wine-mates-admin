@@ -3,7 +3,7 @@
 import { FC, useRef } from 'react'
 import { Card, CardContent } from './card'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@radix-ui/react-accordion'
-import {  ChevronDown } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface IProps {
@@ -29,10 +29,10 @@ export const AccordionWrapper: FC<IProps> = ({ label, children, isOpen, onToggle
     <Accordion type="single" collapsible defaultValue={value}>
       <AccordionItem value={label}>
         <AccordionTrigger className="w-full cursor-pointer" onClick={handleToggle}>
-          <Card className={cn("cursor-pointer w-full", isOpen && "rounded-b-none")}>
+          <Card className={cn('cursor-pointer w-full', isOpen && 'rounded-b-none')}>
             <CardContent className="sm:p-0 flex items-center justify-between">
               {header ? header : <h3 className="text-lg  mb-4 font-medium text-left hover:underline">{label}</h3>}
-              <ChevronDown className={cn("text-muted-foreground", isOpen && "rotate-180")} /> 
+              <ChevronDown className={cn('text-muted-foreground', isOpen && 'rotate-180')} />
             </CardContent>
           </Card>
         </AccordionTrigger>

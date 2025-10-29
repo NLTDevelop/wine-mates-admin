@@ -1,14 +1,7 @@
 import * as React from 'react'
 import { Popover, PopoverTrigger, PopoverContent } from './popover'
 import { Button } from './button'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from './command'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './command'
 import { Check, ChevronsUpDown, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
@@ -90,58 +83,31 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
         return
       }
 
-      const allOptionsAvailable = selectedValues.every(
-        val => options.some(opt => opt.value === val) || itemOptions?.some(opt => opt.value === val)
-      )
+      const allOptionsAvailable = selectedValues.every(val => options.some(opt => opt.value === val) || itemOptions?.some(opt => opt.value === val))
 
       if (allOptionsAvailable) {
-        const orderedOptions = selectedValues
-          .map(
-            val =>
-              options.find(opt => opt.value === val) || itemOptions?.find(opt => opt.value === val)
-          )
-          .filter(Boolean) as MultiSelectOption[]
+        const orderedOptions = selectedValues.map(val => options.find(opt => opt.value === val) || itemOptions?.find(opt => opt.value === val)).filter(Boolean) as MultiSelectOption[]
         setSelectedOptions(orderedOptions)
         return
       }
 
-      const knownOptions = selectedValues
-        .map(
-          val =>
-            options.find(opt => opt.value === val) || itemOptions?.find(opt => opt.value === val)
-        )
-        .filter(Boolean) as MultiSelectOption[]
+      const knownOptions = selectedValues.map(val => options.find(opt => opt.value === val) || itemOptions?.find(opt => opt.value === val)).filter(Boolean) as MultiSelectOption[]
 
-      const missingValues = selectedValues.filter(
-        val =>
-          !options.some(opt => opt.value === val) && !itemOptions?.some(opt => opt.value === val)
-      )
+      const missingValues = selectedValues.filter(val => !options.some(opt => opt.value === val) && !itemOptions?.some(opt => opt.value === val))
 
       if (missingValues.length > 0) {
         try {
           const missingOptions = await fetchOptions()
-          const foundMissingOptions = missingOptions.filter(opt =>
-            missingValues.includes(opt.value)
-          )
-          const orderedOptions = selectedValues
-            .map(
-              val =>
-                knownOptions.find(opt => opt.value === val) ||
-                foundMissingOptions.find(opt => opt.value === val)
-            )
-            .filter(Boolean) as MultiSelectOption[]
+          const foundMissingOptions = missingOptions.filter(opt => missingValues.includes(opt.value))
+          const orderedOptions = selectedValues.map(val => knownOptions.find(opt => opt.value === val) || foundMissingOptions.find(opt => opt.value === val)).filter(Boolean) as MultiSelectOption[]
           setSelectedOptions(orderedOptions)
         } catch (error) {
           console.error('Error loading missing options:', error)
-          const orderedOptions = selectedValues
-            .map(val => knownOptions.find(opt => opt.value === val))
-            .filter(Boolean) as MultiSelectOption[]
+          const orderedOptions = selectedValues.map(val => knownOptions.find(opt => opt.value === val)).filter(Boolean) as MultiSelectOption[]
           setSelectedOptions(orderedOptions)
         }
       } else {
-        const orderedOptions = selectedValues
-          .map(val => knownOptions.find(opt => opt.value === val))
-          .filter(Boolean) as MultiSelectOption[]
+        const orderedOptions = selectedValues.map(val => knownOptions.find(opt => opt.value === val)).filter(Boolean) as MultiSelectOption[]
         setSelectedOptions(orderedOptions)
       }
     }
@@ -199,11 +165,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
       const newValue = selectedValues.includes(optionValue) ? '' : optionValue
       onChange(newValue)
       if (closeOnSelect) setOpen(false)
-      setPoliteMessage(
-        newValue
-          ? `${option?.label || optionValue} selected`
-          : `${option?.label || optionValue} deselected`
-      )
+      setPoliteMessage(newValue ? `${option?.label || optionValue} selected` : `${option?.label || optionValue} deselected`)
       setTimeout(() => setPoliteMessage(''), 200)
       return
     }
@@ -223,11 +185,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     }
 
     onChange(newSelectedValues)
-    setPoliteMessage(
-      isSelected
-        ? `Removed ${option?.label || optionValue}`
-        : `Selected ${option?.label || optionValue}`
-    )
+    setPoliteMessage(isSelected ? `Removed ${option?.label || optionValue}` : `Selected ${option?.label || optionValue}`)
     setTimeout(() => setPoliteMessage(''), 300)
 
     if (closeOnSelect && !isSelected) {
@@ -358,25 +316,16 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                         <div className="flex items-center gap-1 transition-all duration-500 ease-in-out group-hover:opacity-0 group-hover:-translate-x-3">
                           {IconComponent && (
                             <IconComponent
-                              className={cn(
-                                'h-3 w-3 transition-all duration-500 ease-in-out',
-                                customStyle?.iconColor && 'text-current'
-                              )}
-                              {...(customStyle?.iconColor
-                                ? { style: { color: customStyle.iconColor } }
-                                : {})}
+                              className={cn('h-3 w-3 transition-all duration-500 ease-in-out', customStyle?.iconColor && 'text-current')}
+                              {...(customStyle?.iconColor ? { style: { color: customStyle.iconColor } } : {})}
                             />
                           )}
-                          <span className="max-w-[100px] truncate transition-all duration-500 ease-in-out">
-                            {option.label}
-                          </span>
+                          <span className="max-w-[100px] truncate transition-all duration-500 ease-in-out">{option.label}</span>
                           <X className="h-3 w-3 ml-1 transition-all duration-500 ease-in-out" />
                         </div>
 
                         <div className="absolute inset-0 flex items-center justify-center transition-all duration-500 ease-in-out opacity-0 group-hover:opacity-100 transform group-hover:translate-x-0 translate-x-4">
-                          <span className="font-medium transition-all duration-500 ease-in-out flex items-center gap-2">
-                            {t('button.delete')}
-                          </span>
+                          <span className="font-medium transition-all duration-500 ease-in-out flex items-center gap-2">{t('button.delete')}</span>
                         </div>
                       </div>
                     )
@@ -411,9 +360,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 
                 {selectedValues.length > 0 ? (
                   <X
-                    className={cn(
-                      'opacity-50 w-4 h-4 cursor-pointer transition-all duration-200 hover:opacity-100 hover:scale-110'
-                    )}
+                    className={cn('opacity-50 w-4 h-4 cursor-pointer transition-all duration-200 hover:opacity-100 hover:scale-110')}
                     onClick={e => {
                       e.stopPropagation()
                       handleClearSelection()
@@ -428,11 +375,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
         </PopoverTrigger>
 
         <PopoverContent
-          className={cn(
-            'w-[var(--radix-popper-anchor-width)] max-w-none p-0 shadow-xl border-2 border-popover bg-popover',
-            getPopoverAnimationClass(),
-            popoverClassName
-          )}
+          className={cn('w-[var(--radix-popper-anchor-width)] max-w-none p-0 shadow-xl border-2 border-popover bg-popover', getPopoverAnimationClass(), popoverClassName)}
           align="start"
           style={{
             animationDuration: `${animationConfig?.duration ?? 300}ms`,
@@ -441,11 +384,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
         >
           <Command shouldFilter={false}>
             <div className="relative">
-              <CommandInput
-                placeholder={searchLabel ?? t('search')}
-                value={searchTerm}
-                onValueChange={handleSearchChange}
-              />
+              <CommandInput placeholder={searchLabel ?? t('search')} value={searchTerm} onValueChange={handleSearchChange} />
               {searchTerm && (
                 <button
                   type="button"
@@ -461,11 +400,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
               )}
             </div>
             <CommandList>
-              {!loading && options.length === 0 && (
-                <CommandEmpty className="py-4 text-center text-muted-foreground">
-                  {t('nothingFound')}
-                </CommandEmpty>
-              )}
+              {!loading && options.length === 0 && <CommandEmpty className="py-4 text-center text-muted-foreground">{t('nothingFound')}</CommandEmpty>}
 
               <CommandGroup className="p-1 max-h-60 overflow-auto">
                 {loading ? (
@@ -475,12 +410,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                 ) : (
                   options.map(option => {
                     const isSelected = selectedValues.includes(option.value)
-                    const isDisabled =
-                      option.disabled ||
-                      (mode === 'multiple' &&
-                        maxSelections &&
-                        selectedValues.length >= maxSelections &&
-                        !isSelected)
+                    const isDisabled = option.disabled || (mode === 'multiple' && maxSelections && selectedValues.length >= maxSelections && !isSelected)
 
                     const IconComponent = option.icon
 
@@ -489,10 +419,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                         key={option.value}
                         value={option.value}
                         onSelect={() => !isDisabled && toggleOption(option.value)}
-                        className={cn(
-                          'cursor-pointer rounded-md transition-colors duration-200 px-2 py-1 flex items-center gap-2 hover:bg-accent/50',
-                          isDisabled && 'opacity-50 cursor-not-allowed'
-                        )}
+                        className={cn('cursor-pointer rounded-md transition-colors duration-200 px-2 py-1 flex items-center gap-2 hover:bg-accent/50', isDisabled && 'opacity-50 cursor-not-allowed')}
                         disabled={isDisabled || false}
                         style={{
                           animationDuration: `${animationConfig?.duration ?? 300}ms`,
@@ -502,35 +429,20 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                         <div
                           className={cn(
                             'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border transition-all duration-200',
-                            isSelected
-                              ? 'bg-primary border-primary text-primary-foreground scale-110'
-                              : 'border-border hover:border-primary/50',
+                            isSelected ? 'bg-primary border-primary text-primary-foreground scale-110' : 'border-border hover:border-primary/50',
                             mode === 'single' && 'rounded-full'
                           )}
                         >
-                          {isSelected &&
-                            (mode === 'single' ? (
-                              <div className="h-2 w-2 rounded-full bg-primary-foreground animate-scaleIn" />
-                            ) : (
-                              <Check className="h-3 w-3 animate-scaleIn" />
-                            ))}
+                          {isSelected && (mode === 'single' ? <div className="h-2 w-2 rounded-full bg-primary-foreground animate-scaleIn" /> : <Check className="h-3 w-3 animate-scaleIn" />)}
                         </div>
 
-                        {IconComponent && (
-                          <IconComponent className="mr-2 h-4 w-4 transition-colors duration-200" />
-                        )}
+                        {IconComponent && <IconComponent className="mr-2 h-4 w-4 transition-colors duration-200" />}
 
                         <span className="transition-colors duration-200">{option.label}</span>
 
-                        {isDisabled &&
-                          mode === 'multiple' &&
-                          maxSelections &&
-                          selectedValues.length >= maxSelections &&
-                          !isSelected && (
-                            <span className="ml-auto text-xs text-muted-foreground transition-opacity duration-200">
-                              Max {maxSelections}
-                            </span>
-                          )}
+                        {isDisabled && mode === 'multiple' && maxSelections && selectedValues.length >= maxSelections && !isSelected && (
+                          <span className="ml-auto text-xs text-muted-foreground transition-opacity duration-200">Max {maxSelections}</span>
+                        )}
                       </CommandItem>
                     )
                   })
@@ -541,22 +453,14 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             {(selectedValues.length > 0 || open) && (
               <div className="flex items-center justify-between p-2 border-t bg-muted/20">
                 {selectedValues.length > 0 ? (
-                  <Button
-                    variant="outline"
-                    onClick={handleClearSelection}
-                    className="h-8 px-2 text-xs"
-                  >
+                  <Button variant="outline" onClick={handleClearSelection} className="h-8 px-2 text-xs">
                     {t('button.clear')}
                   </Button>
                 ) : (
                   <div />
                 )}
 
-                <Button
-                  variant="outline"
-                  onClick={() => setOpen(false)}
-                  className="h-8 px-3 text-xs"
-                >
+                <Button variant="outline" onClick={() => setOpen(false)} className="h-8 px-3 text-xs">
                   {t('button.close')}
                 </Button>
               </div>

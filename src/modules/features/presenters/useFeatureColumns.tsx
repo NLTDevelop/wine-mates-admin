@@ -25,7 +25,7 @@ export const useFeatureColumns = ({ onToggle, isUpdating }: UseFeatureColumnsPro
         meta: { cellClassName: 'text-start w-1/3' },
       }),
 
-      columnHelper.accessor('is_enabled', {
+      columnHelper.accessor('isEnabled', {
         id: 'status',
         header: t('table.status'),
         cell: info => {
@@ -52,12 +52,7 @@ export const useFeatureColumns = ({ onToggle, isUpdating }: UseFeatureColumnsPro
 
           return (
             <div className="flex items-center justify-center space-x-2 " style={{ pointerEvents: 'auto' }}>
-              <Switch
-                checked={feature.is_enabled}
-                onCheckedChange={handleToggleChange}
-                // disabled={isUpdating}
-                // className={isUpdating ? 'opacity-60 cursor-not-allowed' : ' cursor-pointer'}
-              />
+              <Switch checked={feature.isEnabled} onCheckedChange={handleToggleChange} disabled={isUpdating} className={isUpdating ? 'opacity-60 cursor-not-allowed' : ' cursor-pointer'} />
             </div>
           )
         },
