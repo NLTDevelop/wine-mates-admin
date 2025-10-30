@@ -49,8 +49,8 @@ export const CreateWineForm: React.FC = () => {
     },
   })
 
-  const onSubmit = (data: CreateWineFormData) => {
-    console.log('Wine data:', data)
+  const onSubmit = (/*data: CreateWineFormData*/) => {
+    // console.log('Wine data:', data)
     // API запрос на создание вина
   }
 
