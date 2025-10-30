@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { MouseEventHandler, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HexColorPicker } from 'react-colorful'
 import { Button } from '@/UIKit/shadcn/ui/button'
@@ -14,9 +14,10 @@ interface ColorPickerProps {
   onChange?: (color: string) => void
   className?: string
   baseHexNoHash?: string
+  onClick?: MouseEventHandler<HTMLInputElement>
 }
 
-export const ColorPicker = ({ value, onChange, className, baseHexNoHash }: ColorPickerProps) => {
+export const ColorPicker = ({ value, onChange, className, baseHexNoHash, onClick }: ColorPickerProps) => {
   const { t } = useTranslation('common')
   const [open, setOpen] = useState(false)
 
@@ -108,7 +109,7 @@ export const ColorPicker = ({ value, onChange, className, baseHexNoHash }: Color
               />
             </div>
           )}
-          <Input value={value} onChange={e => onChange?.(e.target.value)} placeholder={baseHexNoHash ? baseHexNoHash : '#000000'} className="font-mono w-full" />
+          <Input value={value} onClick={onClick} onChange={e => onChange?.(e.target.value)} placeholder={baseHexNoHash ? baseHexNoHash : '#000000'} className="font-mono w-full" />
         </div>
       </PopoverContent>
     </Popover>

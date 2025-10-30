@@ -112,7 +112,7 @@ export const uk = {
     create_wine: 'Створення вина',
     color: 'Колір',
     title: 'Назва',
-   
+
     entry_flavors: 'Введіть смаки (через кому)',
     entry_flavor_title: 'Введіть назву смаку',
     smells: 'Аромати',
@@ -196,12 +196,12 @@ export const uk = {
       base_color: 'Базовий колір',
     },
     flavors: {
-       flavors: 'Аромати',
-      create_new_color: 'Створення нового кольору',
-      colors: 'Кольори',
-      color_name_ua: 'Назва кольору (UA)',
-      color_name_en: 'Назва кольору (EN)',
-      base_color: 'Базовий колір',
+      flavors: 'Аромати',
+      aroma_name_ua: 'Назва аромату (UA)',
+      aroma_name_en: 'Назва аромату (EN)',
+      group_name_ua: 'Назва групи (UA)',
+      group_name_en: 'Назва групи (EN)',
+      create_new_group: 'Створення нової групи ароматів',
     },
     button: {
       edit: 'Редагувати',
@@ -210,7 +210,8 @@ export const uk = {
       add_new_shade: 'Додати відтінок',
       add_new_type: 'Додати тип вина',
       create_new_color: 'Додати базовий колір',
-
+      create_new_aroma_group: 'Додати групу ароматів',
+      add_new_aroma: 'Додати аромат',
     },
   },
 }

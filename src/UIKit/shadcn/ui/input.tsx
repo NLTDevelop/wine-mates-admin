@@ -44,16 +44,18 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, type 
 
       {isSearchVariant && <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />}
 
-      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 flex items-center justify-center">
-        {shouldShowLoader ? (
-          <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-        ) : shouldShowClear ? (
-          <button type="button" onClick={onClear} className="w-6 h-6 flex items-center justify-center p-1 hover:bg-muted rounded-[2px] transition-colors">
-            <X className="w-4 h-4 text-muted-foreground" />
-            <span className="sr-only">Clear input</span>
-          </button>
-        ) : null}
-      </div>
+      {isSearchVariant && (
+        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 flex items-center justify-center">
+          {shouldShowLoader ? (
+            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+          ) : shouldShowClear ? (
+            <button type="button" onClick={onClear} className="w-6 h-6 flex items-center justify-center p-1 hover:bg-muted rounded-[2px] transition-colors">
+              <X className="w-4 h-4 text-muted-foreground" />
+              <span className="sr-only">Clear input</span>
+            </button>
+          ) : null}
+        </div>
+      )}
     </div>
   )
 })

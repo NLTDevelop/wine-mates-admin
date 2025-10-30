@@ -2,13 +2,11 @@ import { useTranslation } from 'react-i18next'
 import { useContrastText } from '@/hooks/ui/useContrastText'
 import { usePaletteItem } from '@/modules/wine/create/colors/presenters/usePaletteItem'
 import { cn } from '@/lib/utils'
-import { Check, X } from 'lucide-react'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { Input } from '@/UIKit/shadcn/ui/input'
 import { WineColor } from '../../entities/types/color'
 import { PaletteItemActions } from '..'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
-import { MouseEvent, useState } from 'react'
+import { EditableHeader } from '../../../general/ui/editable-header'
 
 export type ColorCardData = WineColor
 
@@ -21,12 +19,12 @@ interface ColorCardProps {
   onToggleForm?: () => void
   isFormOpen?: boolean
   onCancel: (id: string) => void
+  handleToggleAccordion: (colorId: string, isOpen: boolean) => void
+  isAccordionOpen: { [colorId: string]: boolean }
 }
 
-export const ColorCard = ({ data, onRemove, isLoading, isEditable = false, onEditColor, onToggleForm, isFormOpen = false, onCancel }: ColorCardProps) => {
+export const ColorCard = ({ data, onRemove, isLoading, isEditable = false, onEditColor, onToggleForm, isFormOpen = false, onCancel, handleToggleAccordion, isAccordionOpen }: ColorCardProps) => {
   const { t } = useTranslation('wines')
-
-  const [isOpenAccordion, setIsOpenAccordion] = useState<boolean>(false)
 
   const {
     isEditing,
@@ -52,98 +50,58 @@ export const ColorCard = ({ data, onRemove, isLoading, isEditable = false, onEdi
     onToggleForm,
   })
 
+  const handleToggle = (isOpen: boolean) => {
+    handleToggleAccordion(data.id, isOpen)
+    if (isFormOpen) {
+      onToggleForm?.()
+    }
+  }
+
   return (
     <AccordionWrapper
       label={`${data.label} (${data.value})`}
-      isOpen={isOpenAccordion}
-      onToggle={setIsOpenAccordion}
+      isOpen={isAccordionOpen[data.id] || false}
+      onToggle={handleToggle}
       style={{ backgroundColor: color }}
       chevronStyle={cardTextColorClass}
       header={
-        <div className={`flex items-start gap-2 justify-between w-full bg-${color}`}>
-          {isEditable && isEditing ? (
-            <div className="flex items-center gap-2 flex-1">
-              <Input
-                value={editValue}
-                onChange={e => setEditValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                disabled={isSaving}
-                className={cn('h-8 text-label bg-transparent border border-white/30 focus:border-white/50', cardTextColorClass)}
-                autoFocus
-                onClick={(e: MouseEvent) => e.stopPropagation()}
-              />
-              <div onClick={(e: MouseEvent) => handleSaveLabel(e)} className={cn('p-0 opacity-60 hover:opacity-100', cardTextColorClass)}>
-                <Check className="h-4 w-4" />
-              </div>
-              <div onClick={(e: MouseEvent) => cancelEditing(e)} className={cn('p-0 opacity-60 hover:opacity-100', cardTextColorClass)}>
-                <X className="h-4 w-4" />
-              </div>
-            </div>
-          ) : (
-            <div className="flex gap-2 items-end">
-              <span className={cn('text-label flex items-center flex-1', cardTextColorClass)}>
-                {data.label} ({data.value})
-              </span>
-            </div>
-          )}
-          <PaletteItemActions
-            isLoading={isLoading || false}
-            onRemove={onRemove}
-            dataId={data.id}
-            cardTextColorClass={cardTextColorClass}
-            onEdit={isEditable ? startEditing : undefined}
-            showEditButton={isEditable && !isEditing}
-          />
-        </div>
+        <EditableHeader
+          isEditable={isEditable}
+          isEditing={isEditing}
+          isSaving={isSaving}
+          label={data.label}
+          labelEn={data.labelEn || ''}
+          value={data.value}
+          editValue={editValue}
+          cardTextColorClass={cardTextColorClass}
+          onStartEditing={startEditing}
+          onSave={handleSaveLabel}
+          onCancel={cancelEditing}
+          onKeyDown={handleKeyDown}
+          onEditValueChange={setEditValue}
+          actions={
+            <PaletteItemActions
+              isLoading={isLoading || false}
+              onRemove={onRemove}
+              dataId={data.id}
+              cardTextColorClass={cardTextColorClass}
+              onEdit={isEditable ? startEditing : undefined}
+              showEditButton={isEditable && !isEditing}
+            />
+          }
+        />
       }
     >
       <div
         onClick={handleMainClick}
-        // style={{ backgroundColor: color }}
         className={cn(
-          'relative flex flex-col h-auto min-h-8 w-full items-start justify-between p-3 transition-all flex-1  bg-input/50',
+          'relative flex flex-col h-auto min-h-8 w-full items-start justify-between p-3 pt-0 transition-all flex-1  bg-input/50',
           isFormOpen ? 'rounded-t-md rounded-b-0' : 'rounded-t-none rounded-b-md',
           'cursor-default',
-          // cardTextColorClass,
           'group',
           data.items && data.items.length > 0 ? 'gap-2 items-start' : 'gap-4'
         )}
       >
-        {/* <div className="flex items-start gap-2 justify-between w-full">
-          {isEditable && isEditing ? (
-            <div className="flex items-center gap-2 flex-1">
-              <Input
-                value={editValue}
-                onChange={e => setEditValue(e.target.value)}
-                onKeyDown={handleKeyDown}
-                disabled={isSaving}
-                className={cn('h-8 text-label bg-transparent border border-white/30 focus:border-white/50', cardTextColorClass)}
-                autoFocus
-              />
-              <Button size="sm" variant="ghost" onClick={handleSaveLabel} disabled={isSaving} className={cn('h-6 w-6 p-0', cardTextColorClass)}>
-                <Check className="h-3 w-3" />
-              </Button>
-              <Button size="sm" variant="ghost" onClick={cancelEditing} disabled={isSaving} className={cn('h-6 w-6 p-0', cardTextColorClass)}>
-                <X className="h-3 w-3" />
-              </Button>
-            </div>
-          ) : (
-            <div className="flex gap-2 items-end">
-              <span className={cn('text-label flex items-center flex-1', cardTextColorClass)}>
-                {data.label} ({data.value})
-              </span>
-            </div>
-          )}
-          <PaletteItemActions
-            isLoading={isLoading || false}
-            onRemove={onRemove}
-            dataId={data.id}
-            cardTextColorClass={cardTextColorClass}
-            onEdit={isEditable ? startEditing : undefined}
-            showEditButton={isEditable && !isEditing}
-          />
-        </div> */}
-
         {renderableItems.length > 0 && (
           <div className="space-y-2 mt-3 hover:brightness-100 w-full">
             {renderableItems.map((item, index) => {
@@ -151,10 +109,10 @@ export const ColorCard = ({ data, onRemove, isLoading, isEditable = false, onEdi
               const itemTones = getItemTones(item)
 
               return (
-                <div key={item.id || index} className="flex gap-2 justify-between items-start sm:items-end flex-col sm:flex-row">
+                <div key={item.id || index} className="flex gap-2 justify-between items-center  flex-row p-2 border-input border rounded sm:border-none sm:p-0">
                   <div className="flex gap-2 flex-1 justify-between items-center">
                     <div className="text-sm">{itemName}</div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-col sm:flex-row">
                       {(['pale', 'medium', 'deep'] as const).map(tone => {
                         const toneColor = itemTones?.[tone]
                         const { textColorClass } = useContrastText(`${toneColor}`)

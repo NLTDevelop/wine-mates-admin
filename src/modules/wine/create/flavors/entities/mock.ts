@@ -1,5 +1,4 @@
-import { WineAromaGroup } from "./types/flavor"
-
+import { WineAromaGroup } from './types/flavor'
 
 export const mockAromaGroups: WineAromaGroup[] = [
   {
@@ -11,29 +10,29 @@ export const mockAromaGroups: WineAromaGroup[] = [
       {
         id: '1-1',
         name: 'Яблуко',
-        nameEn: 'Apple'
+        nameEn: 'Apple',
       },
       {
         id: '1-2',
         name: 'Груша',
-        nameEn: 'Pear'
+        nameEn: 'Pear',
       },
       {
         id: '1-3',
         name: 'Персик',
-        nameEn: 'Peach'
+        nameEn: 'Peach',
       },
       {
         id: '1-4',
         name: 'Абрикос',
-        nameEn: 'Apricot'
+        nameEn: 'Apricot',
       },
       {
         id: '1-5',
         name: 'Вишня',
-        nameEn: 'Cherry'
-      }
-    ]
+        nameEn: 'Cherry',
+      },
+    ],
   },
   {
     id: '2',
@@ -44,24 +43,24 @@ export const mockAromaGroups: WineAromaGroup[] = [
       {
         id: '2-1',
         name: 'Полуниця',
-        nameEn: 'Strawberry'
+        nameEn: 'Strawberry',
       },
       {
         id: '2-2',
         name: 'Малина',
-        nameEn: 'Raspberry'
+        nameEn: 'Raspberry',
       },
       {
         id: '2-3',
         name: 'Чорниця',
-        nameEn: 'Blueberry'
+        nameEn: 'Blueberry',
       },
       {
         id: '2-4',
         name: 'Чорна смородина',
-        nameEn: 'Blackcurrant'
-      }
-    ]
+        nameEn: 'Blackcurrant',
+      },
+    ],
   },
   {
     id: '3',
@@ -72,24 +71,24 @@ export const mockAromaGroups: WineAromaGroup[] = [
       {
         id: '3-1',
         name: 'Лимон',
-        nameEn: 'Lemon'
+        nameEn: 'Lemon',
       },
       {
         id: '3-2',
         name: 'Лайм',
-        nameEn: 'Lime'
+        nameEn: 'Lime',
       },
       {
         id: '3-3',
         name: 'Грейпфрут',
-        nameEn: 'Grapefruit'
+        nameEn: 'Grapefruit',
       },
       {
         id: '3-4',
         name: 'Апельсин',
-        nameEn: 'Orange'
-      }
-    ]
+        nameEn: 'Orange',
+      },
+    ],
   },
   {
     id: '4',
@@ -100,24 +99,24 @@ export const mockAromaGroups: WineAromaGroup[] = [
       {
         id: '4-1',
         name: 'Троянда',
-        nameEn: 'Rose'
+        nameEn: 'Rose',
       },
       {
         id: '4-2',
         name: 'Бузок',
-        nameEn: 'Lilac'
+        nameEn: 'Lilac',
       },
       {
         id: '4-3',
         name: 'Жасмин',
-        nameEn: 'Jasmine'
+        nameEn: 'Jasmine',
       },
       {
         id: '4-4',
         name: 'Фіалка',
-        nameEn: 'Violet'
-      }
-    ]
+        nameEn: 'Violet',
+      },
+    ],
   },
   {
     id: '5',
@@ -128,24 +127,24 @@ export const mockAromaGroups: WineAromaGroup[] = [
       {
         id: '5-1',
         name: 'Ваніль',
-        nameEn: 'Vanilla'
+        nameEn: 'Vanilla',
       },
       {
         id: '5-2',
         name: 'Кориця',
-        nameEn: 'Cinnamon'
+        nameEn: 'Cinnamon',
       },
       {
         id: '5-3',
         name: 'Перець',
-        nameEn: 'Pepper'
+        nameEn: 'Pepper',
       },
       {
         id: '5-4',
         name: 'Гвоздика',
-        nameEn: 'Clove'
-      }
-    ]
+        nameEn: 'Clove',
+      },
+    ],
   },
   {
     id: '6',
@@ -156,19 +155,19 @@ export const mockAromaGroups: WineAromaGroup[] = [
       {
         id: '6-1',
         name: 'Мигдаль',
-        nameEn: 'Almond'
+        nameEn: 'Almond',
       },
       {
         id: '6-2',
         name: 'Фундук',
-        nameEn: 'Hazelnut'
+        nameEn: 'Hazelnut',
       },
       {
         id: '6-3',
         name: 'Горіх',
-        nameEn: 'Walnut'
-      }
-    ]
+        nameEn: 'Walnut',
+      },
+    ],
   },
   {
     id: '7',
@@ -179,19 +178,19 @@ export const mockAromaGroups: WineAromaGroup[] = [
       {
         id: '7-1',
         name: 'Дуб',
-        nameEn: 'Oak'
+        nameEn: 'Oak',
       },
       {
         id: '7-2',
         name: 'Кедр',
-        nameEn: 'Cedar'
+        nameEn: 'Cedar',
       },
       {
         id: '7-3',
         name: 'Дим',
-        nameEn: 'Smoke'
-      }
-    ]
+        nameEn: 'Smoke',
+      },
+    ],
   },
   {
     id: '8',
@@ -202,70 +201,65 @@ export const mockAromaGroups: WineAromaGroup[] = [
       {
         id: '8-1',
         name: 'Гриби',
-        nameEn: 'Mushroom'
+        nameEn: 'Mushroom',
       },
       {
         id: '8-2',
         name: 'Трюфель',
-        nameEn: 'Truffle'
+        nameEn: 'Truffle',
       },
       {
         id: '8-3',
         name: 'Земля',
-        nameEn: 'Earth'
-      }
-    ]
+        nameEn: 'Earth',
+      },
+    ],
   },
-    {
+  {
     id: '9',
     label: 'Фруктові',
     labelEn: 'Fruity',
-    value: '#FF6B6B'
+    value: '#FF6B6B',
   },
   {
     id: '10',
     label: 'Квіткові',
     labelEn: 'Floral',
-    value: '#A29BFE'
+    value: '#A29BFE',
   },
   {
     id: '11',
     label: 'Пряні',
     labelEn: 'Spicy',
-    value: '#6BCF7F'
+    value: '#6BCF7F',
   },
   {
     id: '12',
     label: 'Деревні',
     labelEn: 'Woody',
-    value: '#CD6133'
-  }
+    value: '#CD6133',
+  },
 ]
-
-
-
 
 export const mockAromaItems = [
   {
     id: '1-1',
     name: 'Яблуко',
-    nameEn: 'Apple'
+    nameEn: 'Apple',
   },
   {
     id: '1-2',
     name: 'Груша',
-    nameEn: 'Pear'
+    nameEn: 'Pear',
   },
   {
     id: '4-1',
     name: 'Троянда',
-    nameEn: 'Rose'
+    nameEn: 'Rose',
   },
   {
     id: '5-1',
     name: 'Ваніль',
-    nameEn: 'Vanilla'
-  }
+    nameEn: 'Vanilla',
+  },
 ]
-
-

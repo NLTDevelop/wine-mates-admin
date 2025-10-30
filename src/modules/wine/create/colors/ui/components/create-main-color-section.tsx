@@ -22,9 +22,9 @@ export const CreateMainColorSection = ({ onCreateColor, isLoading = false }: Cre
 
   if (!isExpanded) {
     return (
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center flex-wrap-reverse sm:flex-nowrap gap-6">
         <h2 className="text-2xl font-bold">{t('colors.colors')}</h2>
-        <Button onClick={expandForm}>
+        <Button onClick={expandForm} className="w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" />
           {t('button.create_new_color')}
         </Button>
@@ -61,7 +61,7 @@ export const CreateMainColorSection = ({ onCreateColor, isLoading = false }: Cre
           </div>
         </div>
 
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-2 flex-col sm:flex-row">
           <Button onClick={handleCancel} variant="outline" disabled={isLoading}>
             {tc('button.cancel')}
           </Button>

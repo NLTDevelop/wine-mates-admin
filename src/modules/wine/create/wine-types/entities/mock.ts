@@ -8,7 +8,7 @@ export const mockWineTypes: WineType[] = [
     colors: ['ruby', 'garnet', 'purple'],
     aromas: ['berry', 'spicy', 'woody'],
     flavorNotes: ['fruity', 'earthy', 'oaky'],
-    flavorCharacteristics: ['tannic', 'full-bodied', 'dry']
+    flavorCharacteristics: ['tannic', 'full-bodied', 'dry'],
   },
   {
     value: 'white',
@@ -17,7 +17,7 @@ export const mockWineTypes: WineType[] = [
     colors: ['straw', 'golden', 'lemon'],
     aromas: ['citrus', 'tropical', 'floral'],
     flavorNotes: ['mineral', 'herbal', 'fruity'],
-    flavorCharacteristics: ['acidic', 'dry', 'light']
+    flavorCharacteristics: ['acidic', 'dry', 'light'],
   },
   {
     value: 'rose',
@@ -26,7 +26,7 @@ export const mockWineTypes: WineType[] = [
     colors: ['salmon', 'pink', 'peach'],
     aromas: ['red_fruits', 'floral_rose', 'herbal'],
     flavorNotes: ['fruity', 'fresh', 'citrus'],
-    flavorCharacteristics: ['light', 'dry', 'refreshing']
+    flavorCharacteristics: ['light', 'dry', 'refreshing'],
   },
   {
     value: 'sparkling',
@@ -35,7 +35,7 @@ export const mockWineTypes: WineType[] = [
     colors: ['champagne', 'blush'],
     aromas: ['bready', 'citrus_sparkling', 'mineral_sparkling'],
     flavorNotes: ['toasty', 'yeasty', 'citrus'],
-    flavorCharacteristics: ['bubbly', 'crisp', 'dry']
+    flavorCharacteristics: ['bubbly', 'crisp', 'dry'],
   },
   {
     value: 'dessert',
@@ -44,8 +44,8 @@ export const mockWineTypes: WineType[] = [
     colors: ['amber', 'honey', 'caramel'],
     aromas: ['dried_fruits', 'honey_aroma', 'spicy_dessert'],
     flavorNotes: ['sweet', 'rich', 'complex'],
-    flavorCharacteristics: ['sweet', 'full-bodied', 'luscious']
-  }
+    flavorCharacteristics: ['sweet', 'full-bodied', 'luscious'],
+  },
 ]
 
 export const mockColors = [
@@ -62,7 +62,7 @@ export const mockColors = [
   { value: 'blush', label: 'Розовое игристое' },
   { value: 'amber', label: 'Янтарный' },
   { value: 'honey', label: 'Медовый' },
-  { value: 'caramel', label: 'Карамельный' }
+  { value: 'caramel', label: 'Карамельный' },
 ]
 
 export const mockAromas = [
@@ -80,7 +80,7 @@ export const mockAromas = [
   { value: 'mineral_sparkling', label: 'Минеральный (игристое)' },
   { value: 'dried_fruits', label: 'Сухофрукты' },
   { value: 'honey_aroma', label: 'Медовый' },
-  { value: 'spicy_dessert', label: 'Пряный (десертное)' }
+  { value: 'spicy_dessert', label: 'Пряный (десертное)' },
 ]
 
 export const mockFlavorNotes = [
@@ -95,7 +95,7 @@ export const mockFlavorNotes = [
   { value: 'yeasty', label: 'Дрожжевой' },
   { value: 'sweet', label: 'Сладкий' },
   { value: 'rich', label: 'Богатый' },
-  { value: 'complex', label: 'Сложный' }
+  { value: 'complex', label: 'Сложный' },
 ]
 
 export const mockFlavorCharacteristics = [
@@ -108,5 +108,5 @@ export const mockFlavorCharacteristics = [
   { value: 'bubbly', label: 'Игристость' },
   { value: 'crisp', label: 'Хрустящий' },
   { value: 'sweet', label: 'Сладкий' },
-  { value: 'luscious', label: 'Сочный' }
+  { value: 'luscious', label: 'Сочный' },
 ]

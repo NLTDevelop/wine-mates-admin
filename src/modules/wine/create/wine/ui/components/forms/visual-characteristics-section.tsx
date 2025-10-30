@@ -1,13 +1,11 @@
 import { UseFormReturn } from 'react-hook-form'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/UIKit/shadcn/ui/form'
-import { SelectColorPicker } from '@/UIKit/shadcn/ui/select-color-picker'
 import { Image } from 'lucide-react'
 import { CreateWineFormData } from '@/modules/wine/create/entities/types'
 import { useState } from 'react'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
 import { useTranslation } from 'react-i18next'
-import { useWineColors } from '@/modules/wine/create/colors/presenters/useWineColors'
 
 interface VisualCharacteristicsSectionProps {
   form: UseFormReturn<CreateWineFormData>
@@ -36,7 +34,11 @@ export const VisualCharacteristicsSection = ({ form }: VisualCharacteristicsSect
           <FormField
             control={form.control}
             name="color"
-            render={({ field }) => (
+            render={(
+              {
+                /*field*/
+              }
+            ) => (
               <FormItem>
                 <FormLabel>{t('color') + '*'}</FormLabel>
                 <FormControl>

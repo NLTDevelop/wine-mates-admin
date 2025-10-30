@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
 import { WineType } from '../entities/types/wine-type'
-import { useWineOptions, useWineOptionsMock } from './useWineOptions'
+import { /*useWineOptions,*/ useWineOptionsMock } from './useWineOptions'
 
 interface UseWineTypeCardProps {
   wineType: WineType
   isLoading: boolean
 }
 
-export const useWineTypeCard = ({ wineType, isLoading }: UseWineTypeCardProps) => {
+export const useWineTypeCard = ({ /*wineType,*/ isLoading }: UseWineTypeCardProps) => {
   const [isEditing, setIsEditing] = useState(false)
   const [expandedSections, setExpandedSections] = useState({
     colors: false,

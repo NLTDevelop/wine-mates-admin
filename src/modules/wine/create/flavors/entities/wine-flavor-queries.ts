@@ -29,19 +29,16 @@ export const wineFlavorQueries = {
 
   createItem: () => ({
     mutationKey: ['aroma-items', 'create'],
-    mutationFn: ({ groupId, item }: { groupId: string; item: CreateWineAromaItemParams }) => 
-      wineFlavorService.createItem(groupId, item),
+    mutationFn: ({ groupId, item }: { groupId: string; item: CreateWineAromaItemParams }) => wineFlavorService.createItem(groupId, item),
   }),
 
   updateItem: () => ({
     mutationKey: ['aroma-items', 'update'],
-    mutationFn: (params: { groupId: string; itemId: string; newItem: CreateWineAromaItemParams }) => 
-      wineFlavorService.updateItem(params),
+    mutationFn: (params: { groupId: string; itemId: string; newItem: CreateWineAromaItemParams }) => wineFlavorService.updateItem(params),
   }),
 
   deleteItem: () => ({
     mutationKey: ['aroma-items', 'delete'],
-    mutationFn: (params: { groupId: string; itemId: string }) => 
-      wineFlavorService.deleteItem(params),
+    mutationFn: (params: { groupId: string; itemId: string }) => wineFlavorService.deleteItem(params),
   }),
 }

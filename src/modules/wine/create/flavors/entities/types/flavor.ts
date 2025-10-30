@@ -8,7 +8,7 @@ export interface WineAromaGroup {
   id: string
   label: string
   labelEn: string
-  value: string 
+  value: string
   items?: WineAromaItem[]
 }
 

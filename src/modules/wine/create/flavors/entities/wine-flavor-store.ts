@@ -5,7 +5,7 @@ interface WineFlavorStoreState {
   aromaGroups: WineAromaGroup[]
   searchResults: WineAromaGroup[]
   currentAromaGroup: WineAromaGroup | null
-  aromaItems: WineAromaItem[] 
+  aromaItems: WineAromaItem[]
 
   setAromaGroups: (groups: WineAromaGroup[]) => void
   setCurrentAromaGroup: (group: WineAromaGroup | null) => void
@@ -72,10 +72,8 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
     searchAromaGroups: searchTerm =>
       set(
         (state: WineFlavorStoreState) => ({
-          searchResults: state.aromaGroups.filter(g => 
-            g.label.toLowerCase().includes(searchTerm.toLowerCase()) || 
-            g.labelEn?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            g.value.toLowerCase().includes(searchTerm.toLowerCase())
+          searchResults: state.aromaGroups.filter(
+            g => g.label.toLowerCase().includes(searchTerm.toLowerCase()) || g.labelEn?.toLowerCase().includes(searchTerm.toLowerCase()) || g.value.toLowerCase().includes(searchTerm.toLowerCase())
           ),
         }),
         false,
@@ -89,11 +87,7 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
     addAromaItem: (groupId, item) =>
       set(
         (state: WineFlavorStoreState) => ({
-          aromaGroups: state.aromaGroups.map(g => 
-            g.id === groupId 
-              ? { ...g, items: [...(g.items || []), item] }
-              : g
-          ),
+          aromaGroups: state.aromaGroups.map(g => (g.id === groupId ? { ...g, items: [...(g.items || []), item] } : g)),
           aromaItems: [...state.aromaItems, item],
         }),
         false,
@@ -103,11 +97,11 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
     updateAromaItem: (groupId, itemId, newItem) =>
       set(
         (state: WineFlavorStoreState) => ({
-          aromaGroups: state.aromaGroups.map(g => 
-            g.id === groupId 
-              ? { 
-                  ...g, 
-                  items: g.items?.map(i => (i.id === itemId ? newItem : i)) 
+          aromaGroups: state.aromaGroups.map(g =>
+            g.id === groupId
+              ? {
+                  ...g,
+                  items: g.items?.map(i => (i.id === itemId ? newItem : i)),
                 }
               : g
           ),
@@ -120,11 +114,7 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
     deleteAromaItem: (groupId, itemId) =>
       set(
         (state: WineFlavorStoreState) => ({
-          aromaGroups: state.aromaGroups.map(g => 
-            g.id === groupId 
-              ? { ...g, items: g.items?.filter(i => i.id !== itemId) }
-              : g
-          ),
+          aromaGroups: state.aromaGroups.map(g => (g.id === groupId ? { ...g, items: g.items?.filter(i => i.id !== itemId) } : g)),
           aromaItems: state.aromaItems.filter(i => i.id !== itemId),
         }),
         false,

@@ -1,12 +1,12 @@
 import { useState, useCallback, MouseEvent, KeyboardEvent } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useContrastText } from '@/hooks/ui/useContrastText'
-import { colorQueries } from '../entities/color-queries'
-import { WineColor } from '../entities/types/color'
+import { wineFlavorQueries } from '../entities/wine-flavor-queries'
+import { WineAromaGroup } from '../entities/types/flavor'
 
-interface UsePaletteItemProps {
-  data: WineColor
-  onItemClick?: (data: WineColor) => void
+interface UseEditFlavorGroupProps {
+  data: WineAromaGroup
+  onItemClick?: (data: WineAromaGroup) => void
   handleClick?: () => void
   isEditable?: boolean
   isFormOpen?: boolean
@@ -14,7 +14,7 @@ interface UsePaletteItemProps {
   onToggleForm?: () => void
 }
 
-interface UsePaletteItemReturn {
+interface UseEditFlavorGroupReturn {
   isEditing: boolean
   editValue: {
     label: string
@@ -24,20 +24,19 @@ interface UsePaletteItemReturn {
   color: string
   cardTextColorClass: string
   isSaving: boolean
-  renderableItems: WineColor[]
+  renderableItems: any[]
 
   startEditing: () => void
-  handleSaveLabel: () => Promise<void>
+  handleSaveLabel: (editData: { label: string; labelEn: string; value: string }) => Promise<void>
   cancelEditing: (e?: MouseEvent | KeyboardEvent) => void
   handleKeyDown: (e: KeyboardEvent) => void
   handleMainClick: () => void
-  handleAddShadeClick: () => void
+  handleAddAromaClick: () => void
   setEditValue: (field: string, value: string) => void
-  getItemName: (item: WineColor) => string
-  getItemTones: (item: WineColor) => any
+  getItemName: (item: any) => string
 }
 
-export const usePaletteItem = ({ data, onItemClick, handleClick, isEditable = false, isFormOpen = false, onCancel, onToggleForm }: UsePaletteItemProps): UsePaletteItemReturn => {
+export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable = false, isFormOpen = false, onCancel, onToggleForm }: UseEditFlavorGroupProps): UseEditFlavorGroupReturn => {
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValueState] = useState({
     label: data.label,
@@ -50,32 +49,30 @@ export const usePaletteItem = ({ data, onItemClick, handleClick, isEditable = fa
   const color = data.value?.[0] === '#' ? data.value : '#ffffff'
   const { textColorClass: cardTextColorClass } = useContrastText(color)
 
-  const updateColorMutation = useMutation({
-    ...colorQueries.update(),
+  const updateGroupMutation = useMutation({
+    ...wineFlavorQueries.updateGroup(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['colors', 'list'] })
+      queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list'] })
     },
   })
 
   const handleSaveLabel = useCallback(
-    async (editData?: { label: string; labelEn: string; value: string }) => {
+    async (editData: { label: string; labelEn: string; value: string }) => {
       if (!data.id) return
 
-      const saveData = editData || editValue
-
-      await updateColorMutation.mutateAsync({
-        colorId: data.id,
-        newColor: {
-          label: saveData.label,
-          labelEn: saveData.labelEn,
-          value: saveData.value,
+      await updateGroupMutation.mutateAsync({
+        groupId: data.id,
+        newGroup: {
+          label: editData.label,
+          labelEn: editData.labelEn,
+          value: editData.value,
           items: data.items,
         },
       })
 
       setIsEditing(false)
     },
-    [data, editValue, updateColorMutation]
+    [data, updateGroupMutation]
   )
 
   const setEditValue = useCallback((field: string, value: string) => {
@@ -93,7 +90,7 @@ export const usePaletteItem = ({ data, onItemClick, handleClick, isEditable = fa
       labelEn: data.labelEn || '',
       value: data.value,
     })
-  }, [data.label, isEditable])
+  }, [data.label, data.labelEn, data.value, isEditable])
 
   const cancelEditing = useCallback(
     (e?: MouseEvent | KeyboardEvent) => {
@@ -108,18 +105,18 @@ export const usePaletteItem = ({ data, onItemClick, handleClick, isEditable = fa
         value: data.value,
       })
     },
-    [data.label]
+    [data.label, data.labelEn, data.value]
   )
 
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
+    (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
-        handleSaveLabel()
+        handleSaveLabel(editValue)
       } else if (e.key === 'Escape') {
         cancelEditing(e)
       }
     },
-    [handleSaveLabel, cancelEditing]
+    [handleSaveLabel, cancelEditing, editValue]
   )
 
   const handleMainClick = useCallback(() => {
@@ -134,7 +131,7 @@ export const usePaletteItem = ({ data, onItemClick, handleClick, isEditable = fa
     }
   }, [isEditing, onItemClick, handleClick, data])
 
-  const handleAddShadeClick = useCallback(() => {
+  const handleAddAromaClick = useCallback(() => {
     if (isFormOpen && onCancel) {
       onCancel(data.id)
     } else if (onToggleForm) {
@@ -142,24 +139,17 @@ export const usePaletteItem = ({ data, onItemClick, handleClick, isEditable = fa
     }
   }, [isFormOpen, onCancel, data.id, onToggleForm])
 
-  const getItemName = useCallback((item: WineColor): string => {
-    return item.label || ''
+  const getItemName = useCallback((item: any): string => {
+    return item.name || item.label || ''
   }, [])
 
-  const getItemTones = useCallback((item: WineColor) => {
-    if (item.items && item.items.length > 0) {
-      return item.items[0].tones
-    }
-    return undefined
-  }, [])
-
-  const getRenderableItems = useCallback((): WineColor[] => {
+  const getRenderableItems = useCallback((): any[] => {
     if (data.items && data.items.length > 0) {
       return data.items.map((item, index) => ({
-        id: `${data.id}-item-${index}`,
+        id: item.id || `${data.id}-item-${index}`,
         label: item.name,
         labelEn: item.nameEn,
-        value: item.tones?.medium || data.value,
+        value: data.value,
         items: [item],
       }))
     }
@@ -173,7 +163,7 @@ export const usePaletteItem = ({ data, onItemClick, handleClick, isEditable = fa
     editValue,
     color,
     cardTextColorClass,
-    isSaving: updateColorMutation.isPending,
+    isSaving: updateGroupMutation.isPending,
     renderableItems,
 
     startEditing,
@@ -181,9 +171,8 @@ export const usePaletteItem = ({ data, onItemClick, handleClick, isEditable = fa
     handleSaveLabel,
     handleKeyDown,
     handleMainClick,
-    handleAddShadeClick,
+    handleAddAromaClick,
     getItemName,
-    getItemTones,
     setEditValue,
   }
 }

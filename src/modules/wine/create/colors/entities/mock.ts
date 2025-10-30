@@ -13,8 +13,8 @@ export const mockColors: WineColor[] = [
         tones: {
           pale: '#A83731',
           medium: '#8B0000',
-          deep: '#660000'
-        }
+          deep: '#660000',
+        },
       },
       {
         name: 'Бургундія',
@@ -22,8 +22,8 @@ export const mockColors: WineColor[] = [
         tones: {
           pale: '#722F37',
           medium: '#5D1F1F',
-          deep: '#3D0000'
-        }
+          deep: '#3D0000',
+        },
       },
       {
         name: 'Рубін',
@@ -31,10 +31,10 @@ export const mockColors: WineColor[] = [
         tones: {
           pale: '#E0115F',
           medium: '#C71585',
-          deep: '#8B0000'
-        }
-      }
-    ]
+          deep: '#8B0000',
+        },
+      },
+    ],
   },
   {
     id: '2',
@@ -48,8 +48,8 @@ export const mockColors: WineColor[] = [
         tones: {
           pale: '#F5F5DC',
           medium: '#E4D96F',
-          deep: '#D2B48C'
-        }
+          deep: '#D2B48C',
+        },
       },
       {
         name: 'Золото',
@@ -57,8 +57,8 @@ export const mockColors: WineColor[] = [
         tones: {
           pale: '#FFF8DC',
           medium: '#FFD700',
-          deep: '#DAA520'
-        }
+          deep: '#DAA520',
+        },
       },
       {
         name: 'Мед',
@@ -66,10 +66,10 @@ export const mockColors: WineColor[] = [
         tones: {
           pale: '#F0E68C',
           medium: '#FFA500',
-          deep: '#FF8C00'
-        }
-      }
-    ]
+          deep: '#FF8C00',
+        },
+      },
+    ],
   },
   {
     id: '3',
@@ -83,8 +83,8 @@ export const mockColors: WineColor[] = [
         tones: {
           pale: '#FFE4E1',
           medium: '#FA8072',
-          deep: '#E9967A'
-        }
+          deep: '#E9967A',
+        },
       },
       {
         name: 'Корал',
@@ -92,10 +92,10 @@ export const mockColors: WineColor[] = [
         tones: {
           pale: '#FF7F50',
           medium: '#FF6347',
-          deep: '#FF4500'
-        }
-      }
-    ]
+          deep: '#FF4500',
+        },
+      },
+    ],
   },
   {
     id: '4',
@@ -109,8 +109,8 @@ export const mockColors: WineColor[] = [
         tones: {
           pale: '#FFE4B5',
           medium: '#FFBF00',
-          deep: '#FF8C00'
-        }
+          deep: '#FF8C00',
+        },
       },
       {
         name: 'Мідь',
@@ -118,16 +118,16 @@ export const mockColors: WineColor[] = [
         tones: {
           pale: '#B87333',
           medium: '#8B4513',
-          deep: '#654321'
-        }
-      }
-    ]
+          deep: '#654321',
+        },
+      },
+    ],
   },
-   {
+  {
     id: '5',
     label: 'Кораловий',
     labelEn: 'Red',
-    value: '#DC143C'
+    value: '#DC143C',
   },
 ]
 
@@ -136,28 +136,27 @@ export const mockSimpleColors: WineColor[] = [
     id: '1',
     label: 'Червоне',
     labelEn: 'Red',
-    value: '#DC143C'
+    value: '#DC143C',
   },
   {
     id: '2',
     label: 'Біле',
     labelEn: 'White',
-    value: '#F5F5DC'
+    value: '#F5F5DC',
   },
   {
     id: '3',
     label: 'Рожеве',
     labelEn: 'Rosé',
-    value: '#FFC0CB'
+    value: '#FFC0CB',
   },
   {
     id: '4',
     label: 'Помаранчеве',
     labelEn: 'Orange',
-    value: '#FFA500'
-  }
+    value: '#FFA500',
+  },
 ]
-
 
 export const mockWineColorItems: WineColorItem[] = [
   {
@@ -166,8 +165,8 @@ export const mockWineColorItems: WineColorItem[] = [
     tones: {
       pale: '#B22222',
       medium: '#8B0000',
-      deep: '#660000'
-    }
+      deep: '#660000',
+    },
   },
   {
     name: 'Фіолетовий',
@@ -175,8 +174,7 @@ export const mockWineColorItems: WineColorItem[] = [
     tones: {
       pale: '#EE82EE',
       medium: '#8A2BE2',
-      deep: '#4B0082'
-    }
-  }
+      deep: '#4B0082',
+    },
+  },
 ]
-

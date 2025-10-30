@@ -6,7 +6,7 @@ export const AROMA_CRUD_ENDPOINTS = {
     UPDATE: '/aroma-groups/:groupId',
     DELETE: '/aroma-groups/:groupId',
   },
-  
+
   ITEMS: {
     LIST: '/aroma-items',
     CREATE: '/aroma-items',
@@ -14,9 +14,9 @@ export const AROMA_CRUD_ENDPOINTS = {
     UPDATE: '/aroma-items/:itemId',
     DELETE: '/aroma-items/:itemId',
   },
-  
+
   GROUP_ITEMS: {
     LIST: '/aroma-groups/:groupId/items',
     CREATE: '/aroma-groups/:groupId/items',
-  }
+  },
 } as const

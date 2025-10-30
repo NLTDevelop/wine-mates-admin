@@ -114,10 +114,10 @@ export const useWineTypes = () => {
       .toLowerCase()
       .replace(/\s+/g, '-')
       .replace(/[^a-z0-9-]/g, '')
-    
+
     const dataWithValue: WineType = {
       ...wineTypeData,
-      value
+      value,
     }
 
     createMutation.mutate(dataWithValue)
@@ -130,8 +130,8 @@ export const useWineTypes = () => {
       oldValue: editingWineType.value,
       newWineType: {
         ...editingWineType,
-        ...formData
-      }
+        ...formData,
+      },
     }
 
     updateMutation.mutate(paramsToUse)
@@ -145,20 +145,11 @@ export const useWineTypes = () => {
     setCurrentWineType(wineType)
   }
 
-  const canCreate = formData.label.trim() && 
-    formData.colors.length > 0 && 
-    formData.aromas.length > 0
+  const canCreate = formData.label.trim() && formData.colors.length > 0 && formData.aromas.length > 0
 
-  const canUpdate = editingWineType && 
-    formData.label.trim() && 
-    formData.colors.length > 0 && 
-    formData.aromas.length > 0
+  const canUpdate = editingWineType && formData.label.trim() && formData.colors.length > 0 && formData.aromas.length > 0
 
-
-  const isDuplicate = wineTypes.some(wt => 
-    wt.label.toLowerCase() === formData.label.toLowerCase() && 
-    wt.value !== editingWineType?.value
-  )
+  const isDuplicate = wineTypes.some(wt => wt.label.toLowerCase() === formData.label.toLowerCase() && wt.value !== editingWineType?.value)
 
   const isLoading = isLoadingList || createMutation.isPending || updateMutation.isPending || deleteMutation.isPending
 
@@ -167,7 +158,7 @@ export const useWineTypes = () => {
     currentWineType,
     formData,
     editingWineType,
-    
+
     isLoading,
     canCreate: canCreate && !isDuplicate,
     canUpdate: canUpdate && !isDuplicate,

@@ -10,13 +10,7 @@ interface PaletteItemActionsProps {
   showEditButton?: boolean
 }
 
-export const PaletteItemActions = ({  
-  onRemove, 
-  dataId, 
-  cardTextColorClass, 
-  onEdit, 
-  showEditButton = false 
-}: PaletteItemActionsProps) => {
+export const PaletteItemActions = ({ onRemove, dataId, cardTextColorClass, onEdit, showEditButton = false }: PaletteItemActionsProps) => {
   return (
     <div className="flex gap-1 items-center">
       {showEditButton && onEdit && (

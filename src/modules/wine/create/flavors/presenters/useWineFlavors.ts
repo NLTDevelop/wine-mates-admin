@@ -84,7 +84,6 @@ export const useWineFlavor = () => {
     },
   })
 
-
   const createGroup = (group: CreateWineAromaGroupParams) => {
     return createGroupMutation.mutateAsync(group)
   }
@@ -108,7 +107,6 @@ export const useWineFlavor = () => {
   const deleteItem = (groupId: string, itemId: string) => {
     return deleteItemMutation.mutateAsync({ groupId, itemId })
   }
-
 
   const searchAromaGroups = (searchTerm: string) => {
     store.searchAromaGroups(searchTerm)

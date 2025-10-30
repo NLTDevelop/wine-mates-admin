@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from '@/UIKit/shadcn/ui/card'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { Edit, Trash2, Wine, Palette,  Scale,  Cloud, Leaf } from 'lucide-react'
+import { Edit, Trash2, Wine, Palette, Scale, Cloud, Leaf } from 'lucide-react'
 import { WineType } from '../../entities/types/wine-type'
 import { useWineTypeCard } from '../../presenters/useWineTypeCard'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
@@ -26,7 +26,9 @@ export const WineTypeCard = ({ wineType, onUpdate, onDelete, isLoading }: WineTy
     getFlavorNoteLabel,
     getFlavorCharacteristicLabel,
     startEditing,
-    finishEditing,setIsOpenAccordion, isOpenAccordion,
+    finishEditing,
+    setIsOpenAccordion,
+    isOpenAccordion,
     isLoading: cardLoading,
   } = useWineTypeCard({ wineType, isLoading })
 
@@ -62,20 +64,26 @@ export const WineTypeCard = ({ wineType, onUpdate, onDelete, isLoading }: WineTy
           <div className="flex justify-between items-start">
             <div></div>
             <div className="flex gap-3 items-center">
-              <Button variant="secondary" size="sm" className=''  onClick={startEditing} disabled={cardLoading}>
-                <span>{t("button.edit")}</span>
+              <Button variant="secondary" size="sm" className="" onClick={startEditing} disabled={cardLoading}>
+                <span>{t('button.edit')}</span>
                 <Edit className="text-green-700" />
               </Button>
-              <Button variant="delete" size="sm" className='' onClick={() => onDelete(wineType.value)} disabled={cardLoading}>
-                 <span>{t("button.delete")}</span>
-                <Trash2  />
+              <Button variant="delete" size="sm" className="" onClick={() => onDelete(wineType.value)} disabled={cardLoading}>
+                <span>{t('button.delete')}</span>
+                <Trash2 />
               </Button>
             </div>
           </div>
         </CardHeader>
 
         <CardContent className="space-y-2 max-sm:p-0 sm:p-0">
-          <Section title={t("types.colors")} icon={<Palette className="w-4 h-4" />} isExpanded={expandedSections.colors} onToggle={() => toggleSection('colors')} itemsCount={wineType.colors?.length || 0}>
+          <Section
+            title={t('types.colors')}
+            icon={<Palette className="w-4 h-4" />}
+            isExpanded={expandedSections.colors}
+            onToggle={() => toggleSection('colors')}
+            itemsCount={wineType.colors?.length || 0}
+          >
             <div className="space-y-2">
               {wineType.colors?.map(colorId => (
                 <div key={colorId} className="flex items-center gap-3 p-2 border rounded">
@@ -86,7 +94,13 @@ export const WineTypeCard = ({ wineType, onUpdate, onDelete, isLoading }: WineTy
             </div>
           </Section>
 
-          <Section title={t("types.aromas")} icon={<Cloud className="w-4 h-4" />} isExpanded={expandedSections.aromas} onToggle={() => toggleSection('aromas')} itemsCount={wineType.aromas?.length || 0}>
+          <Section
+            title={t('types.aromas')}
+            icon={<Cloud className="w-4 h-4" />}
+            isExpanded={expandedSections.aromas}
+            onToggle={() => toggleSection('aromas')}
+            itemsCount={wineType.aromas?.length || 0}
+          >
             <div className="space-y-2">
               {wineType.aromas?.map(aromaId => (
                 <div key={aromaId} className="p-2 border rounded">
@@ -97,7 +111,7 @@ export const WineTypeCard = ({ wineType, onUpdate, onDelete, isLoading }: WineTy
           </Section>
 
           <Section
-            title={t("types.flavor_notes")}
+            title={t('types.flavor_notes')}
             icon={<Leaf className="w-4 h-4" />}
             isExpanded={expandedSections.flavorNotes}
             onToggle={() => toggleSection('flavorNotes')}
@@ -113,7 +127,7 @@ export const WineTypeCard = ({ wineType, onUpdate, onDelete, isLoading }: WineTy
           </Section>
 
           <Section
-            title={t("types.flavor_characteristics")}
+            title={t('types.flavor_characteristics')}
             icon={<Scale className="w-4 h-4" />}
             isExpanded={expandedSections.flavorCharacteristics}
             onToggle={() => toggleSection('flavorCharacteristics')}

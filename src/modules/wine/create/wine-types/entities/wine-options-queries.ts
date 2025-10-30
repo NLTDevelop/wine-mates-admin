@@ -1,4 +1,4 @@
-import { wineOptionsService } from "./wine-options-service";
+import { wineOptionsService } from './wine-options-service'
 
 export const wineOptionsQueries = {
   colors: (search?: string) => ({

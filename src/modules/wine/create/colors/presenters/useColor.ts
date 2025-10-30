@@ -36,18 +36,18 @@ export const useColor = () => {
 
   const createColorMutation = useMutation({
     ...colorQueries.create(),
-    onSuccess: (newColor) => {
+    onSuccess: newColor => {
       store.addColor(newColor)
       queryClient.invalidateQueries({ queryKey: ['colors', 'list'] })
-    }
+    },
   })
 
   const updateColorMutation = useMutation({
     ...colorQueries.update(),
-    onSuccess: (updatedColor) => {
+    onSuccess: updatedColor => {
       store.updateColor(updatedColor.id, updatedColor)
       queryClient.invalidateQueries({ queryKey: ['colors', 'list'] })
-    }
+    },
   })
 
   const deleteColorMutation = useMutation({
@@ -55,7 +55,7 @@ export const useColor = () => {
     onSuccess: (_, colorId) => {
       store.deleteColor(colorId)
       queryClient.invalidateQueries({ queryKey: ['colors', 'list'] })
-    }
+    },
   })
 
   const createShadeMutation = useMutation({
@@ -64,10 +64,9 @@ export const useColor = () => {
       store.addShade(newShade)
       queryClient.invalidateQueries({ queryKey: ['colors', variables.colorId, 'shades'] })
       queryClient.invalidateQueries({ queryKey: ['shades', 'list'] })
-    }
+    },
   })
 
-  // Actions
   const createColor = (color: CreateWineColorParams) => {
     return createColorMutation.mutateAsync(color)
   }
@@ -84,7 +83,6 @@ export const useColor = () => {
     return createShadeMutation.mutateAsync({ colorId, shade })
   }
 
-
   //TODO уточнит нужен ли поиск по цветам
   const searchColors = (searchTerm: string) => {
     store.searchColors(searchTerm)
@@ -93,7 +91,7 @@ export const useColor = () => {
   const clearSearch = () => {
     store.clearSearch()
   }
-// -------------------------
+  // -------------------------
 
   const setCurrentColor = (color: WineColor | null) => {
     store.setCurrentColor(color)

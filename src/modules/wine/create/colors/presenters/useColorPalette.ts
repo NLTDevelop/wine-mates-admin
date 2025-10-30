@@ -2,17 +2,10 @@ import { useState } from 'react'
 import { useColor } from './useColor'
 import { WineColor, WineColorItem } from '../entities/types/color'
 
-
 export const useColorPalette = () => {
-  const { 
-    colors, 
-    isLoading, 
-    createColor, 
-    updateColor, 
-    deleteColor, 
-    createShade 
-  } = useColor()
+  const { colors, isLoading, createColor, updateColor, deleteColor, createShade } = useColor()
 
+  const [isAccordionOpen, setIsAccordionOpen] = useState<{ [colorId: string]: boolean }>({})
   const [editingColor, setEditingColor] = useState<{ colorId: string; color?: WineColor } | null>(null)
   const [isFormOpen, setIsFormOpen] = useState<{ [colorId: string]: boolean }>({})
   const [newColorData, setNewColorData] = useState<{
@@ -45,25 +38,25 @@ export const useColorPalette = () => {
         tones: colorData.tones || {
           pale: colorData.value,
           medium: colorData.value,
-          deep: colorData.value
-        }
+          deep: colorData.value,
+        },
       }
 
       createShade(colorId, {
         label: colorData.label,
         labelEn: colorData.labelEn,
         value: colorData.value,
-        items: [wineColorItem]
+        items: [wineColorItem],
       })
-      
-      setNewColorData(prev => ({ 
-        ...prev, 
-        [colorId]: { 
-          label: '', 
-          labelEn: '', 
+
+      setNewColorData(prev => ({
+        ...prev,
+        [colorId]: {
+          label: '',
+          labelEn: '',
           value: '',
-          tones: undefined
-        } 
+          tones: undefined,
+        },
       }))
     }
   }
@@ -86,21 +79,21 @@ export const useColorPalette = () => {
         label: color.label,
         labelEn: color.labelEn || '',
         value: color.value,
-        tones: firstItem?.tones
+        tones: firstItem?.tones,
       },
     }))
   }
 
   const handleCancelEdit = (colorId: string) => {
     setEditingColor(null)
-    setNewColorData(prev => ({ 
-      ...prev, 
-      [colorId]: { 
-        label: '', 
-        labelEn: '', 
+    setNewColorData(prev => ({
+      ...prev,
+      [colorId]: {
+        label: '',
+        labelEn: '',
         value: '',
-        tones: undefined
-      } 
+        tones: undefined,
+      },
     }))
     setIsFormOpen(prev => ({ ...prev, [colorId]: false }))
   }
@@ -113,14 +106,16 @@ export const useColorPalette = () => {
           label: newColorData[colorId].label,
           labelEn: newColorData[colorId].labelEn,
           value: newColorData[colorId].value,
-          items: editingColor.color.items?.map((item, index) => 
-            index === 0 ? {
-              ...item,
-              name: newColorData[colorId].label,
-              nameEn: newColorData[colorId].labelEn,
-              tones: newColorData[colorId].tones || item.tones
-            } : item
-          )
+          items: editingColor.color.items?.map((item, index) =>
+            index === 0
+              ? {
+                  ...item,
+                  name: newColorData[colorId].label,
+                  nameEn: newColorData[colorId].labelEn,
+                  tones: newColorData[colorId].tones || item.tones,
+                }
+              : item
+          ),
         },
       })
     } else {
@@ -139,24 +134,34 @@ export const useColorPalette = () => {
     }))
   }
 
-const updateToneData = (colorId: string, tone: 'pale' | 'medium' | 'deep', value: string) => {
-  setNewColorData(prev => {
-    const currentData = prev[colorId] || { label: '', labelEn: '', value: '' }
-    
-    return {
-      ...prev,
-      [colorId]: {
-        ...currentData,
-        tones: {
-          pale: currentData.tones?.pale || currentData.value,
-          medium: currentData.tones?.medium || currentData.value,
-          deep: currentData.tones?.deep || currentData.value,
-          [tone]: value,
+  const updateToneData = (colorId: string, tone: 'pale' | 'medium' | 'deep', value: string) => {
+    setNewColorData(prev => {
+      const currentData = prev[colorId] || { label: '', labelEn: '', value: '' }
+
+      return {
+        ...prev,
+        [colorId]: {
+          ...currentData,
+          tones: {
+            pale: currentData.tones?.pale || currentData.value,
+            medium: currentData.tones?.medium || currentData.value,
+            deep: currentData.tones?.deep || currentData.value,
+            [tone]: value,
+          },
         },
-      },
+      }
+    })
+  }
+
+  const handleToggleAccordion = (colorId: string, isOpen: boolean) => {
+    setIsAccordionOpen(prev => ({
+      ...prev,
+      [colorId]: isOpen,
+    }))
+    if (!isOpen && isFormOpen[colorId]) {
+      handleCancelEdit(colorId)
     }
-  })
-}
+  }
 
   const canAddColor = (colorId: string) => {
     const data = newColorData[colorId]
@@ -169,6 +174,7 @@ const updateToneData = (colorId: string, tone: 'pale' | 'medium' | 'deep', value
 
     editingColor,
     isFormOpen,
+    isAccordionOpen,
     newColorData,
 
     handleAddCategory,
@@ -180,5 +186,6 @@ const updateToneData = (colorId: string, tone: 'pale' | 'medium' | 'deep', value
     updateFormData,
     updateToneData,
     canAddColor,
+    handleToggleAccordion,
   }
 }

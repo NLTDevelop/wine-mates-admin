@@ -20,14 +20,12 @@ interface UseCreateMainColorReturn {
   expandForm: () => void
 }
 
-export const useCreateMainColor = ({ 
-  onCreateColor, 
-}: UseCreateMainColorProps): UseCreateMainColorReturn => {
+export const useCreateMainColor = ({ onCreateColor }: UseCreateMainColorProps): UseCreateMainColorReturn => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [formData, setFormData] = useState({
     label: '',
     labelEn: '',
-    value: ""
+    value: '',
   })
 
   const updateFormData = (updates: Partial<typeof formData>) => {
@@ -37,7 +35,7 @@ export const useCreateMainColor = ({
   const handleCreateColor = () => {
     if (canCreateCategory) {
       onCreateColor(formData)
-      setFormData({ label: '', labelEn: '', value: "" })
+      setFormData({ label: '', labelEn: '', value: '' })
       setIsExpanded(false)
     }
   }

@@ -6,7 +6,6 @@ interface UseCreateFlavorGroupProps {
 }
 
 interface UseCreateFlavorGroupReturn {
-
   isExpanded: boolean
   formData: {
     label: string
@@ -22,15 +21,12 @@ interface UseCreateFlavorGroupReturn {
   expandForm: () => void
 }
 
-export const useCreateFlavorGroup = ({ 
-  onCreateGroup, 
-  isLoading = false 
-}: UseCreateFlavorGroupProps): UseCreateFlavorGroupReturn => {
+export const useCreateFlavorGroup = ({ onCreateGroup, isLoading = false }: UseCreateFlavorGroupProps): UseCreateFlavorGroupReturn => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [formData, setFormData] = useState({
     label: '',
     labelEn: '',
-    value: ""
+    value: '',
   })
 
   const updateFormData = (updates: Partial<typeof formData>) => {
@@ -40,7 +36,7 @@ export const useCreateFlavorGroup = ({
   const handleCreateGroup = () => {
     if (canCreateGroup) {
       onCreateGroup(formData)
-      setFormData({ label: '', labelEn: '', value: "" })
+      setFormData({ label: '', labelEn: '', value: '' })
       setIsExpanded(false)
     }
   }

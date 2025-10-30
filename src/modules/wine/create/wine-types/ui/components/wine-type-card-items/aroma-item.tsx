@@ -1,4 +1,4 @@
-import { Badge } from "@/UIKit/shadcn/ui/badge";
+import { Badge } from '@/UIKit/shadcn/ui/badge'
 
 export const AromaItem = ({ aroma }: { aroma: any }) => (
   <div className="p-2 border rounded">

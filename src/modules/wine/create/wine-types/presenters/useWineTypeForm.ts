@@ -1,5 +1,5 @@
-import { useState } from "react"
-import {  WineType } from "../entities/types/wine-type"
+import { useState } from 'react'
+import { WineType } from '../entities/types/wine-type'
 
 interface UseWineTypeFormProps {
   initialData?: WineType
@@ -21,22 +21,22 @@ export const useWineTypeForm = ({ initialData, onSubmit, isLoading }: UseWineTyp
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (isEdit) {
       const updatedWineType: WineType = {
         ...initialData!,
-        ...formData
+        ...formData,
       }
       onSubmit(updatedWineType)
     } else {
-       const value = formData.label
+      const value = formData.label
         .toLowerCase()
         .replace(/\s+/g, '-')
         .replace(/[^a-z0-9-]/g, '')
-      
+
       const newWineType: WineType = {
         value,
-        ...formData
+        ...formData,
       }
       onSubmit(newWineType)
     }
@@ -56,13 +56,11 @@ export const useWineTypeForm = ({ initialData, onSubmit, isLoading }: UseWineTyp
   const handleChange = (field: keyof typeof formData, value: any) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }))
   }
 
-  const canSubmit = formData.label.trim() && 
-    formData.colors.length > 0 && 
-    formData.aromas.length > 0
+  const canSubmit = formData.label.trim() && formData.colors.length > 0 && formData.aromas.length > 0
 
   return {
     formData,
@@ -70,6 +68,6 @@ export const useWineTypeForm = ({ initialData, onSubmit, isLoading }: UseWineTyp
     handleChange,
     canSubmit,
     isEdit,
-    isLoading
+    isLoading,
   }
 }

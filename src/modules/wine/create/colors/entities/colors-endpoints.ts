@@ -6,7 +6,7 @@ export const COLOR_CRUD_ENDPOINTS = {
     UPDATE: '/colors/:colorId',
     DELETE: '/colors/:colorId',
   },
-  
+
   SHADES: {
     LIST: '/shades',
     CREATE: '/shades',
@@ -14,9 +14,9 @@ export const COLOR_CRUD_ENDPOINTS = {
     UPDATE: '/shades/:shadeId',
     DELETE: '/shades/:shadeId',
   },
-  
+
   COLOR_SHADES: {
     LIST: '/colors/:colorId/shades',
     CREATE: '/colors/:colorId/shades',
-  }
-} as const;
+  },
+} as const
