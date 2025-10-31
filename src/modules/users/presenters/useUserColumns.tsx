@@ -79,11 +79,12 @@ export const useUserColumns = ({ onConfirmCategory }: UseUserColumnsProps) => {
         cell: ({ row }) => {
           const handleConfirmCategory = (e: React.MouseEvent) => {
             e.stopPropagation()
+            e.preventDefault()
             onConfirmCategory(row.original.id)
           }
           const isWineLower = row.original.wineExperienceLevel === USER_CATEGORIES.WINE_LOVER
           return !isWineLower ? (
-            <Button variant="outline" size="sm" onClick={handleConfirmCategory}>
+            <Button variant="outline" size="sm" onClick={handleConfirmCategory} style={{ pointerEvents: 'auto' }}>
               {row.original.isConfirmed ? t('cancel_confirmation') : t('confirm')}
             </Button>
           ) : null

@@ -1,17 +1,14 @@
-
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { wineColorQueries } from '../entities/color/wine-color-queries'
 import { WineColorCategory, WineCategoryFormData, WineColorTones, CreateCategoryParams, CreateColorParams } from '../entities/types/color'
 import { mockWineColorCategories } from '../entities/color/mock'
 
-
 interface CategoryFormsData {
   [categoryId: string]: WineCategoryFormData
 }
 
 export const useWineColors = () => {
-
   const [categoryFormsData, setCategoryFormsData] = useState<CategoryFormsData>({})
   const [selectedCategory, setSelectedCategory] = useState('')
 
@@ -23,7 +20,6 @@ export const useWineColors = () => {
   const createCategoryMutation = useMutation(wineColorQueries.categories.create())
   const deleteCategoryMutation = useMutation(wineColorQueries.categories.delete())
   const createColorMutation = useMutation(wineColorQueries.colors.create())
-
 
   const getCategoryFormData = (categoryId: string): WineCategoryFormData => {
     return (
@@ -46,7 +42,6 @@ export const useWineColors = () => {
     }))
   }
 
-
   const resetCategoryFormData = (categoryId: string) => {
     setCategoryFormsData(prev => ({
       ...prev,
@@ -60,7 +55,6 @@ export const useWineColors = () => {
   }
 
   const addCategory = (categoryData: WineCategoryFormData) => {
-    // console.log('categoryData->', categoryData)
     const params: CreateCategoryParams = {
       value: categoryData.value,
       label: categoryData.label,
@@ -69,9 +63,7 @@ export const useWineColors = () => {
     }
 
     createCategoryMutation.mutate(params, {
-      onSuccess: () => {
-       
-      },
+      onSuccess: () => {},
     })
   }
 
@@ -92,7 +84,6 @@ export const useWineColors = () => {
   }
 
   const addColorToCategory = (categoryId: string, colorData: { colorName: string; tones: WineColorTones }) => {
-    // console.log('colorData->', colorData)
     const params: CreateColorParams = {
       categoryId: categoryId,
       data: {
@@ -131,7 +122,7 @@ export const useWineColors = () => {
     const formData = getCategoryFormData(categoryId)
     if (canAddColor(categoryId) && formData.tones) {
       addColorToCategory(categoryId, {
-        colorName: formData.label, 
+        colorName: formData.label,
         tones: formData.tones,
       })
     }
@@ -172,12 +163,12 @@ export const useWineColors = () => {
     updateTone,
     selectedCategory,
     isLoading: isLoadingState,
-    canAddColor, 
+    canAddColor,
     addCategory,
     addColorToCategory,
     selectCategory,
     handleDeleteCategory,
-    handleAddColor, 
+    handleAddColor,
     baseHex,
     selectedCategoryData,
   }

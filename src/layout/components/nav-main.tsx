@@ -65,7 +65,7 @@ export function NavMain({
                     <SidebarMenuButton
                       tooltip={t(item.titleKey)}
                       className={cn(
-                        'h-10 relative transition-colors duration-300',
+                        'h-10 relative transition-colors duration-300  cursor-pointer',
                         !isDashboard && ['hover:bg-primary hover:text-primary-foreground', isActive && 'bg-primary text-primary-foreground'],
                         isDashboard && ['title-sidebar', 'hover:!bg-transparent hover:!title-sidebar']
                       )}
