@@ -70,7 +70,7 @@ export function NavMain({
                         isDashboard && ['title-sidebar', 'hover:!bg-transparent hover:!title-sidebar']
                       )}
                     >
-                      {item.icon && <item.icon className={isActive ? 'text-primary-foreground' : 'text-foreground'} />}
+                      {item.icon && <item.icon className={isActive ? 'text-primary-foreground' : 'text-input'} />}
                       <span className={`${isActive ? 'text-background' : ''}`}>{t(item.titleKey)}</span>
                       <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                     </SidebarMenuButton>
