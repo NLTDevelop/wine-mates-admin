@@ -4,7 +4,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/UIKi
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { Textarea } from '@/UIKit/shadcn/ui/textarea'
 import { Wine } from 'lucide-react'
-import { CreateWineFormData } from '@/modules/wine/create/entities/types'
+import { CreateWineFormData } from '@/modules/wine/create/general/entities/types'
 import { useState } from 'react'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
 import { useTranslation } from 'react-i18next'

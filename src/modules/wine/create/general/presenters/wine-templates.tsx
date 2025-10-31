@@ -1,4 +1,4 @@
-import { WineTemplate } from './types'
+import { WineTemplate } from '../entities/types'
 import { Palette, Grape, Flower, Wine, Tags } from 'lucide-react'
 import { TFunction } from 'i18next'
 
@@ -20,15 +20,20 @@ export const getWineTemplates = (t: TFunction): WineTemplate[] => {
       type: 'flavor_palette',
       name: t('flavor_palette'),
       description: t('settings_flavor_palette'),
+      icon: <Flower size={20} />,
+    },
+    {
+      type: 'taste_palette',
+      name: t('taste_palette'),
+      description: t('settings_taste_palette'),
       icon: <Grape size={20} />,
     },
     {
-      type: 'smell_palette',
-      name: t('smell_palette'),
-      description: t('settings_smell_palette'),
-      icon: <Flower size={20} />,
+      type: 'taste_characteristics_palette',
+      name: t('taste_characteristics_palette'),
+      description: t('settings_taste_characteristics_palette'),
+      icon: <Grape size={20} />,
     },
-
     {
       type: 'wine_creation',
       name: t('wine_creation'),

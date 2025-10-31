@@ -29,17 +29,17 @@ export const AccordionWrapper: FC<IProps> = ({ label, children, isOpen, onToggle
 
   return (
     <Accordion type="single" collapsible defaultValue={value}>
-      <AccordionItem value={label}>
-        <AccordionTrigger className={cn('w-full cursor-pointer')} onClick={handleToggle}>
-          <Card className={cn('cursor-pointer w-full', isOpen && 'rounded-b-none')} style={style}>
-            <CardContent className="sm:p-0 max-sm:p-0 flex items-center justify-between">
+      <Card className={cn('cursor-pointer w-full h-full', isOpen && 'rounded-b-none')} style={style}>
+        <AccordionItem value={label}>
+          <AccordionTrigger className={cn('w-full cursor-pointer')} onClick={handleToggle}>
+            <CardContent className="sm:p-0 max-sm:p-0 flex items-center justify-between h-full">
               {header ? header : <h3 className="text-lg  mb-4 font-medium text-left hover:underline">{label}</h3>}
               <ChevronDown className={cn('text-muted-foreground', isOpen && 'rotate-180', chevronStyle)} />
             </CardContent>
-          </Card>
-        </AccordionTrigger>
-        <AccordionContent>{children}</AccordionContent>
-      </AccordionItem>
+          </AccordionTrigger>
+          <AccordionContent>{children}</AccordionContent>
+        </AccordionItem>
+      </Card>
     </Accordion>
   )
 }

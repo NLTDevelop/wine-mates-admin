@@ -1,6 +1,0 @@
-export * from './components/config-managers/wine-template-selector'
-export * from '../colors/ui/color-palette-manager'
-export * from '../flavors/ui/components/flavor-palette-manager'
-export * from '../smells/ui/compoments/smell-palette-manager'
-export * from '../wine-types/ui/components/wine-type-manager'
-export * from './components/wine-management-view'

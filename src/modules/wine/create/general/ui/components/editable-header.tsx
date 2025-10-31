@@ -117,16 +117,16 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
           </div>
         </div>
       ) : (
-        <div className="flex gap-4 items-start text-start flex-1 cursor-pointer flex-wrap flex-col md:flex-row">
-          <div className="flex items-center  gap-2 w-[25%]">
-            <span className={cn('text-label flex items-center ', cardTextColorClass)}>{label}</span>
+        <div className="flex gap-1md:gap-4 items-start md:items-center text-start flex-1 cursor-pointer flex-wrap flex-col md:flex-row min-w-0">
+          <div className="flex items-end  gap-2 w-full md:w-[25%] min-h-6 min-w-0">
+            <span className={cn('text-label **flex items-center** whitespace-normal break-words min-w-0', cardTextColorClass)}>{label}</span>
           </div>
 
-          <div className="flex items-center gap-2 w-[25%]">
+          <div className="flex items-end gap-2 w-full md:w-[25%] h-6">
             <span className={cn('text-label flex items-center opacity-70 text-sm', cardTextColorClass)}>{labelEn}</span>
           </div>
 
-          <div className="flex items-center gap-2 w-[25%]">
+          <div className="flex items-end gap-2 w-full md:w-[25%] h-6">
             <span className={cn('text-label font-mono text-sm', cardTextColorClass)}>{value}</span>
           </div>
         </div>

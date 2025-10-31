@@ -4,9 +4,8 @@ import { usePaletteItem } from '@/modules/wine/create/colors/presenters/usePalet
 import { cn } from '@/lib/utils'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { WineColor } from '../../entities/types/color'
-import { PaletteItemActions } from '..'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
-import { EditableHeader } from '../../../general/ui/editable-header'
+import { EditableHeader, PaletteItemActions } from '../../../general/ui'
 
 export type ColorCardData = WineColor
 
@@ -62,7 +61,7 @@ export const ColorCard = ({ data, onRemove, isLoading, isEditable = false, onEdi
       label={`${data.label} (${data.value})`}
       isOpen={isAccordionOpen[data.id] || false}
       onToggle={handleToggle}
-      style={{ backgroundColor: color }}
+      style={{ backgroundColor: color, padding: '8px' }}
       chevronStyle={cardTextColorClass}
       header={
         <EditableHeader
@@ -87,6 +86,7 @@ export const ColorCard = ({ data, onRemove, isLoading, isEditable = false, onEdi
               cardTextColorClass={cardTextColorClass}
               onEdit={isEditable ? startEditing : undefined}
               showEditButton={isEditable && !isEditing}
+              isHeader
             />
           }
         />
@@ -95,7 +95,7 @@ export const ColorCard = ({ data, onRemove, isLoading, isEditable = false, onEdi
       <div
         onClick={handleMainClick}
         className={cn(
-          'relative flex flex-col h-auto min-h-8 w-full items-start justify-between p-3 pt-0 transition-all flex-1  bg-input/50',
+          'relative flex flex-col h-auto min-h-8 w-full items-start justify-between pl-1 pr-1 sm:pl-3 sm:pr-6 pb-2 pt-0 mt-2  transition-all flex-1  bg-muted',
           isFormOpen ? 'rounded-t-md rounded-b-0' : 'rounded-t-none rounded-b-md',
           'cursor-default',
           'group',
@@ -133,14 +133,15 @@ export const ColorCard = ({ data, onRemove, isLoading, isEditable = false, onEdi
                     dataId={item.id}
                     onEdit={onEditColor ? () => onEditColor(item as WineColor) : undefined}
                     showEditButton={isEditable && !isEditing && !!onEditColor}
+                    variant="col"
                   />
                 </div>
               )
             })}
           </div>
         )}
-        <div className="w-full flex justify-end mt-4">
-          <Button size="sm" variant="ghost" className="border-1" onClick={handleAddShadeClick}>
+        <div className="w-full flex justify-end">
+          <Button size="sm" variant="ghost" className="border-1 w-full sm:w-auto" onClick={handleAddShadeClick}>
             {isFormOpen ? t('button.cancel') : t('button.add_new_shade')}
           </Button>
         </div>

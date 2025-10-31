@@ -1,5 +1,5 @@
 import { api } from '@/services'
-import { WineOption } from '../../entities/types'
+import { WineOption } from '../../general/entities/types'
 
 export const wineOptionsService = {
   getColors: (search?: string): Promise<WineOption[]> => api.get('/wine-colors', { params: { search } }).then(response => response.data),

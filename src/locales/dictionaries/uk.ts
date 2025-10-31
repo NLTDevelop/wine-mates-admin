@@ -112,7 +112,6 @@ export const uk = {
     create_wine: 'Створення вина',
     color: 'Колір',
     title: 'Назва',
-
     entry_flavors: 'Введіть смаки (через кому)',
     entry_flavor_title: 'Введіть назву смаку',
     smells: 'Аромати',
@@ -127,13 +126,15 @@ export const uk = {
     entry_title: 'Ввведіть назву кольору',
     color_palette: 'Палітра кольорів',
     flavor_palette: 'Палітра ароматів',
-    smell_palette: 'Палітра смаків',
+    taste_palette: 'Палітра смаків',
     wine_creation: 'Створення вина',
     wine_type: 'Типи вина',
+    taste_characteristics_palette: 'Палітра смакових характеристик',
     settings_color_palette: 'Налаштування палітри кольорів',
-    settings_flavor_palette: 'Налаштування палітри смаків',
-    settings_smell_palette: 'Налаштування палітри ароматів',
+    settings_flavor_palette: 'Налаштування палітри ароматів',
+    settings_taste_palette: 'Налаштування палітри смаків',
     settings_wine_type: 'Налаштування типів вина',
+    settings_taste_characteristics_palette: 'Налаштування смакових характеристик вина',
     add_wine: 'Створення вина і додовання його у каталог',
     chose_color: 'Оберіть колір',
     chose_flavor: 'Оберіть смак',
@@ -172,10 +173,8 @@ export const uk = {
     exposure_periods: 'Термін витримки',
     peak_start: 'Початок',
     peak_end: 'Кінець',
-
     subcategory_name_ua: 'Відтінок (UA)',
     subcategory_name_en: 'Відтінок (EN)',
-
     pale_tone: 'Блідий',
     medium_tone: 'Середній',
     deep_tone: 'Насичений',
@@ -203,6 +202,12 @@ export const uk = {
       group_name_en: 'Назва групи (EN)',
       create_new_group: 'Створення нової групи ароматів',
     },
+    tastes: {
+      tastes: 'Смаки',
+      taste_name_ua: 'Назва смаку (UA)',
+      taste_name_en: 'Назва смаку (EN)',
+      create_new_taste: 'Створення смаку',
+    },
     button: {
       edit: 'Редагувати',
       delete: 'Видалити',
@@ -212,6 +217,7 @@ export const uk = {
       create_new_color: 'Додати базовий колір',
       create_new_aroma_group: 'Додати групу ароматів',
       add_new_aroma: 'Додати аромат',
+      create_new_taste: 'Додати смак',
     },
   },
 }

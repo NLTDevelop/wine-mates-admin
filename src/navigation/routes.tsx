@@ -8,7 +8,8 @@ import { DashboardView } from '@/modules/dashboard'
 import { AuthorizationView } from '@/modules/autorization'
 import { UsersView } from '@/modules/users/ui'
 import { FeaturesView } from '@/modules/features/ui'
-import { WineManagementView } from '@/modules/wine/create/ui'
+import { WineManagementView } from '@/modules/wine/create/general/ui'
+
 
 const usersRoutes = [{ path: PATHS.USERS, element: <UsersView /> }]
 

@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { cn } from '@/lib/utils'
-import { PaletteItemActions } from '../../../colors/ui/components/palette-item-actions'
 import { WineAromaGroup } from '../../entities/types/flavor'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
 import { useEditFlavorGroup } from '../../presenters/useEditFlavorGroup'
-import { EditableHeader } from '../../../general/ui/editable-header'
+import { EditableHeader, PaletteItemActions } from '../../../general/ui'
+
 
 interface FlavorGroupCardProps {
   data: WineAromaGroup
@@ -65,7 +65,7 @@ export const FlavorGroupCard = ({
       label={`${data.label} (${data.value})`}
       isOpen={isOpenAccordion}
       onToggle={handleToggle}
-      style={{ backgroundColor: color }}
+      style={{ backgroundColor: color, padding: "8px" }}
       chevronStyle={cardTextColorClass}
       header={
         <EditableHeader
@@ -90,6 +90,7 @@ export const FlavorGroupCard = ({
               cardTextColorClass={cardTextColorClass}
               onEdit={isEditable ? startEditing : undefined}
               showEditButton={isEditable && !isEditing}
+              isHeader
             />
           }
         />
@@ -97,7 +98,7 @@ export const FlavorGroupCard = ({
     >
       <div
         className={cn(
-          'relative flex flex-col h-auto min-h-8 w-full items-start justify-between p-3 pt-0 transition-all flex-1 bg-input/50',
+          'relative flex flex-col h-auto min-h-8 w-full items-start justify-between pl-1 pr-1 sm:pl-3 sm:pr-6 pb-2 pt-0 mt-2 transition-all flex-1 bg-muted',
           isFormOpen ? 'rounded-t-md rounded-b-0' : 'rounded-t-none rounded-b-md',
           'cursor-default',
           'group',
@@ -119,13 +120,14 @@ export const FlavorGroupCard = ({
                   cardTextColorClass={cardTextColorClass}
                   onEdit={isEditable ? () => handleEditItem(item) : undefined}
                   showEditButton={isEditable}
+                  variant="row"
                 />
               </div>
             ))}
           </div>
         )}
 
-        <div className="w-full flex justify-end mt-4">
+        <div className="w-full flex justify-end">
           <Button size="sm" variant="ghost" className="border-1" onClick={handleAddAromaClick}>
             {isFormOpen ? t('button.cancel') : t('button.add_new_aroma')}
           </Button>

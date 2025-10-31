@@ -1,4 +1,4 @@
-import { CreateWineFormData } from '@/modules/wine/create/entities/types'
+import { CreateWineFormData } from '@/modules/wine/create/general/entities/types'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/UIKit/shadcn/ui/form'

@@ -8,18 +8,20 @@ interface PaletteItemActionsProps {
   cardTextColorClass?: string
   onEdit?: () => void
   showEditButton?: boolean
+  variant?: 'row' | 'col'
+  isHeader?: boolean
 }
 
-export const PaletteItemActions = ({ onRemove, dataId, cardTextColorClass, onEdit, showEditButton = false }: PaletteItemActionsProps) => {
+export const PaletteItemActions = ({ onRemove, dataId, cardTextColorClass, onEdit, showEditButton = false, variant = 'row',isHeader=false }: PaletteItemActionsProps) => {
   return (
-    <div className="flex gap-1 items-center">
+    <div className={cn('flex gap-1 items-center', variant !== 'row' ? 'flex-col sm:flex-row' : 'flex-row')}>
       {showEditButton && onEdit && (
         <div
           onClick={e => {
             e.stopPropagation()
             onEdit()
           }}
-          className={cn(cardTextColorClass, 'p-1.5 opacity-70 hover:opacity-100 flex-shrink-0')}
+          className={cn(isHeader && cardTextColorClass, 'p-1.5 opacity-70 hover:opacity-100 flex-shrink-0')}
           title="Edit"
         >
           <PenLine className="h-4 w-4" />
@@ -31,7 +33,7 @@ export const PaletteItemActions = ({ onRemove, dataId, cardTextColorClass, onEdi
           e.stopPropagation()
           onRemove(dataId)
         }}
-        className={cn(cardTextColorClass, 'p-1.5 opacity-70 hover:opacity-100 flex-shrink-0')}
+        className={cn(isHeader && cardTextColorClass, 'p-1.5 opacity-70 hover:opacity-100 flex-shrink-0')}
         title="Delete"
       >
         <Trash2 className="w-4.5 h-4.5" />

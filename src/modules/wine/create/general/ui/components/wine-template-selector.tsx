@@ -1,5 +1,5 @@
 import { Card } from '@/UIKit/shadcn/ui/card'
-import { getWineTemplates } from '../../../entities/wine-templates'
+import { getWineTemplates } from '../../presenters/wine-templates'
 import { useTranslation } from 'react-i18next'
 
 interface WineTemplateSelectorProps {
