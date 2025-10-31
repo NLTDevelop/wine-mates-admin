@@ -65,12 +65,12 @@ export function NavMain({
                     <SidebarMenuButton
                       tooltip={t(item.titleKey)}
                       className={cn(
-                        'h-10 relative transition-colors duration-300',
+                        'h-10 relative transition-colors duration-300  cursor-pointer',
                         !isDashboard && ['hover:bg-primary hover:text-primary-foreground', isActive && 'bg-primary text-primary-foreground'],
                         isDashboard && ['title-sidebar', 'hover:!bg-transparent hover:!title-sidebar']
                       )}
                     >
-                      {item.icon && <item.icon className={isActive ? 'text-primary-foreground' : 'text-foreground'} />}
+                      {item.icon && <item.icon className={isActive ? 'text-primary-foreground' : 'text-input'} />}
                       <span className={`${isActive ? 'text-background' : ''}`}>{t(item.titleKey)}</span>
                       <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                     </SidebarMenuButton>

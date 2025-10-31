@@ -64,7 +64,12 @@ export function NLTDataTable<T>({ table, rowClassname, ToolBar, showColumnsSelec
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map(row => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} className={cn(rowClassname, 'border-input')} onClick={onRowClick ? () => onRowClick(row.original) : undefined}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  className={cn(rowClassname, 'border-input', onRowClick ? 'cursor-pointer' : 'cursor-default')}
+                  onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+                >
                   {row.getVisibleCells().map(cell => (
                     <TableCell className={(cell.column.columnDef.meta as ColumnMeta)?.cellClassName} key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
