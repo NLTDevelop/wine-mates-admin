@@ -1,7 +1,6 @@
 import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
 import { WineTaste } from './types/tastes'
 
-
 interface TasteStoreState {
   tastes: WineTaste[]
   searchResults: WineTaste[]
@@ -43,9 +42,9 @@ export const useTasteStore = createStoreDevToolsWrapper<TasteStoreState>(
     updateTaste: (tasteId, newTaste) =>
       set(
         (state: TasteStoreState) => ({
-          tastes: state.tastes.map(t => t.id === tasteId ? newTaste : t),
+          tastes: state.tastes.map(t => (t.id === tasteId ? newTaste : t)),
           currentTaste: state.currentTaste?.id === tasteId ? newTaste : state.currentTaste,
-          searchResults: state.searchResults.map(t => t.id === tasteId ? newTaste : t),
+          searchResults: state.searchResults.map(t => (t.id === tasteId ? newTaste : t)),
         }),
         false,
         'tastes/updateTaste'
@@ -65,10 +64,7 @@ export const useTasteStore = createStoreDevToolsWrapper<TasteStoreState>(
     searchTastes: searchTerm =>
       set(
         (state: TasteStoreState) => ({
-          searchResults: state.tastes.filter(t => 
-            t.label.toLowerCase().includes(searchTerm.toLowerCase()) || 
-            t.labelEn?.toLowerCase().includes(searchTerm.toLowerCase())
-          ),
+          searchResults: state.tastes.filter(t => t.label.toLowerCase().includes(searchTerm.toLowerCase()) || t.labelEn?.toLowerCase().includes(searchTerm.toLowerCase())),
         }),
         false,
         'tastes/searchTastes'

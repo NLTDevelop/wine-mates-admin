@@ -2,12 +2,13 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Form } from '@/UIKit/shadcn/ui/form'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { CreateWineFormData } from '../../../general/entities/types'
+
 import { BasicInfoSection } from './forms/basic-info-section'
 import { VisualCharacteristicsSection } from './forms/visual-characteristics-section'
 import { TasteSmellSection } from './forms/taste-smell-section'
 import { WineCharacteristicsSection } from './forms/wine-characteristics-section'
 import { AgingSection } from './forms/aging-section'
+import { CreateWineFormData } from '../../../wine-types/entities/types/wine-type'
 
 export const CreateWineForm: React.FC = () => {
   const { t } = useTranslation('common')

@@ -5,7 +5,7 @@ import { Label } from '@/UIKit/shadcn/ui/label'
 import { X, Plus } from 'lucide-react'
 import { CreateWineTypeParams } from '../../../entities/types/wine-type'
 import { useWineTypeForm } from '../../../presenters/useWineTypeForm'
-import { useWineOptions, useWineOptionsMock } from '../../../presenters/useWineOptions'
+import { useWineOptionsMock } from '../../../presenters/useWineOptions'
 import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
 
 interface CreateWineTypeFormProps {
@@ -53,7 +53,6 @@ export const CreateWineTypeForm = ({ onSubmit, onCancel, isLoading }: CreateWine
             </div>
           </div>
 
-          {/* Цвета */}
           <div className="space-y-2">
             <Label htmlFor="colors">Цвета вина *</Label>
             <MultiSelect

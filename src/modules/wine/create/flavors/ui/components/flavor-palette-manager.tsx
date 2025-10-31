@@ -1,23 +1,23 @@
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { useTranslation } from 'react-i18next'
-import { mockAromaGroups } from '../../entities/mock'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { FlavorGroupCard, CreateFlavorGroupSection } from '..'
 import { useFlavorPalette } from '../../presenters/useFlavorPalette'
 import { Plus, Save } from 'lucide-react'
+import { StatesManager } from './state-maneger'
 
 export const FlavorPaletteManager = () => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
-  const aromaGroups = mockAromaGroups
-
   const {
+    aromaGroups,
     isLoading,
     editingGroup,
     isFormOpen,
     newItemData,
+    isAccordionOpen,
     handleAddGroup,
     handleDeleteGroup,
     handleToggleForm,
@@ -26,8 +26,10 @@ export const FlavorPaletteManager = () => {
     handleSaveItem,
     updateItemFormData,
     canAddItem,
-    isAccordionOpen,
     handleToggleAccordion,
+    handleUpdateItemStates,
+    getItemStates,
+    getNewItemStates,
   } = useFlavorPalette()
 
   const handleEditItemClick = (groupId: string, item: any) => {
@@ -81,6 +83,16 @@ export const FlavorPaletteManager = () => {
                         />
                       </div>
                     </div>
+                    <StatesManager
+                      states={editingGroup?.editingItem ? getItemStates(editingGroup.editingItem.id) : getNewItemStates(group.id)}
+                      onStatesChange={states => {
+                        if (editingGroup?.editingItem) {
+                          handleUpdateItemStates(editingGroup.editingItem.id, states)
+                        } else {
+                          handleUpdateItemStates(`new-${group.id}`, states)
+                        }
+                      }}
+                    />
                   </div>
 
                   <div className="flex justify-end gap-2 mt-6">

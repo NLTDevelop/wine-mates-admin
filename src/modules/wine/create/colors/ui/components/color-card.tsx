@@ -140,7 +140,8 @@ export const ColorCard = ({ data, onRemove, isLoading, isEditable = false, onEdi
             })}
           </div>
         )}
-        <div className="w-full flex justify-end">
+
+        <div className={cn('w-full flex justify-end', !renderableItems.length && 'mt-3')}>
           <Button size="sm" variant="ghost" className="border-1 w-full sm:w-auto" onClick={handleAddShadeClick}>
             {isFormOpen ? t('button.cancel') : t('button.add_new_shade')}
           </Button>

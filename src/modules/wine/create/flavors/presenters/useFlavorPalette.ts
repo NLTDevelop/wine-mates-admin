@@ -1,8 +1,11 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useWineFlavor } from './useWineFlavors'
-import { WineAromaGroup } from '../entities/types/flavor'
+import { StateItem, WineAromaGroup } from '../entities/types/flavor'
+import { lightenColor, sortColorsByBrightness } from '@/lib/utils'
+import { mockAromaGroups } from '../entities/mock'
 
 export const useFlavorPalette = () => {
+  const aromaGroups = mockAromaGroups
   const { isLoading, createGroup, deleteGroup, createItem, updateItem } = useWineFlavor()
 
   const [isAccordionOpen, setIsAccordionOpen] = useState<{ [groupId: string]: boolean }>({})
@@ -16,6 +19,10 @@ export const useFlavorPalette = () => {
     }
   }>({})
 
+  const [itemStates, setItemStates] = useState<{
+    [itemId: string]: StateItem[]
+  }>({})
+
   const handleAddGroup = (groupData: { value: string; label: string; labelEn: string }) => {
     createGroup(groupData)
   }
@@ -27,11 +34,26 @@ export const useFlavorPalette = () => {
   const handleAddItem = (groupId: string) => {
     const itemData = newItemData[groupId]
     if (itemData) {
-      createItem(groupId, itemData)
-      setNewItemData(prev => ({
-        ...prev,
-        [groupId]: { name: '', nameEn: '', description: '' },
-      }))
+      const group = aromaGroups.find(g => g.id === groupId)
+      if (group) {
+        const lightenedColor = lightenColor(group.value, 20)
+
+        createItem(groupId, {
+          ...itemData,
+          value: lightenedColor,
+          state: itemStates[`new-${groupId}`] || [],
+        })
+
+        setNewItemData(prev => ({
+          ...prev,
+          [groupId]: { name: '', nameEn: '', description: '' },
+        }))
+        setItemStates(prev => {
+          const newState = { ...prev }
+          delete newState[`new-${groupId}`]
+          return newState
+        })
+      }
     }
   }
 
@@ -55,19 +77,35 @@ export const useFlavorPalette = () => {
     }))
   }
 
-  const handleEditItem = (groupId: string, item: any) => {
+  const handleEditItem = (groupId: string, itemData: any) => {
+    let itemToEdit = itemData
+    if (itemData.items && itemData.items.length > 0) {
+      itemToEdit = itemData.items[0]
+    }
+
+    setItemStates(prev => {
+      const newState = { ...prev }
+      delete newState[`new-${groupId}`]
+      return newState
+    })
+
     setEditingGroup({
       groupId,
-      editingItem: item,
+      editingItem: itemToEdit,
     })
     setIsFormOpen(prev => ({ ...prev, [groupId]: true }))
 
     setNewItemData(prev => ({
       ...prev,
       [groupId]: {
-        name: item.name || item.label || '',
-        nameEn: item.nameEn || item.labelEn || '',
+        name: itemToEdit.name || itemToEdit.label || '',
+        nameEn: itemToEdit.nameEn || itemToEdit.labelEn || '',
       },
+    }))
+
+    setItemStates(prev => ({
+      ...prev,
+      [itemToEdit.id]: itemToEdit.state || [],
     }))
   }
 
@@ -78,21 +116,48 @@ export const useFlavorPalette = () => {
       [groupId]: { name: '', nameEn: '', description: '' },
     }))
     setIsFormOpen(prev => ({ ...prev, [groupId]: false }))
+    setItemStates(prev => {
+      const newState = { ...prev }
+      delete newState[`new-${groupId}`]
+      if (editingGroup?.editingItem?.id) {
+        delete newState[editingGroup.editingItem.id]
+      }
+      return newState
+    })
   }
 
   const handleSaveItem = (groupId: string) => {
     if (editingGroup && editingGroup.groupId === groupId) {
       if (editingGroup.editingItem) {
+        const group = aromaGroups.find(g => g.id === groupId)
+        const lightenedColor = group ? lightenColor(group.value, 20) : editingGroup.editingItem.value
+
         updateItem(groupId, editingGroup.editingItem.id, {
           name: newItemData[groupId].name,
           nameEn: newItemData[groupId].nameEn,
-          description: newItemData[groupId].description,
+          value: lightenedColor,
+          state: itemStates[editingGroup.editingItem.id] || [],
         })
       }
     } else {
       handleAddItem(groupId)
     }
     handleCancelEdit(groupId)
+  }
+
+  const handleUpdateItemStates = (itemId: string, states: StateItem[]) => {
+    setItemStates(prev => ({
+      ...prev,
+      [itemId]: states,
+    }))
+  }
+
+  const getItemStates = (itemId: string): StateItem[] => {
+    return itemStates[itemId] || []
+  }
+
+  const getNewItemStates = (groupId: string): StateItem[] => {
+    return itemStates[`new-${groupId}`] || []
   }
 
   const updateItemFormData = (groupId: string, field: string, value: string) => {
@@ -115,17 +180,23 @@ export const useFlavorPalette = () => {
     }
   }
 
+  const sortedItems = useMemo(() => {
+    return sortColorsByBrightness(aromaGroups)
+  }, [aromaGroups])
+
   const canAddItem = (groupId: string) => {
     const data = newItemData[groupId]
     return !!(data?.name && data.nameEn)
   }
 
   return {
+    aromaGroups: sortedItems,
     isLoading,
     editingGroup,
     isFormOpen,
     newItemData,
     isAccordionOpen,
+    itemStates,
 
     handleAddGroup,
     handleDeleteGroup,
@@ -137,5 +208,9 @@ export const useFlavorPalette = () => {
     updateItemFormData,
     canAddItem,
     handleToggleAccordion,
+
+    handleUpdateItemStates,
+    getItemStates,
+    getNewItemStates,
   }
 }

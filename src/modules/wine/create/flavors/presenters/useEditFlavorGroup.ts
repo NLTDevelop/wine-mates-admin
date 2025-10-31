@@ -34,6 +34,7 @@ interface UseEditFlavorGroupReturn {
   handleAddAromaClick: () => void
   setEditValue: (field: string, value: string) => void
   getItemName: (item: any) => string
+  getItemsColor: (item: any) => string
 }
 
 export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable = false, isFormOpen = false, onCancel, onToggleForm }: UseEditFlavorGroupProps): UseEditFlavorGroupReturn => {
@@ -143,7 +144,11 @@ export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable 
     return item.name || item.label || ''
   }, [])
 
-  const getRenderableItems = useCallback((): any[] => {
+  const getItemsColor = useCallback((item: any): string => {
+    return item.value || ''
+  }, [])
+
+  const getRenderableItems = useCallback((): WineAromaGroup[] => {
     if (data.items && data.items.length > 0) {
       return data.items.map((item, index) => ({
         id: item.id || `${data.id}-item-${index}`,
@@ -156,7 +161,7 @@ export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable 
     return []
   }, [data])
 
-  const renderableItems = getRenderableItems()
+  const renderableItems: WineAromaGroup[] = getRenderableItems()
 
   return {
     isEditing,
@@ -174,5 +179,6 @@ export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable 
     handleAddAromaClick,
     getItemName,
     setEditValue,
+    getItemsColor,
   }
 }

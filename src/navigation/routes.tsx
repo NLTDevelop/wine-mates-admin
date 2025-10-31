@@ -10,7 +10,6 @@ import { UsersView } from '@/modules/users/ui'
 import { FeaturesView } from '@/modules/features/ui'
 import { WineManagementView } from '@/modules/wine/create/general/ui'
 
-
 const usersRoutes = [{ path: PATHS.USERS, element: <UsersView /> }]
 
 const featuresRoutes = [{ path: PATHS.FEATURES, element: <FeaturesView /> }]

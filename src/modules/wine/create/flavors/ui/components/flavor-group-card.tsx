@@ -1,11 +1,10 @@
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { cn } from '@/lib/utils'
-import { WineAromaGroup } from '../../entities/types/flavor'
+import { StateItem, WineAromaGroup } from '../../entities/types/flavor'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
 import { useEditFlavorGroup } from '../../presenters/useEditFlavorGroup'
 import { EditableHeader, PaletteItemActions } from '../../../general/ui'
-
 
 interface FlavorGroupCardProps {
   data: WineAromaGroup
@@ -65,7 +64,7 @@ export const FlavorGroupCard = ({
       label={`${data.label} (${data.value})`}
       isOpen={isOpenAccordion}
       onToggle={handleToggle}
-      style={{ backgroundColor: color, padding: "8px" }}
+      style={{ backgroundColor: color, padding: '8px' }}
       chevronStyle={cardTextColorClass}
       header={
         <EditableHeader
@@ -106,28 +105,44 @@ export const FlavorGroupCard = ({
         )}
       >
         {renderableItems.length > 0 && (
-          <div className="space-y-2 mt-3 hover:brightness-100 w-full">
-            {renderableItems.map((item, index) => (
-              <div key={item.id || index} className="flex gap-2 justify-between items-start ">
-                <div className="flex gap-2 flex-1 justify-between items-center">
-                  <div className="text-sm">{getItemName(item)}</div>
-                </div>
+          <div className="space-y-3 mt-3 hover:brightness-100 w-full">
+            {renderableItems.map((item, index) => {
+              const aromaItem = item?.items?.[0]
+              return (
+                <div key={item.id || index} className="flex gap-2 justify-between items-start">
+                  <div className="flex gap-2  items-center w-full">
+                    <div className=" flex gap-2 items-center w-1/5">
+                      <div className="h-6 w-6 rounded-full mt-1 flex-shrink-0" style={{ backgroundColor: aromaItem?.value }}></div>
+                      <div className={`text-sm font-medium`}>{getItemName(item)}</div>
+                    </div>
 
-                <PaletteItemActions
-                  isLoading={isLoading || false}
-                  onRemove={onRemove}
-                  dataId={item.id}
-                  cardTextColorClass={cardTextColorClass}
-                  onEdit={isEditable ? () => handleEditItem(item) : undefined}
-                  showEditButton={isEditable}
-                  variant="row"
-                />
-              </div>
-            ))}
+                    {aromaItem?.state && aromaItem.state.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mr-4">
+                        {aromaItem.state.map((stateItem: StateItem) => (
+                          <span key={stateItem.id} className={cn('px-2 py-1 text-xs rounded-md border', cardTextColorClass, 'border-current/30 bg-current/10')}>
+                            {stateItem.stateName}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <PaletteItemActions
+                    isLoading={isLoading || false}
+                    onRemove={onRemove}
+                    dataId={item.id}
+                    cardTextColorClass={cardTextColorClass}
+                    onEdit={isEditable ? () => handleEditItem(aromaItem) : undefined}
+                    showEditButton={isEditable}
+                    variant="row"
+                  />
+                </div>
+              )
+            })}
           </div>
         )}
 
-        <div className="w-full flex justify-end">
+        <div className={cn('w-full flex justify-end', !renderableItems.length && 'mt-3')}>
           <Button size="sm" variant="ghost" className="border-1" onClick={handleAddAromaClick}>
             {isFormOpen ? t('button.cancel') : t('button.add_new_aroma')}
           </Button>

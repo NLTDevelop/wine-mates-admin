@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { CreateWineAromaGroupParams, UpdateWineAromaGroupParams, CreateWineAromaItemParams, WineAromaGroup } from '../entities/types/flavor'
+import { CreateWineAromaGroupParams, UpdateWineAromaGroupParams, CreateWineAromaItemParams, WineAromaGroup, StateItem } from '../entities/types/flavor'
 import { useWineFlavorStore } from '../entities/wine-flavor-store'
 import { wineFlavorQueries } from '../entities/wine-flavor-queries'
 
@@ -84,6 +84,15 @@ export const useWineFlavor = () => {
     },
   })
 
+  const updateItemStatesMutation = useMutation({
+    ...wineFlavorQueries.updateItemStates(),
+    onSuccess: (_updatedItem, variables) => {
+      store.updateAromaItemStates(variables.groupId, variables.itemId, variables.states)
+      queryClient.invalidateQueries({ queryKey: ['aroma-groups', variables.groupId, 'items'] })
+      queryClient.invalidateQueries({ queryKey: ['aroma-items', 'list'] })
+    },
+  })
+
   const createGroup = (group: CreateWineAromaGroupParams) => {
     return createGroupMutation.mutateAsync(group)
   }
@@ -106,6 +115,10 @@ export const useWineFlavor = () => {
 
   const deleteItem = (groupId: string, itemId: string) => {
     return deleteItemMutation.mutateAsync({ groupId, itemId })
+  }
+
+  const updateItemStates = (groupId: string, itemId: string, states: StateItem[]) => {
+    return updateItemStatesMutation.mutateAsync({ groupId, itemId, states })
   }
 
   const searchAromaGroups = (searchTerm: string) => {
@@ -156,6 +169,7 @@ export const useWineFlavor = () => {
     isCreatingItem: createItemMutation.isPending,
     isUpdatingItem: updateItemMutation.isPending,
     isDeletingItem: deleteItemMutation.isPending,
+    isUpdatingItemStates: updateItemStatesMutation.isPending,
 
     createGroup,
     updateGroup,
@@ -163,6 +177,7 @@ export const useWineFlavor = () => {
     createItem,
     updateItem,
     deleteItem,
+    updateItemStates,
     searchAromaGroups,
     clearSearch,
     setCurrentAromaGroup,

@@ -1,25 +1,22 @@
 import { UseFormReturn } from 'react-hook-form'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/UIKit/shadcn/ui/form'
-import { SelectColorPicker } from '@/UIKit/shadcn/ui/select-color-picker'
 import { Star } from 'lucide-react'
-import { CreateWineFormData } from '@/modules/wine/create/general/entities/types'
-import { useWineFlavors } from '@/modules/wine/create/flavors/presenters/useWineFlavors'
-import { useWineSmells } from '@/modules/wine/create/presenters/useWineSmells'
 import { useState } from 'react'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
 import { useTranslation } from 'react-i18next'
+import { CreateWineFormData } from '@/modules/wine/create/wine-types/entities/types/wine-type'
+// import { useWineFlavorStore } from '@/modules/wine/create/flavors/entities/wine-flavor-store'
 
 interface TasteSmellSectionProps {
   form: UseFormReturn<CreateWineFormData>
 }
 
-export const TasteSmellSection = ({ form }: TasteSmellSectionProps) => {
+export const TasteSmellSection = ({} /*form*/ : TasteSmellSectionProps) => {
   const { t } = useTranslation('wines')
   const [isOpenAccordion, setIsOpenAccordion] = useState<boolean>(false)
 
-  const { flavors } = useWineFlavors()
-  const { smells } = useWineSmells()
+  // const { flavors } = useWineFlavorStore()
+  // const { smells } = useWineSmells()
 
   return (
     <AccordionWrapper
@@ -35,7 +32,7 @@ export const TasteSmellSection = ({ form }: TasteSmellSectionProps) => {
     >
       <Card className="rounded-t-none bg-input/50">
         <CardContent className="space-y-6">
-          <FormField
+          {/* <FormField
             control={form.control}
             name="tasteTags.descriptors"
             render={({ field }) => (
@@ -54,9 +51,9 @@ export const TasteSmellSection = ({ form }: TasteSmellSectionProps) => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
-          <FormField
+          {/* <FormField
             control={form.control}
             name="smellTags.descriptors"
             render={({ field }) => (
@@ -75,7 +72,7 @@ export const TasteSmellSection = ({ form }: TasteSmellSectionProps) => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
         </CardContent>
       </Card>
     </AccordionWrapper>

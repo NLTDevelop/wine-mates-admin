@@ -12,7 +12,7 @@ interface PaletteItemActionsProps {
   isHeader?: boolean
 }
 
-export const PaletteItemActions = ({ onRemove, dataId, cardTextColorClass, onEdit, showEditButton = false, variant = 'row',isHeader=false }: PaletteItemActionsProps) => {
+export const PaletteItemActions = ({ onRemove, dataId, cardTextColorClass, onEdit, showEditButton = false, variant = 'row', isHeader = false }: PaletteItemActionsProps) => {
   return (
     <div className={cn('flex gap-1 items-center', variant !== 'row' ? 'flex-col sm:flex-row' : 'flex-row')}>
       {showEditButton && onEdit && (

@@ -1,6 +1,5 @@
-import { CreateWineTasteParams, UpdateWineTasteParams } from "./types/tastes";
-import { tasteService } from "./wine-taste-service";
-
+import { CreateWineTasteParams, UpdateWineTasteParams } from './types/tastes'
+import { tasteService } from './wine-taste-service'
 
 export const tasteQueries = {
   list: () => ({

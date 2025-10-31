@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useColor } from './useColor'
 import { WineColor, WineColorItem } from '../entities/types/color'
+import { sortColorsByBrightness } from '@/lib/utils'
+import { mockColors } from '../entities/mock'
 
 export const useColorPalette = () => {
-  const { colors, isLoading, createColor, updateColor, deleteColor, createShade } = useColor()
+  const colors = mockColors
+  const { /*colors,*/ isLoading, createColor, updateColor, deleteColor, createShade } = useColor()
 
   const [isAccordionOpen, setIsAccordionOpen] = useState<{ [colorId: string]: boolean }>({})
   const [editingColor, setEditingColor] = useState<{ colorId: string; color?: WineColor } | null>(null)
@@ -168,8 +171,12 @@ export const useColorPalette = () => {
     return !!(data?.label && data.labelEn && data.tones?.deep && data.tones?.medium && data.tones?.pale)
   }
 
+  const sortedItems = useMemo(() => {
+    return sortColorsByBrightness(colors)
+  }, [colors])
+
   return {
-    colors,
+    colors: sortedItems,
     isLoading,
 
     editingColor,

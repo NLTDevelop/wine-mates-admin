@@ -5,7 +5,7 @@ import { Label } from '@/UIKit/shadcn/ui/label'
 import { X, Save } from 'lucide-react'
 import { WineType } from '../../../entities/types/wine-type'
 import { useWineTypeForm } from '../../../presenters/useWineTypeForm'
-import { useWineOptions, useWineOptionsMock } from '../../../presenters/useWineOptions'
+import { useWineOptionsMock } from '../../../presenters/useWineOptions'
 import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
 
 interface EditWineTypeFormProps {

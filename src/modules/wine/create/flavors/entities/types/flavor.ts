@@ -1,7 +1,14 @@
+export interface StateItem {
+  id: string
+  stateName: string
+  order: number
+}
 export interface WineAromaItem {
   id: string
   name: string
   nameEn: string
+  value: string
+  state: StateItem[]
 }
 
 export interface WineAromaGroup {
@@ -24,10 +31,21 @@ export interface UpdateWineAromaGroupParams {
   newGroup: CreateWineAromaGroupParams
 }
 
+export interface CreateStateItemParams {
+  stateName: string
+  order: number
+}
+
+export interface UpdateStateItemParams {
+  stateId: string
+  newState: CreateStateItemParams
+}
+
 export interface CreateWineAromaItemParams {
   name: string
   nameEn: string
-  description?: string
+  value: string
+  state?: StateItem[]
 }
 
 export interface UpdateWineAromaItemParams {

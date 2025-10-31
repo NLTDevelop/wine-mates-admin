@@ -29,7 +29,6 @@ export const useWineTypes = () => {
   const {
     wineTypes,
     currentWineType,
-    setWineTypes,
     setCurrentWineType,
     addWineType: addToStore,
     updateWineType: updateInStore,

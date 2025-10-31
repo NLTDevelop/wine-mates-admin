@@ -21,7 +21,7 @@ interface UseCreateFlavorGroupReturn {
   expandForm: () => void
 }
 
-export const useCreateFlavorGroup = ({ onCreateGroup, isLoading = false }: UseCreateFlavorGroupProps): UseCreateFlavorGroupReturn => {
+export const useCreateFlavorGroup = ({ onCreateGroup }: UseCreateFlavorGroupProps): UseCreateFlavorGroupReturn => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [formData, setFormData] = useState({
     label: '',

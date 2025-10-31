@@ -2,12 +2,9 @@ import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { CreateTasteSection } from '..'
 import { TasteCard } from './taste-card'
 import { useTastePalette } from '../../presenters/useTastePalette'
-import { mockTastes } from '../../entities/mock'
 
 export const TastePaletteManager = () => {
-  const tastes = mockTastes
-
-  const { isLoading, isFormOpen, handleAddTaste, handleDeleteTaste, handleToggleForm, handleCancelEdit } = useTastePalette()
+  const { tastes, isLoading, isFormOpen, handleAddTaste, handleDeleteTaste, handleToggleForm, handleCancelEdit } = useTastePalette()
 
   return (
     <Card>
@@ -16,10 +13,10 @@ export const TastePaletteManager = () => {
           <CreateTasteSection onCreateTaste={handleAddTaste} isLoading={isLoading} />
         </div>
         <div className="mx-auto flex flex-col justify-center gap-2 w-full xl:w-2/3 ">
-        <div  className="flex gap-2 flex-col">
-          {tastes.map(taste => (
+          <div className="flex gap-2 flex-col">
+            {tastes.map(taste => (
               <TasteCard
-              key={taste.id}
+                key={taste.id}
                 data={taste}
                 onRemove={handleDeleteTaste}
                 isLoading={isLoading}
@@ -29,7 +26,7 @@ export const TastePaletteManager = () => {
                 onCancel={() => handleCancelEdit(taste.id)}
               />
             ))}
-            </div>
+          </div>
         </div>
       </CardContent>
     </Card>

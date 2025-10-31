@@ -8,7 +8,6 @@ import { WineTypeManager } from '../../../wine-types/ui'
 import { ColorPaletteManager } from '../../../colors/ui'
 import { FlavorPaletteManager } from '../../../flavors/ui'
 
-
 export const WineManagementView = () => {
   const { t } = useTranslation('wines')
   const [selectedTemplate, setSelectedTemplate] = useState<string>('')

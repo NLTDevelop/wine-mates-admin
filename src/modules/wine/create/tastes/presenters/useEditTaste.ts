@@ -4,7 +4,6 @@ import { useContrastText } from '@/hooks/ui/useContrastText'
 import { WineTaste } from '../entities/types/tastes'
 import { tasteQueries } from '../entities/wine-taste-queries'
 
-
 interface UseEditTasteProps {
   data: WineTaste
   isEditable?: boolean
@@ -30,15 +29,12 @@ interface UseEditTasteReturn {
   setEditValue: (field: string, value: string) => void
 }
 
-export const useEditTaste = ({ 
-  data, 
-  isEditable = false, 
-}: UseEditTasteProps): UseEditTasteReturn => {
+export const useEditTaste = ({ data, isEditable = false }: UseEditTasteProps): UseEditTasteReturn => {
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValueState] = useState({
     label: data.label,
     labelEn: data.labelEn || '',
-    value: data.value
+    value: data.value,
   })
 
   const queryClient = useQueryClient()
@@ -74,7 +70,7 @@ export const useEditTaste = ({
   const setEditValue = useCallback((field: string, value: string) => {
     setEditValueState(prev => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }))
   }, [])
 
@@ -84,7 +80,7 @@ export const useEditTaste = ({
     setEditValueState({
       label: data.label,
       labelEn: data.labelEn || '',
-      value: data.value
+      value: data.value,
     })
   }, [data.label, data.labelEn, data.value, isEditable])
 
@@ -93,7 +89,7 @@ export const useEditTaste = ({
     setEditValueState({
       label: data.label,
       labelEn: data.labelEn || '',
-      value: data.value
+      value: data.value,
     })
   }, [data.label, data.labelEn, data.value])
 
@@ -107,7 +103,6 @@ export const useEditTaste = ({
     },
     [handleSaveLabel, cancelEditing, editValue]
   )
-
 
   return {
     isEditing,

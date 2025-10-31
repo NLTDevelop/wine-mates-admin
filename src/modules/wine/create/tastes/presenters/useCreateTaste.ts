@@ -19,15 +19,12 @@ interface UseCreateTasteReturn {
   expandForm: () => void
 }
 
-export const useCreateTaste = ({ 
-  onCreateTaste, 
-  isLoading = false 
-}: UseCreateTasteProps): UseCreateTasteReturn => {
+export const useCreateTaste = ({ onCreateTaste, isLoading = false }: UseCreateTasteProps): UseCreateTasteReturn => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [formData, setFormData] = useState({
     label: '',
     labelEn: '',
-    value: ''
+    value: '',
   })
 
   const updateFormData = useCallback((updates: Partial<{ label: string; labelEn: string; value: string }>) => {

@@ -2,10 +2,10 @@ import { UseFormReturn } from 'react-hook-form'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/UIKit/shadcn/ui/form'
 import { Image } from 'lucide-react'
-import { CreateWineFormData } from '@/modules/wine/create/general/entities/types'
 import { useState } from 'react'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
 import { useTranslation } from 'react-i18next'
+import { CreateWineFormData } from '@/modules/wine/create/wine-types/entities/types/wine-type'
 
 interface VisualCharacteristicsSectionProps {
   form: UseFormReturn<CreateWineFormData>

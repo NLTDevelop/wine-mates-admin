@@ -1,7 +1,5 @@
-import { useTranslation } from 'react-i18next'
-import { Button } from '@/UIKit/shadcn/ui/button'
 import { cn } from '@/lib/utils'
-import {EditableHeader, PaletteItemActions } from '../../../general/ui'
+import { EditableHeader, PaletteItemActions } from '../../../general/ui'
 import { useEditTaste } from '../../presenters/useEditTaste'
 import { WineTaste } from '../../entities/types/tastes'
 
@@ -16,7 +14,6 @@ interface TasteCardProps {
 }
 
 export const TasteCard = ({ data, onRemove, isLoading, isEditable = false, onToggleForm, isFormOpen = false, onCancel }: TasteCardProps) => {
-
   const { isEditing, editValue, color, cardTextColorClass, isSaving, startEditing, handleSaveLabel, cancelEditing, handleKeyDown, setEditValue } = useEditTaste({
     data,
     isEditable,

@@ -4,7 +4,6 @@ import { useTasteStore } from '../entities/wine-taste-store'
 import { tasteQueries } from '../entities/wine-taste-queries'
 import { CreateWineTasteParams, UpdateWineTasteParams, WineTaste } from '../entities/types/tastes'
 
-
 export const useWineTaste = () => {
   const queryClient = useQueryClient()
   const store = useTasteStore()

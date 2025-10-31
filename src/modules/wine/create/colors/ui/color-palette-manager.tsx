@@ -1,11 +1,10 @@
 import { useColorPalette } from '../presenters/useColorPalette'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { ColorCard, CreateMainColorSection, AddColorSection } from '.'
-import { mockColors } from '../entities/mock'
 
 export const ColorPaletteManager = () => {
-  const colors = mockColors
   const {
+    colors,
     isLoading,
     editingColor,
     isFormOpen,
