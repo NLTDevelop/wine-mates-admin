@@ -2,7 +2,6 @@ import { wineColorService } from './color-service'
 import { CreateCategoryParams, UpdateCategoryParams, CreateColorParams, UpdateColorParams } from '../types/color'
 
 export const wineColorQueries = {
-  // === КАТЕГОРИИ ===
   categories: {
     list: () => ({
       queryKey: ['wine-color-categories', 'list'],
@@ -30,7 +29,6 @@ export const wineColorQueries = {
     }),
   },
 
-  // === ЦВЕТА (подкатегории) ===
   colors: {
     list: (categoryId: string) => ({
       queryKey: ['wine-colors', 'list', categoryId],

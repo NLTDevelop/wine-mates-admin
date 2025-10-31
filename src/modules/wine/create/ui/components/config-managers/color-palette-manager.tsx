@@ -67,7 +67,6 @@ export const ColorPaletteManager = () => {
 
   const handleSaveColor = (categoryId: string) => {
     if (editingColor && editingColor.color && editingColor.categoryId === categoryId) {
-      // console.log('Updating color:', editingColor.color.id, getCategoryFormData(categoryId))
       // handleUpdateColor(editingColor.categoryId, editingColor.color.id, getCategoryFormData(categoryId))
     } else {
       handleAddColor(categoryId)

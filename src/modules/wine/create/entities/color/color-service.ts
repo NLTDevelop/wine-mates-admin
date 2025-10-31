@@ -4,7 +4,6 @@ import { WineColorCategory, WineColor, CreateCategoryParams, UpdateCategoryParam
 import { WINE_COLORS_ENDPOINTS } from './wine-colors-endpoints'
 
 export const wineColorService = {
-  // === КАТЕГОРИИ ===
   listCategories: (): Promise<WineColorCategory[]> => api.get(WINE_COLORS_ENDPOINTS.CATEGORIES).then(response => response.data),
 
   getCategory: (categoryId: string): Promise<WineColorCategory> => api.get(buildUrl(WINE_COLORS_ENDPOINTS.CATEGORY_DETAIL, { categoryId })).then(response => response.data),
@@ -16,7 +15,6 @@ export const wineColorService = {
 
   deleteCategory: (categoryId: string): Promise<void> => api.delete(buildUrl(WINE_COLORS_ENDPOINTS.DELETE_CATEGORY, { categoryId })),
 
-  // === ЦВЕТА ===
   getCategoryColors: (categoryId: string): Promise<WineColor[]> => api.get(buildUrl(WINE_COLORS_ENDPOINTS.CATEGORY_COLORS, { categoryId })).then(response => response.data),
 
   addColor: ({ categoryId, data }: CreateColorParams): Promise<WineColor> => api.post(buildUrl(WINE_COLORS_ENDPOINTS.ADD_COLOR, { categoryId }), data).then(response => response.data),

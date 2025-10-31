@@ -80,13 +80,11 @@ export const usePaletteItem = ({ data, isNeedCopy = false, variant = 'color', ca
   }, [data, editValue, variant, categoryId, updateCategoryMutation, updateColorMutation, queryClient])
 
   const startEditing = useCallback(() => {
-    // console.log('Starting editing for:', data?.id, data.label)
     setIsEditing(true)
     setEditValue(data.label)
   }, [data?.id, data.label])
 
   const cancelEditing = useCallback(() => {
-    // console.log('Canceling editing for:', data?.id)
     setIsEditing(false)
     setEditValue(data.label)
   }, [data.label])
