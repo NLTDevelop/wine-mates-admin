@@ -21,7 +21,7 @@ export const ConfirmModal: FC<IProps> = ({ title, actionTitle, description, vari
     <NLTModal title={title} description={description} isOpen={isOpen} onClose={onClose}>
       {children}
       <div className="px-1">
-        <div className="grid grid-cols-2 gap-2 mt-8">
+        <div className="grid grid-cols-2 gap-2 mt-8 ">
           <Button
             type="button"
             className={
@@ -31,7 +31,7 @@ export const ConfirmModal: FC<IProps> = ({ title, actionTitle, description, vari
           >
             {actionTitle}
           </Button>
-          <Button type="button" className="w-full bg-muted text-foreground/90 hover:bg-muted/90" onClick={onClose}>
+          <Button type="button" className="w-full bg-muted text-foreground/90 hover:bg-muted/90 " onClick={onClose}>
             {t('button.cancel')}
           </Button>
         </div>
