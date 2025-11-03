@@ -9,7 +9,7 @@ interface EditableHeaderProps {
   isSaving: boolean
   label: string
   labelEn: string
-  value: string
+  value: string | number
   editValue: {
     label: string
     labelEn: string

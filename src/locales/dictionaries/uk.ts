@@ -224,6 +224,13 @@ export const uk = {
       taste_name_en: 'Назва смаку (EN)',
       create_new_taste: 'Створення смакової ноти',
     },
+    taste_characteristics: {
+      tastes: 'Смаки',
+      characteristic_name_ua: 'Назва характеристики (UA)',
+      characteristic_name_en: 'Назва характеристики (EN)',
+      create_new_taste: 'Створення смакової ноти',
+      entry_level:"Рівень"
+    },
     button: {
       edit: 'Редагувати',
       delete: 'Видалити',
@@ -233,6 +240,7 @@ export const uk = {
       create_new_color: 'Додати базовий колір',
       create_new_aroma_group: 'Додати групу ароматів',
       add_new_aroma: 'Додати аромат',
+      add_level: 'Додати рівень',
       create_new_taste: 'Додати смакову ноту',
     },
   },
