@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { Card, CardContent, CardHeader } from '@/UIKit/shadcn/ui/card'
-import { Plus, Palette } from 'lucide-react'
+import { Plus, Grape } from 'lucide-react'
 import { useCreateTaste } from '../../presenters/useCreateTaste'
 import { ColorPicker } from '@/UIKit/shadcn/ui/color-picker'
 
@@ -24,7 +24,7 @@ export const CreateTasteSection = ({ onCreateTaste, isLoading = false }: CreateT
     return (
       <div className="flex justify-between items-center flex-wrap-reverse sm:flex-nowrap gap-6">
         <h2 className="text-2xl font-bold">{t('tastes.tastes')}</h2>
-        <Button onClick={expandForm}>
+        <Button onClick={expandForm} className="w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" />
           {t('button.create_new_taste')}
         </Button>
@@ -37,7 +37,7 @@ export const CreateTasteSection = ({ onCreateTaste, isLoading = false }: CreateT
       <CardContent className="md:p-0 sm:p-0">
         <CardHeader className="px-0 py-1 border-none mb-3">
           <h3 className="text-lg font-medium flex items-center gap-2">
-            <Palette className="w-5 h-5" />
+            <Grape className="w-5 h-5" />
             {t('tastes.create_new_taste')}
           </h3>
         </CardHeader>

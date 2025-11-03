@@ -9,6 +9,7 @@ import { Form, FormField } from '@/UIKit/shadcn/ui/form-field'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { loginSchema } from '../../presenters/auth-schema'
+import { PasswordInput } from '@/UIKit/shadcn/ui/input-password'
 
 type AuthorizationViewData = z.infer<typeof loginSchema>
 
@@ -41,7 +42,7 @@ export const AuthorizationView = () => {
             </FormField>
 
             <FormField name="password" label={t('password')} error={errors.password?.message}>
-              <Input type="password" placeholder={t('password_plaseholder')} {...register('password')} />
+              <PasswordInput placeholder={t('password_plaseholder')} {...register('password')} />
             </FormField>
 
             <Button type="submit" disabled={isSubmitting} fullWidth className="mt-2" size="lg">

@@ -24,6 +24,29 @@ export interface IUserTable {
   wineExperienceLevel: string
   isConfirmed?: boolean
   userFullName?: string
+  occupation?: string
+  wineryName?: string | null
+  gender?: string
+  bio?: string
+  language?: string
+  city?: string
+  roles?: Array<{
+    id: number
+    name: string
+  }>
+}
+
+export interface IUserDetail extends IUserTable {
+  occupation: string
+  wineryName: string | null
+  gender: string
+  bio: string
+  language: string
+  city: string
+  roles: Array<{
+    id: number
+    name: string
+  }>
 }
 
 export interface ConfirmUserCategoryParams {

@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import i18n from 'i18next'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -12,6 +13,16 @@ export const buildUrl = (url: string, params?: Record<string, string | number>):
     const regex = new RegExp(`[\\{:]${key}\\}?`, 'g')
     return result.replace(regex, String(value))
   }, url)
+}
+
+export const getCategoryLabel = (category: string): string => {
+  const categoryLabels = {
+    lover: i18n.t('users:lover'),
+    expert: i18n.t('users:expert'),
+    creator: i18n.t('users:creator'),
+  }
+
+  return categoryLabels[category as keyof typeof categoryLabels] || category
 }
 
 export const isDarkColor = (hexColor: string): boolean => {

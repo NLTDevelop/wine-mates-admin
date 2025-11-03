@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { Card, CardContent, CardHeader } from '@/UIKit/shadcn/ui/card'
-import { Plus, Palette } from 'lucide-react'
+import { Plus, Flower } from 'lucide-react'
 import { useCreateFlavorGroup } from '../../presenters/useCreateFlavorGroup'
 
 interface CreateFlavorGroupSectionProps {
@@ -23,7 +23,7 @@ export const CreateFlavorGroupSection = ({ onCreateGroup, isLoading = false }: C
     return (
       <div className="flex justify-between items-center flex-wrap-reverse sm:flex-nowrap gap-6">
         <h2 className="text-2xl font-bold">{t('flavors.flavors')}</h2>
-        <Button onClick={expandForm}>
+        <Button onClick={expandForm} className="w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" />
           {t('button.create_new_aroma_group')}
         </Button>
@@ -36,7 +36,7 @@ export const CreateFlavorGroupSection = ({ onCreateGroup, isLoading = false }: C
       <CardContent className="md:p-0 sm:p-0">
         <CardHeader className="px-0 py-1 border-none mb-3">
           <h3 className="text-lg font-medium flex items-center gap-2">
-            <Palette className="w-5 h-5" />
+            <Flower className="w-5 h-5" />
             {t('flavors.create_new_group')}
           </h3>
         </CardHeader>

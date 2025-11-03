@@ -9,7 +9,9 @@ export const useFlavorPalette = () => {
   const { isLoading, createGroup, deleteGroup, createItem, updateItem } = useWineFlavor()
 
   const [isAccordionOpen, setIsAccordionOpen] = useState<{ [groupId: string]: boolean }>({})
-  const [editingGroup, setEditingGroup] = useState<{ groupId: string; group?: WineAromaGroup; editingItem?: any } | null>(null)
+  const [editingGroups, setEditingGroups] = useState<{
+    [groupId: string]: { group?: WineAromaGroup; editingItem?: any }
+  }>({})
   const [isFormOpen, setIsFormOpen] = useState<{ [groupId: string]: boolean }>({})
   const [newItemData, setNewItemData] = useState<{
     [groupId: string]: {
@@ -62,10 +64,20 @@ export const useFlavorPalette = () => {
       ...prev,
       [groupId]: !prev[groupId],
     }))
+
+    if (!isFormOpen[groupId]) {
+      setEditingGroups(prev => ({
+        ...prev,
+        [groupId]: {},
+      }))
+    }
   }
 
   const handleEditGroup = (groupId: string, group: WineAromaGroup) => {
-    setEditingGroup({ groupId, group })
+    setEditingGroups(prev => ({
+      ...prev,
+      [groupId]: { group },
+    }))
     setIsFormOpen(prev => ({ ...prev, [groupId]: true }))
 
     setNewItemData(prev => ({
@@ -89,10 +101,11 @@ export const useFlavorPalette = () => {
       return newState
     })
 
-    setEditingGroup({
-      groupId,
-      editingItem: itemToEdit,
-    })
+    setEditingGroups(prev => ({
+      ...prev,
+      [groupId]: { editingItem: itemToEdit },
+    }))
+
     setIsFormOpen(prev => ({ ...prev, [groupId]: true }))
 
     setNewItemData(prev => ({
@@ -110,35 +123,42 @@ export const useFlavorPalette = () => {
   }
 
   const handleCancelEdit = (groupId: string) => {
-    setEditingGroup(null)
+    setEditingGroups(prev => {
+      const newState = { ...prev }
+      delete newState[groupId]
+      return newState
+    })
+
     setNewItemData(prev => ({
       ...prev,
       [groupId]: { name: '', nameEn: '', description: '' },
     }))
     setIsFormOpen(prev => ({ ...prev, [groupId]: false }))
+
     setItemStates(prev => {
       const newState = { ...prev }
-      delete newState[`new-${groupId}`]
-      if (editingGroup?.editingItem?.id) {
-        delete newState[editingGroup.editingItem.id]
+      const editingItem = editingGroups[groupId]?.editingItem
+      if (editingItem?.id) {
+        delete newState[editingItem.id]
       }
+      delete newState[`new-${groupId}`]
       return newState
     })
   }
 
   const handleSaveItem = (groupId: string) => {
-    if (editingGroup && editingGroup.groupId === groupId) {
-      if (editingGroup.editingItem) {
-        const group = aromaGroups.find(g => g.id === groupId)
-        const lightenedColor = group ? lightenColor(group.value, 20) : editingGroup.editingItem.value
+    const editingGroup = editingGroups[groupId]
 
-        updateItem(groupId, editingGroup.editingItem.id, {
-          name: newItemData[groupId].name,
-          nameEn: newItemData[groupId].nameEn,
-          value: lightenedColor,
-          state: itemStates[editingGroup.editingItem.id] || [],
-        })
-      }
+    if (editingGroup?.editingItem) {
+      const group = aromaGroups.find(g => g.id === groupId)
+      const lightenedColor = group ? lightenColor(group.value, 20) : editingGroup.editingItem.value
+
+      updateItem(groupId, editingGroup.editingItem.id, {
+        name: newItemData[groupId].name,
+        nameEn: newItemData[groupId].nameEn,
+        value: lightenedColor,
+        state: itemStates[editingGroup.editingItem.id] || [],
+      })
     } else {
       handleAddItem(groupId)
     }
@@ -158,6 +178,10 @@ export const useFlavorPalette = () => {
 
   const getNewItemStates = (groupId: string): StateItem[] => {
     return itemStates[`new-${groupId}`] || []
+  }
+
+  const getEditingGroup = (groupId: string) => {
+    return editingGroups[groupId] || null
   }
 
   const updateItemFormData = (groupId: string, field: string, value: string) => {
@@ -192,7 +216,8 @@ export const useFlavorPalette = () => {
   return {
     aromaGroups: sortedItems,
     isLoading,
-    editingGroup,
+    editingGroups,
+    getEditingGroup,
     isFormOpen,
     newItemData,
     isAccordionOpen,

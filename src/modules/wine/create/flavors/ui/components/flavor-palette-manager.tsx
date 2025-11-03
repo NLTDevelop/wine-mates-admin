@@ -14,10 +14,10 @@ export const FlavorPaletteManager = () => {
   const {
     aromaGroups,
     isLoading,
-    editingGroup,
     isFormOpen,
     newItemData,
     isAccordionOpen,
+    getEditingGroup,
     handleAddGroup,
     handleDeleteGroup,
     handleToggleForm,
@@ -43,77 +43,81 @@ export const FlavorPaletteManager = () => {
           <CreateFlavorGroupSection onCreateGroup={handleAddGroup} isLoading={isLoading} />
         </div>
         <div className="mx-auto flex flex-col justify-center gap-2 w-full xl:w-2/3">
-          {aromaGroups.map(group => (
-            <div key={group.id} className="flex flex-col">
-              <FlavorGroupCard
-                data={group}
-                onRemove={handleDeleteGroup}
-                onEditItem={handleEditItemClick}
-                isLoading={isLoading}
-                isEditable={true}
-                onToggleForm={() => handleToggleForm(group.id)}
-                isFormOpen={isFormOpen[group.id] || false}
-                onCancel={() => handleCancelEdit(group.id)}
-                isAccordionOpen={isAccordionOpen}
-                handleToggleAccordion={handleToggleAccordion}
-              />
+          {aromaGroups.map(group => {
+            const editingGroup = getEditingGroup(group.id)
 
-              {isAccordionOpen[group.id] && isFormOpen[group.id] && (
-                <div className="border-1 border-input p-4 rounded-b-md">
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">{t('flavors.aroma_name_ua')} *</label>
-                        <Input
-                          value={newItemData[group.id]?.name || ''}
-                          onChange={e => updateItemFormData(group.id, 'name', e.target.value)}
-                          placeholder={t('flavors.aroma_name_ua')}
-                          className="w-full"
-                          autoFocus
-                        />
-                      </div>
+            return (
+              <div key={group.id} className="flex flex-col">
+                <FlavorGroupCard
+                  data={group}
+                  onRemove={handleDeleteGroup}
+                  onEditItem={handleEditItemClick}
+                  isLoading={isLoading}
+                  isEditable={true}
+                  onToggleForm={() => handleToggleForm(group.id)}
+                  isFormOpen={isFormOpen[group.id] || false}
+                  onCancel={() => handleCancelEdit(group.id)}
+                  isAccordionOpen={isAccordionOpen}
+                  handleToggleAccordion={handleToggleAccordion}
+                />
 
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">{t('flavors.aroma_name_en')} *</label>
-                        <Input
-                          value={newItemData[group.id]?.nameEn || ''}
-                          onChange={e => updateItemFormData(group.id, 'nameEn', e.target.value)}
-                          placeholder={t('flavors.aroma_name_en')}
-                          className="w-full"
-                        />
+                {isAccordionOpen[group.id] && isFormOpen[group.id] && (
+                  <div className="border-1 border-input p-4 rounded-b-md">
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">{t('flavors.aroma_name_ua')} *</label>
+                          <Input
+                            value={newItemData[group.id]?.name || ''}
+                            onChange={e => updateItemFormData(group.id, 'name', e.target.value)}
+                            placeholder={t('flavors.aroma_name_ua')}
+                            className="w-full"
+                            autoFocus
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">{t('flavors.aroma_name_en')} *</label>
+                          <Input
+                            value={newItemData[group.id]?.nameEn || ''}
+                            onChange={e => updateItemFormData(group.id, 'nameEn', e.target.value)}
+                            placeholder={t('flavors.aroma_name_en')}
+                            className="w-full"
+                          />
+                        </div>
                       </div>
+                      <StatesManager
+                        states={editingGroup?.editingItem ? getItemStates(editingGroup.editingItem.id) : getNewItemStates(group.id)}
+                        onStatesChange={states => {
+                          if (editingGroup?.editingItem) {
+                            handleUpdateItemStates(editingGroup.editingItem.id, states)
+                          } else {
+                            handleUpdateItemStates(`new-${group.id}`, states)
+                          }
+                        }}
+                      />
                     </div>
-                    <StatesManager
-                      states={editingGroup?.editingItem ? getItemStates(editingGroup.editingItem.id) : getNewItemStates(group.id)}
-                      onStatesChange={states => {
-                        if (editingGroup?.editingItem) {
-                          handleUpdateItemStates(editingGroup.editingItem.id, states)
-                        } else {
-                          handleUpdateItemStates(`new-${group.id}`, states)
-                        }
-                      }}
-                    />
-                  </div>
 
-                  <div className="flex justify-end gap-2 mt-6">
-                    <Button onClick={() => handleSaveItem(group.id)} disabled={!canAddItem(group.id) || isLoading} size="sm">
-                      {editingGroup && editingGroup.groupId === group.id ? (
-                        <>
-                          <Save className="w-4 h-4" />
-                          {isLoading ? tc('button.saving') : tc('button.save')}
-                        </>
-                      ) : (
-                        <>
-                          <Plus className="w-4 h-4" />
-                          {isLoading ? tc('button.saving') : tc('button.add')}
-                        </>
-                      )}
-                    </Button>
+                    <div className="flex justify-end gap-2 mt-6">
+                      <Button onClick={() => handleSaveItem(group.id)} disabled={!canAddItem(group.id) || isLoading} size="sm">
+                        {editingGroup?.editingItem ? (
+                          <>
+                            <Save className="w-4 h-4" />
+                            {isLoading ? tc('button.saving') : tc('button.save')}
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="w-4 h-4" />
+                            {isLoading ? tc('button.saving') : tc('button.add')}
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            )
+          })}
         </div>
       </CardContent>
     </Card>

@@ -7,6 +7,7 @@ export interface InputProps extends React.ComponentProps<'input'> {
   onClear?: () => void
   variant?: 'default' | 'search'
   isLoading?: boolean
+  type?: string
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, type = 'text', showClearButton = true, onClear, variant = 'default', isLoading = false, value, ...props }, ref) => {
@@ -17,7 +18,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, type 
   return (
     <div className="relative">
       <input
-        type="text"
+        type={type}
         className={cn(
           'flex h-11 w-full border bg-background px-3 text-base shadow-sm transition-colors rounded-md input-focus',
           'file:border-0 file:bg-background file:text-sm file:font-medium file:text-foreground',

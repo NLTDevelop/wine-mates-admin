@@ -4,7 +4,7 @@ import { ContentLayout } from '@/layout/components/content-layout'
 
 import { WineTemplateSelector } from '..'
 import { TastePaletteManager } from '../../../tastes/ui'
-import { WineTypeManager } from '../../../wine-types/ui'
+// import { WineTypeManager } from '../../../wine-types/ui'
 import { ColorPaletteManager } from '../../../colors/ui'
 import { FlavorPaletteManager } from '../../../flavors/ui'
 
@@ -14,8 +14,8 @@ export const WineManagementView = () => {
 
   const renderContent = () => {
     switch (selectedTemplate) {
-      case 'wine_type':
-        return <WineTypeManager />
+      // case 'wine_type':
+      //   return <WineTypeManager />
       case 'color_palette':
         return <ColorPaletteManager />
       case 'flavor_palette':

@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { USER_CATEGORIES } from '../entities/IUser'
 import { getCountryName } from '@/lib/localized-countries'
+import { getCategoryLabel } from '@/lib/utils'
 
 interface IRow {
   id: string
@@ -65,12 +66,7 @@ export const useUserColumns = ({ onConfirmCategory }: UseUserColumnsProps) => {
         header: t('table.category'),
         cell: info => {
           const category = info.getValue()
-          const categoryLabels = {
-            lover: t('lover'),
-            expert: t('expert'),
-            creator: t('creator'),
-          }
-          return categoryLabels[category as keyof typeof categoryLabels] || category
+          getCategoryLabel(category)
         },
       }),
       columnHelper.display({

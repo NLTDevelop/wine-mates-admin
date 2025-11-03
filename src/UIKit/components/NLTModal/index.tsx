@@ -13,7 +13,7 @@ interface IProps {
 export const NLTModal: FC<IProps> = ({ title, description, isOpen, onClose, children }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[525px]" >
+      <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

@@ -6,11 +6,14 @@ import { PublicRoutes } from './publicRoutes'
 import Layout from '@/layout'
 import { DashboardView } from '@/modules/dashboard'
 import { AuthorizationView } from '@/modules/autorization'
-import { UsersView } from '@/modules/users/ui'
+import { UsersDetailView, UsersView } from '@/modules/users/ui'
 import { FeaturesView } from '@/modules/features/ui'
-import { WineManagementView } from '@/modules/wine/create/general/ui'
+import { WineManagementView } from '@/modules/wine/create/dashboard/ui'
 
-const usersRoutes = [{ path: PATHS.USERS, element: <UsersView /> }]
+const usersRoutes = [
+  { path: PATHS.USERS, element: <UsersView /> },
+  { path: PATHS.USERS_DETAIL, element: <UsersDetailView /> },
+]
 
 const featuresRoutes = [{ path: PATHS.FEATURES, element: <FeaturesView /> }]
 

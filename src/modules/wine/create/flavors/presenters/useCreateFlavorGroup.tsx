@@ -50,7 +50,7 @@ export const useCreateFlavorGroup = ({ onCreateGroup }: UseCreateFlavorGroupProp
     setIsExpanded(true)
   }
 
-  const canCreateGroup = !!(formData.value && formData.label && formData.labelEn)
+  const canCreateGroup = !!(formData.label && formData.labelEn)
 
   return {
     isExpanded,
