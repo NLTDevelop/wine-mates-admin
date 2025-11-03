@@ -82,7 +82,7 @@ export function NavMain({
                       return (
                         <SidebarMenuSubItem key={subItem.title} className={`relative transition-colors duration-300 rounded-md`}>
                           <SidebarMenuSubButton asChild className={`transition-colors hover:text-background ${location.pathname === subItem.url ? 'text-primary-foreground bg-primary' : ''}`}>
-                            <Link to={subItem.url}>
+                            <Link to={subItem.url} onClick={handleLinkClick}>
                               <span>{t(`${subItem.title}`)}</span>
                               {location.pathname === subItem.url && <span className={`w-2 h-2 bg-white rounded-full ml-auto `}></span>}
                             </Link>

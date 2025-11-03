@@ -8,7 +8,7 @@ const AppHeaderContent = () => {
   const { isMobile } = useSidebar()
 
   return (
-    <header className={cn('flex z-40 h-16 shrink-0 items-center justify-between gap-2 px-4 w-full bg-gray-100', !isMobile && 'absolute right-0 w-[80px]')}>
+    <header className={cn('flex z-40 h-16 shrink-0 items-center justify-between gap-2 px-4 w-full md:bg-transparent bg-gray-100', !isMobile && 'absolute right-0 w-[80px]')}>
       <SidebarTrigger className="md:hidden" />
 
       <div className="flex-1 text-right">

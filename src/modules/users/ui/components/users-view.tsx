@@ -7,9 +7,12 @@ import { ConfirmModal } from '@/modals/confirmModal'
 import { NLTDataTable } from '@/UIKit/components/NLTDataTable'
 import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
 import { ContentLayout } from '@/layout/components/content-layout'
+import { useNavigate } from 'react-router-dom'
+import { PATHS } from '@/navigation/paths'
 
 export const UsersView = () => {
   const { t } = useTranslation('users')
+  const navigate = useNavigate()
 
   const { users, filters, onChangeSearch, handleClearSearch, onChangePagination, modal, searchValue, userToConfirm } = useUsers()
   const columns = useUserColumns({ onConfirmCategory: modal.open })
@@ -27,12 +30,18 @@ export const UsersView = () => {
         category: t(`${userToConfirm.category}`),
       })
 
+  const handleRowClick = (row: any) => {
+    const userId = row.original.id
+    navigate(PATHS.USERS_DETAIL.replace(':id', userId))
+  }
+
   return (
     <ContentLayout title={t('users')}>
       <NLTDataTable
         table={table}
-        rowClassname="text-center cursor-none pointer-events-none"
+        rowClassname="text-center cursor-pointer"
         ToolBar={<UserFilters filterSearch={searchValue} onChangeFilterSearch={onChangeSearch} onClearSearch={handleClearSearch} />}
+        onRowClick={handleRowClick}
       />
       <NLTTablePagination limit={filters.limit} offset={filters.offset} totalRows={users?.length || 0} setOffset={onChangePagination} />
       <ConfirmModal

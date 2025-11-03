@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { MouseEventHandler, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HexColorPicker } from 'react-colorful'
 import { Button } from '@/UIKit/shadcn/ui/button'
@@ -14,9 +14,10 @@ interface ColorPickerProps {
   onChange?: (color: string) => void
   className?: string
   baseHexNoHash?: string
+  onClick?: MouseEventHandler<HTMLInputElement>
 }
 
-export const ColorPicker = ({ value, onChange, className, baseHexNoHash }: ColorPickerProps) => {
+export const ColorPicker = ({ value, onChange, className, baseHexNoHash, onClick }: ColorPickerProps) => {
   const { t } = useTranslation('common')
   const [open, setOpen] = useState(false)
 
@@ -25,7 +26,7 @@ export const ColorPicker = ({ value, onChange, className, baseHexNoHash }: Color
   const baseHsl = useMemo(() => {
     if (!baseHexNoHash) return null
     try {
-      const color = chroma(`#${baseHexNoHash}`)
+      const color = chroma(baseHexNoHash)
       const [h, s] = color.hsl()
       return { h: isNaN(h) ? 0 : h, s: isNaN(s) ? 0 : s }
     } catch {
@@ -39,7 +40,7 @@ export const ColorPicker = ({ value, onChange, className, baseHexNoHash }: Color
     const gradientColors = []
 
     for (let i = 0; i < steps; i++) {
-      const lightness = 0.01 + (i / (steps - 1)) * 0.99
+      const lightness = i / (steps - 1)
       const hex = chroma.hsl(baseHsl.h, baseHsl.s, lightness).hex()
       gradientColors.push(hex)
     }
@@ -53,10 +54,8 @@ export const ColorPicker = ({ value, onChange, className, baseHexNoHash }: Color
     if (!baseHsl) return
     const rect = e.currentTarget.getBoundingClientRect()
     const clickX = e.clientX - rect.left
-
-    let ratio = clickX / rect.width
-    ratio = Math.min(0.9, Math.max(0.0, ratio))
-    const lightness = 0.0 + ratio * 0.9
+    const ratio = Math.min(1, Math.max(0, clickX / rect.width))
+    const lightness = ratio
 
     const newHex = chroma.hsl(baseHsl.h, baseHsl.s, lightness).hex()
     onChange?.(newHex)
@@ -70,10 +69,8 @@ export const ColorPicker = ({ value, onChange, className, baseHexNoHash }: Color
     try {
       const lightness = chroma(hexValue).hsl()[2]
       if (typeof lightness === 'number' && !isNaN(lightness)) {
-        const minLightness = 0.01
-        const maxLightness = 0.99
-        const position = ((lightness - minLightness) / (maxLightness - minLightness)) * 100
-        return `${Math.min(100, Math.max(0, position))}%`
+        const position = lightness * 100
+        return `calc(${Math.min(100, Math.max(0, position))}% - 16px)`
       }
     } catch (e) {
       console.warn('Chroma error on indicator position:', e)
@@ -112,7 +109,7 @@ export const ColorPicker = ({ value, onChange, className, baseHexNoHash }: Color
               />
             </div>
           )}
-          <Input value={value} onChange={e => onChange?.(e.target.value)} placeholder={baseHexNoHash ? baseHexNoHash : '#000000'} className="font-mono w-full" />
+          <Input value={value} onClick={onClick} onChange={e => onChange?.(e.target.value)} placeholder={baseHexNoHash ? baseHexNoHash : '#000000'} className="font-mono w-full" />
         </div>
       </PopoverContent>
     </Popover>

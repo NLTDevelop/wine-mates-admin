@@ -7,6 +7,7 @@ export interface InputProps extends React.ComponentProps<'input'> {
   onClear?: () => void
   variant?: 'default' | 'search'
   isLoading?: boolean
+  type?: string
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, type = 'text', showClearButton = true, onClear, variant = 'default', isLoading = false, value, ...props }, ref) => {
@@ -17,7 +18,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, type 
   return (
     <div className="relative">
       <input
-        type="text"
+        type={type}
         className={cn(
           'flex h-11 w-full border bg-background px-3 text-base shadow-sm transition-colors rounded-md input-focus',
           'file:border-0 file:bg-background file:text-sm file:font-medium file:text-foreground',
@@ -44,16 +45,18 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, type 
 
       {isSearchVariant && <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />}
 
-      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 flex items-center justify-center">
-        {shouldShowLoader ? (
-          <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-        ) : shouldShowClear ? (
-          <button type="button" onClick={onClear} className="w-6 h-6 flex items-center justify-center p-1 hover:bg-muted rounded-[2px] transition-colors">
-            <X className="w-4 h-4 text-muted-foreground" />
-            <span className="sr-only">Clear input</span>
-          </button>
-        ) : null}
-      </div>
+      {isSearchVariant && (
+        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 flex items-center justify-center">
+          {shouldShowLoader ? (
+            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+          ) : shouldShowClear ? (
+            <button type="button" onClick={onClear} className="w-6 h-6 flex items-center justify-center p-1 hover:bg-muted rounded-[2px] transition-colors">
+              <X className="w-4 h-4 text-muted-foreground" />
+              <span className="sr-only">Clear input</span>
+            </button>
+          ) : null}
+        </div>
+      )}
     </div>
   )
 })

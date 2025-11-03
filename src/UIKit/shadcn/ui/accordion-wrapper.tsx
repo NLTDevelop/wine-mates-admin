@@ -12,9 +12,11 @@ interface IProps {
   label: string
   header?: React.ReactNode | string
   children: React.ReactNode
+  style?: React.CSSProperties
+  chevronStyle?: string
 }
 
-export const AccordionWrapper: FC<IProps> = ({ label, children, isOpen, onToggle, header }) => {
+export const AccordionWrapper: FC<IProps> = ({ label, children, isOpen, onToggle, header, style, chevronStyle }) => {
   const value = isOpen ? label : undefined
   const contentRef = useRef<HTMLDivElement>(null)
 
@@ -27,17 +29,17 @@ export const AccordionWrapper: FC<IProps> = ({ label, children, isOpen, onToggle
 
   return (
     <Accordion type="single" collapsible defaultValue={value}>
-      <AccordionItem value={label}>
-        <AccordionTrigger className="w-full cursor-pointer" onClick={handleToggle}>
-          <Card className={cn('cursor-pointer w-full', isOpen && 'rounded-b-none')}>
-            <CardContent className="sm:p-0 flex items-center justify-between">
+      <Card className={cn('cursor-pointer w-full h-full', isOpen && 'rounded-b-none')} style={style}>
+        <AccordionItem value={label}>
+          <AccordionTrigger className={cn('w-full cursor-pointer')} onClick={handleToggle}>
+            <CardContent className="sm:p-0 max-sm:p-0 flex items-center justify-between h-full">
               {header ? header : <h3 className="text-lg  mb-4 font-medium text-left hover:underline">{label}</h3>}
-              <ChevronDown className={cn('text-muted-foreground', isOpen && 'rotate-180')} />
+              <ChevronDown className={cn('text-muted-foreground', isOpen && 'rotate-180', chevronStyle)} />
             </CardContent>
-          </Card>
-        </AccordionTrigger>
-        <AccordionContent>{children}</AccordionContent>
-      </AccordionItem>
+          </AccordionTrigger>
+          <AccordionContent>{children}</AccordionContent>
+        </AccordionItem>
+      </Card>
     </Accordion>
   )
 }

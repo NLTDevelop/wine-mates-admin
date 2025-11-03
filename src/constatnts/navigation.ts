@@ -1,4 +1,4 @@
-import {  Cog, Users, Wine } from 'lucide-react'
+import { Cog, Users, Wine } from 'lucide-react'
 
 import { generateLinks } from '@/lib/generate-links'
 
