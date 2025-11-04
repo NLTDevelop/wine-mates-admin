@@ -25,7 +25,7 @@ export const CreateTasteSection = ({ onCreateTaste, isLoading = false }: CreateT
       <div className="flex justify-between items-center flex-wrap-reverse sm:flex-nowrap gap-6">
         <h2 className="text-2xl font-bold">{t('tastes.tastes')}</h2>
         <Button onClick={expandForm} className="w-full sm:w-auto">
-          <Plus className="w-4 h-4 mr-2" />
+          <Plus className="w-4 h-4" />
           {t('button.create_new_taste')}
         </Button>
       </div>
@@ -65,7 +65,7 @@ export const CreateTasteSection = ({ onCreateTaste, isLoading = false }: CreateT
             {tc('button.cancel')}
           </Button>
           <Button onClick={handleCreateTaste} disabled={!canCreateTaste || isLoading}>
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="w-4 h-4" />
             {isLoading ? tc('button.saving') : tc('button.save')}
           </Button>
         </div>

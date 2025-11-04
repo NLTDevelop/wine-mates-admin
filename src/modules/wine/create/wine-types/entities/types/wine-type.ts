@@ -1,5 +1,5 @@
 export interface WineType {
-  value: string
+  id: string
   label: string
   labelEn?: string
   colors: string[]
@@ -33,6 +33,7 @@ export interface WineFlavor {
 }
 
 export interface CreateWineTypeParams {
+  id: string
   label: string
   labelEn?: string
   colors: string[]

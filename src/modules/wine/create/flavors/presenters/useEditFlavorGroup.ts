@@ -27,7 +27,7 @@ interface UseEditFlavorGroupReturn {
   renderableItems: any[]
 
   startEditing: () => void
-  handleSaveLabel: (editData: { label: string; labelEn: string; value: string }) => Promise<void>
+  handleSaveLabel: (editData: { label: string; labelEn: string; value?: string }) => Promise<void>
   cancelEditing: (e?: MouseEvent | KeyboardEvent) => void
   handleKeyDown: (e: KeyboardEvent) => void
   handleMainClick: () => void
@@ -58,7 +58,7 @@ export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable 
   })
 
   const handleSaveLabel = useCallback(
-    async (editData: { label: string; labelEn: string; value: string }) => {
+    async (editData: { label: string; labelEn: string; value?: string }) => {
       if (!data.id) return
 
       await updateGroupMutation.mutateAsync({
@@ -66,7 +66,7 @@ export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable 
         newGroup: {
           label: editData.label,
           labelEn: editData.labelEn,
-          value: editData.value,
+          value: editData.value || '',
           items: data.items,
         },
       })

@@ -6,6 +6,7 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { StateItem } from '../../entities/types/flavor'
+import { useTranslation } from 'react-i18next'
 
 interface SortableStateInputProps {
   state: StateItem
@@ -44,6 +45,8 @@ interface StatesManagerProps {
 }
 
 export const StatesManager: React.FC<StatesManagerProps> = ({ states, onStatesChange }) => {
+  const { t } = useTranslation('wines')
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -87,11 +90,11 @@ export const StatesManager: React.FC<StatesManagerProps> = ({ states, onStatesCh
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <h4 className="text-sm font-medium text-gray-700">Стан аромату</h4>
+          <h4 className="text-sm font-medium text-gray-700">{t('flavors.state_flavor')}</h4>
         </div>
-        <Button type="button" variant="outline" size="sm" onClick={addNewStateInput} className="flex items-center gap-2">
+        <Button type="button" variant="outline" size="sm" onClick={addNewStateInput} className="flex items-center gap-2 ">
           <Plus className="w-4 h-4" />
-          Додати стан
+          {t('button.add_state_flavor')}
         </Button>
       </div>
 

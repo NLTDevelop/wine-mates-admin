@@ -55,7 +55,7 @@ export const useWineTypes = () => {
     onSuccess: (updatedWineType: WineType) => {
       queryClient.invalidateQueries({ queryKey: ['wine-types', 'list'] })
       if (editingWineType) {
-        updateInStore(editingWineType.value, updatedWineType)
+        updateInStore(editingWineType.id, updatedWineType)
       }
       setEditingWineType(null)
       resetForm()
@@ -67,10 +67,10 @@ export const useWineTypes = () => {
     onSuccess: (_, wineTypeValue) => {
       queryClient.invalidateQueries({ queryKey: ['wine-types', 'list'] })
       deleteFromStore(wineTypeValue)
-      if (editingWineType && editingWineType.value === wineTypeValue) {
+      if (editingWineType && editingWineType.id === wineTypeValue) {
         setEditingWineType(null)
       }
-      if (currentWineType?.value === wineTypeValue) {
+      if (currentWineType?.id === wineTypeValue) {
         setCurrentWineType(null)
       }
     },
@@ -109,6 +109,7 @@ export const useWineTypes = () => {
   }
 
   const createWineType = (wineTypeData: CreateWineTypeParams) => {
+    console.log('Data from form->', wineTypeData)
     const value = wineTypeData.label
       .toLowerCase()
       .replace(/\s+/g, '-')
@@ -116,7 +117,7 @@ export const useWineTypes = () => {
 
     const dataWithValue: WineType = {
       ...wineTypeData,
-      value,
+      id: value,
     }
 
     createMutation.mutate(dataWithValue)
@@ -126,7 +127,7 @@ export const useWineTypes = () => {
     if (!editingWineType) return
 
     const paramsToUse = params || {
-      oldValue: editingWineType.value,
+      oldValue: editingWineType.id,
       newWineType: {
         ...editingWineType,
         ...formData,
@@ -144,11 +145,11 @@ export const useWineTypes = () => {
     setCurrentWineType(wineType)
   }
 
-  const canCreate = formData.label.trim() && formData.colors.length > 0 && formData.aromas.length > 0
+  const canCreate = formData.label.trim() && formData.colors.length > 0 && formData.aromas.length > 0 && formData.flavorNotes.length > 0 && formData.flavorCharacteristics.length > 0
 
   const canUpdate = editingWineType && formData.label.trim() && formData.colors.length > 0 && formData.aromas.length > 0
 
-  const isDuplicate = wineTypes.some(wt => wt.label.toLowerCase() === formData.label.toLowerCase() && wt.value !== editingWineType?.value)
+  const isDuplicate = wineTypes.some(wt => wt.label.toLowerCase() === formData.label.toLowerCase() && wt.id !== editingWineType?.id)
 
   const isLoading = isLoadingList || createMutation.isPending || updateMutation.isPending || deleteMutation.isPending
 
