@@ -12,12 +12,14 @@ interface SectionProps {
 
 export const Section = ({ title, icon, isExpanded, onToggle, children, itemsCount = 0 }: SectionProps) => (
   <div className="border border-input rounded-lg">
-    <Button variant="outline" onClick={onToggle} className="w-full flex items-center justify-between hover:bg-muted/50 transition-colors">
-      <div className="flex items-center gap-2">
+    <Button variant="outline" onClick={onToggle} className="w-full flex items-center justify-between hover:bg-muted/50 transition-colors p-3 h-full">
+      <div className="flex items-center gap-2 min-w-0 flex-1">
         {icon}
-        <span className="font-medium">{title}</span>
+        <span className="font-medium text-left break-words whitespace-normal truncate">{title}</span>
       </div>
-      <Badge variant="default">{itemsCount}</Badge>
+      <Badge variant="default" className="flex-shrink-0 ml-2">
+        {itemsCount}
+      </Badge>
     </Button>
     {isExpanded && <div className="p-3 space-y-2">{children}</div>}
   </div>

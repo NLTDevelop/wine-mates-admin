@@ -62,15 +62,15 @@ export const WineTypeCard = ({ wineType, onUpdate, onDelete, isLoading }: WineTy
       }
     >
       <Card className="rounded-t-none bg-input/50 pt-3!">
-        <CardHeader className="p-0 mb-2 border-none">
-          <div className="flex justify-between items-start">
+        <CardHeader className="p-0 mb-2 border-none ">
+          <div className="flex justify-between items-start ">
             <div></div>
-            <div className="flex gap-3 items-center">
-              <Button variant="secondary" size="sm" className="" onClick={startEditing} disabled={cardLoading}>
+            <div className="flex gap-3 items-center flex-col sm:flex-row">
+              <Button variant="secondary" size="sm" className=" w-full" onClick={startEditing} disabled={cardLoading}>
                 <span>{t('button.edit')}</span>
                 <Edit className="text-green-700" />
               </Button>
-              <Button variant="delete" size="sm" className="" onClick={() => onDelete(wineType.id)} disabled={cardLoading}>
+              <Button variant="delete" size="sm" className=" w-full" onClick={() => onDelete(wineType.id)} disabled={cardLoading}>
                 <span>{t('button.delete')}</span>
                 <Trash2 />
               </Button>
