@@ -7,7 +7,7 @@ import { SortableLevelInput } from '..'
 interface LevelListProps {
   states: LevelItem[]
   minFields: number
-  onUpdateState: (stateId: string, stateName: string) => void
+  onUpdateState: (stateId: string, levelName: string) => void
   onRemoveState: (stateId: string) => void
   onReorderStates: (reorderedStates: LevelItem[]) => void
 }
@@ -38,8 +38,8 @@ export const LevelList: React.FC<LevelListProps> = React.memo(({ states, minFiel
   )
 
   const handleUpdateState = useCallback(
-    (stateId: string, stateName: string) => {
-      onUpdateState(stateId, stateName)
+    (stateId: string, levelName: string) => {
+      onUpdateState(stateId, levelName)
     },
     [onUpdateState]
   )
@@ -55,7 +55,7 @@ export const LevelList: React.FC<LevelListProps> = React.memo(({ states, minFiel
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={states.map(s => s.id)} strategy={verticalListSortingStrategy}>
         <div className="space-y-2">
-          {states.map((state, index) =>{ 
+          {states.map((state, index) => {
             return <SortableLevelInput key={state.id} state={state} onUpdate={handleUpdateState} onRemove={handleRemoveState} isRequired={index < minFields} />
           })}
         </div>

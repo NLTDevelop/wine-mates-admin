@@ -17,13 +17,13 @@ interface UseEditTasteReturn {
   editValue: {
     label: string
     labelEn: string
-    value: string
+    value?: string
   }
   color: string
   cardTextColorClass: string
   isSaving: boolean
   startEditing: () => void
-  handleSaveLabel: (editData: { label: string; labelEn: string; value: string }) => Promise<void>
+  handleSaveLabel: (editData: { label: string; labelEn: string; value?: string }) => Promise<void>
   cancelEditing: () => void
   handleKeyDown: (e: KeyboardEvent) => void
   setEditValue: (field: string, value: string) => void
@@ -50,7 +50,7 @@ export const useEditTaste = ({ data, isEditable = false }: UseEditTasteProps): U
   })
 
   const handleSaveLabel = useCallback(
-    async (editData: { label: string; labelEn: string; value: string }) => {
+    async (editData: { label: string; labelEn: string; value?: string }) => {
       if (!data.id) return
 
       await updateTasteMutation.mutateAsync({
@@ -58,7 +58,7 @@ export const useEditTaste = ({ data, isEditable = false }: UseEditTasteProps): U
         newTaste: {
           label: editData.label,
           labelEn: editData.labelEn,
-          value: editData.value,
+          value: editData.value || "",
         },
       })
 

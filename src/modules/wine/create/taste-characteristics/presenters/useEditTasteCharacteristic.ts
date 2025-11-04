@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { WineTasteCharacteristics } from '../entities/types/taste-characteristics'
+import { WineTasteCharacteristics, LevelItem } from '../entities/types/taste-characteristics'
 
 interface UseEditTasteCharacteristicProps {
   data: WineTasteCharacteristics
@@ -8,15 +8,26 @@ interface UseEditTasteCharacteristicProps {
   onCancel: (id: string) => void
   onToggleForm?: () => void
   onUpdateCharacteristic: (id: string, updates: { label?: string; labelEn?: string }) => Promise<void | WineTasteCharacteristics>
+  onSaveLevelsOrder?: (levels: LevelItem[]) => Promise<void> 
+   onCloseAccordion?: () => void
 }
 
-export const useEditTasteCharacteristic = ({ data, isEditable,  onCancel, onToggleForm, onUpdateCharacteristic }: UseEditTasteCharacteristicProps) => {
+export const useEditTasteCharacteristic = ({ 
+  data, 
+  isEditable,  
+  onCancel, 
+  onToggleForm, 
+  onUpdateCharacteristic,
+  onSaveLevelsOrder , onCloseAccordion
+}: UseEditTasteCharacteristicProps) => {
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [editValue, setEditValue] = useState({
     label: data.label,
     labelEn: data.labelEn || '',
   })
+  const [originalLevels, setOriginalLevels] = useState<LevelItem[]>(data.levels || []) 
+  const [currentLevels, setCurrentLevels] = useState<LevelItem[]>(data.levels || []) 
 
   const startEditing = useCallback(() => {
     if (!isEditable) return
@@ -25,7 +36,9 @@ export const useEditTasteCharacteristic = ({ data, isEditable,  onCancel, onTogg
       label: data.label,
       labelEn: data.labelEn || '',
     })
-  }, [isEditable, data.label, data.labelEn])
+    setOriginalLevels(data.levels || [])
+    setCurrentLevels(data.levels || [])
+  }, [isEditable, data.label, data.labelEn, data.levels])
 
   const cancelEditing = useCallback(() => {
     setIsEditing(false)
@@ -33,8 +46,9 @@ export const useEditTasteCharacteristic = ({ data, isEditable,  onCancel, onTogg
       label: data.label,
       labelEn: data.labelEn || '',
     })
+    setCurrentLevels(originalLevels)
     onCancel(data.id)
-  }, [data.label, data.labelEn, data.id, onCancel])
+  }, [data.label, data.labelEn, data.id, onCancel, originalLevels])
 
   const handleSaveLabel = useCallback(async () => {
     if (!editValue.label.trim()) return
@@ -52,6 +66,29 @@ export const useEditTasteCharacteristic = ({ data, isEditable,  onCancel, onTogg
       setIsSaving(false)
     }
   }, [editValue.label, editValue.labelEn, data.id, onUpdateCharacteristic])
+
+
+  const handleSaveLevelsOrder = useCallback(async () => {
+    if (!onSaveLevelsOrder) return
+    
+    setIsSaving(true)
+    try {
+      await onSaveLevelsOrder(currentLevels)
+      setOriginalLevels(currentLevels)
+
+      if (onCloseAccordion) {
+        onCloseAccordion()
+      }
+    } catch (error) {
+      console.error('Failed to save levels order:', error)
+    } finally {
+      setIsSaving(false)
+    }
+  }, [currentLevels, onSaveLevelsOrder, onCloseAccordion]) 
+
+  const updateCurrentLevels = useCallback((levels: LevelItem[]) => {
+    setCurrentLevels(levels)
+  }, [])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -85,9 +122,12 @@ export const useEditTasteCharacteristic = ({ data, isEditable,  onCancel, onTogg
     startEditing,
     cancelEditing,
     handleSaveLabel,
+    handleSaveLevelsOrder, 
+    updateCurrentLevels, 
     handleKeyDown,
     handleAddItemClick,
     getItemName,
     renderableItems,
+    currentLevels,
   }
 }

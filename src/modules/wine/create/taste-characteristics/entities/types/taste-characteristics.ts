@@ -23,6 +23,8 @@ export interface CreateWineTasteCharacteristicParams {
   levels?: LevelItem[] 
 }
 
+
+
 export interface UpdateWineTasteCharacteristicParams {
   characteristicId: string
   newCharacteristic: {

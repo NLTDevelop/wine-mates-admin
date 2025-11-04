@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { LevelItem } from '../../entities/types/taste-characteristics'
 import { LevelList } from '..'
 import { Button } from '@/UIKit/shadcn/ui/button'
@@ -13,57 +13,37 @@ interface LevelManagerProps {
 
 export const LevelManager: React.FC<LevelManagerProps> = ({ states, onStatesChange, minFields = 3 }) => {
   const { t } = useTranslation('wines')
-  const [internalStates, setInternalStates] = useState<LevelItem[]>(() => {
-    if (states.length === 0) {
-      return Array.from({ length: minFields }, (_, index) => ({
-        id: `state-${index}`,
-        levelName: '',
-        order: index,
-      }))
-    }
-    return states
-  })
-
-  useEffect(() => {
-    if (states.length === 0 && internalStates.length === minFields) {
-      onStatesChange(internalStates)
-    }
-  }, [internalStates, states.length, onStatesChange, minFields])
 
   const handleAddState = useCallback(() => {
     const newState: LevelItem = {
       id: `state-${Date.now()}`,
       levelName: '',
-      order: internalStates.length,
+      order: states.length,
     }
-    const newStates = [...internalStates, newState]
-    setInternalStates(newStates)
+    const newStates = [...states, newState]
     onStatesChange(newStates)
-  }, [internalStates, onStatesChange])
+  }, [states, onStatesChange])
 
   const handleUpdateState = useCallback(
-    (stateId: string, stateName: string) => {
-      const updatedStates = internalStates.map(state => (state.id === stateId ? { ...state, stateName } : state))
-      setInternalStates(updatedStates)
+    (stateId: string, levelName: string) => {
+      const updatedStates = states.map(state => (state.id === stateId ? { ...state, levelName } : state))
       onStatesChange(updatedStates)
     },
-    [internalStates, onStatesChange]
+    [states, onStatesChange]
   )
 
   const handleRemoveState = useCallback(
     (stateId: string) => {
-      if (internalStates.length > minFields) {
-        const updatedStates = internalStates.filter(state => state.id !== stateId)
-        setInternalStates(updatedStates)
+      if (states.length > minFields) {
+        const updatedStates = states.filter(state => state.id !== stateId)
         onStatesChange(updatedStates)
       }
     },
-    [internalStates, minFields, onStatesChange]
+    [states, minFields, onStatesChange]
   )
 
   const handleReorderStates = useCallback(
     (reorderedStates: LevelItem[]) => {
-      setInternalStates(reorderedStates)
       onStatesChange(reorderedStates)
     },
     [onStatesChange]
@@ -71,12 +51,12 @@ export const LevelManager: React.FC<LevelManagerProps> = ({ states, onStatesChan
 
   return (
     <div className="space-y-3">
-      <Button type="button" variant="outline" size="sm" onClick={handleAddState} className="flex items-center gap-2">
+      <Button type="button" variant="ghost" size="sm" onClick={handleAddState} className="flex items-center gap-2 mt-3 border-1 hover:bg-muted-foreground hover:text-input">
         <Plus className="w-4 h-4" />
         {t('button.add_level')}
       </Button>
 
-      <LevelList states={internalStates} minFields={minFields} onUpdateState={handleUpdateState} onRemoveState={handleRemoveState} onReorderStates={handleReorderStates} />
+      <LevelList states={states} minFields={minFields} onUpdateState={handleUpdateState} onRemoveState={handleRemoveState} onReorderStates={handleReorderStates} />
     </div>
   )
 }

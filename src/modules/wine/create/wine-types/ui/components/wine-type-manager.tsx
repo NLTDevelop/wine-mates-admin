@@ -22,7 +22,7 @@ export const WineTypeManager = () => {
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">{t('types.wine_types')}</h2>
           <Button onClick={() => setIsCreating(true)}>
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="w-4 h-4" />
             {t('button.add_new_type')}
           </Button>
         </div>

@@ -8,6 +8,7 @@ import { TastePaletteManager } from '../../../tastes/ui'
 import { ColorPaletteManager } from '../../../colors/ui'
 import { FlavorPaletteManager } from '../../../flavors/ui'
 import { TasteCharacteristicsPaletteManager } from '../../../taste-characteristics/ui'
+import { WineTypeManager } from '../../../wine-types/ui'
 
 export const WineManagementView = () => {
   const { t } = useTranslation('wines')
@@ -15,8 +16,8 @@ export const WineManagementView = () => {
 
   const renderContent = () => {
     switch (selectedTemplate) {
-      // case 'wine_type':
-      //   return <WineTypeManager />
+      case 'wine_type':
+        return <WineTypeManager />
       case 'color_palette':
         return <ColorPaletteManager />
       case 'flavor_palette':

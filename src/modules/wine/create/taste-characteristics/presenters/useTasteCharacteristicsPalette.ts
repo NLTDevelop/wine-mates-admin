@@ -29,7 +29,8 @@ export const useTasteCharacteristicsPalette = () => {
   const [isFormOpen, setIsFormOpen] = useState<{ [key: string]: boolean }>({})
   const [isAccordionOpen, setIsAccordionOpen] = useState<{ [key: string]: boolean }>({})
   const [editingGroups, setEditingGroups] = useState<{ [key: string]: EditingGroup }>({})
-  const [characteristicLevels, setCharacteristicLevels] = useState<{ [key: string]: LevelItem[] }>({})
+  const [characteristicLevels, setCharacteristicLevels] = useState<{ [key: string]: LevelItem[] }>({
+    'new-characteristic': [] })
   
   const [newCharacteristicData, setNewCharacteristicData] = useState<NewCharacteristicData>({
     label: '',
@@ -144,7 +145,8 @@ export const useTasteCharacteristicsPalette = () => {
     isLoading,
     isFormOpen,
     isAccordionOpen,
-    newCharacteristicData, 
+    newCharacteristicData,
+    characteristicLevels, 
 
     handleAddCharacteristic,
     handleUpdateCharacteristic,

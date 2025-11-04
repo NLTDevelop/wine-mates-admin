@@ -143,7 +143,7 @@ export const FlavorGroupCard = ({
         )}
 
         <div className={cn('w-full flex justify-end', !renderableItems.length && 'mt-3')}>
-          <Button size="sm" variant="ghost" className="border-1" onClick={handleAddAromaClick}>
+          <Button size="sm" variant="ghost" className="border-1 hover:bg-muted-foreground hover:text-input" onClick={handleAddAromaClick}>
             {isFormOpen ? t('button.cancel') : t('button.add_new_aroma')}
           </Button>
         </div>

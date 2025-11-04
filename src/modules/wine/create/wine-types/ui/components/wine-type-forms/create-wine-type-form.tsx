@@ -29,7 +29,7 @@ export const CreateWineTypeForm = ({ onSubmit, onCancel, isLoading }: CreateWine
   const { fetchColors, fetchAromas, fetchFlavorNotes, fetchFlavorCharacteristics } = useWineOptionsMock()
 
   return (
-    <Card className="border-l-4 border-l-green-500">
+     <Card className="border-1 border-dashed p-0">
       <CardHeader className="pb-3">
         <CardTitle className="flex justify-between items-center">
           Создание нового типа вина
@@ -110,7 +110,7 @@ export const CreateWineTypeForm = ({ onSubmit, onCancel, isLoading }: CreateWine
               Отмена
             </Button>
             <Button type="submit" disabled={formLoading || !canSubmit}>
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4" />
               {formLoading ? 'Создание...' : 'Создать тип вина'}
             </Button>
           </div>

@@ -56,8 +56,8 @@ export const tasteCharacteristicsQueries = {
         characteristicId: params.characteristicId,
         itemId: params.itemId,
         newItem: {
-          name: currentItem.name,
-          nameEn: currentItem.nameEn,
+          name: currentItem.label,
+          nameEn: currentItem.labelEn,
           level: params.levels,
         },
       })

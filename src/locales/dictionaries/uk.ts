@@ -127,6 +127,7 @@ export const uk = {
   wines: {
     create_wine: 'Створення вина',
     color: 'Колір',
+    qty: 'Кількість',
     title: 'Назва',
     entry_flavors: 'Введіть смаки (через кому)',
     entry_flavor_title: 'Введіть назву смаку',
@@ -217,6 +218,7 @@ export const uk = {
       group_name_ua: 'Назва групи (UA)',
       group_name_en: 'Назва групи (EN)',
       create_new_group: 'Створення нової групи ароматів',
+      state_flavor: 'Стан аромату',
     },
     tastes: {
       tastes: 'Смаки',
@@ -225,7 +227,7 @@ export const uk = {
       create_new_taste: 'Створення смакової ноти',
     },
     taste_characteristics: {
-      tastes: 'Смаки',
+      characteristics: 'Смакові характеристики',
       characteristic_name_ua: 'Назва характеристики (UA)',
       characteristic_name_en: 'Назва характеристики (EN)',
       create_new_taste: 'Створення смакової ноти',
@@ -240,7 +242,9 @@ export const uk = {
       create_new_color: 'Додати базовий колір',
       create_new_aroma_group: 'Додати групу ароматів',
       add_new_aroma: 'Додати аромат',
+      add_new_characteristic: 'Додати характеристику',
       add_level: 'Додати рівень',
+      add_state_flavor: 'Додати стан',
       create_new_taste: 'Додати смакову ноту',
     },
   },

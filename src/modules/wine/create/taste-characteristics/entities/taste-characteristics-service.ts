@@ -2,14 +2,7 @@ import { api } from '@/services'
 import { buildUrl } from '@/lib/utils'
 
 import { TASTE_CHARACTERISTICS_ENDPOINTS } from './taste-characteristics-endpoints'
-import {
-  WineTasteCharacteristics,
-  WineTasteCharacteristicsItem,
-  CreateWineTasteCharacteristicParams,
-  UpdateWineTasteCharacteristicParams,
-  CreateWineTasteItemParams,
-  UpdateWineTasteItemParams,
-} from './types/taste-characteristics'
+import { WineTasteCharacteristics, CreateWineTasteCharacteristicParams, UpdateWineTasteCharacteristicParams, CreateWineTasteItemParams, UpdateWineTasteItemParams } from './types/taste-characteristics'
 
 export const tasteCharacteristicsService = {
   listCharacteristics: (): Promise<WineTasteCharacteristics[]> => api.get(TASTE_CHARACTERISTICS_ENDPOINTS.CHARACTERISTICS.LIST).then(response => response.data),
@@ -27,10 +20,10 @@ export const tasteCharacteristicsService = {
     return api.get(endpoint).then(response => response.data)
   },
 
-  createItem: (characteristicId: string, item: CreateWineTasteItemParams): Promise<WineTasteCharacteristicsItem> =>
+  createItem: (characteristicId: string, item: CreateWineTasteItemParams): Promise<WineTasteCharacteristics> =>
     api.post(buildUrl(TASTE_CHARACTERISTICS_ENDPOINTS.CHARACTERISTIC_ITEMS.CREATE, { characteristicId }), item).then(response => response.data),
 
-  updateItem: (params: UpdateWineTasteItemParams): Promise<WineTasteCharacteristicsItem> =>
+  updateItem: (params: UpdateWineTasteItemParams): Promise<WineTasteCharacteristics> =>
     api.put(buildUrl(TASTE_CHARACTERISTICS_ENDPOINTS.ITEMS.UPDATE, { itemId: params.itemId }), params.newItem).then(response => response.data),
 
   deleteItem: (params: { characteristicId: string; itemId: string }): Promise<void> =>

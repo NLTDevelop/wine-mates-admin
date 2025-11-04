@@ -5,13 +5,12 @@ import { mockTasteCharacteristics } from '../../entities/mocks'
 import { useState } from 'react'
 
 export const TasteCharacteristicsPaletteManager = () => {
-
-
   const tasteCharacteristics = mockTasteCharacteristics
   const {
     isLoading,
     isFormOpen,
     isAccordionOpen,
+    characteristicLevels,
     handleAddCharacteristic,
     handleDeleteCharacteristic,
     handleToggleForm,
@@ -52,11 +51,11 @@ export const TasteCharacteristicsPaletteManager = () => {
     <Card>
       <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
         <div>
-          <CreateTasteCharacteristicSection 
-            onCreateCharacteristic={handleAddCharacteristic} 
+          <CreateTasteCharacteristicSection
+            onCreateCharacteristic={handleAddCharacteristic}
             isLoading={isLoading}
-            characteristicLevels={[]}
-            onCharacteristicLevelsChange={(levels) => {
+            characteristicLevels={characteristicLevels['new-characteristic'] || []}
+            onCharacteristicLevelsChange={levels => {
               updateLocalCharacteristicLevels('new-characteristic', levels)
             }}
           />
@@ -82,11 +81,11 @@ export const TasteCharacteristicsPaletteManager = () => {
                       return newData
                     })
                   }}
-                  onUpdateCharacteristic={(id) => handleSaveCharacteristic(id)}
+                  onUpdateCharacteristic={id => handleSaveCharacteristic(id)}
                   isAccordionOpen={isAccordionOpen}
                   handleToggleAccordion={handleToggleAccordion}
-                  characteristicLevels={characteristic.levels || []}
-                  onCharacteristicLevelsChange={(levels) => {
+                  characteristicLevels={characteristicLevels[characteristic.id] || []}
+                  onCharacteristicLevelsChange={levels => {
                     updateLocalCharacteristicLevels(characteristic.id, levels)
                   }}
                   editData={currentEditData}

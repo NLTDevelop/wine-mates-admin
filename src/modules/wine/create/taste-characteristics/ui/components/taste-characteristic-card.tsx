@@ -1,11 +1,13 @@
 import { useTranslation } from 'react-i18next'
-import { Button } from '@/UIKit/shadcn/ui/button'
 import { cn } from '@/lib/utils'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
 import { useEditTasteCharacteristic } from '../../presenters/useEditTasteCharacteristic'
 import { EditableHeader, PaletteItemActions } from '../../../general/ui'
-import { LevelItem, WineTasteCharacteristics } from '../../entities/types/taste-characteristics'
-import { LevelManager } from './level-manager'
+import { LevelItem, WineTasteCharacteristics, } from '../../entities/types/taste-characteristics'
+import { LevelManager } from '..'
+import { useCallback } from 'react'
+import { useWineTasteCharacteristics } from '../../presenters/useWineTasteCharacteristics'
+import { useDebounce } from '@/hooks/ui/useDebounce'
 
 interface TasteCharacteristicCardProps {
   data: WineTasteCharacteristics
@@ -44,9 +46,24 @@ export const TasteCharacteristicCard = ({
   editData,
   onEditDataChange,
 }: TasteCharacteristicCardProps) => {
-  const { t } = useTranslation('wines')
+  const { t: tc } = useTranslation('common')
 
-  const { isEditing, editValue, isSaving, startEditing, handleSaveLabel, cancelEditing, handleKeyDown, setEditValue, handleAddItemClick } = useEditTasteCharacteristic({
+  const { 
+    isReorderingCharacteristicLevels,
+    updateCharacteristicLevels
+  } = useWineTasteCharacteristics()
+
+  const { 
+    isEditing, 
+    editValue, 
+    isSaving, 
+    startEditing, 
+    handleSaveLabel, 
+    cancelEditing, 
+    handleKeyDown, 
+    setEditValue,  
+    updateCurrentLevels, 
+  } = useEditTasteCharacteristic({
     data,
     isEditable,
     isFormOpen,
@@ -62,12 +79,28 @@ export const TasteCharacteristicCard = ({
     }))
   }
 
+    const saveLevelsToServer = useCallback(async (levels: LevelItem[]) => {
+    
+    try {
+      await updateCharacteristicLevels(data.id, levels)
+    } catch (error) {
+      console.error('Failed to save levels:', error)
+    }
+  }, [data.id, updateCharacteristicLevels])
+
+const { debouncedWrapper } = useDebounce(saveLevelsToServer, 1000) 
+
+  const handleLevelsChange = useCallback((levels: LevelItem[]) => {
+   
+    updateCurrentLevels(levels)
+    onCharacteristicLevelsChange?.(levels)
+    
+    debouncedWrapper(levels)
+  }, [updateCurrentLevels, onCharacteristicLevelsChange, debouncedWrapper])
+
   const isOpenAccordion = isAccordionOpen[data.id] || false
 
   const handleToggle = (isOpen: boolean) => {
-    if (isEditing) {
-      return
-    }
     handleToggleAccordion(data.id, isOpen)
 
     if (!isOpen && isFormOpen) {
@@ -79,22 +112,21 @@ export const TasteCharacteristicCard = ({
 
   return (
     <AccordionWrapper
-      label={`${data.label} (${data.levels?.length || 0})`}
+      label={`${data.label} (${characteristicLevels.length > 0 ? characteristicLevels.length : data.levels?.length || 0})`}
       isOpen={isOpenAccordion}
       onToggle={handleToggle}
-      style={{ padding: '8px' }}
+      style={{backgroundColor:"#fffbfb", padding: '8px' }}
       header={
         <EditableHeader
           isEditable={isEditable}
           isEditing={isEditing}
-          isSaving={isSaving}
+          isSaving={isSaving || isReorderingCharacteristicLevels}
           label={data.label}
           labelEn={data.labelEn || ''}
-          value={data.levels?.length || 0} 
+          value={characteristicLevels.length > 0 ? characteristicLevels.length : data.levels?.length || 0}
           editValue={{
-            label: editData?.label || editValue.label, 
+            label: editData?.label || editValue.label,
             labelEn: editData?.labelEn || editValue.labelEn,
-            value: String(data.levels?.length || 0), 
           }}
           cardTextColorClass="text-gray-800"
           onStartEditing={startEditing}
@@ -103,14 +135,14 @@ export const TasteCharacteristicCard = ({
           onKeyDown={handleKeyDown}
           onEditValueChange={(field, value) => {
             if (onEditDataChange) {
-              onEditDataChange(field, value) 
+              onEditDataChange(field, value)
             } else {
               handleEditValueChange(field, value) 
             }
           }}
           actions={
             <PaletteItemActions
-              isLoading={isLoading || false}
+              isLoading={isLoading || isSaving || isReorderingCharacteristicLevels}
               onRemove={() => onRemove(data.id)}
               dataId={data.id}
               cardTextColorClass="text-gray-800"
@@ -122,35 +154,25 @@ export const TasteCharacteristicCard = ({
         />
       }
     >
-      <div
-        className={cn(
-          'relative flex flex-col h-auto min-h-8 w-full items-start justify-between pl-1 pr-1 sm:pl-3 sm:pr-6 pb-2 pt-0 mt-2 transition-all flex-1 bg-muted',
-          isFormOpen ? 'rounded-t-md rounded-b-0' : 'rounded-t-none rounded-b-md',
-          'cursor-default',
-          'group'
-        )}
-      >
-        {isOpenAccordion && (
-          <div className="w-full mb-4 p-4 border rounded-md bg-white">
-            <h4 className="text-sm font-medium mb-3">{t('taste_characteristics.manage_levels') || 'Manage Levels'}</h4>
-            <LevelManager 
-              states={levelsToShow} 
-              onStatesChange={onCharacteristicLevelsChange || (() => {})} 
-            />
-          </div>
-        )}
-
-        <div className={cn('w-full flex justify-end', 'mt-3')}>
-          <Button 
-            size="sm" 
-            variant="ghost" 
-            className="border-1" 
-            onClick={handleAddItemClick}
-          >
-            {isFormOpen ? t('button.cancel') : t('button.add_new_taste')}
-          </Button>
+      {isOpenAccordion && (
+        <div
+          className={cn(
+            'relative flex flex-col h-auto min-h-8 w-full items-start justify-between pl-1 pr-1 sm:pl-3 sm:pr-6 pb-2 pt-0 mt-2 transition-all flex-1 bg-muted/40',
+            isFormOpen ? 'rounded-t-md rounded-b-0' : 'rounded-t-none rounded-b-md',
+            'cursor-default',
+            'group'
+          )}
+        >
+          <LevelManager states={levelsToShow} onStatesChange={handleLevelsChange} />
+          
+          {/* индикатор сохранения (может потом уберу) */}
+          {isReorderingCharacteristicLevels && (
+            <div className="text-xs text-blue-500 mt-2 text-center">
+              {tc('button.saving')}...
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </AccordionWrapper>
   )
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { X, GripVertical } from 'lucide-react'
@@ -9,12 +9,12 @@ import { useTranslation } from 'react-i18next'
 
 interface SortableLevelInputProps {
   state: LevelItem
-  onUpdate: (id: string, stateName: string) => void
+  onUpdate: (id: string, levelName: string) => void
   onRemove: (id: string) => void
   isRequired: boolean
 }
 
-export const SortableLevelInput: React.FC<SortableLevelInputProps> = React.memo(({ state, onUpdate, onRemove, isRequired }) => {
+export const SortableLevelInput: React.FC<SortableLevelInputProps> = ({ state, onUpdate, onRemove, isRequired }) => {
   const { t } = useTranslation('wines')
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: state.id,
@@ -26,7 +26,7 @@ export const SortableLevelInput: React.FC<SortableLevelInputProps> = React.memo(
     opacity: isDragging ? 0.5 : 1,
   }
 
-  const handleInputChange = React.useCallback(
+  const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onUpdate(state.id, e.target.value)
     },
@@ -44,7 +44,7 @@ export const SortableLevelInput: React.FC<SortableLevelInputProps> = React.memo(
       </div>
 
       <div className="w-full">
-        <Input value={state.levelName} onChange={handleInputChange} placeholder={t("taste_characteristics.entry_level")} className="flex-1 h-8" />
+        <Input value={state.levelName} onChange={handleInputChange} placeholder={t('taste_characteristics.entry_level')} className="flex-1 h-8" />
       </div>
 
       {!isRequired && (
@@ -54,6 +54,5 @@ export const SortableLevelInput: React.FC<SortableLevelInputProps> = React.memo(
       )}
     </div>
   )
-})
-
+}
 SortableLevelInput.displayName = 'SortableLevelInput'
