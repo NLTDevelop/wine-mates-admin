@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
 import { useEditTasteCharacteristic } from '../../presenters/useEditTasteCharacteristic'
 import { EditableHeader, PaletteItemActions } from '../../../general/ui'
-import { LevelItem, WineTasteCharacteristics, } from '../../entities/types/taste-characteristics'
+import { LevelItem, WineTasteCharacteristics } from '../../entities/types/taste-characteristics'
 import { LevelManager } from '..'
 import { useCallback } from 'react'
 import { useWineTasteCharacteristics } from '../../presenters/useWineTasteCharacteristics'
@@ -48,22 +48,9 @@ export const TasteCharacteristicCard = ({
 }: TasteCharacteristicCardProps) => {
   const { t: tc } = useTranslation('common')
 
-  const { 
-    isReorderingCharacteristicLevels,
-    updateCharacteristicLevels
-  } = useWineTasteCharacteristics()
+  const { isReorderingCharacteristicLevels, updateCharacteristicLevels } = useWineTasteCharacteristics()
 
-  const { 
-    isEditing, 
-    editValue, 
-    isSaving, 
-    startEditing, 
-    handleSaveLabel, 
-    cancelEditing, 
-    handleKeyDown, 
-    setEditValue,  
-    updateCurrentLevels, 
-  } = useEditTasteCharacteristic({
+  const { isEditing, editValue, isSaving, startEditing, handleSaveLabel, cancelEditing, handleKeyDown, setEditValue, updateCurrentLevels } = useEditTasteCharacteristic({
     data,
     isEditable,
     isFormOpen,
@@ -79,24 +66,28 @@ export const TasteCharacteristicCard = ({
     }))
   }
 
-    const saveLevelsToServer = useCallback(async (levels: LevelItem[]) => {
-    
-    try {
-      await updateCharacteristicLevels(data.id, levels)
-    } catch (error) {
-      console.error('Failed to save levels:', error)
-    }
-  }, [data.id, updateCharacteristicLevels])
+  const saveLevelsToServer = useCallback(
+    async (levels: LevelItem[]) => {
+      try {
+        await updateCharacteristicLevels(data.id, levels)
+      } catch (error) {
+        console.error('Failed to save levels:', error)
+      }
+    },
+    [data.id, updateCharacteristicLevels]
+  )
 
-const { debouncedWrapper } = useDebounce(saveLevelsToServer, 1000) 
+  const { debouncedWrapper } = useDebounce(saveLevelsToServer, 1000)
 
-  const handleLevelsChange = useCallback((levels: LevelItem[]) => {
-   
-    updateCurrentLevels(levels)
-    onCharacteristicLevelsChange?.(levels)
-    
-    debouncedWrapper(levels)
-  }, [updateCurrentLevels, onCharacteristicLevelsChange, debouncedWrapper])
+  const handleLevelsChange = useCallback(
+    (levels: LevelItem[]) => {
+      updateCurrentLevels(levels)
+      onCharacteristicLevelsChange?.(levels)
+
+      debouncedWrapper(levels)
+    },
+    [updateCurrentLevels, onCharacteristicLevelsChange, debouncedWrapper]
+  )
 
   const isOpenAccordion = isAccordionOpen[data.id] || false
 
@@ -115,7 +106,7 @@ const { debouncedWrapper } = useDebounce(saveLevelsToServer, 1000)
       label={`${data.label} (${characteristicLevels.length > 0 ? characteristicLevels.length : data.levels?.length || 0})`}
       isOpen={isOpenAccordion}
       onToggle={handleToggle}
-      style={{backgroundColor:"#fffbfb", padding: '8px' }}
+      style={{ backgroundColor: '#fffbfb', padding: '8px' }}
       header={
         <EditableHeader
           isEditable={isEditable}
@@ -137,7 +128,7 @@ const { debouncedWrapper } = useDebounce(saveLevelsToServer, 1000)
             if (onEditDataChange) {
               onEditDataChange(field, value)
             } else {
-              handleEditValueChange(field, value) 
+              handleEditValueChange(field, value)
             }
           }}
           actions={
@@ -164,13 +155,9 @@ const { debouncedWrapper } = useDebounce(saveLevelsToServer, 1000)
           )}
         >
           <LevelManager states={levelsToShow} onStatesChange={handleLevelsChange} />
-          
+
           {/* индикатор сохранения (может потом уберу) */}
-          {isReorderingCharacteristicLevels && (
-            <div className="text-xs text-blue-500 mt-2 text-center">
-              {tc('button.saving')}...
-            </div>
-          )}
+          {isReorderingCharacteristicLevels && <div className="text-xs text-blue-500 mt-2 text-center">{tc('button.saving')}...</div>}
         </div>
       )}
     </AccordionWrapper>

@@ -35,7 +35,7 @@ export const useWineTypeForm = ({ initialData, onSubmit, isLoading }: UseWineTyp
         .replace(/[^a-z0-9-]/g, '')
 
       const newWineType: WineType = {
-        value,
+        id: value,
         ...formData,
       }
       onSubmit(newWineType)
@@ -60,7 +60,7 @@ export const useWineTypeForm = ({ initialData, onSubmit, isLoading }: UseWineTyp
     }))
   }
 
-  const canSubmit = formData.label.trim() && formData.colors.length > 0 && formData.aromas.length > 0
+  const canSubmit = formData.label.trim() && formData.colors.length > 0 && formData.aromas.length > 0 && formData.flavorNotes.length > 0 && formData.flavorCharacteristics.length > 0
 
   return {
     formData,

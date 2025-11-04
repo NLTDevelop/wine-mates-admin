@@ -58,7 +58,7 @@ export const useEditTaste = ({ data, isEditable = false }: UseEditTasteProps): U
         newTaste: {
           label: editData.label,
           labelEn: editData.labelEn,
-          value: editData.value || "",
+          value: editData.value || '',
         },
       })
 

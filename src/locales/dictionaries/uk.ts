@@ -46,6 +46,8 @@ export const uk = {
       logout: 'Вийти',
       add: 'Додати',
       saving: 'Збереження...',
+      select_all: 'Обрати всі',
+      deselect_all: 'Очистити все',
     },
     modal: {
       wish_logout: 'Бажаєте вийти?',
@@ -203,6 +205,19 @@ export const uk = {
       flavor_notes: 'Смакові ноти',
       flavor_characteristics: 'Смакові характиристики',
       wine_types: 'Типи вина',
+      create_new_type: 'Створити новий тип вина',
+      type_name_ua: 'Назва типу (UA)',
+      type_name_en: 'Назва типу (EN)',
+      color: 'Колір вина',
+      choose_color: 'Оберіть кольори',
+      search_color: 'Пошук кольору',
+      choose_aromas: 'Оберіть аромати',
+      search_aromas: 'Пошук аромату',
+      choose_flavor_notes: 'Оберіть смакові ноти',
+      search_flavor_notes: 'Пошук смакової ноти',
+      choose_flavor_characteristics: 'Оберіть смакові характеристики',
+      search_flavor_characteristics: 'Пошук смакової характеристики',
+      edit_type: 'Редагування типу вина',
     },
     colors: {
       create_new_color: 'Створення нового кольору',
@@ -231,7 +246,7 @@ export const uk = {
       characteristic_name_ua: 'Назва характеристики (UA)',
       characteristic_name_en: 'Назва характеристики (EN)',
       create_new_taste: 'Створення смакової ноти',
-      entry_level:"Рівень"
+      entry_level: 'Рівень',
     },
     button: {
       edit: 'Редагувати',

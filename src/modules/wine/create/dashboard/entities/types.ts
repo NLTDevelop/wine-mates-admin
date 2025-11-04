@@ -7,7 +7,6 @@ export interface WineTemplate {
   order?: number
 }
 
-
 export interface ReorderWineTemplatesParams {
   templates: Array<{
     id: string

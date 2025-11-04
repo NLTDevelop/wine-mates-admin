@@ -9,33 +9,32 @@ import { useTranslation } from 'react-i18next'
 export const useWineTemplates = () => {
   const queryClient = useQueryClient()
   const store = useWineTemplateStore()
-  const { t } = useTranslation("wines")
+  const { t } = useTranslation('wines')
 
-   const [staticTemplates] = useState(() => getWineTemplates(t))
-  
+  const [staticTemplates] = useState(() => getWineTemplates(t))
+
   const templatesQuery = useQuery({
     queryKey: ['wine-templates', 'list'],
     queryFn: () => wineTemplateService.list(),
-    initialData: staticTemplates, 
+    initialData: staticTemplates,
   })
 
+  //-----------------когда будет бек---------------------
+  // const templatesQuery = useQuery({
+  //   queryKey: ['wine-templates', 'list'],
+  //   queryFn: async () => {
+  //     const backendData = await wineTemplateService.list()
+  //     const staticTemplates = getWineTemplates(t)
 
-//-----------------когда будет бек---------------------
-// const templatesQuery = useQuery({
-//   queryKey: ['wine-templates', 'list'],
-//   queryFn: async () => {
-//     const backendData = await wineTemplateService.list()
-//     const staticTemplates = getWineTemplates(t)
-    
-//     return backendData.map(backendItem => {
-//       const staticData = staticTemplates.find(t => t.id === backendItem.id)
-//       return {
-//         ...staticData, 
-//         ...backendItem 
-//       }
-//     })
-//   }
-// })
+  //     return backendData.map(backendItem => {
+  //       const staticData = staticTemplates.find(t => t.id === backendItem.id)
+  //       return {
+  //         ...staticData,
+  //         ...backendItem
+  //       }
+  //     })
+  //   }
+  // })
 
   useEffect(() => {
     if (templatesQuery.data) {
@@ -51,7 +50,7 @@ export const useWineTemplates = () => {
     },
   })
 
-const handleReorderTemplates = (templates: WineTemplate[]) => {
+  const handleReorderTemplates = (templates: WineTemplate[]) => {
     store.reorderTemplates(templates)
 
     const reorderParams: ReorderWineTemplatesParams = {
@@ -60,7 +59,7 @@ const handleReorderTemplates = (templates: WineTemplate[]) => {
         order: index,
       })),
     }
-    
+
     reorderMutation.mutate(reorderParams)
   }
 

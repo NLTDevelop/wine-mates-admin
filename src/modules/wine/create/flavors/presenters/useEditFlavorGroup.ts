@@ -66,7 +66,7 @@ export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable 
         newGroup: {
           label: editData.label,
           labelEn: editData.labelEn,
-          value: editData.value || "",
+          value: editData.value || '',
           items: data.items,
         },
       })

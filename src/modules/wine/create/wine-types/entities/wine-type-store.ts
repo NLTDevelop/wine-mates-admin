@@ -40,9 +40,9 @@ export const useWineTypeStore = createStoreDevToolsWrapper<WineTypeStoreState>(
     updateWineType: (oldValue, newWineType) =>
       set(
         (state: WineTypeStoreState) => ({
-          wineTypes: state.wineTypes.map(wt => (wt.value === oldValue ? newWineType : wt)),
-          currentWineType: state.currentWineType?.value === oldValue ? newWineType : state.currentWineType,
-          searchResults: state.searchResults.map(wt => (wt.value === oldValue ? newWineType : wt)),
+          wineTypes: state.wineTypes.map(wt => (wt.id === oldValue ? newWineType : wt)),
+          currentWineType: state.currentWineType?.id === oldValue ? newWineType : state.currentWineType,
+          searchResults: state.searchResults.map(wt => (wt.id === oldValue ? newWineType : wt)),
         }),
         false,
         'wineTypes/updateWineType'
@@ -51,9 +51,9 @@ export const useWineTypeStore = createStoreDevToolsWrapper<WineTypeStoreState>(
     deleteWineType: wineTypeValue =>
       set(
         (state: WineTypeStoreState) => ({
-          wineTypes: state.wineTypes.filter(wt => wt.value !== wineTypeValue),
-          currentWineType: state.currentWineType?.value === wineTypeValue ? null : state.currentWineType,
-          searchResults: state.searchResults.filter(wt => wt.value !== wineTypeValue),
+          wineTypes: state.wineTypes.filter(wt => wt.id !== wineTypeValue),
+          currentWineType: state.currentWineType?.id === wineTypeValue ? null : state.currentWineType,
+          searchResults: state.searchResults.filter(wt => wt.id !== wineTypeValue),
         }),
         false,
         'wineTypes/deleteWineType'
@@ -71,11 +71,11 @@ export const useWineTypeStore = createStoreDevToolsWrapper<WineTypeStoreState>(
     clearSearch: () => set({ searchResults: [] }, false, 'wineTypes/clearSearch'),
 
     getWineTypeByValue: value => {
-      return get().wineTypes.find((wt: WineType) => wt.value === value)
+      return get().wineTypes.find((wt: WineType) => wt.id === value)
     },
 
     hasWineType: value => {
-      return get().wineTypes.some((wt: WineType) => wt.value === value)
+      return get().wineTypes.some((wt: WineType) => wt.id === value)
     },
   }),
   'WineTypeStore'

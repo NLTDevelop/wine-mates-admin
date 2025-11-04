@@ -8,26 +8,19 @@ interface UseEditTasteCharacteristicProps {
   onCancel: (id: string) => void
   onToggleForm?: () => void
   onUpdateCharacteristic: (id: string, updates: { label?: string; labelEn?: string }) => Promise<void | WineTasteCharacteristics>
-  onSaveLevelsOrder?: (levels: LevelItem[]) => Promise<void> 
-   onCloseAccordion?: () => void
+  onSaveLevelsOrder?: (levels: LevelItem[]) => Promise<void>
+  onCloseAccordion?: () => void
 }
 
-export const useEditTasteCharacteristic = ({ 
-  data, 
-  isEditable,  
-  onCancel, 
-  onToggleForm, 
-  onUpdateCharacteristic,
-  onSaveLevelsOrder , onCloseAccordion
-}: UseEditTasteCharacteristicProps) => {
+export const useEditTasteCharacteristic = ({ data, isEditable, onCancel, onToggleForm, onUpdateCharacteristic, onSaveLevelsOrder, onCloseAccordion }: UseEditTasteCharacteristicProps) => {
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [editValue, setEditValue] = useState({
     label: data.label,
     labelEn: data.labelEn || '',
   })
-  const [originalLevels, setOriginalLevels] = useState<LevelItem[]>(data.levels || []) 
-  const [currentLevels, setCurrentLevels] = useState<LevelItem[]>(data.levels || []) 
+  const [originalLevels, setOriginalLevels] = useState<LevelItem[]>(data.levels || [])
+  const [currentLevels, setCurrentLevels] = useState<LevelItem[]>(data.levels || [])
 
   const startEditing = useCallback(() => {
     if (!isEditable) return
@@ -67,10 +60,9 @@ export const useEditTasteCharacteristic = ({
     }
   }, [editValue.label, editValue.labelEn, data.id, onUpdateCharacteristic])
 
-
   const handleSaveLevelsOrder = useCallback(async () => {
     if (!onSaveLevelsOrder) return
-    
+
     setIsSaving(true)
     try {
       await onSaveLevelsOrder(currentLevels)
@@ -84,7 +76,7 @@ export const useEditTasteCharacteristic = ({
     } finally {
       setIsSaving(false)
     }
-  }, [currentLevels, onSaveLevelsOrder, onCloseAccordion]) 
+  }, [currentLevels, onSaveLevelsOrder, onCloseAccordion])
 
   const updateCurrentLevels = useCallback((levels: LevelItem[]) => {
     setCurrentLevels(levels)
@@ -122,8 +114,8 @@ export const useEditTasteCharacteristic = ({
     startEditing,
     cancelEditing,
     handleSaveLabel,
-    handleSaveLevelsOrder, 
-    updateCurrentLevels, 
+    handleSaveLevelsOrder,
+    updateCurrentLevels,
     handleKeyDown,
     handleAddItemClick,
     getItemName,

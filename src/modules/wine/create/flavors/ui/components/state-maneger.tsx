@@ -45,7 +45,7 @@ interface StatesManagerProps {
 }
 
 export const StatesManager: React.FC<StatesManagerProps> = ({ states, onStatesChange }) => {
-const {t} = useTranslation("wines")
+  const { t } = useTranslation('wines')
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -90,10 +90,11 @@ const {t} = useTranslation("wines")
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <h4 className="text-sm font-medium text-gray-700">{t("flavors.state_flavor")}</h4>
+          <h4 className="text-sm font-medium text-gray-700">{t('flavors.state_flavor')}</h4>
         </div>
         <Button type="button" variant="outline" size="sm" onClick={addNewStateInput} className="flex items-center gap-2 ">
-          <Plus className="w-4 h-4" />{t("button.add_state_flavor")}
+          <Plus className="w-4 h-4" />
+          {t('button.add_state_flavor')}
         </Button>
       </div>
 

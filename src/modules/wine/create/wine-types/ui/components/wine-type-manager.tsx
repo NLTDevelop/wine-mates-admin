@@ -1,23 +1,23 @@
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
-
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useWineTypes } from '../../presenters/useWineTypes'
 import { mockWineTypes } from '../../entities/mock'
-import { CreateWineTypeForm, WineTypeCard } from '..'
+import { WineTypeCard } from '..'
 import { useTranslation } from 'react-i18next'
+import { WineTypeForm } from '..'
 
 export const WineTypeManager = () => {
   const { t } = useTranslation('wines')
 
   const wineTypes = mockWineTypes
-  const { createWineType, updateWineType, deleteWineType, isLoading } = useWineTypes()
+  const { /*wineTypes,*/ createWineType, updateWineType, deleteWineType, isLoading } = useWineTypes()
 
   const [isCreating, setIsCreating] = useState(false)
 
   return (
-    <Card className=" ">
+    <Card>
       <CardContent className="space-y-6 max-sm:p-0 sm:p-0">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">{t('types.wine_types')}</h2>
@@ -27,12 +27,10 @@ export const WineTypeManager = () => {
           </Button>
         </div>
 
-        {isCreating && <CreateWineTypeForm onSubmit={createWineType} onCancel={() => setIsCreating(false)} isLoading={isLoading} />}
+        {isCreating && <WineTypeForm mode="create" onSubmit={createWineType} onCancel={() => setIsCreating(false)} isLoading={isLoading} />}
 
         <div className="space-y-4">
-          {wineTypes.map(wineType => (
-            <WineTypeCard key={wineType.value} wineType={wineType} onUpdate={updateWineType} onDelete={deleteWineType} isLoading={isLoading} />
-          ))}
+          {wineTypes.length > 0 && wineTypes.map(wineType => <WineTypeCard key={wineType.id} wineType={wineType} onUpdate={updateWineType} onDelete={deleteWineType} isLoading={isLoading} />)}
         </div>
       </CardContent>
     </Card>

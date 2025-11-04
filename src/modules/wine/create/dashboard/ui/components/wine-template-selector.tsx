@@ -10,13 +10,7 @@ interface WineTemplateSelectorProps {
 }
 
 export const WineTemplateSelector = ({ selectedTemplate, onTemplateSelect }: WineTemplateSelectorProps) => {
-  const { 
-    templates, 
-    isLoading, 
-    isReordering, 
-    reorderTemplates,
-    setSelectedTemplateType 
-  } = useWineTemplates()
+  const { templates, isLoading, reorderTemplates, setSelectedTemplateType } = useWineTemplates()
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -57,27 +51,14 @@ export const WineTemplateSelector = ({ selectedTemplate, onTemplateSelect }: Win
   }
 
   return (
-    <div className="relative">
-      {isReordering && (
-        <div className="absolute top-0 right-0 z-10 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-          Сохранение порядка...
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <SortableContext items={templates.map(t => t.type)} strategy={rectSortingStrategy}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {templates.map(template => (
+            <SortableTemplateCard key={template.type} template={template} isSelected={selectedTemplate === template.type} onSelect={handleTemplateSelect} />
+          ))}
         </div>
-      )}
-      
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={templates.map(t => t.type)} strategy={rectSortingStrategy}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {templates.map(template => (
-              <SortableTemplateCard 
-                key={template.type} 
-                template={template} 
-                isSelected={selectedTemplate === template.type} 
-                onSelect={handleTemplateSelect} 
-              />
-            ))}
-          </div>
-        </SortableContext>
-      </DndContext>
-    </div>
+      </SortableContext>
+    </DndContext>
   )
 }

@@ -1,4 +1,3 @@
-
 // Sweetness,Activity, Tanin (level), Tanin (intensity), Alcohol, Body, Finish, Wine Peak, Complexity, Viscosity, Oak, Fruitness
 
 export interface LevelItem {
@@ -7,23 +6,20 @@ export interface LevelItem {
   order: number
 }
 
-
 export interface WineTasteCharacteristics {
   id: string
   label: string
   labelEn: string
   order: number
-  levels?: LevelItem[] 
+  levels?: LevelItem[]
 }
 
 export interface CreateWineTasteCharacteristicParams {
   label: string
   labelEn: string
   order?: number
-  levels?: LevelItem[] 
+  levels?: LevelItem[]
 }
-
-
 
 export interface UpdateWineTasteCharacteristicParams {
   characteristicId: string
@@ -31,7 +27,7 @@ export interface UpdateWineTasteCharacteristicParams {
     label?: string
     labelEn?: string
     order?: number
-    levels?: LevelItem[] 
+    levels?: LevelItem[]
   }
 }
 

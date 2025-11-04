@@ -5,7 +5,7 @@ import { WineType } from '../../entities/types/wine-type'
 import { useWineTypeCard } from '../../presenters/useWineTypeCard'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
 import { useTranslation } from 'react-i18next'
-import { EditWineTypeForm, Section } from '..'
+import { Section, WineTypeForm } from '..'
 
 interface WineTypeCardProps {
   wineType: WineType
@@ -34,10 +34,11 @@ export const WineTypeCard = ({ wineType, onUpdate, onDelete, isLoading }: WineTy
 
   if (isEditing) {
     return (
-      <EditWineTypeForm
+      <WineTypeForm
+        mode="edit"
         wineType={wineType}
         onSubmit={newWineType => {
-          onUpdate({ oldValue: wineType.value, newWineType })
+          onUpdate({ oldValue: wineType.id, newWineType })
           finishEditing()
         }}
         onCancel={finishEditing}
@@ -51,6 +52,7 @@ export const WineTypeCard = ({ wineType, onUpdate, onDelete, isLoading }: WineTy
       label={t('exposure_periods')}
       isOpen={isOpenAccordion}
       onToggle={setIsOpenAccordion}
+      style={{ backgroundColor: '#fffbfb', padding: '8px' }}
       header={
         <div className="flex items-center gap-2">
           <Wine className="w-5 h-5" />
@@ -59,7 +61,7 @@ export const WineTypeCard = ({ wineType, onUpdate, onDelete, isLoading }: WineTy
         </div>
       }
     >
-      <Card className="rounded-t-none bg-input/50">
+      <Card className="rounded-t-none bg-input/50 pt-3!">
         <CardHeader className="p-0 mb-2 border-none">
           <div className="flex justify-between items-start">
             <div></div>
@@ -68,7 +70,7 @@ export const WineTypeCard = ({ wineType, onUpdate, onDelete, isLoading }: WineTy
                 <span>{t('button.edit')}</span>
                 <Edit className="text-green-700" />
               </Button>
-              <Button variant="delete" size="sm" className="" onClick={() => onDelete(wineType.value)} disabled={cardLoading}>
+              <Button variant="delete" size="sm" className="" onClick={() => onDelete(wineType.id)} disabled={cardLoading}>
                 <span>{t('button.delete')}</span>
                 <Trash2 />
               </Button>
@@ -85,12 +87,13 @@ export const WineTypeCard = ({ wineType, onUpdate, onDelete, isLoading }: WineTy
             itemsCount={wineType.colors?.length || 0}
           >
             <div className="space-y-2">
-              {wineType.colors?.map(colorId => (
-                <div key={colorId} className="flex items-center gap-3 p-2 border rounded">
-                  <div className="w-6 h-6 rounded border bg-muted" />
-                  <span className="font-medium">{getColorLabel(colorId)}</span>
-                </div>
-              ))}
+              {wineType.colors?.map(colorId => {
+                return (
+                  <div key={colorId} className={`flex items-center gap-3 p-2 border rounded`}>
+                    <span className="font-medium">{getColorLabel(colorId)}</span>
+                  </div>
+                )
+              })}
             </div>
           </Section>
 

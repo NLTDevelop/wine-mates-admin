@@ -43,6 +43,7 @@ interface MultiSelectProps {
   animationConfig?: AnimationConfig
   className?: string
   popoverClassName?: string
+  showSelectAll?: boolean
 }
 
 export const MultiSelect: React.FC<MultiSelectProps> = ({
@@ -59,6 +60,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   animationConfig,
   className,
   popoverClassName,
+  showSelectAll = true,
 }) => {
   const { t } = useTranslation('common')
   const [open, setOpen] = React.useState(false)
@@ -155,6 +157,31 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     }
   }, [selectedValues, animationConfig?.duration])
 
+  const handleSelectAll = () => {
+    if (disabled) return
+
+    const enabledOptions = options.filter(opt => !opt.disabled)
+
+    if (maxSelections && enabledOptions.length > maxSelections) {
+      setAssertiveMessage(`Cannot select all. Maximum ${maxSelections} options allowed`)
+      setTimeout(() => setAssertiveMessage(''), 300)
+      return
+    }
+
+    const allValues = enabledOptions.map(opt => opt.value)
+    onChange(allValues)
+    setPoliteMessage(`All ${enabledOptions.length} options selected`)
+    setTimeout(() => setPoliteMessage(''), 300)
+  }
+
+  const handleDeselectAll = () => {
+    if (disabled) return
+
+    onChange(mode === 'single' ? '' : [])
+    setPoliteMessage('All options deselected')
+    setTimeout(() => setPoliteMessage(''), 300)
+  }
+
   const toggleOption = (optionValue: string) => {
     if (disabled) return
 
@@ -239,6 +266,12 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     return `${selectedValues.length} option${selectedValues.length === 1 ? '' : 's'} selected: ${labels.join(', ')}`
   }, [selectedValues, options])
 
+  const allSelected = React.useMemo(() => {
+    if (mode === 'single') return false
+    const enabledOptions = options.filter(opt => !opt.disabled)
+    return enabledOptions.length > 0 && selectedValues.length === enabledOptions.length
+  }, [options, selectedValues, mode])
+
   return (
     <div className="w-full">
       <div className="sr-only" aria-hidden={false}>
@@ -281,7 +314,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             }}
           >
             {mode === 'multiple' && selectedValues.length > 0 ? (
-              <div className="flex items-center justify-between w-full max-h-6">
+              <div className="flex items-center justify-between w-full **max-h-6**">
                 <div className="flex flex-wrap items-center gap-2 flex-1 overflow-hidden mr-2">
                   {selectedOptions.map(option => {
                     const IconComponent = option.icon
@@ -375,14 +408,14 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
         </PopoverTrigger>
 
         <PopoverContent
-          className={cn('w-[var(--radix-popper-anchor-width)] max-w-none p-0 shadow-xl border-2 border-popover bg-popover', getPopoverAnimationClass(), popoverClassName)}
+          className={cn('w-[var(--radix-popper-anchor-width)]  max-w-none p-0 shadow-xl border-2 border-popover bg-popover', getPopoverAnimationClass(), popoverClassName)}
           align="start"
           style={{
             animationDuration: `${animationConfig?.duration ?? 300}ms`,
             animationDelay: `${animationConfig?.delay ?? 0}ms`,
           }}
         >
-          <Command shouldFilter={false}>
+          <Command shouldFilter={false} className="bg-[#fffbfb]">
             <div className="relative">
               <CommandInput placeholder={searchLabel ?? t('search')} value={searchTerm} onValueChange={handleSearchChange} />
               {searchTerm && (
@@ -401,6 +434,20 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             </div>
             <CommandList>
               {!loading && options.length === 0 && <CommandEmpty className="py-4 text-center text-muted-foreground">{t('nothingFound')}</CommandEmpty>}
+
+              {showSelectAll && mode === 'multiple' && options.length > 0 && (
+                <div className="flex gap-2 p-2 border-b bg-muted/10">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={allSelected ? handleDeselectAll : handleSelectAll}
+                    disabled={!!disabled || !!(maxSelections && options.filter(opt => !opt.disabled).length > maxSelections)}
+                    className="h-7 px-2 text-xs flex-1"
+                  >
+                    {allSelected ? t('button.deselect_all') : t('button.select_all')}
+                  </Button>
+                </div>
+              )}
 
               <CommandGroup className="p-1 max-h-60 overflow-auto">
                 {loading ? (

@@ -11,8 +11,8 @@ interface SortableTemplateCardProps {
 }
 
 export const SortableTemplateCard = ({ template, isSelected, onSelect }: SortableTemplateCardProps) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
-    id: template.type
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: template.type,
   })
 
   const style = {
@@ -23,9 +23,9 @@ export const SortableTemplateCard = ({ template, isSelected, onSelect }: Sortabl
   }
 
   return (
-    <div 
-      ref={setNodeRef} 
-      style={style} 
+    <div
+      ref={setNodeRef}
+      style={style}
       className={`
         dnd-kit-drag transform-gpu will-change-transform
         ${isDragging ? 'z-50' : ''}
@@ -46,7 +46,7 @@ export const SortableTemplateCard = ({ template, isSelected, onSelect }: Sortabl
         >
           <GripVertical className="w-4 h-4 text-gray-400" />
         </div>
-        
+
         <div className="text-2xl mb-2">{template.icon}</div>
         <h3 className="font-semibold text-lg mb-2 pr-8">{template.name}</h3>
         <p className="text-muted-foreground text-sm">{template.description}</p>

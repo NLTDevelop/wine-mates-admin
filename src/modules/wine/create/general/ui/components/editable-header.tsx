@@ -40,7 +40,7 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
   onEditValueChange,
   actions,
 }) => {
-  const {t} = useTranslation("wines")
+  const { t } = useTranslation('wines')
   const [activeField, setActiveField] = useState<'label' | 'labelEn' | 'value' | null>(null)
 
   const handleSave = (e: MouseEvent) => {
@@ -94,20 +94,22 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
             />
           </div>
 
-         {editValue.value !== undefined && <div className="flex items-center gap-1 w-full md:w-auto justify-between">
-            <span className={cn('text-xs opacity-70', cardTextColorClass)}>{`${t("color")}:`}</span>
-            <div className="flex items-center gap-1">
-              <Input
-                value={editValue.value}
-                onChange={e => onEditValueChange('value', e.target.value)}
-                onKeyDown={handleInputKeyDown}
-                disabled={isSaving}
-                className={cn('h-7 text-sm bg-transparent border border-white/30 focus:border-white/50 w-24 font-mono', cardTextColorClass)}
-                autoFocus={activeField === 'value'}
-                onClick={(e: MouseEvent) => e.stopPropagation()}
-              />
+          {editValue.value !== undefined && (
+            <div className="flex items-center gap-1 w-full md:w-auto justify-between">
+              <span className={cn('text-xs opacity-70', cardTextColorClass)}>{`${t('color')}:`}</span>
+              <div className="flex items-center gap-1">
+                <Input
+                  value={editValue.value}
+                  onChange={e => onEditValueChange('value', e.target.value)}
+                  onKeyDown={handleInputKeyDown}
+                  disabled={isSaving}
+                  className={cn('h-7 text-sm bg-transparent border border-white/30 focus:border-white/50 w-24 font-mono', cardTextColorClass)}
+                  autoFocus={activeField === 'value'}
+                  onClick={(e: MouseEvent) => e.stopPropagation()}
+                />
+              </div>
             </div>
-          </div>}
+          )}
 
           <div className="flex items-center gap-1 ">
             <div onClick={handleSave} className={cn('p-0 opacity-60 hover:opacity-100 cursor-pointer', cardTextColorClass)}>

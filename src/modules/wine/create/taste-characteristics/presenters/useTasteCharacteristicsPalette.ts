@@ -13,28 +13,29 @@ interface NewCharacteristicData {
 }
 
 export const useTasteCharacteristicsPalette = () => {
-  const { 
-    tasteCharacteristics, 
-    isLoading, 
-    createCharacteristic, 
-    updateCharacteristic, 
+  const {
+    tasteCharacteristics,
+    isLoading,
+    createCharacteristic,
+    updateCharacteristic,
     deleteCharacteristic,
     updateCharacteristicLevels,
     addCharacteristicLevel,
     updateCharacteristicLevel,
     deleteCharacteristicLevel,
-    reorderCharacteristicLevels
+    reorderCharacteristicLevels,
   } = useWineTasteCharacteristics()
 
   const [isFormOpen, setIsFormOpen] = useState<{ [key: string]: boolean }>({})
   const [isAccordionOpen, setIsAccordionOpen] = useState<{ [key: string]: boolean }>({})
   const [editingGroups, setEditingGroups] = useState<{ [key: string]: EditingGroup }>({})
   const [characteristicLevels, setCharacteristicLevels] = useState<{ [key: string]: LevelItem[] }>({
-    'new-characteristic': [] })
-  
+    'new-characteristic': [],
+  })
+
   const [newCharacteristicData, setNewCharacteristicData] = useState<NewCharacteristicData>({
     label: '',
-    labelEn: ''
+    labelEn: '',
   })
 
   const handleAddCharacteristic = async (dto: CreateWineTasteCharacteristicParams & { levels?: LevelItem[] }) => {
@@ -42,10 +43,10 @@ export const useTasteCharacteristicsPalette = () => {
       ...dto,
       levels: characteristicLevels['new-characteristic'] || [],
     })
-    
+
     setNewCharacteristicData({ label: '', labelEn: '' })
     setCharacteristicLevels(prev => ({ ...prev, ['new-characteristic']: [] }))
-    
+
     return result
   }
 
@@ -132,7 +133,7 @@ export const useTasteCharacteristicsPalette = () => {
   const updateNewCharacteristicData = (field: keyof NewCharacteristicData, value: string) => {
     setNewCharacteristicData(prev => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }))
   }
 
@@ -146,7 +147,7 @@ export const useTasteCharacteristicsPalette = () => {
     isFormOpen,
     isAccordionOpen,
     newCharacteristicData,
-    characteristicLevels, 
+    characteristicLevels,
 
     handleAddCharacteristic,
     handleUpdateCharacteristic,
