@@ -62,46 +62,7 @@ export interface WineOption {
   }
 }
 
-export interface CreateWineFormData {
-  basicInfo: {
-    name: string
-    fullDescription: string
-    region: string
-    country: string
-    vintage: number
-    imageUrl: string
-    subtitle: string
-  }
-  color: string
-  colorVariety: string
-  tasteTags: {
-    descriptors: string[]
-  }
-  smellTags: {
-    descriptors: string[]
-  }
-  flavorVariety: string
-  smellVariety: string
-  characteristics: {
-    sweetness: number
-    acidity: number
-    tanninLevel: number
-    tanninIntensity: number
-    alcohol: number
-    body: number
-    finish: number
-  }
-  aging: {
-    peakStart: number
-    peakEnd: number
-  }
-  foodPairing: {
-    categories: string[]
-  }
-  winery: string
-  grade: string
-  customName: string
-}
+
 
 export interface WineCharacteristics {
   sweetness: number
