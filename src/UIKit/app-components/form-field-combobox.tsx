@@ -1,8 +1,8 @@
-import { FC } from "react"
+import { FC } from 'react'
 
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/UIKit/shadcn/ui/form"
-import { UseFormReturn } from "react-hook-form"
-import { FormCombobox } from "./form-combobox"
+import { FormControl, FormField, FormItem, FormLabel } from '@/UIKit/shadcn/ui/form'
+import { UseFormReturn } from 'react-hook-form'
+import { FormCombobox } from './form-combobox'
 
 export interface IOption {
   value: string
@@ -18,18 +18,10 @@ interface FormFieldComboboxProps {
   searchLabel?: string
   fetchOptions: () => Promise<IOption[]>
   options?: IOption[]
+  error?: string
 }
 
-export const FormFieldCombobox: FC<FormFieldComboboxProps> = ({ 
-  form, 
-  formLabel, 
-  name, 
-  disabled, 
-  placeholder, 
-  searchLabel, 
-  fetchOptions, 
-  options 
-}) => {
+export const FormFieldCombobox: FC<FormFieldComboboxProps> = ({ form, formLabel, name, disabled, placeholder, searchLabel, fetchOptions, options, error }) => {
   return (
     <FormField
       control={form.control}
@@ -46,11 +38,12 @@ export const FormFieldCombobox: FC<FormFieldComboboxProps> = ({
               disabled={disabled}
               fetchOptions={fetchOptions}
               itemOptions={options}
+              error={(form.formState.errors[name]?.message as string) || error}
+              onBlur={field.onBlur}
             />
           </FormControl>
-          <FormMessage />
         </FormItem>
-      )} 
+      )}
     />
   )
 }

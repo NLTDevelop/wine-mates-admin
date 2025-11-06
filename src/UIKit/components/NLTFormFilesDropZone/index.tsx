@@ -12,9 +12,10 @@ interface NLTFormDropZoneProps {
   formLabel?: string
   disabled?: boolean
   maxSizeInMB?: number
+  error?: string
 }
 
-export const NLTFormFilesDropZone: FC<NLTFormDropZoneProps> = ({ form, name, formLabel, disabled, maxSizeInMB, ...other }) => {
+export const NLTFormFilesDropZone: FC<NLTFormDropZoneProps> = ({ form, name, formLabel, disabled, maxSizeInMB, error, ...other }) => {
   const maxFiles = 10
   const maxSizeMB = maxSizeInMB || 5
   const { t } = useTranslation('common')
@@ -37,11 +38,12 @@ export const NLTFormFilesDropZone: FC<NLTFormDropZoneProps> = ({ form, name, for
                   maxFiles={maxFiles}
                   maxSizeMB={maxSizeMB}
                   disabled={disabled}
+                  error={error}
                   files={field.value || []}
                   onDrop={(acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
                     const currentFiles = Array.isArray(field.value) ? field.value : []
 
-                    if (field.value.length + acceptedFiles.length + rejectedFiles.length > maxFiles) {
+                    if (currentFiles.length + acceptedFiles.length + rejectedFiles.length > maxFiles) {
                       notifyToast(`${t('max_files_exceeded')} ${maxFiles}`, 'destructive')
                       return
                     }
@@ -62,8 +64,9 @@ export const NLTFormFilesDropZone: FC<NLTFormDropZoneProps> = ({ form, name, for
                     const updatedFiles = [...currentFiles, ...acceptedFiles]
                     field.onChange(updatedFiles)
                   }}
-                  onRemove={fileName => {
-                    const updatedFiles = field.value.filter((file: any) => (file.id ? file.id !== fileName : file.name !== fileName))
+                  onRemove={(_, fileName) => {
+                    const currentFiles = field.value || []
+                    const updatedFiles = currentFiles.filter((file: any) => (file.id ? file.id !== fileName : file.name !== fileName))
                     field.onChange(updatedFiles)
                   }}
                 />

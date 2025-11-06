@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { Upload } from 'lucide-react'
 import { ImageList } from './imageList'
 import { useFileDownloadLogic } from './imageList/useFileDownloadLogic'
+import { cn } from '@/lib/utils'
 
 export interface IProps extends DropzoneOptions {
   label?: string
@@ -15,12 +16,14 @@ export interface IProps extends DropzoneOptions {
   onDrop: (acceptedFiles: File[], rejectedFiles: FileRejection[]) => void
   onRemove: (event: React.MouseEvent<HTMLButtonElement>, fileName: string) => void
   disabled?: boolean
+  error?: string
 }
 
 export const NLTFilesDropZone: FC<IProps> = ({
   maxSizeMB = 5,
   disabled,
   acceptedFileTypes = ['image/png', 'image/jpeg', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+  error,
   ...other
 }) => {
   const { t } = useTranslation('common')
@@ -43,7 +46,11 @@ export const NLTFilesDropZone: FC<IProps> = ({
     <div>
       <div
         {...getRootProps()}
-        className={`${!disabled && 'cursor-pointer'} flex flex-col items-center justify-center p-5 border-2 border-dashed border-input rounded-md transition-colors duration-200 text-foreground text-center w-full mb-5 mt-2`}
+        className={cn(
+          'flex flex-col items-center justify-center p-5 border-2 border-dashed rounded-md transition-colors duration-200 text-foreground text-center w-full mb-5 mt-2',
+          !disabled && 'cursor-pointer',
+          error ? 'border-red-400 bg-red-50' : 'border-input'
+        )}
       >
         {!disabled && (
           <>

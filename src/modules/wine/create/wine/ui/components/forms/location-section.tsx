@@ -29,6 +29,20 @@ export const LocationSection = memo(({ form, countryValue, regionValue }: Locati
   const isRegionDisabled = useMemo(() => !countryValue, [countryValue])
   const isSubRegionDisabled = useMemo(() => !regionValue, [regionValue])
 
+  const regionError = useMemo(() => {
+    const country = form.watch('country')
+    const region = form.watch('region')
+    const isRegionTouched = form.formState.touchedFields.region
+    if (!isRegionTouched) {
+      return
+    }
+
+    if (country && !region) {
+      return "Регіон обов'язковий при виборі країни"
+    }
+    return form.formState.errors.region?.message as string
+  }, [form.watch('country'), form.watch('region'), form.formState.touchedFields.region])
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <FormFieldCombobox
@@ -61,6 +75,7 @@ export const LocationSection = memo(({ form, countryValue, regionValue }: Locati
         formLabel={t('region') + '*'}
         name="region"
         disabled={isRegionDisabled}
+        error={regionError}
         placeholder={t('region_placeholder')}
         searchLabel={tc('search')}
         fetchOptions={async () => {
@@ -82,7 +97,7 @@ export const LocationSection = memo(({ form, countryValue, regionValue }: Locati
       />
       <FormFieldCombobox
         form={form}
-        formLabel={t('subRegion') + '*'}
+        formLabel={t('sub_region')}
         name="subRegion"
         placeholder={t('sub_region_placeholder')}
         disabled={isSubRegionDisabled}

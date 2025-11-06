@@ -148,7 +148,7 @@ export function YearPicker({ value, onChange, disabled, placeholder = 'Введ�
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={disabled}
-          className={cn('pr-2 transition-colors', error && 'pr-13', showClearButton && !error && 'pr-8', displayError && 'border-red-400! focus-visible:ring-destructive')}
+          className={cn('pr-2 transition-colors', error && 'pr-13', showClearButton && !error && 'pr-8')}
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
           {showClearButton && <X className="h-4 w-4 text-muted-foreground cursor-pointer hover:text-foreground transition-colors" onClick={handleClear} />}

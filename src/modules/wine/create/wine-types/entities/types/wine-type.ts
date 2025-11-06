@@ -62,8 +62,6 @@ export interface WineOption {
   }
 }
 
-
-
 export interface WineCharacteristics {
   sweetness: number
   acidity: number

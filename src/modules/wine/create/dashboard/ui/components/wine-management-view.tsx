@@ -26,7 +26,7 @@ export const WineManagementView = () => {
       case 'taste_characteristics_palette':
         return <TasteCharacteristicsPaletteManager />
       case 'wine_creation':
-        return <CreateWineForm />
+        return <CreateWineForm wineTypes={[]} />
       default:
         return <WineTemplateSelector selectedTemplate={selectedTemplate} onTemplateSelect={setSelectedTemplate} />
     }

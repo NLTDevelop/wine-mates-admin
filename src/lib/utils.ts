@@ -114,15 +114,14 @@ export const lightenColor = (hexColor: string, percent: number): string => {
   }
 }
 
-
 export const isFile = (value: unknown): value is File => {
-  return value instanceof File;
-};
+  return value instanceof File
+}
 
 export const isImageUrl = (value: unknown): value is string => {
-  return typeof value === 'string' && value.length > 0;
-};
+  return typeof value === 'string' && value.length > 0
+}
 
 export const validateImageField = (value: unknown): value is File | string => {
-  return isFile(value) || isImageUrl(value);
-};
+  return isFile(value) || isImageUrl(value)
+}

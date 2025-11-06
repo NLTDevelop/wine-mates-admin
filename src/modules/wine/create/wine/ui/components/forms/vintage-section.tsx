@@ -11,9 +11,9 @@ export const VintageSection = memo(({ form }: { form: UseFormReturn<WineFormData
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <YearPickerFormField form={form} name="vintageConfig" label="Год винтажа" placeholder="Выберите год винтажа" required={true} fromYear={1900} toYear={currentYear} />
-        <YearPickerFormField form={form} name="firstVintage" label={t('first_vintage')} placeholder="Первый винтаж (опционально)" required={false} fromYear={1900} toYear={currentYear} />
-        <YearPickerFormField form={form} name="finalVintage" label={t('final_vintage')} placeholder="Последний винтаж (опционально)" required={false} fromYear={1900} toYear={currentYear} />
+        <YearPickerFormField form={form} name="vintageConfig" label={t('vintage_config')} placeholder={t('vintage_config')} required={true} fromYear={1900} toYear={currentYear} />
+        <YearPickerFormField form={form} name="firstVintage" label={t('first_vintage')} placeholder={t('first_vintage')} required={false} fromYear={1900} toYear={currentYear} />
+        <YearPickerFormField form={form} name="finalVintage" label={t('final_vintage')} placeholder={t('final_vintage')} required={false} fromYear={1900} toYear={currentYear} />
       </div>
     </>
   )

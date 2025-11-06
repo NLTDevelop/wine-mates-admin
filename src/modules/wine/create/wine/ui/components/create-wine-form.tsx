@@ -1,4 +1,3 @@
-
 import { useTranslation } from 'react-i18next'
 import { Form } from '@/UIKit/shadcn/ui/form'
 import { Button } from '@/UIKit/shadcn/ui/button'
@@ -9,7 +8,7 @@ import { useWineForm } from '../../presenters/useWineForm'
 import { WineFormData } from '../../presenters/wine-form-schema'
 
 interface CreateWineFormProps {
-  wineTypes: WineType[] 
+  wineTypes: WineType[]
 }
 
 export const CreateWineForm: React.FC<CreateWineFormProps> = ({ wineTypes }) => {
@@ -20,21 +19,18 @@ export const CreateWineForm: React.FC<CreateWineFormProps> = ({ wineTypes }) => 
   const onSubmit = (data: WineFormData) => {
     console.log('Wine data:', data)
     // TODO: API запрос на создание вина
+    onReset()
   }
+
+  const onReset = () => form.reset()
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <BasicInfoSection form={form as any} wineTypes={wineTypes} />
-        
-        {/* TODO: Добавить остальные секции когда будут готовы */}
-        {/* <ClassificationSection form={form} /> */}
-        {/* <VintageSection form={form} /> */}
-        {/* <MediaSection form={form} /> */}
-
-        <div className="flex gap-4 justify-end pt-4">
-          <Button type="button" variant="outline">
-            {t('button.cancel')}
+        <div className="flex gap-4 justify-end">
+          <Button type="button" variant="outline" onClick={onReset}>
+            {t('button.clear')}
           </Button>
           <Button type="submit" className="min-w-32">
             {t('button.save')}

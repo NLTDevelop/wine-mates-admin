@@ -8,9 +8,10 @@ export interface InputProps extends React.ComponentProps<'input'> {
   variant?: 'default' | 'search'
   isLoading?: boolean
   type?: string
+  error?: string
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, type = 'text', showClearButton = true, onClear, variant = 'default', isLoading = false, value, ...props }, ref) => {
+const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, type = 'text', showClearButton = true, onClear, variant = 'default', isLoading = false, value, error, ...props }, ref) => {
   const isSearchVariant = variant === 'search'
   const shouldShowClear = showClearButton && Boolean(value) && typeof onClear === 'function' && !isLoading
   const shouldShowLoader = isSearchVariant && isLoading

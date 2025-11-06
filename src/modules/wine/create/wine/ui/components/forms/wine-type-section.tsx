@@ -7,43 +7,42 @@ import { memo } from 'react'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { FormFieldCombobox } from '@/UIKit/app-components/form-field-combobox'
 
-
 interface WineTypeSectionProps {
   form: UseFormReturn<WineFormData>
   wineTypes: WineType[]
 }
 
 export const WineTypeSection = memo(
-  ({ form, wineTypes }: WineTypeSectionProps) => {
+  ({ form /*wineTypes*/ }: WineTypeSectionProps) => {
     const { t } = useTranslation('wines')
-      const { t: tc } = useTranslation('common')
+    const { t: tc } = useTranslation('common')
 
     return (
       <>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormFieldCombobox
-                    form={form}
-                    formLabel={t('wine_type') + '*'}
-                    name="type"
-                    placeholder={t('wine_type_placeholder')}
-                    searchLabel={tc('search')}
-                    fetchOptions={async () => {
-                      return [
-                        { value: '1', label: 'Червоне' },
-                        { value: '2', label: 'Біле' },
-                        { value: '3', label: 'Рожеве' },
-                        { value: '4', label: 'Ігристе' },
-                        { value: '5', label: 'Помаранчере' },
-                      ]
-                    }}
-                    options={[
-                      { value: '1', label: 'Червоне' },
-                        { value: '2', label: 'Біле' },
-                        { value: '3', label: 'Рожеве' },
-                        { value: '4', label: 'Ігристе' },
-                        { value: '5', label: 'Помаранчере' },
-                    ]}
-                  />
+          <FormFieldCombobox
+            form={form}
+            formLabel={t('wine_type') + '*'}
+            name="type"
+            placeholder={t('wine_type_placeholder')}
+            searchLabel={tc('search')}
+            fetchOptions={async () => {
+              return [
+                { value: '1', label: 'Червоне' },
+                { value: '2', label: 'Біле' },
+                { value: '3', label: 'Рожеве' },
+                { value: '4', label: 'Ігристе' },
+                { value: '5', label: 'Помаранчере' },
+              ]
+            }}
+            options={[
+              { value: '1', label: 'Червоне' },
+              { value: '2', label: 'Біле' },
+              { value: '3', label: 'Рожеве' },
+              { value: '4', label: 'Ігристе' },
+              { value: '5', label: 'Помаранчере' },
+            ]}
+          />
 
           <FormField
             control={form.control}

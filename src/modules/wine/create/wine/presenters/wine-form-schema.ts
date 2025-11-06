@@ -3,7 +3,7 @@ import { z } from 'zod'
 const fileSchema = z.instanceof(File, { message: 'Must be a file' })
 
 const optionalNumberSchema = z.preprocess(
-  (val) => {
+  val => {
     if (val === undefined || val === null || val === '') return undefined
     if (typeof val === 'number') return val
     if (typeof val === 'string') {
@@ -13,7 +13,8 @@ const optionalNumberSchema = z.preprocess(
     }
     return undefined
   },
-  z.number()
+  z
+    .number()
     .int('Рік має бути цілим числом')
     .min(1900, 'Рік має бути не раніше 1900')
     .max(new Date().getFullYear() + 50, 'Рік не може бути більше ніж на 50 років вперед')
@@ -21,25 +22,26 @@ const optionalNumberSchema = z.preprocess(
 )
 
 const requiredNumberSchema = z.preprocess(
-  (val) => {
+  val => {
     if (typeof val === 'string') {
       if (val === '') return undefined
       return parseInt(val)
     }
     return val
   },
-  z.number({
-    message: "Поле обов'язкове"
-  })
-  .refine(val => !isNaN(val), {
-    message: 'Введіть коректний рік'
-  })
-  .refine(val => val >= 1900, {
-    message: 'Рік має бути не раніше 1900'
-  })
-  .refine(val => val <= new Date().getFullYear(), {
-    message: 'Рік не може бути у майбутньому'
-  })
+  z
+    .number({
+      message: "Поле обов'язкове",
+    })
+    .refine(val => !isNaN(val), {
+      message: 'Введіть коректний рік',
+    })
+    .refine(val => val >= 1900, {
+      message: 'Рік має бути не раніше 1900',
+    })
+    .refine(val => val <= new Date().getFullYear(), {
+      message: 'Рік не може бути у майбутньому',
+    })
 )
 
 export const wineFormSchema = z
@@ -48,6 +50,7 @@ export const wineFormSchema = z
     producerTitle: z.string().min(1, "Назва виробника обов'язкова").max(200),
     producerName: z.string().min(1, "Ім'я виробника обов'язкове").max(200),
     wine: z.string().min(1, "Назва вина обов'язкова").max(200),
+    grapeVariety: z.string().min(1, "Сорт винограду обов'язкове поле").max(200),
 
     country: z.string().min(1, "Країна обов'язкова"),
     region: z.string().optional(),
@@ -74,7 +77,7 @@ export const wineFormSchema = z
       .refine(val => val === undefined || val >= 1900, 'Рік завершення має бути не раніше 1900')
       .refine(val => val === undefined || val <= new Date().getFullYear() + 50, 'Рік завершення не може бути більше ніж на 50 років вперед'),
 
-    images: z.array(fileSchema).min(1, "Принаймні одне зображення обов'язкове").max(10, 'Максимум 10 зображень'),
+    media: z.array(fileSchema).min(1, "Принаймні одне зображення обов'язкове").max(10, 'Максимум 10 зображень'),
   })
   .refine(
     data => {
@@ -88,7 +91,19 @@ export const wineFormSchema = z
       path: ['finalVintage'],
     }
   )
+  .refine(
+    data => {
+      if (data.country && data.country.trim() !== '' && (!data.region || data.region.trim() === '')) {
+        return false
+      }
+      return true
+    },
+    {
+      message: "Регіон обов'язковий при виборі країни",
+      path: ['region'],
+    }
+  )
 
 export type WineFormData = Omit<z.infer<typeof wineFormSchema>, 'vintageConfig'> & {
-  vintageConfig: number;
+  vintageConfig: number
 }
