@@ -18,5 +18,7 @@ export const COLOR_CRUD_ENDPOINTS = {
   COLOR_SHADES: {
     LIST: '/colors/:colorId/shades',
     CREATE: '/colors/:colorId/shades',
+    UPDATE: '/colors/:colorId/shades/:shadeId',
+    REORDER: '/colors/:colorId/shades/reorder',
   },
 } as const

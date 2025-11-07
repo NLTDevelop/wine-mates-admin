@@ -82,7 +82,11 @@ export const ColorPicker = ({ value, onChange, className, baseHexNoHash, onClick
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" style={{ backgroundColor: value || undefined }} className={cn('w-full h-11 justify-start gap-2 bg-background', `hover:${textColorClass}`, textColorClass, className)}>
+        <Button
+          variant="ghost"
+          style={{ backgroundColor: value || t('choose_color') }}
+          className={cn('w-full h-11 justify-start gap-2 bg-background', `hover:${textColorClass}`, textColorClass, className)}
+        >
           <span className={cn('flex-1 text-sm text-left', value ? textColorClass : 'text-muted-foreground')}>{value || t('choose_color')}</span>
           <Palette className={cn('w-6 h-6', textColorClass)} />
         </Button>
@@ -109,7 +113,7 @@ export const ColorPicker = ({ value, onChange, className, baseHexNoHash, onClick
               />
             </div>
           )}
-          <Input value={value} onClick={onClick} onChange={e => onChange?.(e.target.value)} placeholder={baseHexNoHash ? baseHexNoHash : '#000000'} className="font-mono w-full" />
+          <Input value={value || ''} onClick={onClick} onChange={e => onChange?.(e.target.value)} placeholder={baseHexNoHash ? baseHexNoHash : '#000000'} className="font-mono w-full" />
         </div>
       </PopoverContent>
     </Popover>

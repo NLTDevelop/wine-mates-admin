@@ -1,5 +1,5 @@
 import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
-import { WineColor } from './types/color'
+import { WineColor, WineColorItem } from './types/color'
 
 interface ColorStoreState {
   colors: WineColor[]
@@ -16,8 +16,8 @@ interface ColorStoreState {
   clearSearch: () => void
 
   setShades: (shades: WineColor[]) => void
-  addShade: (shade: WineColor) => void
-  updateShade: (shadeId: string, newShade: WineColor) => void
+  addShade: (colorId: string, item: WineColorItem) => void
+  updateShade: (colorId: string, updatedItem: WineColorItem) => void
   deleteShade: (shadeId: string) => void
 
   getColorById: (id: string) => WineColor | undefined
@@ -25,6 +25,7 @@ interface ColorStoreState {
   hasColor: (id: string) => boolean
   hasColorByValue: (value: string) => boolean
   getShadeById: (id: string) => WineColor | undefined
+  reorderShades: (colorId: string, shades: WineColorItem[]) => void
 }
 
 export const useColorStore = createStoreDevToolsWrapper<ColorStoreState>(
@@ -84,22 +85,46 @@ export const useColorStore = createStoreDevToolsWrapper<ColorStoreState>(
 
     setShades: shades => set({ shades }, false, 'colors/setShades'),
 
-    addShade: shade =>
+    addShade: (colorId: string, item: WineColorItem) =>
       set(
         (state: ColorStoreState) => ({
-          shades: [...state.shades, shade],
+          colors: state.colors.map(color =>
+            color.id === colorId
+              ? {
+                  ...color,
+                  items: [...(color.items || []), item],
+                }
+              : color
+          ),
+          shades: [...state.shades, item],
         }),
         false,
         'colors/addShade'
       ),
 
-    updateShade: (shadeId, newShade) =>
+    updateShade: (colorId: string, updatedItem: WineColorItem) =>
       set(
         (state: ColorStoreState) => ({
-          shades: state.shades.map(s => (s.id === shadeId ? newShade : s)),
+          colors: state.colors.map(color =>
+            color.id === colorId
+              ? {
+                  ...color,
+                  items: color.items?.map(item => (item.id === updatedItem.id ? updatedItem : item)) || [],
+                }
+              : color
+          ),
         }),
         false,
         'colors/updateShade'
+      ),
+
+    reorderShades: (colorId: string, shades: WineColorItem[]) =>
+      set(
+        (state: ColorStoreState) => ({
+          colors: state.colors.map(color => (color.id === colorId ? { ...color, items: shades } : color)),
+        }),
+        false,
+        'colors/reorderShades'
       ),
 
     deleteShade: shadeId =>

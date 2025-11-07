@@ -3,9 +3,13 @@ import { useContrastText } from '@/hooks/ui/useContrastText'
 import { usePaletteItem } from '@/modules/wine/create/colors/presenters/usePaletteItem'
 import { cn } from '@/lib/utils'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { WineColor } from '../../entities/types/color'
+import { WineColor, WineColorItem } from '../../entities/types/color'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
 import { EditableHeader, PaletteItemActions } from '../../../general/ui'
+import { SortableShades } from './sortable'
+import { DragEndEvent } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { GripVertical } from 'lucide-react'
 
 export type ColorCardData = WineColor
 
@@ -14,12 +18,13 @@ interface ColorCardProps {
   onRemove: (id: string) => void
   isLoading?: boolean
   isEditable?: boolean
-  onEditColor?: (color: WineColor) => void
+  onEditColor?: (colorId: string, item: WineColorItem) => void
   onToggleForm?: () => void
   isFormOpen?: boolean
   onCancel: (id: string) => void
   handleToggleAccordion: (colorId: string, isOpen: boolean) => void
   isAccordionOpen: { [colorId: string]: boolean }
+  onShadesDragEnd?: (event: DragEndEvent, colorId: string) => void
 }
 
 export const ColorCard = ({ data, onRemove, isLoading, isEditable = false, onEditColor, onToggleForm, isFormOpen = false, onCancel, handleToggleAccordion, isAccordionOpen }: ColorCardProps) => {
@@ -103,42 +108,59 @@ export const ColorCard = ({ data, onRemove, isLoading, isEditable = false, onEdi
         )}
       >
         {renderableItems.length > 0 && (
-          <div className="space-y-2 mt-3 hover:brightness-100 w-full">
-            {renderableItems.map((item, index) => {
-              const itemName = getItemName(item)
-              const itemTones = getItemTones(item)
+          <SortableContext items={renderableItems.map(item => item.id)} strategy={verticalListSortingStrategy}>
+            <div className="space-y-2 mt-3 hover:brightness-100 w-full">
+              {renderableItems.map((item, index) => {
+                const itemName = getItemName(item)
+                const itemTones = getItemTones(item)
 
-              return (
-                <div key={item.id || index} className="flex gap-2 justify-between items-center  flex-row p-2 border-input border rounded sm:border-none sm:p-0">
-                  <div className="flex gap-2 flex-1 justify-between items-center">
-                    <div className="text-sm">{itemName}</div>
-                    <div className="flex gap-2 flex-col sm:flex-row">
-                      {(['pale', 'medium', 'deep'] as const).map(tone => {
-                        const toneColor = itemTones?.[tone]
-                        const { textColorClass } = useContrastText(`${toneColor}`)
-                        return (
-                          <div key={tone} className="flex-1 text-center">
-                            <div className="w-full h-6 flex items-center justify-center border-1 rounded-sm px-1 py-0.5" style={{ backgroundColor: `${toneColor}` }}>
-                              <span className={cn('text-[12px] font-mono font-bold pr-0.5', textColorClass)}>{tone}</span>
-                              <span className={cn('text-[12px] font-mono font-bold', textColorClass)}>{toneColor}</span>
+                return (
+                  <SortableShades shades={item} key={item.id || index}>
+                    {({ attributes, listeners }) => (
+                      <div className="flex gap-2 justify-between items-center flex-row p-2 border-input border rounded sm:border-none sm:p-0">
+                        <div className="flex gap-2 flex-1 justify-between items-center">
+                          <div className="flex gap-2 items-center">
+                            <div
+                              {...attributes}
+                              {...listeners}
+                              className="cursor-grab active:cursor-grabbing p-1 rounded hover:bg-accent transition-colors select-none touch-none"
+                              onClick={e => e.stopPropagation()}
+                            >
+                              <GripVertical className="w-4 h-4 text-muted-foreground" />
                             </div>
+                            <div className="h-6 w-6  rounded-full" style={{ backgroundColor: item.shade }} />
+                            <div className="text-sm">{itemName}</div>
                           </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-                  <PaletteItemActions
-                    isLoading={isLoading || false}
-                    onRemove={onRemove}
-                    dataId={item.id}
-                    onEdit={onEditColor ? () => onEditColor(item as WineColor) : undefined}
-                    showEditButton={isEditable && !isEditing && !!onEditColor}
-                    variant="col"
-                  />
-                </div>
-              )
-            })}
-          </div>
+                          <div className="flex gap-2 flex-col sm:flex-row">
+                            {(['pale', 'medium', 'deep'] as const).map(tone => {
+                              const toneColor = itemTones?.[tone]
+                              const { textColorClass } = useContrastText(`${toneColor}`)
+                              return (
+                                <div key={tone} className="flex-1 text-center">
+                                  <div className="w-full h-6 flex items-center justify-center border-1 rounded-sm px-1 py-0.5" style={{ backgroundColor: `${toneColor}` }}>
+                                    <span className={cn('text-[12px] font-mono font-bold pr-0.5', textColorClass)}>{tone}</span>
+                                    <span className={cn('text-[12px] font-mono font-bold', textColorClass)}>{toneColor}</span>
+                                  </div>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                        <PaletteItemActions
+                          isLoading={isLoading || false}
+                          onRemove={onRemove}
+                          dataId={item.id}
+                          onEdit={onEditColor ? () => onEditColor(data.id, item as WineColorItem) : undefined}
+                          showEditButton={isEditable && !isEditing && !!onEditColor}
+                          variant="col"
+                        />
+                      </div>
+                    )}
+                  </SortableShades>
+                )
+              })}
+            </div>
+          </SortableContext>
         )}
 
         <div className={cn('w-full flex justify-end', !renderableItems.length && 'mt-3')}>

@@ -2,7 +2,7 @@ import { useState, useCallback, MouseEvent, KeyboardEvent } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useContrastText } from '@/hooks/ui/useContrastText'
 import { colorQueries } from '../entities/color-queries'
-import { WineColor } from '../entities/types/color'
+import { WineColor, WineColorItem } from '../entities/types/color'
 
 interface UsePaletteItemProps {
   data: WineColor
@@ -24,7 +24,7 @@ interface UsePaletteItemReturn {
   color: string
   cardTextColorClass: string
   isSaving: boolean
-  renderableItems: WineColor[]
+  renderableItems: WineColorItem[]
 
   startEditing: () => void
   handleSaveLabel: () => Promise<void>
@@ -33,8 +33,8 @@ interface UsePaletteItemReturn {
   handleMainClick: () => void
   handleAddShadeClick: () => void
   setEditValue: (field: string, value: string) => void
-  getItemName: (item: WineColor) => string
-  getItemTones: (item: WineColor) => any
+  getItemName: (item: WineColorItem) => string
+  getItemTones: (item: WineColorItem) => any
 }
 
 export const usePaletteItem = ({ data, onItemClick, handleClick, isEditable = false, isFormOpen = false, onCancel, onToggleForm }: UsePaletteItemProps): UsePaletteItemReturn => {
@@ -142,29 +142,17 @@ export const usePaletteItem = ({ data, onItemClick, handleClick, isEditable = fa
     }
   }, [isFormOpen, onCancel, data.id, onToggleForm])
 
-  const getItemName = useCallback((item: WineColor): string => {
-    return item.label || ''
+  const getItemName = useCallback((item: WineColorItem): string => {
+    return item.name || ''
   }, [])
 
-  const getItemTones = useCallback((item: WineColor) => {
-    if (item.items && item.items.length > 0) {
-      return item.items[0].tones
-    }
-    return undefined
+  const getItemTones = useCallback((item: WineColorItem) => {
+    return item.tones
   }, [])
 
-  const getRenderableItems = useCallback((): WineColor[] => {
-    if (data.items && data.items.length > 0) {
-      return data.items.map((item, index) => ({
-        id: `${data.id}-item-${index}`,
-        label: item.name,
-        labelEn: item.nameEn,
-        value: item.tones?.medium || data.value,
-        items: [item],
-      }))
-    }
-    return []
-  }, [data])
+  const getRenderableItems = useCallback((): WineColorItem[] => {
+    return data.items || []
+  }, [data.items])
 
   const renderableItems = getRenderableItems()
 

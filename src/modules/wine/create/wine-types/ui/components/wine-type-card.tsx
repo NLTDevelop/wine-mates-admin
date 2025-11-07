@@ -84,16 +84,14 @@ export const WineTypeCard = ({ wineType, onUpdate, onDelete, isLoading }: WineTy
             icon={<Palette className="w-4 h-4" />}
             isExpanded={expandedSections.colors}
             onToggle={() => toggleSection('colors')}
-            itemsCount={wineType.colors?.length || 0}
+            // itemsCount={wineType.colors?.length || 0}
           >
             <div className="space-y-2">
-              {wineType.colors?.map(colorId => {
-                return (
-                  <div key={colorId} className={`flex items-center gap-3 p-2 border rounded`}>
-                    <span className="font-medium">{getColorLabel(colorId)}</span>
-                  </div>
-                )
-              })}
+              {wineType.color && (
+                <div className={`flex items-center gap-3 p-2 border rounded`}>
+                  <span className="font-medium">{getColorLabel(wineType.color)}</span>
+                </div>
+              )}
             </div>
           </Section>
 

@@ -7,9 +7,9 @@ import { ColorPicker } from '@/UIKit/shadcn/ui/color-picker'
 
 interface AddColorSectionProps {
   formData: {
-    label: string
-    labelEn: string
-    value: string
+    name: string
+    nameEn: string
+    shade: string
     tones?: {
       pale: string
       medium: string
@@ -19,17 +19,29 @@ interface AddColorSectionProps {
   isLoading: boolean
   canAddColor?: boolean
   baseColor?: string
-  onLabelChange: (value: string) => void
-  onLabelEnChange: (value: string) => void
-  onColorValueChange: (value: string) => void
+  onNameChange: (value: string) => void
+  onNameEnChange: (value: string) => void
+  onShadeChange: (value: string) => void
   onToneChange?: (tone: 'pale' | 'medium' | 'deep', value: string) => void
   onSave: () => void
   isEditing?: boolean
-  editingColorName?: string
+  editingItemName?: string
   showTones?: boolean
 }
 
-export const AddColorSection = ({ formData, isLoading, canAddColor, baseColor, onLabelChange, onLabelEnChange, onToneChange, onSave, isEditing = false, showTones = false }: AddColorSectionProps) => {
+export const AddColorSection = ({
+  formData,
+  isLoading,
+  canAddColor,
+  baseColor,
+  onNameChange,
+  onNameEnChange,
+  onShadeChange,
+  onToneChange,
+  onSave,
+  isEditing = false,
+  showTones = false,
+}: AddColorSectionProps) => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
@@ -38,14 +50,17 @@ export const AddColorSection = ({ formData, isLoading, canAddColor, baseColor, o
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
           <div>
-            <Label>{t('subcategory_name_ua')} *</Label>
-            <Input value={formData.label} onChange={e => onLabelChange(e.target.value)} placeholder="Білі вина" className="w-full" autoFocus />
+            <Label>{t('shade_name_ua')} *</Label>
+            <Input value={formData.name} onChange={e => onNameChange(e.target.value)} placeholder="Білі вина" className="w-full" autoFocus />
           </div>
 
           <div>
-            <Label>{t('subcategory_name_en')} *</Label>
-            <Input value={formData.labelEn} onChange={e => onLabelEnChange(e.target.value)} placeholder="White wines" className="w-full" />
+            <Label>{t('shade_name_en')} *</Label>
+            <Input value={formData.nameEn} onChange={e => onNameEnChange(e.target.value)} placeholder="White wines" className="w-full" />
           </div>
+        </div>
+        <div>
+          <TonePicker label={t('colors.main_tone')} value={formData.shade} onChange={onShadeChange} baseHexNoHash={baseColor} />
         </div>
         {showTones && onToneChange && (
           <div>

@@ -1,74 +1,38 @@
-import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Form } from '@/UIKit/shadcn/ui/form'
 import { Button } from '@/UIKit/shadcn/ui/button'
-
 import { BasicInfoSection } from './forms/basic-info-section'
-import { VisualCharacteristicsSection } from './forms/visual-characteristics-section'
-import { TasteSmellSection } from './forms/taste-smell-section'
-import { WineCharacteristicsSection } from './forms/wine-characteristics-section'
-import { AgingSection } from './forms/aging-section'
-import { CreateWineFormData } from '../../../wine-types/entities/types/wine-type'
 
-export const CreateWineForm: React.FC = () => {
+import { WineType } from '../../../wine-types/entities/types/wine-type'
+import { useWineForm } from '../../presenters/useWineForm'
+import { WineFormData } from '../../presenters/wine-form-schema'
+
+interface CreateWineFormProps {
+  wineTypes: WineType[]
+}
+
+export const CreateWineForm: React.FC<CreateWineFormProps> = ({ wineTypes }) => {
   const { t } = useTranslation('common')
 
-  const form = useForm<CreateWineFormData>({
-    defaultValues: {
-      basicInfo: {
-        name: '',
-        fullDescription: '',
-        region: '',
-        country: '',
-        vintage: new Date().getFullYear(),
-        imageUrl: '',
-        subtitle: '',
-      },
-      color: '',
-      colorVariety: '',
-      tasteTags: { descriptors: [] },
-      smellTags: { descriptors: [] },
-      flavorVariety: '',
-      smellVariety: '',
-      characteristics: {
-        sweetness: 5,
-        acidity: 5,
-        tanninLevel: 5,
-        tanninIntensity: 5,
-        alcohol: 5,
-        body: 5,
-        finish: 5,
-      },
-      aging: {
-        peakStart: new Date().getFullYear(),
-        peakEnd: new Date().getFullYear() + 5,
-      },
-      foodPairing: { categories: [] },
-      winery: '',
-      grade: '',
-      customName: '',
-    },
-  })
+  const form = useWineForm()
 
-  const onSubmit = (/*data: CreateWineFormData*/) => {
-    // console.log('Wine data:', data)
-    // API запрос на создание вина
+  const onSubmit = (data: WineFormData) => {
+    console.log('Wine data:', data)
+    // TODO: API запрос на создание вина
+    onReset()
   }
+
+  const onReset = () => form.reset()
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-        <BasicInfoSection form={form} />
-        <VisualCharacteristicsSection form={form} />
-        <TasteSmellSection form={form} />
-        <WineCharacteristicsSection form={form} />
-        <AgingSection form={form} />
-
-        <div className="flex gap-4 justify-end pt-4">
-          <Button type="button" variant="outline">
-            {t('button.cancel')}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <BasicInfoSection form={form as any} wineTypes={wineTypes} />
+        <div className="flex gap-4 justify-end">
+          <Button type="button" variant="outline" onClick={onReset}>
+            {t('button.clear')}
           </Button>
-          <Button type="submit" className="min-w-32">
+          <Button type="submit" className="min-w-32" /*disabled={!form.formState.isValid}*/>
             {t('button.save')}
           </Button>
         </div>
