@@ -5,9 +5,12 @@ export interface WineColorTones {
 }
 
 export interface WineColorItem {
+  id: string
   name: string
   nameEn: string
   tones: WineColorTones
+  shade: string
+  order: string
 }
 
 export interface WineColor {
@@ -28,4 +31,38 @@ export interface CreateWineColorParams {
 export interface UpdateWineColorParams {
   colorId: string
   newColor: CreateWineColorParams
+}
+
+export interface CreateWineItemParams {
+  name: string
+  nameEn: string
+  shade: string
+  tones: WineColorTones
+  order: string
+}
+
+export interface CreateShadeParams {
+  colorId: string
+  item: CreateWineItemParams
+}
+export interface UpdateWineItemParams {
+  itemId: string
+  name: string
+  nameEn: string
+  shade: string
+  tones: WineColorTones
+  order: string
+}
+
+export interface UpdateShadeParams {
+  colorId: string
+  item: UpdateWineItemParams
+}
+
+export interface ReorderShadesParams {
+  colorId: string
+  shades: {
+    id: string
+    order: number
+  }[]
 }

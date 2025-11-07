@@ -6,6 +6,7 @@ export const PATHS = {
   USERS_DETAIL: '/users/:id',
   FEATURES: '/features',
   FEATURE_CREATE: '/features/create',
-  WINES: '/wines',
   WINE_CREATE: '/wines/create',
+  WINE_LIST: '/wines',
+  WINE_DETAIL: '/wines/:id',
 }

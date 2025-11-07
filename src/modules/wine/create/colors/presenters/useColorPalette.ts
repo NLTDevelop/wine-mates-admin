@@ -1,21 +1,23 @@
 import { useMemo, useState } from 'react'
 import { useColor } from './useColor'
-import { WineColor, WineColorItem } from '../entities/types/color'
+import { ReorderShadesParams, UpdateWineItemParams, WineColorItem } from '../entities/types/color'
 import { sortColorsByBrightness } from '@/lib/utils'
 import { mockColors } from '../entities/mock'
+import { useColorStore } from '../entities/color-store'
 
 export const useColorPalette = () => {
+  const store = useColorStore()
   const colors = mockColors
-  const { /*colors,*/ isLoading, createColor, updateColor, deleteColor, createShade } = useColor()
+  const { /*colors,*/ isLoading, createColor, updateShade, deleteColor, createShade, reorderShades, isReorderingShades } = useColor()
 
   const [isAccordionOpen, setIsAccordionOpen] = useState<{ [colorId: string]: boolean }>({})
-  const [editingColor, setEditingColor] = useState<{ colorId: string; color?: WineColor } | null>(null)
+  const [editingColor, setEditingColor] = useState<{ colorId: string; item?: WineColorItem } | null>(null)
   const [isFormOpen, setIsFormOpen] = useState<{ [colorId: string]: boolean }>({})
   const [newColorData, setNewColorData] = useState<{
     [colorId: string]: {
-      label: string
-      labelEn: string
-      value: string
+      name: string
+      nameEn: string
+      shade: string
       tones?: {
         pale: string
         medium: string
@@ -33,31 +35,29 @@ export const useColorPalette = () => {
   }
 
   const handleAddColor = (colorId: string) => {
-    const colorData = newColorData[colorId]
-    if (colorData) {
+    const itemData = newColorData[colorId]
+    if (itemData) {
       const wineColorItem: WineColorItem = {
-        name: colorData.label,
-        nameEn: colorData.labelEn,
-        tones: colorData.tones || {
-          pale: colorData.value,
-          medium: colorData.value,
-          deep: colorData.value,
+        id: `${colorId}-${Date.now()}`,
+        name: itemData.name,
+        nameEn: itemData.nameEn,
+        shade: itemData.shade,
+        tones: itemData.tones || {
+          pale: itemData.shade,
+          medium: itemData.shade,
+          deep: itemData.shade,
         },
+        order: '1',
       }
 
-      createShade(colorId, {
-        label: colorData.label,
-        labelEn: colorData.labelEn,
-        value: colorData.value,
-        items: [wineColorItem],
-      })
+      createShade(colorId, wineColorItem)
 
       setNewColorData(prev => ({
         ...prev,
         [colorId]: {
-          label: '',
-          labelEn: '',
-          value: '',
+          name: '',
+          nameEn: '',
+          shade: '',
           tones: undefined,
         },
       }))
@@ -71,18 +71,17 @@ export const useColorPalette = () => {
     }))
   }
 
-  const handleEditColor = (colorId: string, color: WineColor) => {
-    setEditingColor({ colorId, color })
+  const handleEditColor = (colorId: string, item: WineColorItem) => {
+    setEditingColor({ colorId, item })
     setIsFormOpen(prev => ({ ...prev, [colorId]: true }))
 
-    const firstItem = color.items?.[0]
     setNewColorData(prev => ({
       ...prev,
       [colorId]: {
-        label: color.label,
-        labelEn: color.labelEn || '',
-        value: color.value,
-        tones: firstItem?.tones,
+        name: item.name,
+        nameEn: item.nameEn,
+        shade: item.shade,
+        tones: item.tones,
       },
     }))
   }
@@ -92,9 +91,9 @@ export const useColorPalette = () => {
     setNewColorData(prev => ({
       ...prev,
       [colorId]: {
-        label: '',
-        labelEn: '',
-        value: '',
+        name: '',
+        nameEn: '',
+        shade: '',
         tones: undefined,
       },
     }))
@@ -102,25 +101,19 @@ export const useColorPalette = () => {
   }
 
   const handleSaveColor = (colorId: string) => {
-    if (editingColor && editingColor.color && editingColor.colorId === colorId) {
-      updateColor({
-        colorId: editingColor.color.id,
-        newColor: {
-          label: newColorData[colorId].label,
-          labelEn: newColorData[colorId].labelEn,
-          value: newColorData[colorId].value,
-          items: editingColor.color.items?.map((item, index) =>
-            index === 0
-              ? {
-                  ...item,
-                  name: newColorData[colorId].label,
-                  nameEn: newColorData[colorId].labelEn,
-                  tones: newColorData[colorId].tones || item.tones,
-                }
-              : item
-          ),
-        },
-      })
+    if (editingColor && editingColor.item && editingColor.colorId === colorId) {
+      const itemData = newColorData[colorId]
+      if (itemData) {
+        const updateParams: UpdateWineItemParams = {
+          itemId: editingColor.item.id,
+          name: itemData.name,
+          nameEn: itemData.nameEn,
+          shade: itemData.shade,
+          tones: itemData.tones || editingColor.item.tones,
+          order: editingColor.item.order,
+        }
+        updateShade(colorId, updateParams)
+      }
     } else {
       handleAddColor(colorId)
     }
@@ -146,9 +139,9 @@ export const useColorPalette = () => {
         [colorId]: {
           ...currentData,
           tones: {
-            pale: currentData.tones?.pale || currentData.value,
-            medium: currentData.tones?.medium || currentData.value,
-            deep: currentData.tones?.deep || currentData.value,
+            pale: currentData.tones?.pale || '',
+            medium: currentData.tones?.medium || '',
+            deep: currentData.tones?.deep || '',
             [tone]: value,
           },
         },
@@ -168,16 +161,29 @@ export const useColorPalette = () => {
 
   const canAddColor = (colorId: string) => {
     const data = newColorData[colorId]
-    return !!(data?.label && data.labelEn && data.tones?.deep && data.tones?.medium && data.tones?.pale)
+    return !!(data?.name && data.nameEn && data.tones?.deep && data.tones?.medium && data.tones?.pale)
   }
 
   const sortedItems = useMemo(() => {
     return sortColorsByBrightness(colors)
   }, [colors])
 
+  const handleReorderShades = (colorId: string, shades: WineColorItem[]) => {
+    store.reorderShades(colorId, shades)
+    const reorderParams: ReorderShadesParams = {
+      colorId,
+      shades: shades.map((shade, index) => ({
+        id: shade.id,
+        order: index,
+      })),
+    }
+
+    reorderShades(reorderParams)
+  }
+
   return {
     colors: sortedItems,
-    isLoading,
+    isLoading: isLoading || isReorderingShades,
 
     editingColor,
     isFormOpen,
@@ -194,5 +200,6 @@ export const useColorPalette = () => {
     updateToneData,
     canAddColor,
     handleToggleAccordion,
+    handleReorderShades,
   }
 }

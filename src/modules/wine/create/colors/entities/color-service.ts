@@ -1,7 +1,7 @@
 import { api } from '@/services'
 import { buildUrl } from '@/lib/utils'
 import { COLOR_CRUD_ENDPOINTS } from './colors-endpoints'
-import { CreateWineColorParams, UpdateWineColorParams, WineColor } from './types/color'
+import { CreateWineColorParams, CreateWineItemParams, ReorderShadesParams, UpdateWineColorParams, UpdateWineItemParams, WineColor, WineColorItem } from './types/color'
 
 export const colorService = {
   list: (): Promise<WineColor[]> => api.get(COLOR_CRUD_ENDPOINTS.COLORS.LIST).then(response => response.data),
@@ -17,5 +17,11 @@ export const colorService = {
     return api.get(endpoint).then(response => response.data)
   },
 
-  createShade: (colorId: string, shade: CreateWineColorParams): Promise<WineColor> => api.post(buildUrl(COLOR_CRUD_ENDPOINTS.COLOR_SHADES.CREATE, { colorId }), shade).then(response => response.data),
+  createShade: (colorId: string, item: CreateWineItemParams): Promise<WineColorItem> => api.post(buildUrl(COLOR_CRUD_ENDPOINTS.COLOR_SHADES.CREATE, { colorId }), item).then(response => response.data),
+
+  updateShade: (colorId: string, item: UpdateWineItemParams): Promise<WineColorItem> =>
+    api.put(buildUrl(COLOR_CRUD_ENDPOINTS.COLOR_SHADES.UPDATE, { colorId, itemId: item.itemId }), item).then(response => response.data),
+
+  reorderShades: (params: ReorderShadesParams): Promise<void> =>
+    api.post(buildUrl(COLOR_CRUD_ENDPOINTS.COLOR_SHADES.REORDER, { colorId: params.colorId }), { shades: params.shades }).then(response => response.data),
 }

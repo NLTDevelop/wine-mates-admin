@@ -7,7 +7,7 @@ import { wineTypeQueries } from '../entities/wine-type-queries'
 interface WineTypeFormData {
   label: string
   labelEn: string
-  colors: string[]
+  color: string
   aromas: string[]
   flavorNotes: string[]
   flavorCharacteristics: string[]
@@ -17,7 +17,7 @@ export const useWineTypes = () => {
   const [formData, setFormData] = useState<WineTypeFormData>({
     label: '',
     labelEn: '',
-    colors: [],
+    color: '',
     aromas: [],
     flavorNotes: [],
     flavorCharacteristics: [],
@@ -84,7 +84,7 @@ export const useWineTypes = () => {
     setFormData({
       label: '',
       labelEn: '',
-      colors: [],
+      color: '',
       aromas: [],
       flavorNotes: [],
       flavorCharacteristics: [],
@@ -96,7 +96,7 @@ export const useWineTypes = () => {
     setFormData({
       label: wineType.label,
       labelEn: wineType.labelEn || '',
-      colors: wineType.colors || [],
+      color: wineType.color || '',
       aromas: wineType.aromas || [],
       flavorNotes: wineType.flavorNotes || [],
       flavorCharacteristics: wineType.flavorCharacteristics || [],
@@ -145,9 +145,9 @@ export const useWineTypes = () => {
     setCurrentWineType(wineType)
   }
 
-  const canCreate = formData.label.trim() && formData.colors.length > 0 && formData.aromas.length > 0 && formData.flavorNotes.length > 0 && formData.flavorCharacteristics.length > 0
+  const canCreate = formData.label.trim() && formData.color && formData.aromas.length > 0 && formData.flavorNotes.length > 0 && formData.flavorCharacteristics.length > 0
 
-  const canUpdate = editingWineType && formData.label.trim() && formData.colors.length > 0 && formData.aromas.length > 0
+  const canUpdate = editingWineType && formData.label.trim() && formData.color && formData.aromas.length > 0
 
   const isDuplicate = wineTypes.some(wt => wt.label.toLowerCase() === formData.label.toLowerCase() && wt.id !== editingWineType?.id)
 

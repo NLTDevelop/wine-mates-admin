@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useColorStore } from '../entities/color-store'
 import { colorQueries } from '../entities/color-queries'
-import { CreateWineColorParams, UpdateWineColorParams, WineColor } from '../entities/types/color'
+import { CreateWineColorParams, CreateWineItemParams, ReorderShadesParams, UpdateWineColorParams, UpdateWineItemParams, WineColor } from '../entities/types/color'
 
 export const useColor = () => {
   const queryClient = useQueryClient()
@@ -60,10 +60,27 @@ export const useColor = () => {
 
   const createShadeMutation = useMutation({
     ...colorQueries.createShade(),
-    onSuccess: (newShade, variables) => {
-      store.addShade(newShade)
+    onSuccess: (newItem, variables) => {
+      store.addShade(variables.colorId, newItem)
       queryClient.invalidateQueries({ queryKey: ['colors', variables.colorId, 'shades'] })
-      queryClient.invalidateQueries({ queryKey: ['shades', 'list'] })
+      queryClient.invalidateQueries({ queryKey: ['colors', 'list'] })
+    },
+  })
+
+  const updateShadeMutation = useMutation({
+    ...colorQueries.updateShade(),
+    onSuccess: (updatedItem, variables) => {
+      store.updateShade(variables.colorId, updatedItem)
+      queryClient.invalidateQueries({ queryKey: ['colors', variables.colorId, 'shades'] })
+      queryClient.invalidateQueries({ queryKey: ['colors', 'list'] })
+    },
+  })
+
+  const reorderShadesMutation = useMutation({
+    ...colorQueries.reorderShades(),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['colors', variables.colorId, 'shades'] })
+      queryClient.invalidateQueries({ queryKey: ['colors', 'list'] })
     },
   })
 
@@ -79,8 +96,16 @@ export const useColor = () => {
     return deleteColorMutation.mutateAsync(colorId)
   }
 
-  const createShade = (colorId: string, shade: CreateWineColorParams) => {
-    return createShadeMutation.mutateAsync({ colorId, shade })
+  const createShade = (colorId: string, item: CreateWineItemParams) => {
+    return createShadeMutation.mutateAsync({ colorId, item })
+  }
+
+  const updateShade = (colorId: string, item: UpdateWineItemParams) => {
+    return updateShadeMutation.mutateAsync({ colorId, item })
+  }
+
+  const reorderShades = (params: ReorderShadesParams) => {
+    return reorderShadesMutation.mutateAsync(params)
   }
 
   //TODO уточнит нужен ли поиск по цветам
@@ -131,7 +156,11 @@ export const useColor = () => {
     isUpdating: updateColorMutation.isPending,
     isDeleting: deleteColorMutation.isPending,
     isCreatingShade: createShadeMutation.isPending,
+    isUpdatingShade: updateShadeMutation.isPending,
+    isReorderingShades: reorderShadesMutation.isPending,
 
+    reorderShades,
+    updateShade,
     createColor,
     updateColor,
     deleteColor,

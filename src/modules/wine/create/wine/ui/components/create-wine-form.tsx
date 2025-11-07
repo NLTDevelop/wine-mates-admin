@@ -32,7 +32,7 @@ export const CreateWineForm: React.FC<CreateWineFormProps> = ({ wineTypes }) => 
           <Button type="button" variant="outline" onClick={onReset}>
             {t('button.clear')}
           </Button>
-          <Button type="submit" className="min-w-32">
+          <Button type="submit" className="min-w-32" /*disabled={!form.formState.isValid}*/>
             {t('button.save')}
           </Button>
         </div>

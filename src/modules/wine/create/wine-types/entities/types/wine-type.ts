@@ -2,41 +2,18 @@ export interface WineType {
   id: string
   label: string
   labelEn?: string
-  colors: string[]
+  color: string
+  // colors: string[]
   aromas: string[]
   flavorNotes: string[]
   flavorCharacteristics: string[]
-}
-
-//нужно будет удалить
-export interface WineColor {
-  id: string
-  label: string
-  labelEn: string
-  tones: {
-    pale?: string
-    medium?: string
-    deep?: string
-  }
-}
-
-export interface WineAroma {
-  value: string
-  label: string
-  subAromas: string[]
-}
-
-export interface WineFlavor {
-  value: string
-  label: string
-  characteristics: string[]
 }
 
 export interface CreateWineTypeParams {
   id: string
   label: string
   labelEn?: string
-  colors: string[]
+  color: string
   aromas: string[]
   flavorNotes: string[]
   flavorCharacteristics: string[]

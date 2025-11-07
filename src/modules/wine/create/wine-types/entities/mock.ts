@@ -1,52 +1,52 @@
-import { WineType } from './types/wine-type'
+// import { WineType } from './types/wine-type'
 
-export const mockWineTypes: WineType[] = [
-  {
-    id: 'red',
-    label: 'Красное вино',
-    labelEn: 'Red Wine',
-    colors: ['ruby', 'garnet', 'purple'],
-    aromas: ['berry', 'spicy', 'woody'],
-    flavorNotes: ['fruity', 'earthy', 'oaky'],
-    flavorCharacteristics: ['tannic', 'full-bodied', 'dry'],
-  },
-  {
-    id: 'white',
-    label: 'Белое вино',
-    labelEn: 'White Wine',
-    colors: ['straw', 'golden', 'lemon'],
-    aromas: ['citrus', 'tropical', 'floral'],
-    flavorNotes: ['mineral', 'herbal', 'fruity'],
-    flavorCharacteristics: ['acidic', 'dry', 'light'],
-  },
-  {
-    id: 'rose',
-    label: 'Розовое вино',
-    labelEn: 'Rosé Wine',
-    colors: ['salmon', 'pink', 'peach'],
-    aromas: ['red_fruits', 'floral_rose', 'herbal'],
-    flavorNotes: ['fruity', 'fresh', 'citrus'],
-    flavorCharacteristics: ['light', 'dry', 'refreshing'],
-  },
-  {
-    id: 'sparkling',
-    label: 'Игристое вино',
-    labelEn: 'Sparkling Wine',
-    colors: ['champagne', 'blush'],
-    aromas: ['bready', 'citrus_sparkling', 'mineral_sparkling'],
-    flavorNotes: ['toasty', 'yeasty', 'citrus'],
-    flavorCharacteristics: ['bubbly', 'crisp', 'dry'],
-  },
-  {
-    id: 'dessert',
-    label: 'Десертное вино',
-    labelEn: 'Dessert Wine',
-    colors: ['amber', 'honey', 'caramel'],
-    aromas: ['dried_fruits', 'honey_aroma', 'spicy_dessert'],
-    flavorNotes: ['sweet', 'rich', 'complex'],
-    flavorCharacteristics: ['sweet', 'full-bodied', 'luscious'],
-  },
-]
+// export const mockWineTypes: WineType[] = [
+//   {
+//     id: 'red',
+//     label: 'Красное вино',
+//     labelEn: 'Red Wine',
+//     color: "#8b",
+//     aromas: ['berry', 'spicy', 'woody'],
+//     flavorNotes: ['fruity', 'earthy', 'oaky'],
+//     flavorCharacteristics: ['tannic', 'full-bodied', 'dry'],
+//   },
+//   {
+//     id: 'white',
+//     label: 'Белое вино',
+//     labelEn: 'White Wine',
+//     color: ,
+//     aromas: ['citrus', 'tropical', 'floral'],
+//     flavorNotes: ['mineral', 'herbal', 'fruity'],
+//     flavorCharacteristics: ['acidic', 'dry', 'light'],
+//   },
+//   {
+//     id: 'rose',
+//     label: 'Розовое вино',
+//     labelEn: 'Rosé Wine',
+//     color: ['salmon', 'pink', 'peach'],
+//     aromas: ['red_fruits', 'floral_rose', 'herbal'],
+//     flavorNotes: ['fruity', 'fresh', 'citrus'],
+//     flavorCharacteristics: ['light', 'dry', 'refreshing'],
+//   },
+//   {
+//     id: 'sparkling',
+//     label: 'Игристое вино',
+//     labelEn: 'Sparkling Wine',
+//     colors: ['champagne', 'blush'],
+//     aromas: ['bready', 'citrus_sparkling', 'mineral_sparkling'],
+//     flavorNotes: ['toasty', 'yeasty', 'citrus'],
+//     flavorCharacteristics: ['bubbly', 'crisp', 'dry'],
+//   },
+//   {
+//     id: 'dessert',
+//     label: 'Десертное вино',
+//     labelEn: 'Dessert Wine',
+//     colors: ['amber', 'honey', 'caramel'],
+//     aromas: ['dried_fruits', 'honey_aroma', 'spicy_dessert'],
+//     flavorNotes: ['sweet', 'rich', 'complex'],
+//     flavorCharacteristics: ['sweet', 'full-bodied', 'luscious'],
+//   },
+// ]
 
 export const mockColors = [
   { id: 'ruby', label: 'Рубиновый' },

@@ -1,5 +1,5 @@
 import { colorService } from './color-service'
-import { CreateWineColorParams, UpdateWineColorParams } from './types/color'
+import { CreateShadeParams, CreateWineColorParams, ReorderShadesParams, UpdateShadeParams, UpdateWineColorParams } from './types/color'
 
 export const colorQueries = {
   list: () => ({
@@ -29,6 +29,16 @@ export const colorQueries = {
 
   createShade: () => ({
     mutationKey: ['shades', 'create'],
-    mutationFn: ({ colorId, shade }: { colorId: string; shade: CreateWineColorParams }) => colorService.createShade(colorId, shade),
+    mutationFn: ({ colorId, item }: CreateShadeParams) => colorService.createShade(colorId, item),
+  }),
+
+  updateShade: () => ({
+    mutationKey: ['shades', 'update'],
+    mutationFn: ({ colorId, item }: UpdateShadeParams) => colorService.updateShade(colorId, item),
+  }),
+
+  reorderShades: () => ({
+    mutationKey: ['shades', 'reorder'],
+    mutationFn: (params: ReorderShadesParams) => colorService.reorderShades(params),
   }),
 }

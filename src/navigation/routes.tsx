@@ -9,6 +9,7 @@ import { AuthorizationView } from '@/modules/autorization'
 import { UsersDetailView, UsersView } from '@/modules/users/ui'
 import { FeaturesView } from '@/modules/features/ui'
 import { WineManagementView } from '@/modules/wine/create/dashboard/ui'
+import { WineDetailView, WineView } from '@/modules/wine/list/ui'
 
 const usersRoutes = [
   { path: PATHS.USERS, element: <UsersView /> },
@@ -17,7 +18,11 @@ const usersRoutes = [
 
 const featuresRoutes = [{ path: PATHS.FEATURES, element: <FeaturesView /> }]
 
-const winesRoutes = [{ path: PATHS.WINE_CREATE, element: <WineManagementView /> }]
+const winesRoutes = [
+  { path: PATHS.WINE_CREATE, element: <WineManagementView /> },
+  { path: PATHS.WINE_LIST, element: <WineView /> },
+  { path: PATHS.WINE_DETAIL, element: <WineDetailView /> },
+]
 
 export const Router: FC = () => {
   const routes = useRoutes([
