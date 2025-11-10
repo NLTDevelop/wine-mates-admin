@@ -93,7 +93,7 @@ export const useWineFlavor = () => {
     },
   })
 
-  const createGroup = (group: CreateWineAromaGroupParams) => {
+  const createGroup = (group: Partial<CreateWineAromaGroupParams>) => {
     return createGroupMutation.mutateAsync(group)
   }
 

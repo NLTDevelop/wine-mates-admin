@@ -36,6 +36,8 @@ export const uk = {
     max_files_exceeded: 'Максимальна кількість файлів',
     acceptable_file_types: 'типи файлів',
     max_size: 'максимальний розмір',
+    or: "або",
+    import_description: "Перетягніть файл для імпорту або натисніть, щоб вибрати",
     button: {
       save: 'Зберегти',
       cancel: 'Скасувати',
@@ -48,6 +50,8 @@ export const uk = {
       saving: 'Збереження...',
       select_all: 'Обрати всі',
       deselect_all: 'Очистити все',
+      import: 'Імпортувати',
+      importing: 'Імпорт..',
     },
     modal: {
       wish_logout: 'Бажаєте вийти?',
@@ -212,8 +216,11 @@ export const uk = {
     vintage_info: 'Інформація про винтаж',
     geographic_info: 'Географія',
     classification_info: 'Класифікація',
+    color_wine: 'Коліри вина',
+    color_taste: 'Колір смаку',
     list: {
       wines_list: 'Список вин',
+      import_wines_list: 'Імпорт списку вин',
       wine_delete: 'Видалення вина',
       delete_description: 'Ви впевнені, що хочете видалити вино {{slug}}. Його повернення до списку після цієї дії буде неможливе.',
       confirm_title: 'Модерація вина',
@@ -258,12 +265,16 @@ export const uk = {
       group_name_en: 'Назва групи (EN)',
       create_new_group: 'Створення нової групи ароматів',
       state_flavor: 'Стан аромату',
+     
+      choose_color: 'Оберіть колір вина',
+      search_color: 'Пошук кольору вина',
     },
     tastes: {
       tastes: 'Смаки',
       taste_name_ua: 'Назва смаку (UA)',
       taste_name_en: 'Назва смаку (EN)',
       create_new_taste: 'Створення смакової ноти',
+      base_color: 'Колір смакової ноти',
     },
     taste_characteristics: {
       characteristics: 'Смакові характеристики',

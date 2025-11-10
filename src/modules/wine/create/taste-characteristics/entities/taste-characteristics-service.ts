@@ -2,7 +2,14 @@ import { api } from '@/services'
 import { buildUrl } from '@/lib/utils'
 
 import { TASTE_CHARACTERISTICS_ENDPOINTS } from './taste-characteristics-endpoints'
-import { WineTasteCharacteristics, CreateWineTasteCharacteristicParams, UpdateWineTasteCharacteristicParams, CreateWineTasteItemParams, UpdateWineTasteItemParams } from './types/taste-characteristics'
+import {
+  WineTasteCharacteristics,
+  CreateWineTasteCharacteristicParams,
+  UpdateWineTasteCharacteristicParams,
+  CreateWineTasteItemParams,
+  UpdateWineTasteItemParams,
+  LevelItem,
+} from './types/taste-characteristics'
 
 export const tasteCharacteristicsService = {
   listCharacteristics: (): Promise<WineTasteCharacteristics[]> => api.get(TASTE_CHARACTERISTICS_ENDPOINTS.CHARACTERISTICS.LIST).then(response => response.data),
@@ -28,4 +35,14 @@ export const tasteCharacteristicsService = {
 
   deleteItem: (params: { characteristicId: string; itemId: string }): Promise<void> =>
     api.delete(buildUrl(TASTE_CHARACTERISTICS_ENDPOINTS.ITEMS.DELETE, { itemId: params.itemId })).then(response => response.data),
+
+  updateLevelName: async (characteristicId: string, levelId: string, levelName: string) => {
+    const response = await api.patch(TASTE_CHARACTERISTICS_ENDPOINTS.LEVELS.UPDATE_LEVEL.replace(':characteristicId', characteristicId).replace(':levelId', levelId), { levelName })
+    return response.data
+  },
+
+  updateLevelsOrder: async (characteristicId: string, levels: LevelItem[]) => {
+    const response = await api.patch(TASTE_CHARACTERISTICS_ENDPOINTS.LEVELS.UPDATE_ORDER.replace(':characteristicId', characteristicId), { levels })
+    return response.data
+  },
 }

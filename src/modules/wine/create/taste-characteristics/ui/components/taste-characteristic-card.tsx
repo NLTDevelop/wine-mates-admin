@@ -66,27 +66,40 @@ export const TasteCharacteristicCard = ({
     }))
   }
 
-  const saveLevelsToServer = useCallback(
+
+  const handleSaveLevelName = useCallback(
+    async (levelId: string, levelName: string) => {
+      try {
+        await updateCharacteristicLevels(data.id, [
+          ...(characteristicLevels.length > 0 ? characteristicLevels : data.levels || []).map(level =>
+            level.id === levelId ? { ...level, levelName } : level
+          )
+        ])
+      } catch (error) {
+        console.error('Failed to save level name:', error)
+      }
+    },
+    [data.id, characteristicLevels, data.levels, updateCharacteristicLevels]
+  )
+
+    const handleSaveLevelsOrder = useCallback(
     async (levels: LevelItem[]) => {
       try {
         await updateCharacteristicLevels(data.id, levels)
       } catch (error) {
-        console.error('Failed to save levels:', error)
+        console.error('Failed to save levels order:', error)
       }
     },
     [data.id, updateCharacteristicLevels]
   )
 
-  const { debouncedWrapper } = useDebounce(saveLevelsToServer, 1000)
 
   const handleLevelsChange = useCallback(
     (levels: LevelItem[]) => {
       updateCurrentLevels(levels)
       onCharacteristicLevelsChange?.(levels)
-
-      debouncedWrapper(levels)
     },
-    [updateCurrentLevels, onCharacteristicLevelsChange, debouncedWrapper]
+    [updateCurrentLevels, onCharacteristicLevelsChange]
   )
 
   const isOpenAccordion = isAccordionOpen[data.id] || false
@@ -154,7 +167,7 @@ export const TasteCharacteristicCard = ({
             'group'
           )}
         >
-          <LevelManager states={levelsToShow} onStatesChange={handleLevelsChange} />
+          <LevelManager states={levelsToShow} onStatesChange={handleLevelsChange} onLevelNameBlur={handleSaveLevelName}  onLevelsOrderChange={handleSaveLevelsOrder}  isSaving={isSaving || isReorderingCharacteristicLevels}/>
 
           {/* индикатор сохранения (может потом уберу) */}
           {isReorderingCharacteristicLevels && <div className="text-xs text-blue-500 mt-2 text-center">{tc('button.saving')}...</div>}

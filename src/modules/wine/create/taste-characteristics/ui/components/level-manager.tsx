@@ -8,10 +8,13 @@ import { useTranslation } from 'react-i18next'
 interface LevelManagerProps {
   states: LevelItem[]
   onStatesChange: (states: LevelItem[]) => void
+  onLevelNameBlur?: (levelId: string, levelName: string) => void
+  onLevelsOrderChange?: (levels: LevelItem[]) => void
   minFields?: number
+   isSaving?: boolean
 }
 
-export const LevelManager: React.FC<LevelManagerProps> = ({ states, onStatesChange, minFields = 3 }) => {
+export const LevelManager: React.FC<LevelManagerProps> = ({ states, onStatesChange, onLevelNameBlur, onLevelsOrderChange, minFields = 3 ,isSaving = false }) => {
   const { t } = useTranslation('wines')
 
   const handleAddState = useCallback(() => {
@@ -37,6 +40,7 @@ export const LevelManager: React.FC<LevelManagerProps> = ({ states, onStatesChan
       if (states.length > minFields) {
         const updatedStates = states.filter(state => state.id !== stateId)
         onStatesChange(updatedStates)
+        //Todo добавить апи для удаления
       }
     },
     [states, minFields, onStatesChange]
@@ -45,18 +49,30 @@ export const LevelManager: React.FC<LevelManagerProps> = ({ states, onStatesChan
   const handleReorderStates = useCallback(
     (reorderedStates: LevelItem[]) => {
       onStatesChange(reorderedStates)
+      if (onLevelsOrderChange) {
+        onLevelsOrderChange(reorderedStates)
+      }
     },
     [onStatesChange]
   )
 
+  const handleLevelNameBlur = useCallback(
+    (levelId: string, levelName: string) => {
+      if (onLevelNameBlur) {
+        onLevelNameBlur(levelId, levelName)
+      }
+    },
+    [onLevelNameBlur]
+  )
+
   return (
     <div className="space-y-3">
-      <Button type="button" variant="ghost" size="sm" onClick={handleAddState} className="flex items-center gap-2 mt-3 border-1 hover:bg-muted-foreground hover:text-input">
+      <Button type="button" variant="ghost" size="sm" onClick={handleAddState} className="flex items-center gap-2 mt-3 border-1 hover:bg-muted-foreground hover:text-input" disabled={isSaving}>
         <Plus className="w-4 h-4" />
         {t('button.add_level')}
       </Button>
 
-      <LevelList states={states} minFields={minFields} onUpdateState={handleUpdateState} onRemoveState={handleRemoveState} onReorderStates={handleReorderStates} />
+      <LevelList states={states} minFields={minFields} onLevelNameBlur={handleLevelNameBlur} onUpdateState={handleUpdateState} onRemoveState={handleRemoveState} onReorderStates={handleReorderStates} />
     </div>
   )
 }

@@ -22,4 +22,11 @@ export const wineListService = {
   update: ({ id, data }: UpdateWineListParams) => api.patch(buildUrl(WINE_LIST_ENDPOINTS.UPDATE, { id }), { data }),
 
   delete: (colorId: string): Promise<void> => api.delete(buildUrl(WINE_LIST_ENDPOINTS.DELETE, { colorId })).then(response => response.data),
+
+  import: (file: File): Promise<void> => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    return api.post(WINE_LIST_ENDPOINTS.IMPORT, formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then(response => response.data)
+  },
 }

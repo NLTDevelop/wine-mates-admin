@@ -34,13 +34,7 @@ export const FlavorGroupCard = ({
   const { t } = useTranslation('wines')
 
   const { isEditing, editValue, color, cardTextColorClass, isSaving, renderableItems, startEditing, handleSaveLabel, cancelEditing, handleKeyDown, handleAddAromaClick, setEditValue, getItemName } =
-    useEditFlavorGroup({
-      data,
-      isEditable,
-      isFormOpen,
-      onCancel,
-      onToggleForm,
-    })
+    useEditFlavorGroup({ data, isEditable, isFormOpen, onCancel, onToggleForm })
 
   const isOpenAccordion = isAccordionOpen[data.id] || false
 
@@ -109,8 +103,8 @@ export const FlavorGroupCard = ({
             {renderableItems.map((item, index) => {
               const aromaItem = item?.items?.[0]
               return (
-                <div key={item.id || index} className="flex gap-2 justify-between items-start">
-                  <div className="flex gap-2  items-center w-full">
+                <div key={item.id || index} className="flex gap-2 justify-between sm:items-start items-center">
+                  <div className="flex gap-2 sm:flex-row flex-col  sm:items-center items-start w-full">
                     <div className=" flex gap-2 items-center w-1/5">
                       <div className="h-6 w-6 rounded-full mt-1 flex-shrink-0" style={{ backgroundColor: aromaItem?.value }}></div>
                       <div className={`text-sm font-medium`}>{getItemName(item)}</div>

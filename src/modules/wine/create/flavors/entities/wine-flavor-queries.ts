@@ -9,7 +9,7 @@ export const wineFlavorQueries = {
 
   createGroup: () => ({
     mutationKey: ['aroma-groups', 'create'],
-    mutationFn: (group: CreateWineAromaGroupParams) => wineFlavorService.createGroup(group),
+    mutationFn: (group: Partial<CreateWineAromaGroupParams>) => wineFlavorService.createGroup(group),
   }),
 
   updateGroup: () => ({

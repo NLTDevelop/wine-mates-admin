@@ -26,4 +26,9 @@ export const wineQueries = {
     mutationKey: ['wines', 'delete'],
     mutationFn: (id: string) => wineListService.delete(id),
   }),
+
+  import: () => ({
+    mutationKey: ['wines', 'import'],
+    mutationFn: (file: File) => wineListService.import(file),
+  }),
 }

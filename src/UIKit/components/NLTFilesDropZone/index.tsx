@@ -38,7 +38,7 @@ export const NLTFilesDropZone: FC<IProps> = ({
     )
   }, [acceptedFileTypes])
 
-  const { handleDownloadFile, loadingFiles } = useFileDownloadLogic()
+  const { handleDownloadFile, loadingFiles, fileTypesText } = useFileDownloadLogic(acceptedFileTypes)
 
   const { getRootProps, getInputProps } = useDropzone({ ...other, maxSize: maxSizeMB * 1024 * 1024, accept })
 
@@ -59,7 +59,7 @@ export const NLTFilesDropZone: FC<IProps> = ({
               <Upload className="w-10 h-10 mx-auto mb-2" />
             </div>
             <div className="w-full text-gray-500 p-4 pb-6">
-              <p className="w-full break-words">{t('acceptable_file_types') + ' PNG, JPG, PDF або DOCX'}</p>
+              <p className="w-full break-words">{t('acceptable_file_types') + ' ' + fileTypesText}</p>
               <p className="w-full break-words">{t('max_size') + ' ' + maxSizeMB + ' MB'}</p>
             </div>
           </>

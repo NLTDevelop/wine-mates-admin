@@ -1,5 +1,7 @@
+import { FILE_TYPE_LABELS } from '@/constatnts/file-types'
 import { useDownloadFileMutation } from '@/modules/download-file/presenters/useDownloadFileMutation'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import i18n from 'i18next'
 
 export const downloadFile = (file: File, name?: string) => {
   const downloadUrl = window.URL.createObjectURL(file)
@@ -16,10 +18,39 @@ export const convertBytesToMB = (bytes: number) => {
   return `${mb.toFixed(1)} mb`
 }
 
-export const useFileDownloadLogic = () => {
+export const useFileDownloadLogic = (acceptedFileTypes?: string[]) => {
   const { mutateAsync } = useDownloadFileMutation()
 
   const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({})
+
+  const acceptConfig = useMemo(() => {
+    if (!acceptedFileTypes) return undefined
+
+    return acceptedFileTypes.reduce(
+      (acc, fileType) => {
+        acc[fileType] = []
+        return acc
+      },
+      {} as Record<string, string[]>
+    )
+  }, [acceptedFileTypes])
+
+  const fileTypesText = useMemo(() => {
+    if (!acceptedFileTypes || acceptedFileTypes.length === 0) return ''
+
+    const labels = acceptedFileTypes
+      .map(type => FILE_TYPE_LABELS[type])
+      .filter(Boolean)
+      .filter((label, index, arr) => arr.indexOf(label) === index)
+
+    if (labels.length === 0) return ''
+
+    if (labels.length === 1) return labels[0]
+    if (labels.length === 2) return labels.join(i18n.t("common:or"))
+
+    const last = labels.pop()
+    return `${labels.join(', ')} ${i18n.t("common:or")} ${last}`
+  }, [acceptedFileTypes])
 
   const handleDownloadFile = async (idOrFile: string | File, name: string) => {
     const fileId = typeof idOrFile === 'string' ? idOrFile : idOrFile.name
@@ -47,5 +78,7 @@ export const useFileDownloadLogic = () => {
   return {
     handleDownloadFile,
     loadingFiles: loadingMap,
+    acceptConfig,
+    fileTypesText,
   }
 }

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useWineFlavor } from './useWineFlavors'
-import { StateItem, WineAromaGroup } from '../entities/types/flavor'
+import { CreateWineAromaGroupParams, StateItem, WineAromaGroup } from '../entities/types/flavor'
 import { lightenColor, sortColorsByBrightness } from '@/lib/utils'
 import { mockAromaGroups } from '../entities/mock'
 
@@ -21,11 +21,10 @@ export const useFlavorPalette = () => {
     }
   }>({})
 
-  const [itemStates, setItemStates] = useState<{
-    [itemId: string]: StateItem[]
-  }>({})
+  const [itemStates, setItemStates] = useState<{    [itemId: string]: StateItem[]  }>({})
+  
 
-  const handleAddGroup = (groupData: { value: string; label: string; labelEn: string }) => {
+  const handleAddGroup = (groupData: Partial<CreateWineAromaGroupParams>) => {
     createGroup(groupData)
   }
 

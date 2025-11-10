@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { WineType } from '../entities/types/wine-type'
-import { /*useWineOptions,*/ useWineOptionsMock } from './useWineOptions'
+import { /*useWineOptions,*/ useWineOptionsMock } from '../../general/presenters/useWineOptions'
 
 interface UseWineTypeCardProps {
   wineType: WineType

@@ -5,10 +5,11 @@ import { Label } from '@/UIKit/shadcn/ui/label'
 import { Plus, Save, Tags } from 'lucide-react'
 import { WineType, CreateWineTypeParams } from '../../../entities/types/wine-type'
 import { useWineTypeForm } from '../../../presenters/useWineTypeForm'
-import { useWineOptionsMock } from '../../../presenters/useWineOptions'
+import { useWineOptionsMock } from '../../../../general/presenters/useWineOptions'
 import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
 import { useTranslation } from 'react-i18next'
 import { wineTypeFormConfig } from '../..'
+import { adaptFetchOptions } from '@/lib/utils'
 
 interface WineTypeFormProps {
   mode: 'create' | 'edit'
@@ -16,16 +17,6 @@ interface WineTypeFormProps {
   onSubmit: (wineType: WineType | CreateWineTypeParams) => void
   onCancel: () => void
   isLoading: boolean
-}
-
-const adaptFetchOptions = (fetchFn: (search?: string) => Promise<{ id: string; label: string }[]>) => {
-  return async (search?: string) => {
-    const data = await fetchFn(search)
-    return data.map(item => ({
-      value: item.id,
-      label: item.label,
-    }))
-  }
 }
 
 export const WineTypeForm = ({ mode, wineType, onSubmit, onCancel, isLoading }: WineTypeFormProps) => {
@@ -44,22 +35,7 @@ export const WineTypeForm = ({ mode, wineType, onSubmit, onCancel, isLoading }: 
     isLoading,
   })
 
-  const { fetchColors, fetchAromas, fetchFlavorNotes, fetchFlavorCharacteristics } = useWineOptionsMock()
-
-  const getFetchFunction = (fetchKey: string) => {
-    switch (fetchKey) {
-      case 'colors':
-        return adaptFetchOptions(fetchColors)
-      case 'aromas':
-        return adaptFetchOptions(fetchAromas)
-      case 'flavorNotes':
-        return adaptFetchOptions(fetchFlavorNotes)
-      case 'flavorCharacteristics':
-        return adaptFetchOptions(fetchFlavorCharacteristics)
-      default:
-        return adaptFetchOptions(fetchColors)
-    }
-  }
+  const { fetchColors } = useWineOptionsMock()
 
   const title = mode === 'create' ? t('types.create_new_type') : t('types.edit_type')
   const submitText = formLoading ? tc('button.saving') : tc('button.save')
@@ -104,7 +80,7 @@ export const WineTypeForm = ({ mode, wineType, onSubmit, onCancel, isLoading }: 
                 onChange={value => handleChange(select.id as keyof typeof formData, value)}
                 placeholder={t(select.placeholderKey)}
                 searchLabel={t(select.searchLabelKey)}
-                fetchOptions={getFetchFunction(select.fetchKey)}
+                fetchOptions={adaptFetchOptions(fetchColors)}
                 mode="multiple"
                 disabled={formLoading}
               />

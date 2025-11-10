@@ -13,10 +13,7 @@ export const useWineTypeForm = ({ initialData, onSubmit, isLoading }: UseWineTyp
   const [formData, setFormData] = useState({
     label: initialData?.label || '',
     labelEn: initialData?.labelEn || '',
-    color: initialData?.color || '',
-    aromas: initialData?.aromas || [],
-    flavorNotes: initialData?.flavorNotes || [],
-    flavorCharacteristics: initialData?.flavorCharacteristics || [],
+    colors: initialData?.colors || [],
   })
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -45,10 +42,7 @@ export const useWineTypeForm = ({ initialData, onSubmit, isLoading }: UseWineTyp
       setFormData({
         label: '',
         labelEn: '',
-        color: '',
-        aromas: [],
-        flavorNotes: [],
-        flavorCharacteristics: [],
+        colors: [],
       })
     }
   }
@@ -60,7 +54,7 @@ export const useWineTypeForm = ({ initialData, onSubmit, isLoading }: UseWineTyp
     }))
   }
 
-  const canSubmit = formData.label.trim() && formData.color && formData.aromas.length > 0 && formData.flavorNotes.length > 0 && formData.flavorCharacteristics.length > 0
+  const canSubmit = formData.label.trim() && formData.colors
 
   return {
     formData,

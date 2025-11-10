@@ -2,7 +2,7 @@ import { useState, useCallback, MouseEvent, KeyboardEvent } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useContrastText } from '@/hooks/ui/useContrastText'
 import { wineFlavorQueries } from '../entities/wine-flavor-queries'
-import { WineAromaGroup } from '../entities/types/flavor'
+import { CreateWineAromaGroupParams, WineAromaGroup } from '../entities/types/flavor'
 
 interface UseEditFlavorGroupProps {
   data: WineAromaGroup
@@ -27,7 +27,7 @@ interface UseEditFlavorGroupReturn {
   renderableItems: any[]
 
   startEditing: () => void
-  handleSaveLabel: (editData: { label: string; labelEn: string; value?: string }) => Promise<void>
+  handleSaveLabel: (editData: Partial<CreateWineAromaGroupParams>) => Promise<void>
   cancelEditing: (e?: MouseEvent | KeyboardEvent) => void
   handleKeyDown: (e: KeyboardEvent) => void
   handleMainClick: () => void
@@ -58,16 +58,17 @@ export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable 
   })
 
   const handleSaveLabel = useCallback(
-    async (editData: { label: string; labelEn: string; value?: string }) => {
+    async (editData: Partial<CreateWineAromaGroupParams>) => {
       if (!data.id) return
 
       await updateGroupMutation.mutateAsync({
         groupId: data.id,
         newGroup: {
-          label: editData.label,
-          labelEn: editData.labelEn,
+          label: editData.label || '',
+          labelEn: editData.labelEn || '',
           value: editData.value || '',
           items: data.items,
+          colors: data.colors,
         },
       })
 
@@ -156,6 +157,7 @@ export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable 
         labelEn: item.nameEn,
         value: data.value,
         items: [item],
+        colors: data.colors,
       }))
     }
     return []

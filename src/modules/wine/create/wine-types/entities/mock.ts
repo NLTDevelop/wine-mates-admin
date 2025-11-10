@@ -49,20 +49,11 @@
 // ]
 
 export const mockColors = [
-  { id: 'ruby', label: 'Рубиновый' },
-  { id: 'garnet', label: 'Гранатовый' },
-  { id: 'purple', label: 'Пурпурный' },
-  { id: 'straw', label: 'Соломенный' },
-  { id: 'golden', label: 'Золотистый' },
-  { id: 'lemon', label: 'Лимонный' },
-  { id: 'salmon', label: 'Лососевый' },
-  { id: 'pink', label: 'Розовый' },
-  { id: 'peach', label: 'Персиковый' },
-  { id: 'champagne', label: 'Шампанское' },
-  { id: 'blush', label: 'Розовое игристое' },
-  { id: 'amber', label: 'Янтарный' },
-  { id: 'honey', label: 'Медовый' },
-  { id: 'caramel', label: 'Карамельный' },
+  { id: 'white', label: 'Біле', labelEn: "white", value: "#fdffd4" },
+  { id: 'red', label: 'Червоне', labelEn: "red", value: "#7c060d"},
+  { id: 'orange', label: 'Помаранчеве',labelEn: "orange", value: "#f99132" },
+  { id: 'pink', label: 'Рожеве', labelEn: "pink", value: "#f7b5e6"},
+
 ]
 
 export const mockAromas = [

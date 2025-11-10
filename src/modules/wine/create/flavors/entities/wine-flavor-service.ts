@@ -6,7 +6,7 @@ import { WineAromaGroup, WineAromaItem, CreateWineAromaGroupParams, UpdateWineAr
 export const wineFlavorService = {
   listGroups: (): Promise<WineAromaGroup[]> => api.get(AROMA_CRUD_ENDPOINTS.GROUPS.LIST).then(response => response.data),
 
-  createGroup: (group: CreateWineAromaGroupParams): Promise<WineAromaGroup> => api.post(AROMA_CRUD_ENDPOINTS.GROUPS.CREATE, group).then(response => response.data),
+  createGroup: (group: Partial<CreateWineAromaGroupParams>): Promise<WineAromaGroup> => api.post(AROMA_CRUD_ENDPOINTS.GROUPS.CREATE, group).then(response => response.data),
 
   updateGroup: (params: UpdateWineAromaGroupParams): Promise<WineAromaGroup> =>
     api.put(buildUrl(AROMA_CRUD_ENDPOINTS.GROUPS.UPDATE, { groupId: params.groupId }), params.newGroup).then(response => response.data),
