@@ -71,25 +71,26 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
     onKeyDown(e)
   }
 
-  console.log(editValue.colors)
 
   return (
-    <div className="flex items-center gap-2 justify-between w-full">
+    <div className="flex items-center gap-2 justify-between w-full cursor-default ">
       {isEditable && isEditing ? (
         <div className="flex items-end md:items-center gap-3 flex-1 flex-col flex-wrap md:flex-row justify-end md:justify-start ">
-          <div className="flex flex-col gap-2 ">
+          <div className="flex flex-1 lg:flex-row flex-col gap-2 md:w-auto w-full">
             <div className="flex items-end md:items-center gap-3 flex-1 flex-col flex-wrap md:flex-row justify-end md:justify-start ">
               <div className="flex items-center gap-1 w-full md:w-auto justify-between">
                 <span className={cn('text-xs opacity-70', cardTextColorClass)}>UA:</span>
+
                 <Input
                   value={editValue.label}
                   onChange={e => onEditValueChange('label', e.target.value)}
                   onKeyDown={handleInputKeyDown}
                   disabled={isSaving}
-                  className={cn('h-7 text-sm bg-transparent border border-white/30 focus:border-white/50 w-32', cardTextColorClass)}
+                  className={cn('h-7 text-sm bg-transparent border border-white/30 focus:border-white/50 min-w-32 w-full ', cardTextColorClass)}
                   autoFocus={activeField === 'label'}
                   onClick={(e: MouseEvent) => e.stopPropagation()}
                 />
+  
               </div>
 
               <div className="flex items-center gap-1 w-full md:w-auto justify-between">
@@ -99,7 +100,7 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
                   onChange={e => onEditValueChange('labelEn', e.target.value)}
                   onKeyDown={handleInputKeyDown}
                   disabled={isSaving}
-                  className={cn('h-7 text-sm bg-transparent border border-white/30 focus:border-white/50 w-32', cardTextColorClass)}
+                  className={cn('h-7 text-sm bg-transparent border border-white/30 focus:border-white/50 w-32 flex-1 ', cardTextColorClass)}
                   autoFocus={activeField === 'labelEn'}
                   onClick={(e: MouseEvent) => e.stopPropagation()}
                 />
@@ -114,7 +115,7 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
                       onChange={e => onEditValueChange('value', e.target.value)}
                       onKeyDown={handleInputKeyDown}
                       disabled={isSaving}
-                      className={cn('h-7 text-sm bg-transparent border border-white/30 focus:border-white/50 w-24 font-mono', cardTextColorClass)}
+                      className={cn('h-7 text-sm bg-transparent border border-white/30 focus:border-white/50 w-24 font-mono flex-1 ', cardTextColorClass)}
                       autoFocus={activeField === 'value'}
                       onClick={(e: MouseEvent) => e.stopPropagation()}
                     />
@@ -123,9 +124,8 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
               )}
             </div>
             {fetchColors && handleColorChange && (
-              <div className="flex items-center gap-1 w-full md:w-auto">
+              <div className="flex flex-1 items-center gap-1 w-full md:w-auto">
                 <span className={cn('text-xs opacity-70 whitespace-nowrap', cardTextColorClass)}>{`${t('color_wine')}:`}</span>
-                <div className="w-48">
                   <MultiSelect
                     value={colorValues}
                     onChange={handleColorChange}
@@ -134,8 +134,8 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
                     fetchOptions={adaptFetchOptions(fetchColors)}
                     mode="multiple"
                     disabled={isSaving}
+                    className='bg-transparent w-full'
                   />
-                </div>
               </div>
             )}
           </div>
@@ -149,7 +149,7 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
           </div>
         </div>
       ) : (
-        <div className="flex gap-1md:gap-4 items-start md:items-center text-start flex-1 cursor-pointer flex-wrap flex-col md:flex-row min-w-0">
+        <div className="flex gap-1 items-start md:items-center text-start flex-1  flex-wrap flex-col md:flex-row min-w-0 lg:flex-row ">
           <div className="flex items-end  gap-2 w-full md:w-[25%] min-h-6 min-w-0">
             <span className={cn('text-label font-bold whitespace-normal break-words min-w-0', cardTextColorClass)}>{label}</span>
           </div>
@@ -163,7 +163,7 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
           </div>
 
           {editValue.colors && editValue.colors.length > 0 && (
-            <div className="flex gap-2 mt-2 sm:flex-row flex-col">
+            <div className="flex gap-2 mt-2 sm:flex-row flex-col md:w-auto w-full">
               {editValue.colors.map(color => {
                 const { textColorClass } = useContrastText(color.value)
                 return (

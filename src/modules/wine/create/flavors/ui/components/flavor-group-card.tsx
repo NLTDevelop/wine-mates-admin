@@ -5,6 +5,7 @@ import { StateItem, WineAromaGroup } from '../../entities/types/flavor'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
 import { useEditFlavorGroup } from '../../presenters/useEditFlavorGroup'
 import { EditableHeader, PaletteItemActions } from '../../../general/ui'
+import { useWineOptionsMock } from '../../../general/presenters/useWineOptions'
 
 interface FlavorGroupCardProps {
   data: WineAromaGroup
@@ -32,9 +33,25 @@ export const FlavorGroupCard = ({
   handleToggleAccordion,
 }: FlavorGroupCardProps) => {
   const { t } = useTranslation('wines')
+  const { fetchColors } = useWineOptionsMock()
 
-  const { isEditing, editValue, color, cardTextColorClass, isSaving, renderableItems, startEditing, handleSaveLabel, cancelEditing, handleKeyDown, handleAddAromaClick, setEditValue, getItemName } =
-    useEditFlavorGroup({ data, isEditable, isFormOpen, onCancel, onToggleForm })
+  const {
+    isEditing,
+    editValue,
+    color,
+    cardTextColorClass,
+    isSaving,
+    renderableItems,
+    startEditing,
+    handleSaveLabel,
+    cancelEditing,
+    handleKeyDown,
+    handleAddAromaClick,
+    setEditValue,
+    getItemName,
+    colorValues,
+    handleColorChange,
+  } = useEditFlavorGroup({ data, isEditable, isFormOpen, onCancel, onToggleForm, fetchColors })
 
   const isOpenAccordion = isAccordionOpen[data.id] || false
 
@@ -75,6 +92,9 @@ export const FlavorGroupCard = ({
           onCancel={cancelEditing}
           onKeyDown={handleKeyDown}
           onEditValueChange={setEditValue}
+          colorValues={colorValues}
+          handleColorChange={handleColorChange}
+          fetchColors={fetchColors}
           actions={
             <PaletteItemActions
               isLoading={isLoading || false}

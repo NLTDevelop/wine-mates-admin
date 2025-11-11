@@ -1,5 +1,6 @@
 import { BaseWineColor } from '../../../general/entities/types'
 
+
 export interface StateItem {
   id: string
   stateName: string
@@ -35,6 +36,18 @@ export interface UpdateWineAromaGroupParams {
   newGroup: CreateWineAromaGroupParams
 }
 
+export interface CreateWineAromaItemParams {
+  name: string
+  nameEn: string
+  state?: StateItem[]
+}
+
+export interface UpdateWineAromaItemParams {
+  groupId: string
+  itemId: string
+  newItem: CreateWineAromaItemParams
+}
+
 export interface CreateStateItemParams {
   stateName: string
   order: number
@@ -45,15 +58,4 @@ export interface UpdateStateItemParams {
   newState: CreateStateItemParams
 }
 
-export interface CreateWineAromaItemParams {
-  name: string
-  nameEn: string
-  value: string
-  state?: StateItem[]
-}
 
-export interface UpdateWineAromaItemParams {
-  groupId: string
-  itemId: string
-  newItem: CreateWineAromaItemParams
-}

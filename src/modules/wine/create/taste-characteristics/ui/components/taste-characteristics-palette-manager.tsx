@@ -3,6 +3,7 @@ import { TasteCharacteristicCard, CreateTasteCharacteristicSection } from '..'
 import { useTasteCharacteristicsPalette } from '../../presenters/useTasteCharacteristicsPalette'
 import { mockTasteCharacteristics } from '../../entities/mocks'
 import { useState } from 'react'
+import { BaseWineColor } from '../../../general/entities/types'
 
 export const TasteCharacteristicsPaletteManager = () => {
   const tasteCharacteristics = mockTasteCharacteristics
@@ -22,7 +23,7 @@ export const TasteCharacteristicsPaletteManager = () => {
 
   const [editData, setEditData] = useState<{ [key: string]: { label: string; labelEn: string } }>({})
 
-  const handleEditDataChange = (characteristicId: string, field: string, value: string) => {
+  const handleEditDataChange = (characteristicId: string, field: string, value: string| BaseWineColor[]) => {
     setEditData(prev => ({
       ...prev,
       [characteristicId]: {
@@ -60,7 +61,7 @@ export const TasteCharacteristicsPaletteManager = () => {
             }}
           />
         </div>
-        <div className="mx-auto flex flex-col justify-center gap-2 w-full xl:w-2/3">
+        <div className="mx-auto flex flex-col justify-center gap-2 w-full">
           {tasteCharacteristics.map(characteristic => {
             const currentEditData = editData[characteristic.id]
 

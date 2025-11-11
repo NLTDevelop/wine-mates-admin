@@ -26,7 +26,7 @@ export const TasteCard = ({ data, onRemove, isLoading, isEditable = false, onTog
   })
 
   return (
-    <div className={cn('border-1 border-input rounded-md transition-all')} style={{ backgroundColor: color }}>
+    <div className={cn('border-1 border-input rounded-md transition-all cursor-default')} style={{ backgroundColor: color}}>
       <div className="p-2">
         <EditableHeader
           isEditable={isEditable}

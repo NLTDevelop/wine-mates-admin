@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useContrastText } from '@/hooks/ui/useContrastText'
 import { wineFlavorQueries } from '../entities/wine-flavor-queries'
 import { CreateWineAromaGroupParams, WineAromaGroup } from '../entities/types/flavor'
+import { BaseWineColor } from '../../general/entities/types'
 
 interface UseEditFlavorGroupProps {
   data: WineAromaGroup
@@ -12,6 +13,7 @@ interface UseEditFlavorGroupProps {
   isFormOpen?: boolean
   onCancel?: (id: string) => void
   onToggleForm?: () => void
+  fetchColors?: () => Promise<BaseWineColor[]>
 }
 
 interface UseEditFlavorGroupReturn {
@@ -32,17 +34,30 @@ interface UseEditFlavorGroupReturn {
   handleKeyDown: (e: KeyboardEvent) => void
   handleMainClick: () => void
   handleAddAromaClick: () => void
-  setEditValue: (field: string, value: string) => void
+  setEditValue: (field: string, value: string | BaseWineColor[]) => void
   getItemName: (item: any) => string
   getItemsColor: (item: any) => string
+  selectedColors: BaseWineColor[]
+  colorValues: string[]
+  handleColorChange: (value: string | string[]) => Promise<void>
 }
 
-export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable = false, isFormOpen = false, onCancel, onToggleForm }: UseEditFlavorGroupProps): UseEditFlavorGroupReturn => {
+export const useEditFlavorGroup = ({
+  data,
+  onItemClick,
+  handleClick,
+  isEditable = false,
+  isFormOpen = false,
+  onCancel,
+  onToggleForm,
+  fetchColors,
+}: UseEditFlavorGroupProps): UseEditFlavorGroupReturn => {
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValueState] = useState({
     label: data.label,
     labelEn: data.labelEn || '',
     value: data.value,
+    colors: data.colors || [],
   })
 
   const queryClient = useQueryClient()
@@ -56,6 +71,22 @@ export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable 
       queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list'] })
     },
   })
+
+  const handleColorChange = useCallback(
+    async (value: string | string[]) => {
+      if (!fetchColors) return
+
+      const selectedValues = Array.isArray(value) ? value : [value]
+      const allColors = await fetchColors()
+      const selectedColorObjects = allColors.filter(color => selectedValues.includes(color.id))
+
+      setEditValueState(prev => ({
+        ...prev,
+        colors: selectedColorObjects,
+      }))
+    },
+    [fetchColors]
+  )
 
   const handleSaveLabel = useCallback(
     async (editData: Partial<CreateWineAromaGroupParams>) => {
@@ -77,7 +108,7 @@ export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable 
     [data, updateGroupMutation]
   )
 
-  const setEditValue = useCallback((field: string, value: string) => {
+  const setEditValue = useCallback((field: string, value: string | BaseWineColor[]) => {
     setEditValueState(prev => ({
       ...prev,
       [field]: value,
@@ -91,6 +122,7 @@ export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable 
       label: data.label,
       labelEn: data.labelEn || '',
       value: data.value,
+      colors: data.colors || [],
     })
   }, [data.label, data.labelEn, data.value, isEditable])
 
@@ -105,6 +137,7 @@ export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable 
         label: data.label,
         labelEn: data.labelEn || '',
         value: data.value,
+        colors: data.colors || [],
       })
     },
     [data.label, data.labelEn, data.value]
@@ -165,6 +198,9 @@ export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable 
 
   const renderableItems: WineAromaGroup[] = getRenderableItems()
 
+  const selectedColors = editValue.colors || []
+  const colorValues = selectedColors.map(color => color.id)
+
   return {
     isEditing,
     editValue,
@@ -172,7 +208,10 @@ export const useEditFlavorGroup = ({ data, onItemClick, handleClick, isEditable 
     cardTextColorClass,
     isSaving: updateGroupMutation.isPending,
     renderableItems,
+    selectedColors,
+    colorValues,
 
+    handleColorChange,
     startEditing,
     cancelEditing,
     handleSaveLabel,

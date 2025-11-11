@@ -50,7 +50,7 @@ export const WineManagementView = () => {
 
   return (
     <ContentLayout title={renderTitle()} isGoBack={!!selectedTemplate} handleGoBack={() => setSelectedTemplate('')}>
-      <div className="max-w-6xl mx-auto">{renderContent()}</div>
+      <div>{renderContent()}</div>
     </ContentLayout>
   )
 }

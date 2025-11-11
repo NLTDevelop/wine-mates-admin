@@ -42,7 +42,7 @@ export const FlavorPaletteManager = () => {
         <div>
           <CreateFlavorGroupSection onCreateGroup={handleAddGroup} isLoading={isLoading} />
         </div>
-        <div className="mx-auto flex flex-col justify-center gap-2 w-full xl:w-2/3">
+        <div className="mx-auto flex flex-col justify-center gap-2 w-full ">
           {aromaGroups.map(group => {
             const editingGroup = getEditingGroup(group.id)
 
@@ -61,7 +61,7 @@ export const FlavorPaletteManager = () => {
                   handleToggleAccordion={handleToggleAccordion}
                 />
 
-                {isAccordionOpen[group.id] && isFormOpen[group.id] && (
+                { isFormOpen[group.id] && (
                   <div className="border-1 border-input p-4 rounded-b-md">
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

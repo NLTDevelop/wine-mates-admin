@@ -1,3 +1,4 @@
+import { mockColors } from '../../wine-types/entities/mock'
 import { WineAromaGroup } from './types/flavor'
 
 export const mockAromaGroups: WineAromaGroup[] = [
@@ -19,6 +20,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
           { id: '1-1-4', stateName: 'сушене', order: 3 },
         ],
       },
+
       {
         id: '1-2',
         name: 'Груша',
@@ -58,6 +60,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
         ],
       },
     ],
+    colors: mockColors,
   },
   {
     id: '2',
@@ -104,6 +107,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
         ],
       },
     ],
+    colors: mockColors,
   },
   {
     id: '3',
@@ -150,6 +154,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
         ],
       },
     ],
+    colors: mockColors,
   },
   {
     id: '4',
@@ -193,6 +198,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
         state: [], // пустой массив состояний
       },
     ],
+    colors: mockColors,
   },
   {
     id: '5',
@@ -239,6 +245,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
         ],
       },
     ],
+    colors: mockColors,
   },
   {
     id: '6',
@@ -275,6 +282,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
         ],
       },
     ],
+    colors: mockColors,
   },
   {
     id: '7',
@@ -311,6 +319,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
         ],
       },
     ],
+    colors: mockColors,
   },
   {
     id: '8',
@@ -347,34 +356,39 @@ export const mockAromaGroups: WineAromaGroup[] = [
         state: [], // пустой массив состояний
       },
     ],
+    colors: mockColors,
   },
   {
     id: '9',
     label: 'Фруктові',
     labelEn: 'Fruity',
     value: '#FF6B6B',
-    items: [], // группа без элементов
+    items: [],
+    colors: mockColors, // группа без элементов
   },
   {
     id: '10',
     label: 'Квіткові',
     labelEn: 'Floral',
     value: '#A29BFE',
-    items: [], // группа без элементов
+    items: [],
+    colors: mockColors, // группа без элементов
   },
   {
     id: '11',
     label: 'Пряні',
     labelEn: 'Spicy',
     value: '#6BCF7F',
-    items: [], // группа без элементов
+    items: [],
+    colors: mockColors, // группа без элементов
   },
   {
     id: '12',
     label: 'Деревні',
     labelEn: 'Woody',
     value: '#CD6133',
-    items: [], // группа без элементов
+    items: [],
+    colors: mockColors, // группа без элементов
   },
 ]
 
