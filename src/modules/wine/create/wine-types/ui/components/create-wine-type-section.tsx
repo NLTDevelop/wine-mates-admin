@@ -56,7 +56,7 @@ export const CreateWineTypeSection = ({ onCreateWineType, isLoading = false }: C
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
           <div className="space-y-2">
-            <label  className="text-sm font-medium mb-2 block">{t('types.type_name_ua')} *</label>
+            <label className="text-sm font-medium mb-2 block">{t('types.type_name_ua')} *</label>
             <Input value={formData.label} onChange={e => updateFormData('label', e.target.value)} placeholder={t('types.type_name_ua')} className="w-full" autoFocus />
           </div>
 

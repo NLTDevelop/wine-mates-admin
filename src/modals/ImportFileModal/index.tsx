@@ -1,7 +1,6 @@
 import { FC, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Upload } from 'lucide-react'
-import { FileRejection } from 'react-dropzone'
 import { cn } from '@/lib/utils'
 import { NLTModal } from '@/UIKit/components/NLTModal'
 import { NLTFilesDropZone } from '@/UIKit/components/NLTFilesDropZone'
@@ -65,7 +64,7 @@ export const ImportFileModal: FC<ImportFileModalProps> = ({
   }
 
   return (
-    <NLTModal isOpen={isOpen} onClose={handleClose} title={title} description={t("import_description")}>
+    <NLTModal isOpen={isOpen} onClose={handleClose} title={title} description={t('import_description')}>
       <div className="space-y-6">
         <NLTFilesDropZone files={files} onDrop={handleDrop} onRemove={handleRemove} acceptedFileTypes={acceptedFileTypes} maxSizeMB={maxSizeMB} multiple={multiple} disabled={isImporting} />
 

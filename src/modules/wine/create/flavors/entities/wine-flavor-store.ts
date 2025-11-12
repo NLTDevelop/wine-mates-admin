@@ -1,11 +1,10 @@
 import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
-import { WineAromaGroup, WineAromaItem, StateItem } from './types/flavor'
+import { WineAromaGroup, WineAromaItem, WineAromaSubgroup } from './types/flavor-types'
 
 interface WineFlavorStoreState {
   aromaGroups: WineAromaGroup[]
   searchResults: WineAromaGroup[]
   currentAromaGroup: WineAromaGroup | null
-  aromaItems: WineAromaItem[]
 
   setAromaGroups: (groups: WineAromaGroup[]) => void
   setCurrentAromaGroup: (group: WineAromaGroup | null) => void
@@ -15,22 +14,18 @@ interface WineFlavorStoreState {
   searchAromaGroups: (searchTerm: string) => void
   clearSearch: () => void
 
-  setAromaItems: (items: WineAromaItem[]) => void
-  addAromaItem: (groupId: string, item: WineAromaItem) => void
-  updateAromaItem: (groupId: string, itemId: string, newItem: WineAromaItem) => void
-  deleteAromaItem: (groupId: string, itemId: string) => void
+  addSubgroup: (groupId: string, subgroup: WineAromaSubgroup) => void
+  updateSubgroup: (groupId: string, subgroupId: string, newSubgroup: WineAromaSubgroup) => void
+  deleteSubgroup: (groupId: string, subgroupId: string) => void
 
-  updateAromaItemStates: (groupId: string, itemId: string, states: StateItem[]) => void
-  addAromaItemState: (groupId: string, itemId: string, state: StateItem) => void
-  updateAromaItemState: (groupId: string, itemId: string, stateId: string, updatedState: StateItem) => void
-  deleteAromaItemState: (groupId: string, itemId: string, stateId: string) => void
-  reorderAromaItemStates: (groupId: string, itemId: string, stateIds: string[]) => void
+  addAroma: (groupId: string, subgroupId: string, aroma: WineAromaItem) => void
+  updateAroma: (groupId: string, subgroupId: string, aromaId: string, newAroma: WineAromaItem) => void
+  deleteAroma: (groupId: string, subgroupId: string, aromaId: string) => void
 
   getAromaGroupById: (id: string) => WineAromaGroup | undefined
-  getAromaGroupByValue: (value: string) => WineAromaGroup | undefined
+  getSubgroupById: (groupId: string, subgroupId: string) => WineAromaSubgroup | undefined
+  getAromaById: (groupId: string, subgroupId: string, aromaId: string) => WineAromaItem | undefined
   hasAromaGroup: (id: string) => boolean
-  hasAromaGroupByValue: (value: string) => boolean
-  getAromaItemById: (id: string) => WineAromaItem | undefined
 }
 
 export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreState>(
@@ -38,7 +33,6 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
     aromaGroups: [],
     searchResults: [],
     currentAromaGroup: null,
-    aromaItems: [],
 
     setAromaGroups: groups => set({ aromaGroups: groups }, false, 'aromaGroups/setAromaGroups'),
 
@@ -80,14 +74,13 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
         (state: WineFlavorStoreState) => ({
           searchResults: state.aromaGroups.filter(
             g =>
-              g.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              g.labelEn?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              g.value.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              g.items?.some(
-                item =>
-                  item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  item.nameEn?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  item.state?.some(state => state.stateName.toLowerCase().includes(searchTerm.toLowerCase()))
+              g.nameUa.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              g.nameEn?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              g.subgroups?.some(
+                subgroup =>
+                  subgroup.nameUa.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  subgroup.nameEn?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  subgroup.aromas?.some(aroma => aroma.nameUa.toLowerCase().includes(searchTerm.toLowerCase()) || aroma.nameEn?.toLowerCase().includes(searchTerm.toLowerCase()))
               )
           ),
         }),
@@ -97,234 +90,139 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
 
     clearSearch: () => set({ searchResults: [] }, false, 'aromaGroups/clearSearch'),
 
-    setAromaItems: items => set({ aromaItems: items }, false, 'aromaGroups/setAromaItems'),
-
-    addAromaItem: (groupId, item) =>
+    addSubgroup: (groupId, subgroup) =>
       set(
         (state: WineFlavorStoreState) => ({
           aromaGroups: state.aromaGroups.map(g =>
             g.id === groupId
               ? {
                   ...g,
-                  items: [...(g.items || []), { ...item, state: item.state || [] }],
+                  subgroups: [...(g.subgroups || []), subgroup],
                 }
               : g
           ),
-          aromaItems: [...state.aromaItems, { ...item, state: item.state || [] }],
         }),
         false,
-        'aromaGroups/addAromaItem'
+        'aromaGroups/addSubgroup'
       ),
 
-    updateAromaItem: (groupId, itemId, newItem) =>
+    updateSubgroup: (groupId, subgroupId, newSubgroup) =>
       set(
         (state: WineFlavorStoreState) => ({
           aromaGroups: state.aromaGroups.map(g =>
             g.id === groupId
               ? {
                   ...g,
-                  items: g.items?.map(i => (i.id === itemId ? { ...newItem, state: newItem.state || i.state || [] } : i)),
+                  subgroups: g.subgroups?.map(sg => (sg.id === subgroupId ? newSubgroup : sg)),
                 }
               : g
           ),
-          aromaItems: state.aromaItems.map(i => (i.id === itemId ? { ...newItem, state: newItem.state || i.state || [] } : i)),
         }),
         false,
-        'aromaGroups/updateAromaItem'
+        'aromaGroups/updateSubgroup'
       ),
 
-    deleteAromaItem: (groupId, itemId) =>
+    deleteSubgroup: (groupId, subgroupId) =>
       set(
         (state: WineFlavorStoreState) => ({
           aromaGroups: state.aromaGroups.map(g =>
             g.id === groupId
               ? {
                   ...g,
-                  items: g.items?.filter(i => i.id !== itemId),
+                  subgroups: g.subgroups?.filter(sg => sg.id !== subgroupId),
                 }
               : g
           ),
-          aromaItems: state.aromaItems.filter(i => i.id !== itemId),
         }),
         false,
-        'aromaGroups/deleteAromaItem'
+        'aromaGroups/deleteSubgroup'
       ),
 
-    updateAromaItemStates: (groupId, itemId, states) =>
+    addAroma: (groupId, subgroupId, aroma) =>
       set(
         (state: WineFlavorStoreState) => ({
           aromaGroups: state.aromaGroups.map(g =>
             g.id === groupId
               ? {
                   ...g,
-                  items: g.items?.map(i => (i.id === itemId ? { ...i, state: states } : i)),
-                }
-              : g
-          ),
-          aromaItems: state.aromaItems.map(i => (i.id === itemId ? { ...i, state: states } : i)),
-        }),
-        false,
-        'aromaGroups/updateAromaItemStates'
-      ),
-
-    addAromaItemState: (groupId, itemId, stateItem) =>
-      set(
-        (state: WineFlavorStoreState) => ({
-          aromaGroups: state.aromaGroups.map(g =>
-            g.id === groupId
-              ? {
-                  ...g,
-                  items: g.items?.map(i =>
-                    i.id === itemId
+                  subgroups: g.subgroups?.map(sg =>
+                    sg.id === subgroupId
                       ? {
-                          ...i,
-                          state: [...(i.state || []), stateItem],
+                          ...sg,
+                          aromas: [...(sg.aromas || []), aroma],
                         }
-                      : i
+                      : sg
                   ),
                 }
               : g
           ),
-          aromaItems: state.aromaItems.map(i =>
-            i.id === itemId
-              ? {
-                  ...i,
-                  state: [...(i.state || []), stateItem],
-                }
-              : i
-          ),
         }),
         false,
-        'aromaGroups/addAromaItemState'
+        'aromaGroups/addAroma'
       ),
 
-    updateAromaItemState: (groupId, itemId, stateId, updatedState) =>
+    updateAroma: (groupId, subgroupId, aromaId, newAroma) =>
       set(
         (state: WineFlavorStoreState) => ({
           aromaGroups: state.aromaGroups.map(g =>
             g.id === groupId
               ? {
                   ...g,
-                  items: g.items?.map(i =>
-                    i.id === itemId
+                  subgroups: g.subgroups?.map(sg =>
+                    sg.id === subgroupId
                       ? {
-                          ...i,
-                          state: i.state?.map(s => (s.id === stateId ? updatedState : s)) || [],
+                          ...sg,
+                          aromas: sg.aromas?.map(a => (a.id === aromaId ? newAroma : a)),
                         }
-                      : i
+                      : sg
                   ),
                 }
               : g
           ),
-          aromaItems: state.aromaItems.map(i =>
-            i.id === itemId
-              ? {
-                  ...i,
-                  state: i.state?.map(s => (s.id === stateId ? updatedState : s)) || [],
-                }
-              : i
-          ),
         }),
         false,
-        'aromaGroups/updateAromaItemState'
+        'aromaGroups/updateAroma'
       ),
 
-    deleteAromaItemState: (groupId, itemId, stateId) =>
+    deleteAroma: (groupId, subgroupId, aromaId) =>
       set(
         (state: WineFlavorStoreState) => ({
           aromaGroups: state.aromaGroups.map(g =>
             g.id === groupId
               ? {
                   ...g,
-                  items: g.items?.map(i =>
-                    i.id === itemId
+                  subgroups: g.subgroups?.map(sg =>
+                    sg.id === subgroupId
                       ? {
-                          ...i,
-                          state: i.state?.filter(s => s.id !== stateId) || [],
+                          ...sg,
+                          aromas: sg.aromas?.filter(a => a.id !== aromaId),
                         }
-                      : i
+                      : sg
                   ),
                 }
               : g
           ),
-          aromaItems: state.aromaItems.map(i =>
-            i.id === itemId
-              ? {
-                  ...i,
-                  state: i.state?.filter(s => s.id !== stateId) || [],
-                }
-              : i
-          ),
         }),
         false,
-        'aromaGroups/deleteAromaItemState'
-      ),
-
-    reorderAromaItemStates: (groupId, itemId, stateIds) =>
-      set(
-        (state: WineFlavorStoreState) => {
-          const group = state.aromaGroups.find(g => g.id === groupId)
-          const item = group?.items?.find(i => i.id === itemId)
-
-          if (!item?.state) return state
-
-          const stateMap = new Map(item.state.map(s => [s.id, s]))
-
-          const reorderedStates = stateIds.map(id => stateMap.get(id)).filter(Boolean) as StateItem[]
-
-          const statesWithUpdatedOrder = reorderedStates.map((state, index) => ({
-            ...state,
-            order: index,
-          }))
-
-          return {
-            aromaGroups: state.aromaGroups.map(g =>
-              g.id === groupId
-                ? {
-                    ...g,
-                    items: g.items?.map(i =>
-                      i.id === itemId
-                        ? {
-                            ...i,
-                            state: statesWithUpdatedOrder,
-                          }
-                        : i
-                    ),
-                  }
-                : g
-            ),
-            aromaItems: state.aromaItems.map(i =>
-              i.id === itemId
-                ? {
-                    ...i,
-                    state: statesWithUpdatedOrder,
-                  }
-                : i
-            ),
-          }
-        },
-        false,
-        'aromaGroups/reorderAromaItemStates'
+        'aromaGroups/deleteAroma'
       ),
 
     getAromaGroupById: id => {
       return get().aromaGroups.find((g: WineAromaGroup) => g.id === id)
     },
 
-    getAromaGroupByValue: value => {
-      return get().aromaGroups.find((g: WineAromaGroup) => g.value === value)
+    getSubgroupById: (groupId, subgroupId) => {
+      const group = get().aromaGroups.find((g: WineAromaGroup) => g.id === groupId)
+      return group?.subgroups?.find((sg: WineAromaSubgroup) => sg.id === subgroupId)
+    },
+
+    getAromaById: (groupId, subgroupId, aromaId) => {
+      const subgroup = get().getSubgroupById(groupId, subgroupId)
+      return subgroup?.aromas?.find((a: WineAromaItem) => a.id === aromaId)
     },
 
     hasAromaGroup: id => {
       return get().aromaGroups.some((g: WineAromaGroup) => g.id === id)
-    },
-
-    hasAromaGroupByValue: value => {
-      return get().aromaGroups.some((g: WineAromaGroup) => g.value === value)
-    },
-
-    getAromaItemById: id => {
-      return get().aromaItems.find((i: WineAromaItem) => i.id === id)
     },
   }),
   'WineFlavorStore'

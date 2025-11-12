@@ -58,7 +58,6 @@ export interface WineImage {
   mimeType?: string
 }
 
-
 export interface ImportWineParams {
   file: File
 }

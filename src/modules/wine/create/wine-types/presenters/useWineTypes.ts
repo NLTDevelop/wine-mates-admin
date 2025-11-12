@@ -54,27 +54,25 @@ export const useWineTypes = () => {
     deleteMutation.mutate(wineTypeId)
   }
 
- const searchTWineType = (searchTerm: string) => {
-     store.searchWineType(searchTerm)
-   }
- 
-   const clearSearch = () => {
-     store.clearSearch()
-   }
- 
-   const setCurrentWineType = (taste: WineType | null) => {
-     store.setCurrentWineType(taste)
-   }
- 
-   const getWineTypeById = (id: string) => {
-     return store.getWineTypeById(id)
-   }
- 
- 
-   const hasWineType = (id: string) => {
-     return store.hasWineType(id)
-   }
- 
+  const searchTWineType = (searchTerm: string) => {
+    store.searchWineType(searchTerm)
+  }
+
+  const clearSearch = () => {
+    store.clearSearch()
+  }
+
+  const setCurrentWineType = (taste: WineType | null) => {
+    store.setCurrentWineType(taste)
+  }
+
+  const getWineTypeById = (id: string) => {
+    return store.getWineTypeById(id)
+  }
+
+  const hasWineType = (id: string) => {
+    return store.hasWineType(id)
+  }
 
   return {
     wineTypes: store.wineTypes,

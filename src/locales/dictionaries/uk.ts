@@ -36,8 +36,8 @@ export const uk = {
     max_files_exceeded: 'Максимальна кількість файлів',
     acceptable_file_types: 'типи файлів',
     max_size: 'максимальний розмір',
-    or: "або",
-    import_description: "Перетягніть файл для імпорту або натисніть, щоб вибрати",
+    or: 'або',
+    import_description: 'Перетягніть файл для імпорту або натисніть, щоб вибрати',
     button: {
       save: 'Зберегти',
       cancel: 'Скасувати',
@@ -264,8 +264,6 @@ export const uk = {
       group_name_ua: 'Назва групи (UA)',
       group_name_en: 'Назва групи (EN)',
       create_new_group: 'Створення нової групи ароматів',
-      state_flavor: 'Стан аромату',
-     
       choose_color: 'Оберіть колір вина',
       search_color: 'Пошук кольору вина',
     },

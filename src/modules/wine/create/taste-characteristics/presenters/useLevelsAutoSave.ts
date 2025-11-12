@@ -8,36 +8,37 @@ interface UseLevelsAutoSaveProps {
   debounceDelay?: number
 }
 
-export const useLevelsAutoSave = ({
-  onSaveLevelName,
-  onSaveLevelsOrder,
-  debounceDelay = 500
-}: UseLevelsAutoSaveProps) => {
+export const useLevelsAutoSave = ({ onSaveLevelName, onSaveLevelsOrder, debounceDelay = 500 }: UseLevelsAutoSaveProps) => {
   const saveTimeoutRef = useRef<NodeJS.Timeout>(null)
 
-  const handleLevelNameBlur = useCallback(async (levelId: string, levelName: string) => {
-    if (!levelName.trim()) return
-    
-    try {
-      await onSaveLevelName(levelId, levelName)
-    } catch (error) {
-      console.error('Failed to save level name:', error)
-    }
-  }, [onSaveLevelName])
+  const handleLevelNameBlur = useCallback(
+    async (levelId: string, levelName: string) => {
+      if (!levelName.trim()) return
 
-
-  const handleLevelsOrderChange = useCallback((levels: LevelItem[]) => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current)
-    }
-    saveTimeoutRef.current = setTimeout(async () => {
       try {
-        await onSaveLevelsOrder(levels)
+        await onSaveLevelName(levelId, levelName)
       } catch (error) {
-        console.error('Failed to save levels order:', error)
+        console.error('Failed to save level name:', error)
       }
-    }, debounceDelay)
-  }, [onSaveLevelsOrder, debounceDelay])
+    },
+    [onSaveLevelName]
+  )
+
+  const handleLevelsOrderChange = useCallback(
+    (levels: LevelItem[]) => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+      saveTimeoutRef.current = setTimeout(async () => {
+        try {
+          await onSaveLevelsOrder(levels)
+        } catch (error) {
+          console.error('Failed to save levels order:', error)
+        }
+      }, debounceDelay)
+    },
+    [onSaveLevelsOrder, debounceDelay]
+  )
 
   const cleanup = useCallback(() => {
     if (saveTimeoutRef.current) {
@@ -48,6 +49,6 @@ export const useLevelsAutoSave = ({
   return {
     handleLevelNameBlur,
     handleLevelsOrderChange,
-    cleanup
+    cleanup,
   }
 }

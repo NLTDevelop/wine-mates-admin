@@ -34,9 +34,9 @@ export const SortableLevelInput: React.FC<SortableLevelInputProps> = ({ state, o
     [state.id, onUpdate]
   )
 
-   const handleInputBlur = useCallback(
+  const handleInputBlur = useCallback(
     (e: React.FocusEvent<HTMLInputElement>) => {
-      onBlur?.(state.id, e.target.value) 
+      onBlur?.(state.id, e.target.value)
     },
     [state.id, onBlur]
   )

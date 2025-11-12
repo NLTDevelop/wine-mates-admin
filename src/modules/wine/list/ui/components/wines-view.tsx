@@ -16,7 +16,7 @@ import { ImportFileModal } from '@/modals/ImportFileModal'
 
 export const WineView = () => {
   const { t } = useTranslation('wines')
-  const { t:tc } = useTranslation('common')
+  const { t: tc } = useTranslation('common')
   const navigate = useNavigate()
 
   const { wines, filters, onChangeSearch, handleClearSearch, onChangePagination, deleteModal, searchValue, deleteWine, saveWineChanges, wineToConfirm, confirmModal, importWines } = useWineList()
@@ -72,8 +72,8 @@ export const WineView = () => {
         isOpen={importWines.isOpen}
         onClose={importWines.closeModal}
         onImport={importWines.import}
-        title={t("list.import_wines_list")}
-        importButtonText={tc("button.import")}
+        title={t('list.import_wines_list')}
+        importButtonText={tc('button.import')}
         acceptedFileTypes={['text/csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/json']}
         maxSizeMB={10}
       />

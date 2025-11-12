@@ -24,25 +24,19 @@ export const useWineTypeCard = ({ /*wineType,*/ isLoading }: UseWineTypeCardProp
   //   const { data: flavorCharacteristicsData = [], isLoading: flavorCharacteristicsLoading } = useFlavorCharacteristics()
 
   // --------------------для мок------------------------
-  const { fetchColors, fetchAromas, fetchFlavorNotes, fetchFlavorCharacteristics } = useWineOptionsMock()
+  const { fetchColors } = useWineOptionsMock()
 
   const [optionsData, setOptionsData] = useState({
     colors: [] as any[],
-    aromas: [] as any[],
-    flavorNotes: [] as any[],
-    flavorCharacteristics: [] as any[],
   })
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [colors, aromas, flavorNotes, flavorChars] = await Promise.all([fetchColors(), fetchAromas(), fetchFlavorNotes(), fetchFlavorCharacteristics()])
+        const [colors] = await Promise.all([fetchColors()])
 
         setOptionsData({
           colors,
-          aromas,
-          flavorNotes,
-          flavorCharacteristics: flavorChars,
         })
       } catch (error) {
         console.error('Error loading wine type data:', error)
@@ -50,7 +44,7 @@ export const useWineTypeCard = ({ /*wineType,*/ isLoading }: UseWineTypeCardProp
     }
 
     loadData()
-  }, [fetchColors, fetchAromas, fetchFlavorNotes, fetchFlavorCharacteristics])
+  }, [fetchColors])
 
   // --------------------------------------------
 
@@ -67,21 +61,6 @@ export const useWineTypeCard = ({ /*wineType,*/ isLoading }: UseWineTypeCardProp
     return optionsData.colors.find(color => color.value === colorId)?.label || colorId
   }
 
-  const getAromaLabel = (aromaId: string) => {
-    //  return aromasData.find(aroma => aroma.value === aromaId)?.label || aromaId
-    return optionsData.aromas.find(aroma => aroma.value === aromaId)?.label || aromaId
-  }
-
-  const getFlavorNoteLabel = (noteId: string) => {
-    // return flavorNotesData.find(note => note.value === noteId)?.label || noteId
-    return optionsData.flavorNotes.find(note => note.value === noteId)?.label || noteId
-  }
-
-  const getFlavorCharacteristicLabel = (charId: string) => {
-    // return flavorCharacteristicsData.find(char => char.value === charId)?.label || charId
-    return optionsData.flavorCharacteristics.find(char => char.value === charId)?.label || charId
-  }
-
   const startEditing = () => setIsEditing(true)
   const cancelEditing = () => setIsEditing(false)
   const finishEditing = () => setIsEditing(false)
@@ -94,9 +73,6 @@ export const useWineTypeCard = ({ /*wineType,*/ isLoading }: UseWineTypeCardProp
     optionsData,
     toggleSection,
     getColorLabel,
-    getAromaLabel,
-    getFlavorNoteLabel,
-    getFlavorCharacteristicLabel,
     startEditing,
     cancelEditing,
     finishEditing,

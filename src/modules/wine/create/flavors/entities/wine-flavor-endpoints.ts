@@ -1,22 +1,20 @@
 export const AROMA_CRUD_ENDPOINTS = {
-  GROUPS: {
-    LIST: '/aroma-groups',
-    CREATE: '/aroma-groups',
-    DETAIL: '/aroma-groups/:groupId',
-    UPDATE: '/aroma-groups/:groupId',
-    DELETE: '/aroma-groups/:groupId',
+  GROUP: {
+    LIST: '/wine-aroma-groups',
+    CREATE: '/wine-aroma-groups',
+    UPDATE: '/wine-aroma-groups/:id',
+    DELETE: '/wine-aroma-groups/:id',
   },
 
-  ITEMS: {
-    LIST: '/aroma-items',
-    CREATE: '/aroma-items',
-    DETAIL: '/aroma-items/:itemId',
-    UPDATE: '/aroma-items/:itemId',
-    DELETE: '/aroma-items/:itemId',
+  SUBGROUP: {
+    CREATE: '/wine-aroma-subgroups',
+    UPDATE: '/wine-aroma-subgroups/:id',
+    DELETE: '/wine-aroma-subgroups/:id',
   },
 
-  GROUP_ITEMS: {
-    LIST: '/aroma-groups/:groupId/items',
-    CREATE: '/aroma-groups/:groupId/items',
+  AROMA: {
+    CREATE: '/wine-aromas',
+    UPDATE: '/wine-aromas/:id',
+    DELETE: '/wine-aromas/:id',
   },
 } as const

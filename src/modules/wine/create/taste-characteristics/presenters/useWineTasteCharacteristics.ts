@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { CreateWineTasteCharacteristicParams, UpdateWineTasteCharacteristicParams, WineTasteCharacteristics, LevelItem, UpdateWineTasteItemParams } from '../entities/types/taste-characteristics'
+import { CreateWineTasteCharacteristicParams, UpdateWineTasteCharacteristicParams, WineTasteCharacteristics, LevelItem } from '../entities/types/taste-characteristics'
 import { useWineTasteCharacteristicsStore } from '../entities/taste-characteristics-store'
 import { tasteCharacteristicsQueries } from '../entities/taste-characteristics-queries'
 
@@ -45,7 +45,7 @@ export const useWineTasteCharacteristics = () => {
   const updateCharacteristicLevelsMutation = useMutation({
     mutationKey: ['taste-characteristics', 'update-levels'],
     mutationFn: async (params: { characteristicId: string; levels: LevelItem[] }) => {
-      const updateParams: UpdateWineTasteCharacteristicParams  = {
+      const updateParams: UpdateWineTasteCharacteristicParams = {
         characteristicId: params.characteristicId,
         newCharacteristic: {
           levels: params.levels,

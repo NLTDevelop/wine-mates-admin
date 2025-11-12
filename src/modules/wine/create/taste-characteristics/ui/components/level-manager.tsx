@@ -11,10 +11,10 @@ interface LevelManagerProps {
   onLevelNameBlur?: (levelId: string, levelName: string) => void
   onLevelsOrderChange?: (levels: LevelItem[]) => void
   minFields?: number
-   isSaving?: boolean
+  isSaving?: boolean
 }
 
-export const LevelManager: React.FC<LevelManagerProps> = ({ states, onStatesChange, onLevelNameBlur, onLevelsOrderChange, minFields = 3 ,isSaving = false }) => {
+export const LevelManager: React.FC<LevelManagerProps> = ({ states, onStatesChange, onLevelNameBlur, onLevelsOrderChange, minFields = 3, isSaving = false }) => {
   const { t } = useTranslation('wines')
 
   const handleAddState = useCallback(() => {
@@ -72,7 +72,14 @@ export const LevelManager: React.FC<LevelManagerProps> = ({ states, onStatesChan
         {t('button.add_level')}
       </Button>
 
-      <LevelList states={states} minFields={minFields} onLevelNameBlur={handleLevelNameBlur} onUpdateState={handleUpdateState} onRemoveState={handleRemoveState} onReorderStates={handleReorderStates} />
+      <LevelList
+        states={states}
+        minFields={minFields}
+        onLevelNameBlur={handleLevelNameBlur}
+        onUpdateState={handleUpdateState}
+        onRemoveState={handleRemoveState}
+        onReorderStates={handleReorderStates}
+      />
     </div>
   )
 }

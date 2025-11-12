@@ -23,7 +23,7 @@ export const TasteCharacteristicsPaletteManager = () => {
 
   const [editData, setEditData] = useState<{ [key: string]: { label: string; labelEn: string } }>({})
 
-  const handleEditDataChange = (characteristicId: string, field: string, value: string| BaseWineColor[]) => {
+  const handleEditDataChange = (characteristicId: string, field: string, value: string | BaseWineColor[]) => {
     setEditData(prev => ({
       ...prev,
       [characteristicId]: {

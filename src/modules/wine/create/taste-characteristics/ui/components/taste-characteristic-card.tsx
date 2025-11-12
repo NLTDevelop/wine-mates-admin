@@ -7,7 +7,6 @@ import { LevelItem, WineTasteCharacteristics } from '../../entities/types/taste-
 import { LevelManager } from '..'
 import { useCallback } from 'react'
 import { useWineTasteCharacteristics } from '../../presenters/useWineTasteCharacteristics'
-import { useDebounce } from '@/hooks/ui/useDebounce'
 import { BaseWineColor } from '../../../general/entities/types'
 import { useWineOptionsMock } from '../../../general/presenters/useWineOptions'
 
@@ -45,7 +44,6 @@ export const TasteCharacteristicCard = ({
   handleToggleAccordion,
   characteristicLevels = [],
   onCharacteristicLevelsChange,
-  editData,
   onEditDataChange,
 }: TasteCharacteristicCardProps) => {
   const { t: tc } = useTranslation('common')
@@ -53,14 +51,17 @@ export const TasteCharacteristicCard = ({
   const { isReorderingCharacteristicLevels, updateCharacteristicLevels } = useWineTasteCharacteristics()
   const { fetchColors } = useWineOptionsMock()
 
-  const { isEditing, editValue, isSaving, startEditing, handleSaveLabel, cancelEditing, handleKeyDown, setEditValue, updateCurrentLevels, colorValues, handleColorChange } = useEditTasteCharacteristic({
-    data,
-    isEditable,
-    isFormOpen,
-    onCancel,
-    onToggleForm,
-    onUpdateCharacteristic,fetchColors
-  })
+  const { isEditing, editValue, isSaving, startEditing, handleSaveLabel, cancelEditing, handleKeyDown, setEditValue, updateCurrentLevels, colorValues, handleColorChange } = useEditTasteCharacteristic(
+    {
+      data,
+      isEditable,
+      isFormOpen,
+      onCancel,
+      onToggleForm,
+      onUpdateCharacteristic,
+      fetchColors,
+    }
+  )
 
   const handleEditValueChange = (field: string, value: string | BaseWineColor[]) => {
     setEditValue(prev => ({

@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react'
 import { CreateWineTypeParams } from '../entities/types/wine-type'
 
-
 interface UseCreateWineTypeProps {
   onCreateWineType: (wineTypeData: CreateWineTypeParams) => void
   isLoading?: boolean

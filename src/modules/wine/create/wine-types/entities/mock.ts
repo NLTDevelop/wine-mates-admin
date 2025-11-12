@@ -1,4 +1,4 @@
-import {  WineType } from './types/wine-type'
+import { WineType } from './types/wine-type'
 
 export const mockColors = [
   { id: 'white', label: 'Біле', labelEn: 'white', value: '#fdffd4' },

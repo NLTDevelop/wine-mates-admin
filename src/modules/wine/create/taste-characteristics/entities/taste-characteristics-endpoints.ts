@@ -21,7 +21,7 @@ export const TASTE_CHARACTERISTICS_ENDPOINTS = {
   },
 
   LEVELS: {
-    UPDATE_ORDER: '/taste-characteristics/:characteristicId/levels/order', 
+    UPDATE_ORDER: '/taste-characteristics/:characteristicId/levels/order',
     UPDATE_LEVEL: '/taste-characteristics/:characteristicId/levels/:levelId',
   },
 } as const

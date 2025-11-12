@@ -71,7 +71,6 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
     onKeyDown(e)
   }
 
-
   return (
     <div className="flex items-center gap-2 justify-between w-full cursor-default ">
       {isEditable && isEditing ? (
@@ -90,7 +89,6 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
                   autoFocus={activeField === 'label'}
                   onClick={(e: MouseEvent) => e.stopPropagation()}
                 />
-  
               </div>
 
               <div className="flex items-center gap-1 w-full md:w-auto justify-between">
@@ -126,16 +124,16 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
             {fetchColors && handleColorChange && (
               <div className="flex flex-1 items-center gap-1 w-full md:w-auto">
                 <span className={cn('text-xs opacity-70 whitespace-nowrap', cardTextColorClass)}>{`${t('color_wine')}:`}</span>
-                  <MultiSelect
-                    value={colorValues}
-                    onChange={handleColorChange}
-                    placeholder={t('flavors.choose_color')}
-                    searchLabel={t('flavors.search_color')}
-                    fetchOptions={adaptFetchOptions(fetchColors)}
-                    mode="multiple"
-                    disabled={isSaving}
-                    className='bg-transparent w-full'
-                  />
+                <MultiSelect
+                  value={colorValues}
+                  onChange={handleColorChange}
+                  placeholder={t('flavors.choose_color')}
+                  searchLabel={t('flavors.search_color')}
+                  fetchOptions={adaptFetchOptions(fetchColors)}
+                  mode="multiple"
+                  disabled={isSaving}
+                  className="bg-transparent w-full"
+                />
               </div>
             )}
           </div>
@@ -174,7 +172,6 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
               })}
             </div>
           )}
-        
         </div>
       )}
       {actions}

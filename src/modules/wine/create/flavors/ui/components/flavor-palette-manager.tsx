@@ -1,120 +1,200 @@
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
-import { useTranslation } from 'react-i18next'
-import { Input } from '@/UIKit/shadcn/ui/input'
+import { CreateFlavorGroupSection } from './create-flavor-group-section'
+import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
+import { FlavorList } from './flavor-list'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { FlavorGroupCard, CreateFlavorGroupSection } from '..'
+import { Save } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { cn } from '@/lib/utils'
+import { Separator } from '@/UIKit/shadcn/ui/separator'
+import { PaletteItemActions } from '@/modules/wine/create/general/ui'
+import { useContrastText } from '@/hooks/ui/useContrastText'
+import { AromasManager, FlavorForm, FlavorGroupFormFields } from '..'
 import { useFlavorPalette } from '../../presenters/useFlavorPalette'
-import { Plus, Save } from 'lucide-react'
-import { StatesManager } from './state-maneger'
 
 export const FlavorPaletteManager = () => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
-  const {
-    aromaGroups,
-    isLoading,
-    isFormOpen,
-    newItemData,
-    isAccordionOpen,
-    getEditingGroup,
-    handleAddGroup,
-    handleDeleteGroup,
-    handleToggleForm,
-    handleEditItem,
-    handleCancelEdit,
-    handleSaveItem,
-    updateItemFormData,
-    canAddItem,
-    handleToggleAccordion,
-    handleUpdateItemStates,
-    getItemStates,
-    getNewItemStates,
-  } = useFlavorPalette()
+  const { aromaGroups, isLoading, editingGroup, newItemData, editingGroupData, forceOpenKeys, setOpenAccordions, setEditingGroup, setNewItemData, setEditingGroupData, groups, items, ui } =
+    useFlavorPalette()
 
-  const handleEditItemClick = (groupId: string, item: any) => {
-    handleEditItem(groupId, item)
+  const isEditable = true
+
+  const toggleCallbacks = {
+    setOpenAccordions,
+    setEditingGroup,
+    setNewItemData,
+    setEditingGroupData,
   }
 
   return (
     <Card>
       <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
         <div>
-          <CreateFlavorGroupSection onCreateGroup={handleAddGroup} isLoading={isLoading} />
+          <CreateFlavorGroupSection onCreateGroup={groups.handleAddGroup} isLoading={isLoading} />
         </div>
-        <div className="mx-auto flex flex-col justify-center gap-2 w-full ">
+
+        <div className="mx-auto flex flex-col justify-center gap-2 w-full">
           {aromaGroups.map(group => {
-            const editingGroup = getEditingGroup(group.id)
+            const { textColorClass: cardTextColorClass } = useContrastText(group.colorHex)
+            const isGroupOpen = ui.isAccordionOpen(group.id)
+            const isGroupEditing = ui.isEditing(group.id)
+            const isItemFormOpen = ui.isFormItemOpen(group.id)
+            const isGroupFormOpen = ui.isFormGroupOpen(group.id)
+
+            const subgroup = group.subgroups?.[0]
+            const itemsList = subgroup?.aromas || []
+
+            const currentEditingGroupData = editingGroupData[group.id]
+            const forceOpenKey = forceOpenKeys[group.id] || 0
+            const accordionKey = isGroupOpen && forceOpenKey > 0 ? `forced-${group.id}-${forceOpenKey}` : group.id
 
             return (
-              <div key={group.id} className="flex flex-col">
-                <FlavorGroupCard
-                  data={group}
-                  onRemove={handleDeleteGroup}
-                  onEditItem={handleEditItemClick}
-                  isLoading={isLoading}
-                  isEditable={true}
-                  onToggleForm={() => handleToggleForm(group.id)}
-                  isFormOpen={isFormOpen[group.id] || false}
-                  onCancel={() => handleCancelEdit(group.id)}
-                  isAccordionOpen={isAccordionOpen}
-                  handleToggleAccordion={handleToggleAccordion}
-                />
-
-                { isFormOpen[group.id] && (
-                  <div className="border-1 border-input p-4 rounded-b-md">
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">{t('flavors.aroma_name_ua')} *</label>
-                          <Input
-                            value={newItemData[group.id]?.name || ''}
-                            onChange={e => updateItemFormData(group.id, 'name', e.target.value)}
-                            placeholder={t('flavors.aroma_name_ua')}
-                            className="w-full"
-                            autoFocus
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">{t('flavors.aroma_name_en')} *</label>
-                          <Input
-                            value={newItemData[group.id]?.nameEn || ''}
-                            onChange={e => updateItemFormData(group.id, 'nameEn', e.target.value)}
-                            placeholder={t('flavors.aroma_name_en')}
-                            className="w-full"
-                          />
-                        </div>
+              <div key={accordionKey} className="flex flex-col">
+                <AccordionWrapper
+                  label={`${group.nameUa} (${group.nameEn})`}
+                  isOpen={isGroupOpen}
+                  onToggle={() => ui.handleToggleAccordion(group.id, toggleCallbacks)}
+                  style={{ backgroundColor: group.colorHex, padding: '8px' }}
+                  chevronStyle={cardTextColorClass}
+                  header={
+                    <div className="flex justify-between items-center w-full">
+                      <div className="flex items-center gap-2">
+                        <span className={cn('font-medium', cardTextColorClass)}>
+                          {group.nameUa} ({group.nameEn})
+                        </span>
                       </div>
-                      <StatesManager
-                        states={editingGroup?.editingItem ? getItemStates(editingGroup.editingItem.id) : getNewItemStates(group.id)}
-                        onStatesChange={states => {
-                          if (editingGroup?.editingItem) {
-                            handleUpdateItemStates(editingGroup.editingItem.id, states)
-                          } else {
-                            handleUpdateItemStates(`new-${group.id}`, states)
-                          }
-                        }}
+                      <PaletteItemActions
+                        isLoading={isLoading}
+                        onRemove={() => groups.handleDeleteGroup(group.id)}
+                        dataId={group.id}
+                        cardTextColorClass={cardTextColorClass}
+                        onEdit={() => groups.startEditingGroup(group.id)}
+                        showEditButton={!isGroupEditing}
+                        isHeader
                       />
                     </div>
+                  }
+                >
+                  <div
+                    className={cn(
+                      'relative flex flex-col h-auto min-h-8 w-full items-start justify-between pl-1 pr-1 sm:pl-3 sm:pr-6 pb-2 pt-0 mt-2 transition-all flex-1 bg-muted',
+                      isItemFormOpen ? 'rounded-t-md rounded-b-0' : 'rounded-t-none rounded-b-md',
+                      'cursor-default',
+                      'group',
+                      itemsList.length > 0 ? 'gap-2 items-start' : 'gap-4'
+                    )}
+                  >
+                    {isGroupFormOpen && currentEditingGroupData && (
+                      <FlavorGroupFormFields
+                        formData={currentEditingGroupData}
+                        onFormDataChange={(field, value) => groups.updateGroupFormData(group.id, field, value)}
+                        isLoading={isLoading}
+                        autoFocus={true}
+                      />
+                    )}
 
-                    <div className="flex justify-end gap-2 mt-6">
-                      <Button onClick={() => handleSaveItem(group.id)} disabled={!canAddItem(group.id) || isLoading} size="sm">
-                        {editingGroup?.editingItem ? (
-                          <>
+                    {isGroupOpen && !isGroupFormOpen && (
+                      <>
+                        <FlavorList
+                          items={group.subgroups}
+                          isLoading={isLoading}
+                          onRemove={() => items.onRemoveItem(group.id, subgroup.id)}
+                          onEdit={item => items.handleEditItem(group.id, item)}
+                          getItemName={items.getItemName}
+                          cardTextColorClass={cardTextColorClass}
+                          isEditable={isEditable}
+                          showEditButton={isEditable}
+                          hexColor={group.colorHex}
+                        />
+
+                        {isItemFormOpen && <Separator className="mt-2" style={{ backgroundColor: group.colorHex }} />}
+                      </>
+                    )}
+
+                    {isItemFormOpen && (
+                      <>
+                        <FlavorForm
+                          data={{
+                            name: newItemData[group.id]?.name || '',
+                            nameEn: newItemData[group.id]?.nameEn || '',
+                          }}
+                          onDataChange={(field, value) => {
+                            items.updateItemFormData(group.id, field as 'name' | 'nameEn', value)
+                          }}
+                          nameLabel={t('flavors.aroma_name_ua')}
+                          nameEnLabel={t('flavors.aroma_name_en')}
+                          namePlaceholder={t('flavors.aroma_name_ua')}
+                          nameEnPlaceholder={t('flavors.aroma_name_en')}
+                          autoFocus={!editingGroup?.editingItem}
+                        />
+
+                        <AromasManager
+                          aromas={editingGroup?.groupId === group.id && editingGroup.editingItem ? editingGroup.editingItem.aromas : newItemData[group.id]?.aromas || []}
+                          onAromasChange={newAromas => {
+                            if (editingGroup?.groupId === group.id && editingGroup.editingItem) {
+                              setEditingGroup(prev => {
+                                if (!prev || !prev.editingItem || prev.groupId !== group.id) return prev
+                                return {
+                                  ...prev,
+                                  editingItem: {
+                                    ...prev.editingItem,
+                                    aromas: newAromas,
+                                  },
+                                }
+                              })
+                            } else {
+                              setNewItemData(prev => ({
+                                ...prev,
+                                [group.id]: {
+                                  ...prev[group.id],
+                                  aromas: newAromas,
+                                },
+                              }))
+                            }
+                          }}
+                        />
+                      </>
+                    )}
+
+                    <div className={cn('w-full flex gap-3 justify-end mt-3')}>
+                      {!isGroupFormOpen && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="border-1 hover:bg-muted-foreground hover:text-input"
+                          onClick={() => (isItemFormOpen ? items.handleCancelItemEdit(group.id) : items.handleAddAromaClick(group.id))}
+                        >
+                          {isItemFormOpen ? t('button.cancel') : t('button.add_new_aroma')}
+                        </Button>
+                      )}
+
+                      {isGroupFormOpen && (
+                        <>
+                          <Button size="sm" variant="ghost" className="border-1 hover:bg-muted-foreground hover:text-input" onClick={() => groups.handleCancelGroupEdit(group.id)}>
+                            {tc('button.cancel')}
+                          </Button>
+                          <Button size="sm" onClick={() => groups.handleSaveGroup(group.id)} disabled={!groups.canSaveGroup(group.id) || isLoading}>
                             <Save className="w-4 h-4" />
                             {isLoading ? tc('button.saving') : tc('button.save')}
-                          </>
-                        ) : (
-                          <>
-                            <Plus className="w-4 h-4" />
-                            {isLoading ? tc('button.saving') : tc('button.add')}
-                          </>
-                        )}
-                      </Button>
+                          </Button>
+                        </>
+                      )}
+
+                      {isItemFormOpen && !isGroupFormOpen && (
+                        <Button
+                          onClick={() => items.handleSaveItem(group.id, subgroup.id)}
+                          disabled={!items.canAddItem(group.id) || isLoading || items.isCreatingAroma || items.isUpdatingAroma}
+                          size="sm"
+                        >
+                          <Save className="w-4 h-4" />
+                          {isLoading || items.isCreatingAroma || items.isUpdatingAroma ? tc('button.saving') : tc('button.save')}
+                        </Button>
+                      )}
                     </div>
                   </div>
-                )}
+                </AccordionWrapper>
               </div>
             )
           })}

@@ -1,4 +1,4 @@
-import { BaseWineColor } from "../../../general/entities/types"
+import { BaseWineColor } from '../../../general/entities/types'
 
 export interface WineType {
   id: string

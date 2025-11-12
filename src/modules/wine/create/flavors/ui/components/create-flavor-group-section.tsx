@@ -1,16 +1,10 @@
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { Input } from '@/UIKit/shadcn/ui/input'
 import { Card, CardContent, CardHeader } from '@/UIKit/shadcn/ui/card'
 import { Plus, Flower } from 'lucide-react'
 import { useCreateFlavorGroup } from '../../presenters/useCreateFlavorGroup'
-import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
-import { adaptFetchOptions } from '@/lib/utils'
-import { useWineOptionsMock } from '../../../general/presenters/useWineOptions'
-import { useColorSelection } from '../../../general/presenters/useColorSelection'
-import { useEffect } from 'react'
-import { CreateWineAromaGroupParams } from '../../entities/types/flavor'
-import { ColorPicker } from '@/UIKit/shadcn/ui/color-picker'
+import { CreateWineAromaGroupParams } from '../../entities/types/flavor-types'
+import { FlavorGroupFormFields } from './flavor-group-form-field'
 
 interface CreateFlavorGroupSectionProps {
   onCreateGroup: (groupData: Partial<CreateWineAromaGroupParams>) => void
@@ -25,13 +19,6 @@ export const CreateFlavorGroupSection = ({ onCreateGroup, isLoading = false }: C
     onCreateGroup,
     isLoading,
   })
-
-  const { fetchColors } = useWineOptionsMock()
-  const { selectedColors, colorValues, handleColorChange } = useColorSelection({ fetchColors, initialColors: formData.colors })
-
-  useEffect(() => {
-    updateFormData('colors', selectedColors)
-  }, [selectedColors])
 
   if (!isExpanded) {
     return (
@@ -55,36 +42,7 @@ export const CreateFlavorGroupSection = ({ onCreateGroup, isLoading = false }: C
           </h3>
         </CardHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-          <div>
-            <label className="text-sm font-medium mb-2 block">{t('flavors.group_name_ua')} *</label>
-            <Input value={formData.label} onChange={e => updateFormData('label', e.target.value)} placeholder={t('flavors.group_name_ua')} className="w-full" autoFocus />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium mb-2 block">{t('flavors.group_name_en')} *</label>
-            <Input value={formData.labelEn} onChange={e => updateFormData('labelEn', e.target.value)} placeholder={t('flavors.group_name_en')} className="w-full" />
-          </div>
-        </div>
-        <div className="mb-4">
-          <label className="text-sm font-medium mb-2 block">{t('tastes.base_color')} *</label>
-          <div className="flex items-center gap-4">
-            <ColorPicker value={formData.value || ''} onChange={color => updateFormData('value', color)} />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium mb-2 block">{t('color_wine')} *</label>
-          <MultiSelect
-            value={colorValues}
-            onChange={handleColorChange}
-            placeholder={t('flavors.choose_color')}
-            searchLabel={t('flavors.search_color')}
-            fetchOptions={adaptFetchOptions(fetchColors)}
-            mode="multiple"
-            disabled={isLoading}
-          />
-        </div>
+        <FlavorGroupFormFields formData={formData} onFormDataChange={updateFormData} isLoading={isLoading} />
 
         <div className="flex justify-end gap-2 flex-col sm:flex-row mt-4">
           <Button onClick={handleCancel} variant="outline" disabled={isLoading}>

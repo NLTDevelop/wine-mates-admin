@@ -52,7 +52,7 @@ export const LevelList: React.FC<LevelListProps> = React.memo(({ states, minFiel
     [onRemoveState]
   )
 
-    const handleLevelNameBlur = useCallback(
+  const handleLevelNameBlur = useCallback(
     (stateId: string, levelName: string) => {
       onLevelNameBlur?.(stateId, levelName)
     },

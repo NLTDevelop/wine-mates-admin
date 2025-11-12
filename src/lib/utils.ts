@@ -126,7 +126,6 @@ export const validateImageField = (value: unknown): value is File | string => {
   return isFile(value) || isImageUrl(value)
 }
 
-
 export const adaptFetchOptions = (fetchFn: (search?: string) => Promise<{ id: string; label: string }[]>) => {
   return async (search?: string) => {
     const data = await fetchFn(search)

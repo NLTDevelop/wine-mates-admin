@@ -46,10 +46,10 @@ export const useFileDownloadLogic = (acceptedFileTypes?: string[]) => {
     if (labels.length === 0) return ''
 
     if (labels.length === 1) return labels[0]
-    if (labels.length === 2) return labels.join(i18n.t("common:or"))
+    if (labels.length === 2) return labels.join(i18n.t('common:or'))
 
     const last = labels.pop()
-    return `${labels.join(', ')} ${i18n.t("common:or")} ${last}`
+    return `${labels.join(', ')} ${i18n.t('common:or')} ${last}`
   }, [acceptedFileTypes])
 
   const handleDownloadFile = async (idOrFile: string | File, name: string) => {

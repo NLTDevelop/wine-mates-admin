@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useContrastText } from '@/hooks/ui/useContrastText'
 import { colorQueries } from '../entities/color-queries'
 import { WineColor, WineColorItem } from '../entities/types/color'
+import { BaseWineColor } from '../../general/entities/types'
 
 interface UsePaletteItemProps {
   data: WineColor
@@ -32,7 +33,7 @@ interface UsePaletteItemReturn {
   handleKeyDown: (e: KeyboardEvent) => void
   handleMainClick: () => void
   handleAddShadeClick: () => void
-  setEditValue: (field: string, value: string) => void
+  setEditValue: (field: string, value: string | BaseWineColor[]) => void
   getItemName: (item: WineColorItem) => string
   getItemTones: (item: WineColorItem) => any
 }
@@ -78,7 +79,7 @@ export const usePaletteItem = ({ data, onItemClick, handleClick, isEditable = fa
     [data, editValue, updateColorMutation]
   )
 
-  const setEditValue = useCallback((field: string, value: string) => {
+  const setEditValue = useCallback((field: string, value: string | BaseWineColor[]) => {
     setEditValueState(prev => ({
       ...prev,
       [field]: value,

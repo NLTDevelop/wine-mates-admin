@@ -33,7 +33,7 @@ export const useEditWineType = ({ data, isEditable = false, fetchColors }: UseEd
   const [editValue, setEditValueState] = useState<Partial<CreateWineTypeParams>>({
     label: data.label,
     labelEn: data.labelEn || '',
-    colors: data.colors || []
+    colors: data.colors || [],
   })
 
   const queryClient = useQueryClient()
@@ -45,20 +45,21 @@ export const useEditWineType = ({ data, isEditable = false, fetchColors }: UseEd
     },
   })
 
-  const handleColorChange = useCallback(async (value: string | string[]) => {
-    if (!fetchColors) return
-    
-    const selectedValues = Array.isArray(value) ? value : [value]
-    const allColors = await fetchColors()
-    const selectedColorObjects = allColors.filter(color => 
-      selectedValues.includes(color.id)
-    )
-    
-    setEditValueState(prev => ({
-      ...prev,
-      colors: selectedColorObjects
-    }))
-  }, [fetchColors])
+  const handleColorChange = useCallback(
+    async (value: string | string[]) => {
+      if (!fetchColors) return
+
+      const selectedValues = Array.isArray(value) ? value : [value]
+      const allColors = await fetchColors()
+      const selectedColorObjects = allColors.filter(color => selectedValues.includes(color.id))
+
+      setEditValueState(prev => ({
+        ...prev,
+        colors: selectedColorObjects,
+      }))
+    },
+    [fetchColors]
+  )
 
   const handleSaveLabel = useCallback(
     async (editData: Partial<CreateWineTypeParams>) => {
@@ -67,9 +68,9 @@ export const useEditWineType = ({ data, isEditable = false, fetchColors }: UseEd
       await updateTasteMutation.mutateAsync({
         wineTypeId: data.id,
         newWineType: {
-          label: editData.label || "",
-          labelEn: editData.labelEn || "",
-          colors: editData.colors || []
+          label: editData.label || '',
+          labelEn: editData.labelEn || '',
+          colors: editData.colors || [],
         },
       })
 
@@ -78,7 +79,7 @@ export const useEditWineType = ({ data, isEditable = false, fetchColors }: UseEd
     [data.id, updateTasteMutation]
   )
 
-const setEditValue = useCallback((field: string, value: string | BaseWineColor[]) => {
+  const setEditValue = useCallback((field: string, value: string | BaseWineColor[]) => {
     setEditValueState(prev => ({
       ...prev,
       [field]: value,
@@ -91,18 +92,18 @@ const setEditValue = useCallback((field: string, value: string | BaseWineColor[]
     setEditValueState({
       label: data.label,
       labelEn: data.labelEn || '',
-      colors: data.colors || []
+      colors: data.colors || [],
     })
-  }, [data.label, data.labelEn,  isEditable])
+  }, [data.label, data.labelEn, isEditable])
 
   const cancelEditing = useCallback(() => {
     setIsEditing(false)
     setEditValueState({
       label: data.label,
       labelEn: data.labelEn || '',
-      colors: data.colors || []
+      colors: data.colors || [],
     })
-  }, [data.label, data.labelEn, ])
+  }, [data.label, data.labelEn])
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {

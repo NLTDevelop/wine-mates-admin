@@ -171,7 +171,7 @@ export const useWineList = () => {
   const importWines = useCallback(
     async (file: File) => {
       await importWinesMutation.mutateAsync(file)
-      winesQuery.refetch() 
+      winesQuery.refetch()
       closeImportModal()
     },
     [importWinesMutation, winesQuery, closeImportModal]

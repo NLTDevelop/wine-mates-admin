@@ -1,4 +1,4 @@
-import {  useState } from 'react'
+import { useState } from 'react'
 import { mockWineTypes } from '../entities/mock'
 import { useWineTypes } from './useWineTypes'
 import { CreateWineTypeParams } from '../entities/types/wine-type'
@@ -27,7 +27,6 @@ export const useWineTypePalette = () => {
   const handleCancelEdit = (tasteId: string) => {
     setIsFormOpen(prev => ({ ...prev, [tasteId]: false }))
   }
-
 
   return {
     wineTypes,
