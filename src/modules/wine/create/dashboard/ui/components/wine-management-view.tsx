@@ -3,11 +3,12 @@ import { useTranslation } from 'react-i18next'
 import { ContentLayout } from '@/layout/components/content-layout'
 import { WineTemplateSelector } from '..'
 import { TastePaletteManager } from '../../../tastes/ui'
-import { ColorPaletteManager } from '../../../colors/ui'
+
 import { TasteCharacteristicsPaletteManager } from '../../../taste-characteristics/ui'
 import { WineTypeManager } from '../../../wine-types/ui'
 import { CreateWineForm } from '../../../wine/ui'
 import { FlavorPaletteManager } from '../../../flavors/ui'
+import { ColorPaletteManager } from '../../../colors/ui'
 
 export const WineManagementView = () => {
   const { t } = useTranslation('wines')

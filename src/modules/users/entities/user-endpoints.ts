@@ -1,5 +1,7 @@
+import { BASE_ADMIN_PATH } from '@/constatnts/base-admin-path'
+
 export const USER_ENDPOINTS = {
-  LIST: '/v1/admin/users',
-  DETAIL: '/v1/admin/users/{id}',
-  CONFIRM_CATEGORY: '/v1/admin/users/{id}/confirmation',
+  LIST: BASE_ADMIN_PATH + '/users',
+  DETAIL: BASE_ADMIN_PATH + '/users/{id}',
+  CONFIRM_CATEGORY: BASE_ADMIN_PATH + '/users/{id}/confirmation',
 } as const

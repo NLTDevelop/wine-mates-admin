@@ -1,24 +1,16 @@
+import { BASE_ADMIN_PATH } from '@/constatnts/base-admin-path'
+
 export const COLOR_CRUD_ENDPOINTS = {
   COLORS: {
-    LIST: '/colors',
-    CREATE: '/colors',
-    DETAIL: '/colors/:colorId',
-    UPDATE: '/colors/:colorId',
-    DELETE: '/colors/:colorId',
-  },
-
-  SHADES: {
-    LIST: '/shades',
-    CREATE: '/shades',
-    DETAIL: '/shades/:shadeId',
-    UPDATE: '/shades/:shadeId',
-    DELETE: '/shades/:shadeId',
+    LIST: BASE_ADMIN_PATH + '/colors',
+    CREATE: BASE_ADMIN_PATH + '/colors',
+    UPDATE: BASE_ADMIN_PATH + '/colors/:colorId',
+    DELETE: BASE_ADMIN_PATH + '/colors/:colorId',
   },
 
   COLOR_SHADES: {
-    LIST: '/colors/:colorId/shades',
-    CREATE: '/colors/:colorId/shades',
-    UPDATE: '/colors/:colorId/shades/:shadeId',
-    REORDER: '/colors/:colorId/shades/reorder',
+    CREATE: BASE_ADMIN_PATH + '/color-shade',
+    UPDATE: BASE_ADMIN_PATH + '/color-shade/:id',
+    DELETE: BASE_ADMIN_PATH + '/color-shade/:id',
   },
 } as const
