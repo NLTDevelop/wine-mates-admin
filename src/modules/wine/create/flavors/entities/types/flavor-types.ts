@@ -7,11 +7,11 @@ export interface StateItem {
 }
 
 export interface WineAromaItem {
-  id: string
+  id?: string
   nameUa: string
   nameEn: string
-  colorHex: string
-  sortNumber: number
+  colorHex?: string
+  sortNumber?: number
 }
 
 export interface WineAromaSubgroup {
@@ -60,7 +60,7 @@ export interface UpdateWineAromaItemParams {
 export interface CreateWineAromaSubgroupParams {
   nameUa: string
   nameEn: string
-  sortNumber: number
+  sortNumber?: number
   aromas: WineAromaItem[]
 }
 

@@ -1,10 +1,10 @@
 import { useCallback } from 'react'
 import { useWineFlavor } from './useWineFlavors'
-import { CreateWineAromaItemParams, WineAromaSubgroup } from '../entities/types/flavor-types'
+import { WineAromaGroup, WineAromaItem, WineAromaSubgroup } from '../entities/types/flavor-types'
 import { EditingGroupState, NewItemData } from '../entities/types/flavor-palette-types'
 
 interface UseFlavorItemsProps {
-  aromaGroups: any[]
+  aromaGroups: WineAromaGroup[] | undefined
   editingGroup: any
   newItemData: Record<string, any>
   openAccordions: Set<string>
@@ -13,8 +13,8 @@ interface UseFlavorItemsProps {
   setOpenAccordions: (accordions: any) => void
 }
 
-export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAccordions, setEditingGroup, setNewItemData, setOpenAccordions }: UseFlavorItemsProps) => {
-  const { createAroma, updateSubgroup, deleteSubgroup, isCreatingAroma, isUpdatingAroma } = useWineFlavor()
+export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setEditingGroup, setNewItemData, setOpenAccordions }: UseFlavorItemsProps) => {
+  const { createSubgroup, updateSubgroup, deleteSubgroup, refetchGroupsWithParams } = useWineFlavor()
 
   const handleAddAromaClick = useCallback(
     (groupId: string) => {
@@ -67,30 +67,58 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
     async (groupId: string, subgroupId: string) => {
       try {
         await deleteSubgroup(groupId, subgroupId)
+        await refetchGroupsWithParams(['subgroups'])
       } catch (error) {
         console.error('Failed to delete item:', error)
       }
     },
-    [deleteSubgroup]
+    [deleteSubgroup, refetchGroupsWithParams]
+  )
+
+  const hasChanges = useCallback(
+    (groupId: string) => {
+      const editingItem = editingGroup?.editingItem
+      const currentData = newItemData[groupId]
+
+      if (!editingItem) {
+        return currentData?.name && currentData?.nameEn
+      }
+
+      if (!currentData) return false
+
+      return editingItem.nameUa !== currentData.name || editingItem.nameEn !== currentData.nameEn || JSON.stringify(editingItem.aromas) !== JSON.stringify(currentData.aromas)
+    },
+    [editingGroup, newItemData]
   )
 
   const handleSaveItem = useCallback(
-    async (groupId: string, subgroupId: string) => {
-      const group = aromaGroups.find(g => g.id === groupId)
-      if (!group || !group.subgroups?.[0]) return
+    async (groupId: string) => {
+      const isNewItem = !editingGroup?.editingItem
 
-      const targetSubgroupId = group.subgroups[0].id
+      if (!isNewItem && !hasChanges(groupId)) {
+        setEditingGroup(null)
+        setNewItemData((prev: Record<string, NewItemData>) => {
+          const newData = { ...prev }
+          delete newData[groupId]
+          return newData
+        })
+        return
+      }
 
-      if (editingGroup?.editingItem) {
+      if (editingGroup?.editingItem && editingGroup.groupId === groupId) {
         const subgroupData = {
           nameUa: newItemData[groupId]?.name || editingGroup.editingItem.nameUa,
           nameEn: newItemData[groupId]?.nameEn || editingGroup.editingItem.nameEn,
-          aromas: newItemData[groupId]?.aromas || [],
+          aromas: newItemData[groupId]?.aromas || editingGroup.editingItem.aromas || [],
           sortNumber: editingGroup.editingItem.sortNumber,
         }
 
         try {
-          await updateSubgroup(groupId, { subgroupId, newSubgroup: subgroupData })
+          await updateSubgroup(groupId, {
+            subgroupId: editingGroup.editingItem.id,
+            newSubgroup: subgroupData,
+          })
+          await refetchGroupsWithParams(['subgroups'])
           setEditingGroup(null)
           setNewItemData((prev: Record<string, NewItemData>) => {
             const newData = { ...prev }
@@ -98,28 +126,29 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
             return newData
           })
         } catch (error) {
-          console.error('Failed to update item:', error)
+          console.error('Failed to update subgroup:', error)
         }
       } else if (newItemData[groupId]) {
-        const itemData: CreateWineAromaItemParams = {
+        const subgroupData = {
           nameUa: newItemData[groupId].name,
           nameEn: newItemData[groupId].nameEn,
           aromas: newItemData[groupId].aromas || [],
         }
 
         try {
-          await createAroma(groupId, targetSubgroupId, itemData)
+          await createSubgroup(groupId, subgroupData)
+          await refetchGroupsWithParams(['subgroups'])
           setNewItemData((prev: Record<string, NewItemData>) => {
             const newData = { ...prev }
             delete newData[groupId]
             return newData
           })
         } catch (error) {
-          console.error('Failed to create item:', error)
+          console.error('Failed to create subgroup:', error)
         }
       }
     },
-    [aromaGroups, editingGroup, newItemData, updateSubgroup, createAroma, setEditingGroup, setNewItemData]
+    [editingGroup, newItemData, updateSubgroup, createSubgroup, setEditingGroup, setNewItemData, refetchGroupsWithParams, hasChanges]
   )
 
   const handleCancelItemEdit = useCallback(
@@ -153,9 +182,30 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
   const canAddItem = useCallback(
     (groupId: string) => {
       const data = newItemData[groupId]
-      return data?.name && data?.nameEn
+      if (!data) return false
+
+      const subgroupNameUa = data.nameUa || data.name
+      const subgroupNameEn = data.nameEn
+
+      if (!subgroupNameUa?.trim() || !subgroupNameEn?.trim()) {
+        return false
+      }
+
+      if (data.aromas && data.aromas.length > 0) {
+        const hasInvalidAromas = data.aromas.some((aroma: WineAromaItem) => !aroma.nameUa?.trim() || !aroma.nameEn?.trim())
+        if (hasInvalidAromas) {
+          return false
+        }
+      }
+
+      const isEditingItem = editingGroup?.groupId === groupId && editingGroup?.editingItem
+      if (isEditingItem) {
+        return hasChanges(groupId)
+      }
+
+      return true
     },
-    [newItemData]
+    [newItemData, editingGroup, hasChanges]
   )
 
   const getItemName = useCallback((item: any) => {
@@ -171,7 +221,5 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
     updateItemFormData,
     canAddItem,
     getItemName,
-    isCreatingAroma,
-    isUpdatingAroma,
   }
 }

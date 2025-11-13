@@ -314,6 +314,7 @@ export const uk = {
       add_new_aroma: 'Додати аромат',
       add_new_characteristic: 'Додати характеристику',
       add_level: 'Додати рівень',
+      add_aroma: 'Додати аромат',
       add_state_flavor: 'Додати стан',
       create_new_taste: 'Додати смакову ноту',
       import: 'Імпортувати список вин',

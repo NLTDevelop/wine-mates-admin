@@ -1,10 +1,10 @@
 import { useCallback } from 'react'
-import { CreateWineAromaGroupParams } from '../entities/types/flavor-types'
+import { CreateWineAromaGroupParams, WineAromaGroup } from '../entities/types/flavor-types'
 import { useWineFlavor } from './useWineFlavors'
 import { NewItemData } from '../entities/types/flavor-palette-types'
 
 interface UseFlavorGroupsProps {
-  aromaGroups: any[]
+  aromaGroups: WineAromaGroup[] | undefined
   editingGroupData: Record<string, Partial<CreateWineAromaGroupParams>>
   setEditingGroup: (editingGroup: any) => void
   setEditingGroupData: (data: any) => void
@@ -13,27 +13,33 @@ interface UseFlavorGroupsProps {
   setNewItemData: (data: any) => void
 }
 
-export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup, setEditingGroupData, setForceOpenKeys, setOpenAccordions }: UseFlavorGroupsProps) => {
-  const { createGroup, updateGroup, deleteGroup, isLoading } = useWineFlavor()
+export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup, setEditingGroupData, setForceOpenKeys, setOpenAccordions, setNewItemData }: UseFlavorGroupsProps) => {
+  const { createGroup, updateGroup, deleteGroup, isLoading, refetchGroupsWithParams } = useWineFlavor()
 
   const handleAddGroup = useCallback(
     async (groupData: Partial<CreateWineAromaGroupParams>) => {
       try {
-        await createGroup(groupData as CreateWineAromaGroupParams)
+        await createGroup({ ...(groupData as CreateWineAromaGroupParams), sortNumber: aromaGroups?.length || 0 })
       } catch (error) {
         console.error('Failed to create group:', error)
       }
     },
-    [createGroup]
+    [createGroup, aromaGroups]
   )
 
   const startEditingGroup = useCallback(
     (groupId: string) => {
-      const group = aromaGroups.find(g => g.id === groupId)
+      const group = aromaGroups?.find(g => g.id === groupId)
       if (!group) {
         console.error('Group not found:', groupId)
         return
       }
+
+      setNewItemData((prev: Record<string, NewItemData>) => {
+        const newData = { ...prev }
+        delete newData[groupId]
+        return newData
+      })
 
       setOpenAccordions((prev: Set<string>) => {
         const newSet = new Set(prev)
@@ -65,7 +71,7 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
         [groupId]: (prev[groupId] || 0) + 1,
       }))
     },
-    [aromaGroups, setEditingGroup, setEditingGroupData, setForceOpenKeys, setOpenAccordions]
+    [aromaGroups, setEditingGroup, setEditingGroupData, setForceOpenKeys, setOpenAccordions, setNewItemData]
   )
 
   const handleDeleteGroup = useCallback(
@@ -85,9 +91,21 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
       if (!groupData) return
 
       try {
+        const currentGroupIndex = aromaGroups?.findIndex(g => g.id === groupId) ?? -1
+        const groupDataWithSortNumber = {
+          ...groupData,
+          sortNumber: currentGroupIndex >= 0 ? currentGroupIndex : aromaGroups?.length || 0,
+        }
         await updateGroup({
           groupId,
-          newGroup: groupData as CreateWineAromaGroupParams,
+          newGroup: groupDataWithSortNumber as CreateWineAromaGroupParams,
+        })
+        await refetchGroupsWithParams(['subgroups', 'assigned-colors'])
+
+        setOpenAccordions((prev: Set<string>) => {
+          const newSet = new Set(prev)
+          newSet.delete(groupId)
+          return newSet
         })
         setEditingGroup(null)
         setEditingGroupData((prev: Record<string, NewItemData>) => {
@@ -99,7 +117,7 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
         console.error('Failed to update group:', error)
       }
     },
-    [updateGroup, editingGroupData, setEditingGroup, setEditingGroupData]
+    [updateGroup, editingGroupData, setEditingGroup, setEditingGroupData, aromaGroups]
   )
 
   const handleCancelGroupEdit = useCallback(
@@ -135,6 +153,18 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
     [editingGroupData]
   )
 
+  const hasChanges = useCallback(
+    (groupId: string) => {
+      const group = aromaGroups?.find(g => g.id === groupId)
+      const currentData = editingGroupData[groupId]
+
+      if (!group || !currentData) return false
+
+      return group.nameUa !== currentData.nameUa || group.nameEn !== currentData.nameEn || group.colorHex !== currentData.colorHex || group.sortNumber !== currentData.sortNumber
+    },
+    [aromaGroups, editingGroupData]
+  )
+
   return {
     handleAddGroup,
     startEditingGroup,
@@ -144,5 +174,6 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
     updateGroupFormData,
     canSaveGroup,
     isLoading,
+    hasChanges,
   }
 }

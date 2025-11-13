@@ -1,10 +1,10 @@
-import { CreateWineAromaGroupParams, CreateWineAromaItemParams, CreateWineAromaSubgroupParams, UpdateWineAromaGroupParams, UpdateWineAromaSubgroupParams } from './types/flavor-types'
+import { CreateWineAromaGroupParams, CreateWineAromaSubgroupParams, UpdateWineAromaGroupParams, UpdateWineAromaSubgroupParams } from './types/flavor-types'
 import { wineFlavorService } from './wine-flavor-service'
 
 export const wineFlavorQueries = {
-  listGroups: () => ({
-    queryKey: ['aroma-groups', 'list'],
-    queryFn: () => wineFlavorService.listGroups(),
+  listGroups: (include?: string[]) => ({
+    queryKey: ['aroma-groups', 'list', ...(include || [])],
+    queryFn: () => wineFlavorService.listGroups(include),
   }),
 
   createGroup: () => ({
@@ -35,20 +35,5 @@ export const wineFlavorQueries = {
   deleteSubgroup: () => ({
     mutationKey: ['aroma-subgroups', 'delete'],
     mutationFn: (subgroupId: string) => wineFlavorService.deleteSubgroup(subgroupId),
-  }),
-
-  createAroma: () => ({
-    mutationKey: ['aroma-items', 'create'],
-    mutationFn: (aroma: CreateWineAromaItemParams) => wineFlavorService.createAroma(aroma),
-  }),
-
-  updateAroma: () => ({
-    mutationKey: ['aroma-items', 'update'],
-    mutationFn: (params: { aromaId: string; newAroma: CreateWineAromaItemParams }) => wineFlavorService.updateAroma(params),
-  }),
-
-  deleteAroma: () => ({
-    mutationKey: ['aroma-items', 'delete'],
-    mutationFn: (aromaId: string) => wineFlavorService.deleteAroma(aromaId),
   }),
 }

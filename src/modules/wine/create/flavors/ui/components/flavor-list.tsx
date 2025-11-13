@@ -29,19 +29,19 @@ export const FlavorList: React.FC<FlavorListProps> = ({ items, isLoading = false
 
   return (
     <div className="space-y-3 mt-3 hover:brightness-100 w-full">
-      {items.map((item, index) => {
+      {items?.map((item, index) => {
         return (
           <div key={item.id || index} className="flex gap-2 justify-between sm:items-start items-center">
             <div className="flex gap-2 sm:flex-row flex-col sm:items-center items-start w-full">
               <div className="flex gap-2 items-center w-1/5">
-                <div className="h-6 w-6 rounded-full mt-1 flex-shrink-0" style={{ backgroundColor: hexColor }} />
+                <div className="h-5 w-5 rounded-full flex-shrink-0" style={{ backgroundColor: hexColor }} />
                 <div className="text-sm font-medium">{getItemName(item)}</div>
               </div>
 
               {item.aromas && item.aromas.length > 0 && (
                 <div className="flex flex-wrap gap-2 mr-4">
                   {item.aromas.map((a: WineAromaItem) => (
-                    <span key={a.id} className={cn('px-2 py-1 text-xs rounded-md border', cardTextColorClass, 'border-current/30 bg-current/10')}>
+                    <span key={a.id} className={cn('px-2 py-1 text-xs rounded-md border', 'border-current/30 bg-current/10')}>
                       {a.nameUa}
                     </span>
                   ))}

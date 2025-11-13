@@ -5,12 +5,15 @@ import { FlavorList } from './flavor-list'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Save } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { cn } from '@/lib/utils'
+import { cn, lightenColor } from '@/lib/utils'
 import { Separator } from '@/UIKit/shadcn/ui/separator'
 import { PaletteItemActions } from '@/modules/wine/create/general/ui'
 import { useContrastText } from '@/hooks/ui/useContrastText'
 import { AromasManager, FlavorForm, FlavorGroupFormFields } from '..'
 import { useFlavorPalette } from '../../presenters/useFlavorPalette'
+import { BaseWineColor } from '../../../general/entities/types'
+import { Badge } from '@/UIKit/shadcn/ui/badge'
+import { WineAromaGroup } from '../../entities/types/flavor-types'
 
 export const FlavorPaletteManager = () => {
   const { t } = useTranslation('wines')
@@ -27,16 +30,14 @@ export const FlavorPaletteManager = () => {
     setNewItemData,
     setEditingGroupData,
   }
-
   return (
     <Card>
       <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
         <div>
           <CreateFlavorGroupSection onCreateGroup={groups.handleAddGroup} isLoading={isLoading} />
         </div>
-
         <div className="mx-auto flex flex-col justify-center gap-2 w-full">
-          {aromaGroups.map(group => {
+          {aromaGroups?.map((group: WineAromaGroup) => {
             const { textColorClass: cardTextColorClass } = useContrastText(group.colorHex)
             const isGroupOpen = ui.isAccordionOpen(group.id)
             const isGroupEditing = ui.isEditing(group.id)
@@ -59,11 +60,16 @@ export const FlavorPaletteManager = () => {
                   style={{ backgroundColor: group.colorHex, padding: '8px' }}
                   chevronStyle={cardTextColorClass}
                   header={
-                    <div className="flex justify-between items-center w-full">
+                    <div className="flex justify-between items-center w-full ">
                       <div className="flex items-center gap-2">
                         <span className={cn('font-medium', cardTextColorClass)}>
                           {group.nameUa} ({group.nameEn})
                         </span>
+                        {group?.colors?.map((c: BaseWineColor) => (
+                          <div>
+                            <Badge>{c.label}</Badge>
+                          </div>
+                        ))}
                       </div>
                       <PaletteItemActions
                         isLoading={isLoading}
@@ -106,10 +112,10 @@ export const FlavorPaletteManager = () => {
                           cardTextColorClass={cardTextColorClass}
                           isEditable={isEditable}
                           showEditButton={isEditable}
-                          hexColor={group.colorHex}
+                          hexColor={`${lightenColor(group.colorHex, 40)}`}
                         />
 
-                        {isItemFormOpen && <Separator className="mt-2" style={{ backgroundColor: group.colorHex }} />}
+                        {isItemFormOpen && group.subgroups.length > 0 && <Separator className="mt-2" style={{ backgroundColor: group.colorHex }} />}
                       </>
                     )}
 
@@ -131,28 +137,15 @@ export const FlavorPaletteManager = () => {
                         />
 
                         <AromasManager
-                          aromas={editingGroup?.groupId === group.id && editingGroup.editingItem ? editingGroup.editingItem.aromas : newItemData[group.id]?.aromas || []}
+                          aromas={newItemData[group.id]?.aromas || []}
                           onAromasChange={newAromas => {
-                            if (editingGroup?.groupId === group.id && editingGroup.editingItem) {
-                              setEditingGroup(prev => {
-                                if (!prev || !prev.editingItem || prev.groupId !== group.id) return prev
-                                return {
-                                  ...prev,
-                                  editingItem: {
-                                    ...prev.editingItem,
-                                    aromas: newAromas,
-                                  },
-                                }
-                              })
-                            } else {
-                              setNewItemData(prev => ({
-                                ...prev,
-                                [group.id]: {
-                                  ...prev[group.id],
-                                  aromas: newAromas,
-                                },
-                              }))
-                            }
+                            setNewItemData(prev => ({
+                              ...prev,
+                              [group.id]: {
+                                ...prev[group.id],
+                                aromas: newAromas,
+                              },
+                            }))
                           }}
                         />
                       </>
@@ -175,7 +168,7 @@ export const FlavorPaletteManager = () => {
                           <Button size="sm" variant="ghost" className="border-1 hover:bg-muted-foreground hover:text-input" onClick={() => groups.handleCancelGroupEdit(group.id)}>
                             {tc('button.cancel')}
                           </Button>
-                          <Button size="sm" onClick={() => groups.handleSaveGroup(group.id)} disabled={!groups.canSaveGroup(group.id) || isLoading}>
+                          <Button size="sm" onClick={() => groups.handleSaveGroup(group.id)} disabled={!groups.canSaveGroup(group.id) || isLoading || !groups.hasChanges(group.id)}>
                             <Save className="w-4 h-4" />
                             {isLoading ? tc('button.saving') : tc('button.save')}
                           </Button>
@@ -184,12 +177,14 @@ export const FlavorPaletteManager = () => {
 
                       {isItemFormOpen && !isGroupFormOpen && (
                         <Button
-                          onClick={() => items.handleSaveItem(group.id, subgroup.id)}
-                          disabled={!items.canAddItem(group.id) || isLoading || items.isCreatingAroma || items.isUpdatingAroma}
+                          onClick={() => {
+                            items.handleSaveItem(group.id)
+                          }}
+                          disabled={!items.canAddItem(group.id) || isLoading}
                           size="sm"
                         >
                           <Save className="w-4 h-4" />
-                          {isLoading || items.isCreatingAroma || items.isUpdatingAroma ? tc('button.saving') : tc('button.save')}
+                          {isLoading ? tc('button.saving') : tc('button.save')}
                         </Button>
                       )}
                     </div>

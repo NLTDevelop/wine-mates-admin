@@ -1,26 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import {
-  CreateWineAromaGroupParams,
-  UpdateWineAromaGroupParams,
-  CreateWineAromaItemParams,
-  CreateWineAromaSubgroupParams,
-  UpdateWineAromaSubgroupParams,
-  WineAromaGroup,
-  WineAromaSubgroup,
-  WineAromaItem,
-} from '../entities/types/flavor-types'
+import { CreateWineAromaGroupParams, UpdateWineAromaGroupParams, CreateWineAromaSubgroupParams, UpdateWineAromaSubgroupParams, WineAromaGroup, WineAromaSubgroup } from '../entities/types/flavor-types'
 import { useWineFlavorStore } from '../entities/wine-flavor-store'
 import { wineFlavorQueries } from '../entities/wine-flavor-queries'
-import { mockAromaGroups } from '../entities/mock'
 
 interface DeleteSubgroupParams {
-  subgroupId: string
-  groupId: string
-}
-
-interface DeleteAromaParams {
-  aromaId: string
   subgroupId: string
   groupId: string
 }
@@ -30,8 +14,12 @@ export const useWineFlavor = () => {
   const store = useWineFlavorStore()
 
   const groupsQuery = useQuery({
-    ...wineFlavorQueries.listGroups(),
+    ...wineFlavorQueries.listGroups(['subgroups', 'assigned-colors']),
   })
+
+  const customRefetchGroups = (include?: string[]) => {
+    return queryClient.fetchQuery(wineFlavorQueries.listGroups(include))
+  }
 
   useEffect(() => {
     if (groupsQuery.data) {
@@ -88,31 +76,6 @@ export const useWineFlavor = () => {
     },
   })
 
-  const createAromaMutation = useMutation({
-    ...wineFlavorQueries.createAroma(),
-    onSuccess: (newAroma: WineAromaItem, variables: CreateWineAromaItemParams & { subgroupId: string; groupId: string }) => {
-      store.addAroma(variables.groupId, variables.subgroupId, newAroma)
-      queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list'] })
-    },
-  })
-
-  const updateAromaMutation = useMutation({
-    ...wineFlavorQueries.updateAroma(),
-    onSuccess: (updatedAroma: WineAromaItem, variables: { aromaId: string; newAroma: CreateWineAromaItemParams } & { subgroupId: string; groupId: string }) => {
-      store.updateAroma(variables.groupId, variables.subgroupId, variables.aromaId, updatedAroma)
-      queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list'] })
-    },
-  })
-
-  const deleteAromaMutation = useMutation({
-    mutationKey: ['aroma-items', 'delete'],
-    mutationFn: (params: DeleteAromaParams) => wineFlavorQueries.deleteAroma().mutationFn(params.aromaId),
-    onSuccess: (_, variables: DeleteAromaParams) => {
-      store.deleteAroma(variables.groupId, variables.subgroupId, variables.aromaId)
-      queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list'] })
-    },
-  })
-
   const createGroup = (group: CreateWineAromaGroupParams) => {
     return createGroupMutation.mutateAsync(group)
   }
@@ -135,18 +98,6 @@ export const useWineFlavor = () => {
 
   const deleteSubgroup = (groupId: string, subgroupId: string) => {
     return deleteSubgroupMutation.mutateAsync({ subgroupId, groupId })
-  }
-
-  const createAroma = (groupId: string, subgroupId: string, aroma: CreateWineAromaItemParams) => {
-    return createAromaMutation.mutateAsync({ ...aroma, groupId, subgroupId })
-  }
-
-  const updateAroma = (groupId: string, subgroupId: string, aromaId: string, newAroma: CreateWineAromaItemParams) => {
-    return updateAromaMutation.mutateAsync({ aromaId, newAroma, groupId, subgroupId })
-  }
-
-  const deleteAroma = (groupId: string, subgroupId: string, aromaId: string) => {
-    return deleteAromaMutation.mutateAsync({ aromaId, groupId, subgroupId })
   }
 
   const searchAromaGroups = (searchTerm: string) => {
@@ -177,10 +128,8 @@ export const useWineFlavor = () => {
     return store.hasAromaGroup(id)
   }
 
-  const aromaGroups = mockAromaGroups
-
   return {
-    aromaGroups,
+    aromaGroups: groupsQuery.data,
     searchResults: store.searchResults,
     currentAromaGroup: store.currentAromaGroup,
 
@@ -194,9 +143,6 @@ export const useWineFlavor = () => {
     isCreatingSubgroup: createSubgroupMutation.isPending,
     isUpdatingSubgroup: updateSubgroupMutation.isPending,
     isDeletingSubgroup: deleteSubgroupMutation.isPending,
-    isCreatingAroma: createAromaMutation.isPending,
-    isUpdatingAroma: updateAromaMutation.isPending,
-    isDeletingAroma: deleteAromaMutation.isPending,
 
     createGroup,
     updateGroup,
@@ -204,9 +150,6 @@ export const useWineFlavor = () => {
     createSubgroup,
     updateSubgroup,
     deleteSubgroup,
-    createAroma,
-    updateAroma,
-    deleteAroma,
     searchAromaGroups,
     clearSearch,
     setCurrentAromaGroup,
@@ -216,6 +159,7 @@ export const useWineFlavor = () => {
     hasAromaGroup,
 
     refetchGroups: groupsQuery.refetch,
+    refetchGroupsWithParams: customRefetchGroups,
     groupsQuery,
   }
 }
