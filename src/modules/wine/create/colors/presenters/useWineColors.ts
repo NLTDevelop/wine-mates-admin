@@ -2,13 +2,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useWineColorStore } from '../entities/wine-color-store'
 import { wineColorQueries } from '../entities/wine-color-queries'
-import { CreateShadesParams, CreateWineColorParams, UpdateShadesParams, UpdateWineColorParams, WineColorGroup } from '../entities/types/color-types'
+import { CreateShadesParams, CreateWineColorParams, UpdateWineColorParams, WineColorGroup } from '../entities/types/color-types'
 import { mockColorGroups } from '../entities/mockColorsGroup'
-
-interface DeleteShadeParams {
-  shadeId: string
-  groupId: string
-}
 
 export const useWineColor = () => {
   const queryClient = useQueryClient()
@@ -54,7 +49,7 @@ export const useWineColor = () => {
 
   const createShadeMutation = useMutation({
     ...wineColorQueries.createShade(),
-    onSuccess: (newShade: any, variables: CreateShadesParams & { groupId: string }) => {
+    onSuccess: (newShade: any, variables: { groupId: string; shadeData: CreateShadesParams }) => {
       store.addShade(variables.groupId, newShade)
       queryClient.invalidateQueries({ queryKey: ['color-groups', 'list'] })
     },
@@ -62,17 +57,21 @@ export const useWineColor = () => {
 
   const updateShadeMutation = useMutation({
     ...wineColorQueries.updateShade(),
-    onSuccess: (updatedShade: any, variables: UpdateShadesParams & { groupId: string }) => {
+    onSuccess: (updatedShade: any, variables: { groupId: string; shadeId: string; newShades: CreateShadesParams }) => {
       store.updateShade(variables.groupId, variables.shadeId, updatedShade)
       queryClient.invalidateQueries({ queryKey: ['color-groups', 'list'] })
     },
   })
 
   const deleteShadeMutation = useMutation({
-    mutationKey: ['color-shades', 'delete'],
-    mutationFn: (params: DeleteShadeParams) => wineColorQueries.deleteShade().mutationFn(params.shadeId),
-    onSuccess: (_, variables: DeleteShadeParams) => {
-      store.deleteShade(variables.groupId, variables.shadeId)
+    ...wineColorQueries.deleteShade(),
+    onSuccess: (_, shadeId: string) => {
+      const colorGroups = store.colorGroups
+      colorGroups.forEach(group => {
+        if (group.shades.some(shade => shade.id === shadeId)) {
+          store.deleteShade(group.id, shadeId)
+        }
+      })
       queryClient.invalidateQueries({ queryKey: ['color-groups', 'list'] })
     },
   })
@@ -89,16 +88,16 @@ export const useWineColor = () => {
     return deleteGroupMutation.mutateAsync(groupId)
   }
 
-  const createShade = (groupId: string, shade: CreateShadesParams) => {
-    return createShadeMutation.mutateAsync({ ...shade, groupId })
+  const createShade = (groupId: string, shadeData: CreateShadesParams) => {
+    return createShadeMutation.mutateAsync({ groupId, shadeData })
   }
 
-  const updateShade = (groupId: string, params: UpdateShadesParams) => {
-    return updateShadeMutation.mutateAsync({ ...params, groupId })
+  const updateShade = (groupId: string, shadeId: string, newShades: CreateShadesParams) => {
+    return updateShadeMutation.mutateAsync({ groupId, shadeId, newShades })
   }
 
-  const deleteShade = (groupId: string, shadeId: string) => {
-    return deleteShadeMutation.mutateAsync({ shadeId, groupId })
+  const deleteShade = (_: string, shadeId: string) => {
+    return deleteShadeMutation.mutateAsync(shadeId)
   }
 
   const searchColorGroups = (searchTerm: string) => {
@@ -126,8 +125,7 @@ export const useWineColor = () => {
   }
 
   return {
-    colorGroups: mockColorGroups,
-    // colorGroups: groupsQuery.data,
+    colorGroups: groupsQuery.data,
     searchResults: store.searchResults,
     currentColorGroup: store.currentColorGroup,
 
@@ -145,7 +143,6 @@ export const useWineColor = () => {
     createGroup,
     updateGroup,
     deleteGroup,
-
     createShade,
     updateShade,
     deleteShade,

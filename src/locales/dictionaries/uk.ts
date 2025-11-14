@@ -253,7 +253,7 @@ export const uk = {
       edit_type: 'Редагування типу вина',
     },
     colors: {
-      create_new_color: 'Створення нового кольору',
+      create_new_color: 'Створення нового кольору вина',
       colors: 'Кольори',
       color_name_ua: 'Назва кольору (UA)',
       color_name_en: 'Назва кольору (EN)',

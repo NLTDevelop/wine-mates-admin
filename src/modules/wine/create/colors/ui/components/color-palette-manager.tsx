@@ -123,12 +123,13 @@ export const ColorPaletteManager = () => {
                             tonePale: newItemData[group.id]?.tonePale || '',
                             toneMedium: newItemData[group.id]?.toneMedium || '',
                             toneDeep: newItemData[group.id]?.toneDeep || '',
-                            baseColor: newItemData[group.id]?.colorHex || '',
+                            colorHex: newItemData[group.id]?.colorHex || '',
                           }}
                           onDataChange={(field, value) => {
                             items.updateItemFormData(group.id, field as keyof CreateShadesParams, value)
                           }}
                           autoFocus={!editingGroup?.editingItem}
+                          baseColor={group.colorHex || ''}
                         />
                       </>
                     )}

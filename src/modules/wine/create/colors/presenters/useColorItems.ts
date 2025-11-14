@@ -81,13 +81,24 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
   const onRemoveItem = useCallback(
     async (groupId: string, shadeId: string) => {
       try {
+        const isEditingCurrentItem = editingGroup?.groupId === groupId && editingGroup?.editingItem?.id === shadeId
+
         await deleteShade(groupId, shadeId)
         await refetchGroupsWithParams(['shades'])
+
+        if (isEditingCurrentItem) {
+          setEditingGroup(null)
+          setNewItemData((prev: Record<string, NewShadeData>) => {
+            const newData = { ...prev }
+            delete newData[groupId]
+            return newData
+          })
+        }
       } catch (error) {
         console.error('Failed to delete shade:', error)
       }
     },
-    [deleteShade, refetchGroupsWithParams]
+    [deleteShade, refetchGroupsWithParams, editingGroup, setEditingGroup, setNewItemData]
   )
 
   const hasChanges = useCallback(
@@ -139,10 +150,7 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
         }
 
         try {
-          await updateShade(groupId, {
-            shadeId: editingGroup.editingItem.id,
-            newShades: shadeData,
-          })
+          await updateShade(groupId, editingGroup.editingItem.id, shadeData)
           await refetchGroupsWithParams(['shades'])
           setEditingGroup(null)
           setNewItemData((prev: Record<string, NewShadeData>) => {
@@ -211,9 +219,10 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
   const canAddItem = useCallback(
     (groupId: string) => {
       const data = newItemData[groupId]
-      if (!data) return false
-
-      const hasRequiredFields = data.nameUa?.trim() && data.nameEn?.trim() && data.colorHex?.trim()
+      if (!data) {
+        return false
+      }
+      const hasRequiredFields = data.nameUa?.trim() && data.nameEn?.trim() && data.tonePale?.trim() && data.toneMedium?.trim() && data.toneDeep?.trim() && data.colorHex?.trim()
 
       if (!hasRequiredFields) {
         return false
@@ -221,7 +230,8 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
 
       const isEditingItem = editingGroup?.groupId === groupId && editingGroup?.editingItem
       if (isEditingItem) {
-        return hasChanges(groupId)
+        const hasChangesResult = hasChanges(groupId)
+        return hasChangesResult
       }
 
       return true

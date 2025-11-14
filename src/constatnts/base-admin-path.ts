@@ -1,1 +1,1 @@
-export const BASE_ADMIN_PATH = '/v1/admin'
+export const BASE_ADMIN_PATH = 'api/v1/admin'

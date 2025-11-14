@@ -106,7 +106,7 @@ export const FlavorPaletteManager = () => {
                         <FlavorList
                           items={group.subgroups}
                           isLoading={isLoading}
-                          onRemove={() => items.onRemoveItem(group.id, subgroup.id)}
+                          onRemove={id => items.onRemoveItem(group.id, id)}
                           onEdit={item => items.handleEditItem(group.id, item)}
                           getItemName={items.getItemName}
                           cardTextColorClass={cardTextColorClass}

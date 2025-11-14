@@ -34,8 +34,8 @@ export interface CreateShadesParams {
   tonePale: string
   toneMedium: string
   toneDeep: string
-  colorHex: string
-  sortNumber: number
+  colorHex?: string
+  sortNumber?: number
 }
 
 export interface UpdateShadesParams {

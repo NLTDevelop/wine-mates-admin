@@ -66,13 +66,24 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
   const onRemoveItem = useCallback(
     async (groupId: string, subgroupId: string) => {
       try {
+        const isEditingCurrentItem = editingGroup?.groupId === groupId && editingGroup?.editingItem?.id === subgroupId
+
         await deleteSubgroup(groupId, subgroupId)
         await refetchGroupsWithParams(['subgroups'])
+
+        if (isEditingCurrentItem) {
+          setEditingGroup(null)
+          setNewItemData((prev: Record<string, NewItemData>) => {
+            const newData = { ...prev }
+            delete newData[groupId]
+            return newData
+          })
+        }
       } catch (error) {
-        console.error('Failed to delete item:', error)
+        console.error('Failed to delete shade:', error)
       }
     },
-    [deleteSubgroup, refetchGroupsWithParams]
+    [deleteSubgroup, refetchGroupsWithParams, editingGroup, setEditingGroup, setNewItemData]
   )
 
   const hasChanges = useCallback(

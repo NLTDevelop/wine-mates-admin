@@ -1,16 +1,14 @@
-import { BASE_ADMIN_PATH } from '@/constatnts/base-admin-path'
-
 export const COLOR_CRUD_ENDPOINTS = {
   COLORS: {
-    LIST: BASE_ADMIN_PATH + '/colors',
-    CREATE: BASE_ADMIN_PATH + '/colors',
-    UPDATE: BASE_ADMIN_PATH + '/colors/:colorId',
-    DELETE: BASE_ADMIN_PATH + '/colors/:colorId',
+    LIST: '/v1/admin/wine-colors',
+    CREATE: '/v1/admin/wine-colors',
+    UPDATE: '/v1/admin/wine-colors/{id}',
+    DELETE: '/v1/admin/wine-colors/{id}',
   },
 
   COLOR_SHADES: {
-    CREATE: BASE_ADMIN_PATH + '/color-shade',
-    UPDATE: BASE_ADMIN_PATH + '/color-shade/:id',
-    DELETE: BASE_ADMIN_PATH + '/color-shade/:id',
+    CREATE: '/v1/admin/wine-color-shades',
+    UPDATE: '/v1/admin/wine-color-shades/{id}',
+    DELETE: '/v1/admin/wine-color-shades/{id}',
   },
 } as const
