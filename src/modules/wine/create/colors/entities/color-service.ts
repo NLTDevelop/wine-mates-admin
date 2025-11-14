@@ -18,7 +18,6 @@ export const colorService = {
   },
 
   update: (params: UpdateWineColorParams): Promise<WineColorGroup> => {
-    console.log(typeof params.colorId)
     return api.patch(buildUrl(COLOR_CRUD_ENDPOINTS.COLORS.UPDATE, { id: params.colorId }), params.newColor).then(response => response.data)
   },
 

@@ -64,7 +64,7 @@ export const useTasteStore = createStoreDevToolsWrapper<TasteStoreState>(
     searchTastes: searchTerm =>
       set(
         (state: TasteStoreState) => ({
-          searchResults: state.tastes.filter(t => t.label.toLowerCase().includes(searchTerm.toLowerCase()) || t.labelEn?.toLowerCase().includes(searchTerm.toLowerCase())),
+          searchResults: state.tastes.filter(t => t.nameUa.toLowerCase().includes(searchTerm.toLowerCase()) || t.nameEn?.toLowerCase().includes(searchTerm.toLowerCase())),
         }),
         false,
         'tastes/searchTastes'

@@ -1,16 +1,15 @@
 import { useState, useCallback } from 'react'
-import { CreateWineTypeParams } from '../entities/types/wine-type'
+import { CreateWineTypeParams, CreateWineTypeRequest } from '../entities/types/wine-type'
 
 interface UseCreateWineTypeProps {
-  onCreateWineType: (wineTypeData: CreateWineTypeParams) => void
+  onCreateWineType: (wineTypeData: CreateWineTypeRequest) => void
   isLoading?: boolean
 }
 
 interface UseCreateWineTypeReturn {
   isExpanded: boolean
   formData: CreateWineTypeParams
-  canCreateWineType: boolean
-  updateFormData: (field: 'label' | 'labelEn' | 'colors', value: any) => void
+  updateFormData: (field: 'nameUa' | 'nameEn' | 'colors', value: any) => void
   handleCreateWineType: () => void
   handleCancel: () => void
   expandForm: () => void
@@ -19,8 +18,8 @@ interface UseCreateWineTypeReturn {
 export const useCreateWineType = ({ onCreateWineType, isLoading = false }: UseCreateWineTypeProps): UseCreateWineTypeReturn => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [formData, setFormData] = useState<CreateWineTypeParams>({
-    label: '',
-    labelEn: '',
+    nameUa: '',
+    nameEn: '',
     colors: [],
   })
 
@@ -28,18 +27,21 @@ export const useCreateWineType = ({ onCreateWineType, isLoading = false }: UseCr
     setFormData(prev => ({ ...prev, [field]: value }))
   }, [])
 
-  const canCreateWineType = !!(formData.label && formData.labelEn && formData.colors?.length)
-
   const handleCreateWineType = useCallback(() => {
-    if (canCreateWineType && !isLoading) {
-      onCreateWineType(formData)
-      setFormData({ label: '', labelEn: '', colors: [] })
+    if (!isLoading) {
+      const wineTypeDataForApi: CreateWineTypeRequest = {
+        nameUa: formData.nameUa,
+        nameEn: formData.nameEn,
+        colorIds: formData.colors.map(color => color.id),
+      }
+      onCreateWineType(wineTypeDataForApi)
+      setFormData({ nameUa: '', nameEn: '', colors: [] })
       setIsExpanded(false)
     }
-  }, [canCreateWineType, isLoading, onCreateWineType, formData])
+  }, [isLoading, onCreateWineType, formData])
 
   const handleCancel = useCallback(() => {
-    setFormData({ label: '', labelEn: '', colors: [] })
+    setFormData({ nameUa: '', nameEn: '', colors: [] })
     setIsExpanded(false)
   }, [])
 
@@ -50,7 +52,6 @@ export const useCreateWineType = ({ onCreateWineType, isLoading = false }: UseCr
   return {
     isExpanded,
     formData,
-    canCreateWineType,
     updateFormData,
     handleCreateWineType,
     handleCancel,

@@ -6,7 +6,7 @@ import { Grape, Plus } from 'lucide-react'
 import { LevelManager } from '..'
 import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
 import { adaptFetchOptions } from '@/lib/utils'
-import { useWineOptionsMock } from '../../../general/presenters/useWineOptions'
+import { useWineOptions } from '../../../general/presenters/useWineOptions'
 import { useCreateTasteCharacteristic } from '../../presenters/useCreateTasteCharacteristic'
 
 interface CreateTasteCharacteristicSectionProps {
@@ -19,7 +19,7 @@ interface CreateTasteCharacteristicSectionProps {
 export const CreateTasteCharacteristicSection = ({ onCreateCharacteristic, isLoading = false, characteristicLevels = [], onCharacteristicLevelsChange }: CreateTasteCharacteristicSectionProps) => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
-  const { fetchColors } = useWineOptionsMock()
+  const { fetchColors } = useWineOptions()
 
   const { isCreating, newCharacteristic, colorValues, canCreate, handleStartCreating, handleCreate, handleCancel, updateCharacteristic, handleColorChange } = useCreateTasteCharacteristic({
     onCreateCharacteristic,

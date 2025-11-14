@@ -1,4 +1,4 @@
-import { CreateWineTasteParams, UpdateWineTasteParams } from './types/tastes'
+import { CreateWineTasteRequest, UpdateWineTasteParams } from './types/tastes'
 import { tasteService } from './wine-taste-service'
 
 export const tasteQueries = {
@@ -9,7 +9,7 @@ export const tasteQueries = {
 
   create: () => ({
     mutationKey: ['tastes', 'create'],
-    mutationFn: (taste: CreateWineTasteParams) => tasteService.create(taste),
+    mutationFn: (taste: CreateWineTasteRequest) => tasteService.create(taste),
   }),
 
   update: () => ({

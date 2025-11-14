@@ -69,7 +69,7 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
         const isEditingCurrentItem = editingGroup?.groupId === groupId && editingGroup?.editingItem?.id === subgroupId
 
         await deleteSubgroup(groupId, subgroupId)
-        await refetchGroupsWithParams(['subgroups'])
+        await refetchGroupsWithParams(['subgroups', 'assigned-colors'])
 
         if (isEditingCurrentItem) {
           setEditingGroup(null)
@@ -129,7 +129,7 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
             subgroupId: editingGroup.editingItem.id,
             newSubgroup: subgroupData,
           })
-          await refetchGroupsWithParams(['subgroups'])
+          await refetchGroupsWithParams(['subgroups', 'assigned-colors'])
           setEditingGroup(null)
           setNewItemData((prev: Record<string, NewItemData>) => {
             const newData = { ...prev }
@@ -148,7 +148,7 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
 
         try {
           await createSubgroup(groupId, subgroupData)
-          await refetchGroupsWithParams(['subgroups'])
+          await refetchGroupsWithParams(['subgroups', 'assigned-colors'])
           setNewItemData((prev: Record<string, NewItemData>) => {
             const newData = { ...prev }
             delete newData[groupId]

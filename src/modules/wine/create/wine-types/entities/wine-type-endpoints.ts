@@ -1,6 +1,6 @@
 export const WINE_TYPE_ENDPOINTS = {
-  LIST: '/wine-types',
-  CREATE: '/wine-types',
-  UPDATE: '/wine-types/:wineTypeValue',
-  DELETE: '/wine-types/:wineTypeValue',
+  LIST: '/v1/admin/wine-types',
+  CREATE: '/v1/admin/wine-types',
+  UPDATE: '/v1/admin/wine-types/:wineTypeValue',
+  DELETE: '/v1/admin/wine-types/:wineTypeValue',
 } as const

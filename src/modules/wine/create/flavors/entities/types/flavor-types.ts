@@ -35,9 +35,16 @@ export interface CreateWineAromaGroupParams {
   colors: BaseWineColor[]
 }
 
+export interface CreateWineAromaGroupRequest {
+  nameUa: string
+  nameEn: string
+  colorHex: string
+  colorIds: string[]
+}
+
 export interface UpdateWineAromaGroupParams {
   groupId: string
-  newGroup: CreateWineAromaGroupParams
+  newGroup: CreateWineAromaGroupRequest
 }
 
 export interface CreateWineAromaSubgroupParams {

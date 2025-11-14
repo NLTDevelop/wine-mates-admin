@@ -3,7 +3,6 @@ import { useEffect } from 'react'
 import { useWineColorStore } from '../entities/wine-color-store'
 import { wineColorQueries } from '../entities/wine-color-queries'
 import { CreateShadesParams, CreateWineColorParams, UpdateWineColorParams, WineColorGroup } from '../entities/types/color-types'
-import { mockColorGroups } from '../entities/mockColorsGroup'
 
 export const useWineColor = () => {
   const queryClient = useQueryClient()

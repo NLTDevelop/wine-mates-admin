@@ -12,10 +12,14 @@ import { useContrastText } from '@/hooks/ui/useContrastText'
 import { AromasManager, FlavorForm, FlavorGroupFormFields } from '..'
 import { useFlavorPalette } from '../../presenters/useFlavorPalette'
 import { BaseWineColor } from '../../../general/entities/types'
-import { Badge } from '@/UIKit/shadcn/ui/badge'
 import { WineAromaGroup } from '../../entities/types/flavor-types'
 
-export const FlavorPaletteManager = () => {
+interface FlavorPaletteManagerProps {
+  cachedColors: BaseWineColor[]
+  colorsLoading?: boolean
+}
+
+export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: FlavorPaletteManagerProps) => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
@@ -34,11 +38,12 @@ export const FlavorPaletteManager = () => {
     <Card>
       <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
         <div>
-          <CreateFlavorGroupSection onCreateGroup={groups.handleAddGroup} isLoading={isLoading} />
+          <CreateFlavorGroupSection onCreateGroup={groups.handleAddGroup} isLoading={isLoading} cachedColors={cachedColors} />
         </div>
         <div className="mx-auto flex flex-col justify-center gap-2 w-full">
           {aromaGroups?.map((group: WineAromaGroup) => {
             const { textColorClass: cardTextColorClass } = useContrastText(group.colorHex)
+
             const isGroupOpen = ui.isAccordionOpen(group.id)
             const isGroupEditing = ui.isEditing(group.id)
             const isItemFormOpen = ui.isFormItemOpen(group.id)
@@ -66,8 +71,8 @@ export const FlavorPaletteManager = () => {
                           {group.nameUa} ({group.nameEn})
                         </span>
                         {group?.colors?.map((c: BaseWineColor) => (
-                          <div>
-                            <Badge>{c.label}</Badge>
+                          <div className="bg-amber-50 px-2 rounded-md">
+                            <span className=" text-sm text-foreground">{c.nameUa}</span>
                           </div>
                         ))}
                       </div>
@@ -96,7 +101,8 @@ export const FlavorPaletteManager = () => {
                       <FlavorGroupFormFields
                         formData={currentEditingGroupData}
                         onFormDataChange={(field, value) => groups.updateGroupFormData(group.id, field, value)}
-                        isLoading={isLoading}
+                        cachedColors={cachedColors}
+                        isLoading={isLoading || colorsLoading}
                         autoFocus={true}
                       />
                     )}

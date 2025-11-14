@@ -126,12 +126,12 @@ export const validateImageField = (value: unknown): value is File | string => {
   return isFile(value) || isImageUrl(value)
 }
 
-export const adaptFetchOptions = (fetchFn: (search?: string) => Promise<{ id: string; label: string }[]>) => {
+export const adaptFetchOptions = (fetchFn: (search?: string) => Promise<{ id: string; nameUa: string }[]>) => {
   return async (search?: string) => {
     const data = await fetchFn(search)
     return data.map(item => ({
       value: item.id,
-      label: item.label,
+      label: item.nameUa,
     }))
   }
 }

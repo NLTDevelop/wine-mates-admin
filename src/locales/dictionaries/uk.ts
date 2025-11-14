@@ -238,7 +238,7 @@ export const uk = {
       flavor_notes: 'Смакові ноти',
       flavor_characteristics: 'Смакові характиристики',
       wine_types: 'Типи вина',
-      create_new_type: 'Створити новий тип вина',
+      create_new_type: 'Створення нового типу вина',
       type_name_ua: 'Назва типу (UA)',
       type_name_en: 'Назва типу (EN)',
       color: 'Колір вина',
@@ -277,6 +277,7 @@ export const uk = {
       taste_name_ua: 'Назва смаку (UA)',
       taste_name_en: 'Назва смаку (EN)',
       create_new_taste: 'Створення смакової ноти',
+      edit_taste: 'Редагування смакової ноти',
       base_color: 'Колір смакової ноти',
     },
     taste_characteristics: {

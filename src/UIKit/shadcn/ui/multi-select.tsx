@@ -415,7 +415,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             animationDelay: `${animationConfig?.delay ?? 0}ms`,
           }}
         >
-          <Command shouldFilter={false} className="bg-[#fffbfb]">
+          <Command shouldFilter={true} className="bg-[#fffbfb]">
             <div className="relative">
               <CommandInput placeholder={searchLabel ?? t('search')} value={searchTerm} onValueChange={handleSearchChange} />
               {searchTerm && (
