@@ -1,27 +1,21 @@
+import { BaseWineColor } from '../../../general/entities/types'
+
 export interface WineType {
   id: string
   label: string
-  labelEn?: string
-  color: string
-  // colors: string[]
-  aromas: string[]
-  flavorNotes: string[]
-  flavorCharacteristics: string[]
+  labelEn: string
+  colors: BaseWineColor[]
 }
 
 export interface CreateWineTypeParams {
-  id: string
-  label: string
+  label?: string
   labelEn?: string
-  color: string
-  aromas: string[]
-  flavorNotes: string[]
-  flavorCharacteristics: string[]
+  colors?: BaseWineColor[]
 }
 
 export interface UpdateWineTypeParams {
-  oldValue: string
-  newWineType: WineType
+  wineTypeId: string
+  newWineType: CreateWineTypeParams
 }
 
 export interface WineOption {

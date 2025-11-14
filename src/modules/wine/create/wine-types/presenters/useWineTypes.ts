@@ -1,182 +1,102 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { CreateWineTypeParams, UpdateWineTypeParams, WineType } from '../entities/types/wine-type'
 import { useWineTypeStore } from '../entities/wine-type-store'
 import { wineTypeQueries } from '../entities/wine-type-queries'
 
-interface WineTypeFormData {
-  label: string
-  labelEn: string
-  color: string
-  aromas: string[]
-  flavorNotes: string[]
-  flavorCharacteristics: string[]
-}
-
 export const useWineTypes = () => {
-  const [formData, setFormData] = useState<WineTypeFormData>({
-    label: '',
-    labelEn: '',
-    color: '',
-    aromas: [],
-    flavorNotes: [],
-    flavorCharacteristics: [],
-  })
-
-  const [editingWineType, setEditingWineType] = useState<WineType | null>(null)
   const queryClient = useQueryClient()
+  const store = useWineTypeStore()
 
-  const {
-    wineTypes,
-    currentWineType,
-    setCurrentWineType,
-    addWineType: addToStore,
-    updateWineType: updateInStore,
-    deleteWineType: deleteFromStore,
-    searchWineTypes,
-    clearSearch,
-    getWineTypeByValue,
-    hasWineType,
-  } = useWineTypeStore()
+  const wineTypeQuery = useQuery({ ...wineTypeQueries.list() })
 
-  const { data: fetchedWineTypes = [], isLoading: isLoadingList } = useQuery(wineTypeQueries.list())
+  useEffect(() => {
+    if (wineTypeQuery.data) {
+      store.setWineTypes(wineTypeQuery.data)
+    }
+  }, [wineTypeQuery.data, store])
 
   const createMutation = useMutation({
     ...wineTypeQueries.create(),
     onSuccess: (newWineType: WineType) => {
+      store.addWineType(newWineType)
       queryClient.invalidateQueries({ queryKey: ['wine-types', 'list'] })
-      addToStore(newWineType)
-      resetForm()
     },
   })
 
   const updateMutation = useMutation({
     ...wineTypeQueries.update(),
     onSuccess: (updatedWineType: WineType) => {
+      store.updateWineType(updatedWineType.id, updatedWineType)
       queryClient.invalidateQueries({ queryKey: ['wine-types', 'list'] })
-      if (editingWineType) {
-        updateInStore(editingWineType.id, updatedWineType)
-      }
-      setEditingWineType(null)
-      resetForm()
     },
   })
 
   const deleteMutation = useMutation({
     ...wineTypeQueries.delete(),
-    onSuccess: (_, wineTypeValue) => {
+    onSuccess: (_, wineTypeId) => {
+      store.deleteWineType(wineTypeId)
       queryClient.invalidateQueries({ queryKey: ['wine-types', 'list'] })
-      deleteFromStore(wineTypeValue)
-      if (editingWineType && editingWineType.id === wineTypeValue) {
-        setEditingWineType(null)
-      }
-      if (currentWineType?.id === wineTypeValue) {
-        setCurrentWineType(null)
-      }
     },
   })
 
-  const updateFormData = (updates: Partial<WineTypeFormData>) => {
-    setFormData(prev => ({ ...prev, ...updates }))
+  const createWineType = (wineType: CreateWineTypeParams) => {
+    console.log('Create wineType->', wineType)
+    return createMutation.mutateAsync(wineType)
   }
 
-  const resetForm = () => {
-    setFormData({
-      label: '',
-      labelEn: '',
-      color: '',
-      aromas: [],
-      flavorNotes: [],
-      flavorCharacteristics: [],
-    })
-    setEditingWineType(null)
+  const updateWineType = (params: UpdateWineTypeParams) => {
+    console.log('Update wineType->', params)
+    return updateMutation.mutate(params)
   }
 
-  const startEdit = (wineType: WineType) => {
-    setFormData({
-      label: wineType.label,
-      labelEn: wineType.labelEn || '',
-      color: wineType.color || '',
-      aromas: wineType.aromas || [],
-      flavorNotes: wineType.flavorNotes || [],
-      flavorCharacteristics: wineType.flavorCharacteristics || [],
-    })
-    setEditingWineType(wineType)
+  const deleteWineType = (wineTypeId: string) => {
+    deleteMutation.mutate(wineTypeId)
   }
 
-  const cancelEdit = () => {
-    resetForm()
+  const searchTWineType = (searchTerm: string) => {
+    store.searchWineType(searchTerm)
   }
 
-  const createWineType = (wineTypeData: CreateWineTypeParams) => {
-    console.log('Data from form->', wineTypeData)
-    const value = wineTypeData.label
-      .toLowerCase()
-      .replace(/\s+/g, '-')
-      .replace(/[^a-z0-9-]/g, '')
-
-    const dataWithValue: WineType = {
-      ...wineTypeData,
-      id: value,
-    }
-
-    createMutation.mutate(dataWithValue)
+  const clearSearch = () => {
+    store.clearSearch()
   }
 
-  const updateWineType = (params?: UpdateWineTypeParams) => {
-    if (!editingWineType) return
-
-    const paramsToUse = params || {
-      oldValue: editingWineType.id,
-      newWineType: {
-        ...editingWineType,
-        ...formData,
-      },
-    }
-
-    updateMutation.mutate(paramsToUse)
+  const setCurrentWineType = (taste: WineType | null) => {
+    store.setCurrentWineType(taste)
   }
 
-  const deleteWineType = (wineTypeValue: string) => {
-    deleteMutation.mutate(wineTypeValue)
+  const getWineTypeById = (id: string) => {
+    return store.getWineTypeById(id)
   }
 
-  const selectWineType = (wineType: WineType) => {
-    setCurrentWineType(wineType)
+  const hasWineType = (id: string) => {
+    return store.hasWineType(id)
   }
-
-  const canCreate = formData.label.trim() && formData.color && formData.aromas.length > 0 && formData.flavorNotes.length > 0 && formData.flavorCharacteristics.length > 0
-
-  const canUpdate = editingWineType && formData.label.trim() && formData.color && formData.aromas.length > 0
-
-  const isDuplicate = wineTypes.some(wt => wt.label.toLowerCase() === formData.label.toLowerCase() && wt.id !== editingWineType?.id)
-
-  const isLoading = isLoadingList || createMutation.isPending || updateMutation.isPending || deleteMutation.isPending
 
   return {
-    wineTypes: fetchedWineTypes,
-    currentWineType,
-    formData,
-    editingWineType,
+    wineTypes: store.wineTypes,
+    searchResults: store.searchResults,
+    currentWineType: store.currentWineType,
 
-    isLoading,
-    canCreate: canCreate && !isDuplicate,
-    canUpdate: canUpdate && !isDuplicate,
-    isDuplicate,
+    isLoading: wineTypeQuery.isLoading,
+    isError: wineTypeQuery.isError,
+    error: wineTypeQuery.error,
 
-    updateFormData,
-    resetForm,
-    startEdit,
-    cancelEdit,
+    isCreating: createMutation.isPending,
+    isUpdating: updateMutation.isPending,
+    isDeleting: deleteMutation.isPending,
 
     createWineType,
     updateWineType,
     deleteWineType,
-    selectWineType,
-    searchWineTypes,
+    searchTWineType,
     clearSearch,
-
-    getWineTypeByValue,
+    setCurrentWineType,
+    getWineTypeById,
     hasWineType,
+
+    refetchTastes: wineTypeQuery.refetch,
+    wineTypeQuery,
   }
 }

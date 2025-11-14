@@ -7,7 +7,8 @@ import { LevelItem, WineTasteCharacteristics } from '../../entities/types/taste-
 import { LevelManager } from '..'
 import { useCallback } from 'react'
 import { useWineTasteCharacteristics } from '../../presenters/useWineTasteCharacteristics'
-import { useDebounce } from '@/hooks/ui/useDebounce'
+import { BaseWineColor } from '../../../general/entities/types'
+import { useWineOptionsMock } from '../../../general/presenters/useWineOptions'
 
 interface TasteCharacteristicCardProps {
   data: WineTasteCharacteristics
@@ -27,7 +28,7 @@ interface TasteCharacteristicCardProps {
     label: string
     labelEn: string
   }
-  onEditDataChange?: (field: string, value: string) => void
+  onEditDataChange?: (field: string, value: string | BaseWineColor[]) => void
 }
 
 export const TasteCharacteristicCard = ({
@@ -43,50 +44,62 @@ export const TasteCharacteristicCard = ({
   handleToggleAccordion,
   characteristicLevels = [],
   onCharacteristicLevelsChange,
-  editData,
   onEditDataChange,
 }: TasteCharacteristicCardProps) => {
   const { t: tc } = useTranslation('common')
 
   const { isReorderingCharacteristicLevels, updateCharacteristicLevels } = useWineTasteCharacteristics()
+  const { fetchColors } = useWineOptionsMock()
 
-  const { isEditing, editValue, isSaving, startEditing, handleSaveLabel, cancelEditing, handleKeyDown, setEditValue, updateCurrentLevels } = useEditTasteCharacteristic({
-    data,
-    isEditable,
-    isFormOpen,
-    onCancel,
-    onToggleForm,
-    onUpdateCharacteristic,
-  })
+  const { isEditing, editValue, isSaving, startEditing, handleSaveLabel, cancelEditing, handleKeyDown, setEditValue, updateCurrentLevels, colorValues, handleColorChange } = useEditTasteCharacteristic(
+    {
+      data,
+      isEditable,
+      isFormOpen,
+      onCancel,
+      onToggleForm,
+      onUpdateCharacteristic,
+      fetchColors,
+    }
+  )
 
-  const handleEditValueChange = (field: string, value: string) => {
+  const handleEditValueChange = (field: string, value: string | BaseWineColor[]) => {
     setEditValue(prev => ({
       ...prev,
       [field]: value,
     }))
   }
 
-  const saveLevelsToServer = useCallback(
+  const handleSaveLevelName = useCallback(
+    async (levelId: string, levelName: string) => {
+      try {
+        await updateCharacteristicLevels(data.id, [
+          ...(characteristicLevels.length > 0 ? characteristicLevels : data.levels || []).map(level => (level.id === levelId ? { ...level, levelName } : level)),
+        ])
+      } catch (error) {
+        console.error('Failed to save level name:', error)
+      }
+    },
+    [data.id, characteristicLevels, data.levels, updateCharacteristicLevels]
+  )
+
+  const handleSaveLevelsOrder = useCallback(
     async (levels: LevelItem[]) => {
       try {
         await updateCharacteristicLevels(data.id, levels)
       } catch (error) {
-        console.error('Failed to save levels:', error)
+        console.error('Failed to save levels order:', error)
       }
     },
     [data.id, updateCharacteristicLevels]
   )
 
-  const { debouncedWrapper } = useDebounce(saveLevelsToServer, 1000)
-
   const handleLevelsChange = useCallback(
     (levels: LevelItem[]) => {
       updateCurrentLevels(levels)
       onCharacteristicLevelsChange?.(levels)
-
-      debouncedWrapper(levels)
     },
-    [updateCurrentLevels, onCharacteristicLevelsChange, debouncedWrapper]
+    [updateCurrentLevels, onCharacteristicLevelsChange]
   )
 
   const isOpenAccordion = isAccordionOpen[data.id] || false
@@ -115,10 +128,7 @@ export const TasteCharacteristicCard = ({
           label={data.label}
           labelEn={data.labelEn || ''}
           value={characteristicLevels.length > 0 ? characteristicLevels.length : data.levels?.length || 0}
-          editValue={{
-            label: editData?.label || editValue.label,
-            labelEn: editData?.labelEn || editValue.labelEn,
-          }}
+          editValue={editValue}
           cardTextColorClass="text-gray-800"
           onStartEditing={startEditing}
           onSave={handleSaveLabel}
@@ -131,6 +141,9 @@ export const TasteCharacteristicCard = ({
               handleEditValueChange(field, value)
             }
           }}
+          colorValues={colorValues}
+          handleColorChange={handleColorChange}
+          fetchColors={fetchColors}
           actions={
             <PaletteItemActions
               isLoading={isLoading || isSaving || isReorderingCharacteristicLevels}
@@ -154,7 +167,13 @@ export const TasteCharacteristicCard = ({
             'group'
           )}
         >
-          <LevelManager states={levelsToShow} onStatesChange={handleLevelsChange} />
+          <LevelManager
+            states={levelsToShow}
+            onStatesChange={handleLevelsChange}
+            onLevelNameBlur={handleSaveLevelName}
+            onLevelsOrderChange={handleSaveLevelsOrder}
+            isSaving={isSaving || isReorderingCharacteristicLevels}
+          />
 
           {/* индикатор сохранения (может потом уберу) */}
           {isReorderingCharacteristicLevels && <div className="text-xs text-blue-500 mt-2 text-center">{tc('button.saving')}...</div>}

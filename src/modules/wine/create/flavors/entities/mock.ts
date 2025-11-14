@@ -1,423 +1,441 @@
-import { WineAromaGroup } from './types/flavor'
+import { mockColors } from '../../wine-types/entities/mock'
+import { WineAromaGroup } from './types/flavor-types'
 
 export const mockAromaGroups: WineAromaGroup[] = [
   {
     id: '1',
-    label: 'Фруктові аромати',
-    labelEn: 'Fruit Aromas',
-    value: '#FF6B6B',
-    items: [
+    nameUa: 'Фруктові аромати',
+    nameEn: 'Fruit Aromas',
+    colorHex: '#FF6B6B',
+    sortNumber: 1,
+    subgroups: [
       {
         id: '1-1',
-        name: 'Яблуко',
-        nameEn: 'Apple',
-        value: '#FF9B9B',
-        state: [
-          { id: '1-1-1', stateName: 'зелене', order: 0 },
-          { id: '1-1-2', stateName: 'червоне', order: 1 },
-          { id: '1-1-3', stateName: 'печене', order: 2 },
-          { id: '1-1-4', stateName: 'сушене', order: 3 },
+        nameUa: 'Цитрусові',
+        nameEn: 'Citrus',
+        sortNumber: 1,
+        aromas: [
+          {
+            id: '1-1-1',
+            nameUa: 'Лимон',
+            nameEn: 'Lemon',
+            colorHex: '#FFE785',
+            sortNumber: 1,
+          },
+          {
+            id: '1-1-2',
+            nameUa: 'Апельсин',
+            nameEn: 'Orange',
+            colorHex: '#FFE785',
+            sortNumber: 2,
+          },
+          {
+            id: '1-1-3',
+            nameUa: 'Грейпфрут',
+            nameEn: 'Grapefruit',
+            colorHex: '#FFE785',
+            sortNumber: 3,
+          },
         ],
       },
       {
         id: '1-2',
-        name: 'Груша',
-        nameEn: 'Pear',
-        value: '#FF9B9B',
-        state: [
-          { id: '1-2-1', stateName: 'стигла', order: 0 },
-          { id: '1-2-2', stateName: 'консервована', order: 1 },
-        ],
-      },
-      {
-        id: '1-3',
-        name: 'Персик',
-        nameEn: 'Peach',
-        value: '#FF9B9B',
-        state: [
-          { id: '1-3-1', stateName: 'стиглий', order: 0 },
-          { id: '1-3-2', stateName: 'нектарин', order: 1 },
-        ],
-      },
-      {
-        id: '1-4',
-        name: 'Абрикос',
-        nameEn: 'Apricot',
-        value: '#FF9B9B',
-        state: [], // пустой массив состояний
-      },
-      {
-        id: '1-5',
-        name: 'Вишня',
-        nameEn: 'Cherry',
-        value: '#FF9B9B',
-        state: [
-          { id: '1-5-1', stateName: 'свіжа', order: 0 },
-          { id: '1-5-2', stateName: 'маринована', order: 1 },
-          { id: '1-5-3', stateName: 'вишневий лікер', order: 2 },
+        nameUa: 'Ягідні',
+        nameEn: 'Berry',
+        sortNumber: 2,
+        aromas: [
+          {
+            id: '1-2-1',
+            nameUa: 'Полуниця',
+            nameEn: 'Strawberry',
+            colorHex: '#F075B3',
+            sortNumber: 1,
+          },
+          {
+            id: '1-2-2',
+            nameUa: 'Малина',
+            nameEn: 'Raspberry',
+            colorHex: '#F075B3',
+            sortNumber: 2,
+          },
+          {
+            id: '1-2-3',
+            nameUa: 'Чорниця',
+            nameEn: 'Blueberry',
+            colorHex: '#F075B3',
+            sortNumber: 3,
+          },
         ],
       },
     ],
+    colors: mockColors,
   },
   {
     id: '2',
-    label: 'Ягідні аромати',
-    labelEn: 'Berry Aromas',
-    value: '#E84393',
-    items: [
+    nameUa: 'Ягідні аромати',
+    nameEn: 'Berry Aromas',
+    colorHex: '#E84393',
+    sortNumber: 2,
+    subgroups: [
       {
         id: '2-1',
-        name: 'Полуниця',
-        nameEn: 'Strawberry',
-        value: '#F075B3',
-        state: [
-          { id: '2-1-1', stateName: 'лісова', order: 0 },
-          { id: '2-1-2', stateName: 'садова', order: 1 },
-          { id: '2-1-3', stateName: 'сушена', order: 2 },
-        ],
-      },
-      {
-        id: '2-2',
-        name: 'Малина',
-        nameEn: 'Raspberry',
-        value: '#F075B3',
-        state: [], // пустой массив состояний
-      },
-      {
-        id: '2-3',
-        name: 'Чорниця',
-        nameEn: 'Blueberry',
-        value: '#F075B3',
-        state: [
-          { id: '2-3-1', stateName: 'свіжа', order: 0 },
-          { id: '2-3-2', stateName: 'варена', order: 1 },
-        ],
-      },
-      {
-        id: '2-4',
-        name: 'Чорна смородина',
-        nameEn: 'Blackcurrant',
-        value: '#F075B3',
-        state: [
-          { id: '2-4-1', stateName: 'свіжа', order: 0 },
-          { id: '2-4-2', stateName: 'листя', order: 1 },
+        nameUa: 'Лісові ягоди',
+        nameEn: 'Forest Berries',
+        sortNumber: 1,
+        aromas: [
+          {
+            id: '2-1-1',
+            nameUa: 'Суниця',
+            nameEn: 'Wild Strawberry',
+            colorHex: '#F075B3',
+            sortNumber: 1,
+          },
+          {
+            id: '2-1-2',
+            nameUa: 'Чорна смородина',
+            nameEn: 'Blackcurrant',
+            colorHex: '#F075B3',
+            sortNumber: 2,
+          },
+          {
+            id: '2-1-3',
+            nameUa: 'Журавлина',
+            nameEn: 'Cranberry',
+            colorHex: '#F075B3',
+            sortNumber: 3,
+          },
         ],
       },
     ],
+    colors: mockColors,
   },
   {
     id: '3',
-    label: 'Цитрусові аромати',
-    labelEn: 'Citrus Aromas',
-    value: '#FFD93D',
-    items: [
+    nameUa: 'Цитрусові аромати',
+    nameEn: 'Citrus Aromas',
+    colorHex: '#FFD93D',
+    sortNumber: 3,
+    subgroups: [
       {
         id: '3-1',
-        name: 'Лимон',
-        nameEn: 'Lemon',
-        value: '#FFE785',
-        state: [
-          { id: '3-1-1', stateName: 'цедра', order: 0 },
-          { id: '3-1-2', stateName: 'сік', order: 1 },
-          { id: '3-1-3', stateName: 'конфі', order: 2 },
-        ],
-      },
-      {
-        id: '3-2',
-        name: 'Лайм',
-        nameEn: 'Lime',
-        value: '#FFE785',
-        state: [], // пустой массив состояний
-      },
-      {
-        id: '3-3',
-        name: 'Грейпфрут',
-        nameEn: 'Grapefruit',
-        value: '#FFE785',
-        state: [
-          { id: '3-3-1', stateName: 'рожевий', order: 0 },
-          { id: '3-3-2', stateName: 'білий', order: 1 },
-        ],
-      },
-      {
-        id: '3-4',
-        name: 'Апельсин',
-        nameEn: 'Orange',
-        value: '#FFE785',
-        state: [
-          { id: '3-4-1', stateName: 'цедра', order: 0 },
-          { id: '3-4-2', stateName: 'мармелад', order: 1 },
+        nameUa: 'Цитрусові',
+        nameEn: 'Citrus',
+        sortNumber: 1,
+        aromas: [
+          {
+            id: '3-1-1',
+            nameUa: 'Лимон',
+            nameEn: 'Lemon',
+            colorHex: '#FFE785',
+            sortNumber: 1,
+          },
+          {
+            id: '3-1-2',
+            nameUa: 'Лайм',
+            nameEn: 'Lime',
+            colorHex: '#FFE785',
+            sortNumber: 2,
+          },
+          {
+            id: '3-1-3',
+            nameUa: 'Грейпфрут',
+            nameEn: 'Grapefruit',
+            colorHex: '#FFE785',
+            sortNumber: 3,
+          },
+          {
+            id: '3-1-4',
+            nameUa: 'Помело',
+            nameEn: 'Pomelo',
+            colorHex: '#FFE785',
+            sortNumber: 4,
+          },
         ],
       },
     ],
+    colors: mockColors,
   },
   {
     id: '4',
-    label: 'Квіткові аромати',
-    labelEn: 'Floral Aromas',
-    value: '#A29BFE',
-    items: [
+    nameUa: 'Квіткові аромати',
+    nameEn: 'Floral Aromas',
+    colorHex: '#A29BFE',
+    sortNumber: 4,
+    subgroups: [
       {
         id: '4-1',
-        name: 'Троянда',
-        nameEn: 'Rose',
-        value: '#C7C3FF',
-        state: [
-          { id: '4-1-1', stateName: 'червона', order: 0 },
-          { id: '4-1-2', stateName: 'біла', order: 1 },
-          { id: '4-1-3', stateName: 'шипшина', order: 2 },
+        nameUa: 'Квіти',
+        nameEn: 'Flowers',
+        sortNumber: 1,
+        aromas: [
+          {
+            id: '4-1-1',
+            nameUa: 'Троянда',
+            nameEn: 'Rose',
+            colorHex: '#C7C3FF',
+            sortNumber: 1,
+          },
+          {
+            id: '4-1-2',
+            nameUa: 'Жасмин',
+            nameEn: 'Jasmine',
+            colorHex: '#C7C3FF',
+            sortNumber: 2,
+          },
+          {
+            id: '4-1-3',
+            nameUa: 'Бузок',
+            nameEn: 'Lilac',
+            colorHex: '#C7C3FF',
+            sortNumber: 3,
+          },
+          {
+            id: '4-1-4',
+            nameUa: 'Фіалка',
+            nameEn: 'Violet',
+            colorHex: '#C7C3FF',
+            sortNumber: 4,
+          },
         ],
-      },
-      {
-        id: '4-2',
-        name: 'Бузок',
-        nameEn: 'Lilac',
-        value: '#C7C3FF',
-        state: [], // пустой массив состояний
-      },
-      {
-        id: '4-3',
-        name: 'Жасмин',
-        nameEn: 'Jasmine',
-        value: '#C7C3FF',
-        state: [
-          { id: '4-3-1', stateName: 'свіжий', order: 0 },
-          { id: '4-3-2', stateName: 'чай', order: 1 },
-        ],
-      },
-      {
-        id: '4-4',
-        name: 'Фіалка',
-        nameEn: 'Violet',
-        value: '#C7C3FF',
-        state: [], // пустой массив состояний
       },
     ],
+    colors: mockColors,
   },
   {
     id: '5',
-    label: 'Пряні аромати',
-    labelEn: 'Spicy Aromas',
-    value: '#6BCF7F',
-    items: [
+    nameUa: 'Пряні аромати',
+    nameEn: 'Spicy Aromas',
+    colorHex: '#6BCF7F',
+    sortNumber: 5,
+    subgroups: [
       {
         id: '5-1',
-        name: 'Ваніль',
-        nameEn: 'Vanilla',
-        value: '#9DDFAB',
-        state: [
-          { id: '5-1-1', stateName: 'стручок', order: 0 },
-          { id: '5-1-2', stateName: 'екстракт', order: 1 },
-          { id: '5-1-3', stateName: 'цукор', order: 2 },
-        ],
-      },
-      {
-        id: '5-2',
-        name: 'Кориця',
-        nameEn: 'Cinnamon',
-        value: '#9DDFAB',
-        state: [
-          { id: '5-2-1', stateName: 'молота', order: 0 },
-          { id: '5-2-2', stateName: 'паличка', order: 1 },
-        ],
-      },
-      {
-        id: '5-3',
-        name: 'Перець',
-        nameEn: 'Pepper',
-        value: '#9DDFAB',
-        state: [], // пустой массив состояний
-      },
-      {
-        id: '5-4',
-        name: 'Гвоздика',
-        nameEn: 'Clove',
-        value: '#9DDFAB',
-        state: [
-          { id: '5-4-1', stateName: 'цвіт', order: 0 },
-          { id: '5-4-2', stateName: 'пряність', order: 1 },
+        nameUa: 'Прянощі',
+        nameEn: 'Spices',
+        sortNumber: 1,
+        aromas: [
+          {
+            id: '5-1-1',
+            nameUa: 'Ваніль',
+            nameEn: 'Vanilla',
+            colorHex: '#9DDFAB',
+            sortNumber: 1,
+          },
+          {
+            id: '5-1-2',
+            nameUa: 'Кориця',
+            nameEn: 'Cinnamon',
+            colorHex: '#9DDFAB',
+            sortNumber: 2,
+          },
+          {
+            id: '5-1-3',
+            nameUa: 'Перець',
+            nameEn: 'Pepper',
+            colorHex: '#9DDFAB',
+            sortNumber: 3,
+          },
+          {
+            id: '5-1-4',
+            nameUa: 'Гвоздика',
+            nameEn: 'Clove',
+            colorHex: '#9DDFAB',
+            sortNumber: 4,
+          },
         ],
       },
     ],
+    colors: mockColors,
   },
   {
     id: '6',
-    label: 'Горіхові аромати',
-    labelEn: 'Nutty Aromas',
-    value: '#8B4513',
-    items: [
+    nameUa: 'Горіхові аромати',
+    nameEn: 'Nutty Aromas',
+    colorHex: '#8B4513',
+    sortNumber: 6,
+    subgroups: [
       {
         id: '6-1',
-        name: 'Мигдаль',
-        nameEn: 'Almond',
-        value: '#B57945',
-        state: [
-          { id: '6-1-1', stateName: 'свіжий', order: 0 },
-          { id: '6-1-2', stateName: 'смажений', order: 1 },
-          { id: '6-1-3', stateName: 'солодкий', order: 2 },
-        ],
-      },
-      {
-        id: '6-2',
-        name: 'Фундук',
-        nameEn: 'Hazelnut',
-        value: '#B57945',
-        state: [], // пустой массив состояний
-      },
-      {
-        id: '6-3',
-        name: 'Горіх',
-        nameEn: 'Walnut',
-        value: '#B57945',
-        state: [
-          { id: '6-3-1', stateName: 'свіжий', order: 0 },
-          { id: '6-3-2', stateName: 'горіхова скорлупа', order: 1 },
+        nameUa: 'Горіхи',
+        nameEn: 'Nuts',
+        sortNumber: 1,
+        aromas: [
+          {
+            id: '6-1-1',
+            nameUa: 'Мигдаль',
+            nameEn: 'Almond',
+            colorHex: '#B57945',
+            sortNumber: 1,
+          },
+          {
+            id: '6-1-2',
+            nameUa: 'Фундук',
+            nameEn: 'Hazelnut',
+            colorHex: '#B57945',
+            sortNumber: 2,
+          },
+          {
+            id: '6-1-3',
+            nameUa: 'Горіх',
+            nameEn: 'Walnut',
+            colorHex: '#B57945',
+            sortNumber: 3,
+          },
+          {
+            id: '6-1-4',
+            nameUa: 'Кешью',
+            nameEn: 'Cashew',
+            colorHex: '#B57945',
+            sortNumber: 4,
+          },
         ],
       },
     ],
+    colors: mockColors,
   },
   {
     id: '7',
-    label: 'Деревні аромати',
-    labelEn: 'Woody Aromas',
-    value: '#CD6133',
-    items: [
+    nameUa: 'Деревні аромати',
+    nameEn: 'Woody Aromas',
+    colorHex: '#CD6133',
+    sortNumber: 7,
+    subgroups: [
       {
         id: '7-1',
-        name: 'Дуб',
-        nameEn: 'Oak',
-        value: '#DE8B65',
-        state: [
-          { id: '7-1-1', stateName: 'французький', order: 0 },
-          { id: '7-1-2', stateName: 'американський', order: 1 },
-          { id: '7-1-3', stateName: 'обпалений', order: 2 },
-        ],
-      },
-      {
-        id: '7-2',
-        name: 'Кедр',
-        nameEn: 'Cedar',
-        value: '#DE8B65',
-        state: [], // пустой массив состояний
-      },
-      {
-        id: '7-3',
-        name: 'Дим',
-        nameEn: 'Smoke',
-        value: '#DE8B65',
-        state: [
-          { id: '7-3-1', stateName: 'вологий', order: 0 },
-          { id: '7-3-2', stateName: 'сухий', order: 1 },
+        nameUa: 'Деревина',
+        nameEn: 'Wood',
+        sortNumber: 1,
+        aromas: [
+          {
+            id: '7-1-1',
+            nameUa: 'Дуб',
+            nameEn: 'Oak',
+            colorHex: '#DE8B65',
+            sortNumber: 1,
+          },
+          {
+            id: '7-1-2',
+            nameUa: 'Кедр',
+            nameEn: 'Cedar',
+            colorHex: '#DE8B65',
+            sortNumber: 2,
+          },
+          {
+            id: '7-1-3',
+            nameUa: 'Смола',
+            nameEn: 'Resin',
+            colorHex: '#DE8B65',
+            sortNumber: 3,
+          },
         ],
       },
     ],
+    colors: mockColors,
   },
   {
     id: '8',
-    label: 'Земляні аромати',
-    labelEn: 'Earthy Aromas',
-    value: '#795548',
-    items: [
+    nameUa: 'Земляні аромати',
+    nameEn: 'Earthy Aromas',
+    colorHex: '#795548',
+    sortNumber: 8,
+    subgroups: [
       {
         id: '8-1',
-        name: 'Гриби',
-        nameEn: 'Mushroom',
-        value: '#9E7A6B',
-        state: [
-          { id: '8-1-1', stateName: 'свіжі', order: 0 },
-          { id: '8-1-2', stateName: 'сушені', order: 1 },
-          { id: '8-1-3', stateName: 'трюфель', order: 2 },
+        nameUa: 'Гриби',
+        nameEn: 'Mushrooms',
+        sortNumber: 1,
+        aromas: [
+          {
+            id: '8-1-1',
+            nameUa: 'Трюфель',
+            nameEn: 'Truffle',
+            colorHex: '#9E7A6B',
+            sortNumber: 1,
+          },
+          {
+            id: '8-1-2',
+            nameUa: 'Печериці',
+            nameEn: 'Champignon',
+            colorHex: '#9E7A6B',
+            sortNumber: 2,
+          },
+          {
+            id: '8-1-3',
+            nameUa: 'Боровики',
+            nameEn: 'Porcini',
+            colorHex: '#9E7A6B',
+            sortNumber: 3,
+          },
         ],
-      },
-      {
-        id: '8-2',
-        name: 'Трюфель',
-        nameEn: 'Truffle',
-        value: '#9E7A6B',
-        state: [
-          { id: '8-2-1', stateName: 'чорний', order: 0 },
-          { id: '8-2-2', stateName: 'білий', order: 1 },
-        ],
-      },
-      {
-        id: '8-3',
-        name: 'Земля',
-        nameEn: 'Earth',
-        value: '#9E7A6B',
-        state: [], // пустой массив состояний
       },
     ],
+    colors: mockColors,
   },
   {
     id: '9',
-    label: 'Фруктові',
-    labelEn: 'Fruity',
-    value: '#FF6B6B',
-    items: [], // группа без элементов
+    nameUa: 'Фруктові',
+    nameEn: 'Fruity',
+    colorHex: '#FF6B6B',
+    sortNumber: 9,
+    subgroups: [],
+    colors: mockColors, // группа без подгрупп
   },
   {
     id: '10',
-    label: 'Квіткові',
-    labelEn: 'Floral',
-    value: '#A29BFE',
-    items: [], // группа без элементов
+    nameUa: 'Квіткові',
+    nameEn: 'Floral',
+    colorHex: '#A29BFE',
+    sortNumber: 10,
+    subgroups: [],
+    colors: mockColors, // группа без подгрупп
   },
   {
     id: '11',
-    label: 'Пряні',
-    labelEn: 'Spicy',
-    value: '#6BCF7F',
-    items: [], // группа без элементов
+    nameUa: 'Пряні',
+    nameEn: 'Spicy',
+    colorHex: '#6BCF7F',
+    sortNumber: 11,
+    subgroups: [],
+    colors: mockColors, // группа без подгрупп
   },
   {
     id: '12',
-    label: 'Деревні',
-    labelEn: 'Woody',
-    value: '#CD6133',
-    items: [], // группа без элементов
+    nameUa: 'Деревні',
+    nameEn: 'Woody',
+    colorHex: '#CD6133',
+    sortNumber: 12,
+    subgroups: [],
+    colors: mockColors, // группа без подгрупп
   },
 ]
 
 export const mockAromaItems = [
   {
-    id: '1-1',
-    name: 'Яблуко',
-    nameEn: 'Apple',
-    value: '#FF9B9B',
-    state: [
-      { id: '1-1-1', stateName: 'зелене', order: 0 },
-      { id: '1-1-2', stateName: 'червоне', order: 1 },
-      { id: '1-1-3', stateName: 'печене', order: 2 },
-    ],
+    id: '1-1-1',
+    nameUa: 'Лимон',
+    nameEn: 'Lemon',
+    colorHex: '#FFE785',
+    sortNumber: 1,
   },
   {
-    id: '1-2',
-    name: 'Груша',
-    nameEn: 'Pear',
-    value: '#FF9B9B',
-    state: [
-      { id: '1-2-1', stateName: 'стигла', order: 0 },
-      { id: '1-2-2', stateName: 'консервована', order: 1 },
-    ],
+    id: '1-1-2',
+    nameUa: 'Апельсин',
+    nameEn: 'Orange',
+    colorHex: '#FFE785',
+    sortNumber: 2,
   },
   {
-    id: '4-1',
-    name: 'Троянда',
+    id: '4-1-1',
+    nameUa: 'Троянда',
     nameEn: 'Rose',
-    value: '#C7C3FF',
-    state: [
-      { id: '4-1-1', stateName: 'червона', order: 0 },
-      { id: '4-1-2', stateName: 'біла', order: 1 },
-    ],
+    colorHex: '#C7C3FF',
+    sortNumber: 1,
   },
   {
-    id: '5-1',
-    name: 'Ваніль',
+    id: '5-1-1',
+    nameUa: 'Ваніль',
     nameEn: 'Vanilla',
-    value: '#9DDFAB',
-    state: [
-      { id: '5-1-1', stateName: 'стручок', order: 0 },
-      { id: '5-1-2', stateName: 'екстракт', order: 1 },
-    ],
+    colorHex: '#9DDFAB',
+    sortNumber: 1,
   },
 ]

@@ -4,10 +4,10 @@ import { ContentLayout } from '@/layout/components/content-layout'
 import { WineTemplateSelector } from '..'
 import { TastePaletteManager } from '../../../tastes/ui'
 import { ColorPaletteManager } from '../../../colors/ui'
-import { FlavorPaletteManager } from '../../../flavors/ui'
 import { TasteCharacteristicsPaletteManager } from '../../../taste-characteristics/ui'
 import { WineTypeManager } from '../../../wine-types/ui'
 import { CreateWineForm } from '../../../wine/ui'
+import { FlavorPaletteManager } from '../../../flavors/ui'
 
 export const WineManagementView = () => {
   const { t } = useTranslation('wines')
@@ -50,7 +50,7 @@ export const WineManagementView = () => {
 
   return (
     <ContentLayout title={renderTitle()} isGoBack={!!selectedTemplate} handleGoBack={() => setSelectedTemplate('')}>
-      <div className="max-w-6xl mx-auto">{renderContent()}</div>
+      <div>{renderContent()}</div>
     </ContentLayout>
   )
 }

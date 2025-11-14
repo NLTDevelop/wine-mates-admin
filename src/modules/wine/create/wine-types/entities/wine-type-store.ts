@@ -11,10 +11,10 @@ interface WineTypeStoreState {
   addWineType: (wineType: WineType) => void
   updateWineType: (oldValue: string, newWineType: WineType) => void
   deleteWineType: (wineTypeValue: string) => void
-  searchWineTypes: (searchTerm: string) => void
+  searchWineType: (searchTerm: string) => void
   clearSearch: () => void
 
-  getWineTypeByValue: (value: string) => WineType | undefined
+  getWineTypeById: (value: string) => WineType | undefined
   hasWineType: (value: string) => boolean
 }
 
@@ -59,7 +59,7 @@ export const useWineTypeStore = createStoreDevToolsWrapper<WineTypeStoreState>(
         'wineTypes/deleteWineType'
       ),
 
-    searchWineTypes: searchTerm =>
+    searchWineType: searchTerm =>
       set(
         (state: WineTypeStoreState) => ({
           searchResults: state.wineTypes.filter(wt => wt.label.toLowerCase().includes(searchTerm.toLowerCase()) || wt.labelEn?.toLowerCase().includes(searchTerm.toLowerCase())),
@@ -70,12 +70,12 @@ export const useWineTypeStore = createStoreDevToolsWrapper<WineTypeStoreState>(
 
     clearSearch: () => set({ searchResults: [] }, false, 'wineTypes/clearSearch'),
 
-    getWineTypeByValue: value => {
-      return get().wineTypes.find((wt: WineType) => wt.id === value)
+    getWineTypeById: id => {
+      return get().wineTypes.find((wt: WineType) => wt.id === id)
     },
 
-    hasWineType: value => {
-      return get().wineTypes.some((wt: WineType) => wt.id === value)
+    hasWineType: id => {
+      return get().wineTypes.some((wt: WineType) => wt.id === id)
     },
   }),
   'WineTypeStore'

@@ -12,9 +12,9 @@ export const TastePaletteManager = () => {
         <div>
           <CreateTasteSection onCreateTaste={handleAddTaste} isLoading={isLoading} />
         </div>
-        <div className="mx-auto flex flex-col justify-center gap-2 w-full xl:w-2/3 ">
+        <div className="mx-auto flex flex-col justify-center gap-2 w-full  ">
           <div className="flex gap-2 flex-col">
-            {tastes.map(taste => (
+            {tastes?.map(taste => (
               <TasteCard
                 key={taste.id}
                 data={taste}

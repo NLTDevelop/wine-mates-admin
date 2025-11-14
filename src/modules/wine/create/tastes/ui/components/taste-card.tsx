@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils'
 import { EditableHeader, PaletteItemActions } from '../../../general/ui'
 import { useEditTaste } from '../../presenters/useEditTaste'
 import { WineTaste } from '../../entities/types/tastes'
+import { useWineOptionsMock } from '../../../general/presenters/useWineOptions'
 
 interface TasteCardProps {
   data: WineTaste
@@ -14,16 +15,18 @@ interface TasteCardProps {
 }
 
 export const TasteCard = ({ data, onRemove, isLoading, isEditable = false, onToggleForm, isFormOpen = false, onCancel }: TasteCardProps) => {
-  const { isEditing, editValue, color, cardTextColorClass, isSaving, startEditing, handleSaveLabel, cancelEditing, handleKeyDown, setEditValue } = useEditTaste({
+  const { fetchColors } = useWineOptionsMock()
+  const { isEditing, editValue, color, cardTextColorClass, isSaving, startEditing, handleSaveLabel, cancelEditing, handleKeyDown, setEditValue, colorValues, handleColorChange } = useEditTaste({
     data,
     isEditable,
     isFormOpen,
     onCancel,
     onToggleForm,
+    fetchColors,
   })
 
   return (
-    <div className={cn('border-1 border-input rounded-md transition-all')} style={{ backgroundColor: color }}>
+    <div className={cn('border-1 border-input rounded-md transition-all cursor-default')} style={{ backgroundColor: color }}>
       <div className="p-2">
         <EditableHeader
           isEditable={isEditable}
@@ -39,6 +42,9 @@ export const TasteCard = ({ data, onRemove, isLoading, isEditable = false, onTog
           onCancel={cancelEditing}
           onKeyDown={handleKeyDown}
           onEditValueChange={setEditValue}
+          colorValues={colorValues}
+          handleColorChange={handleColorChange}
+          fetchColors={fetchColors}
           actions={
             <PaletteItemActions
               isLoading={isLoading || false}

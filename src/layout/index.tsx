@@ -26,7 +26,7 @@ export default function Layout() {
         <div className="flex-1 flex flex-col min-w-0">
           <AppHeaderContent />
           <div className="flex-1 !overflow-auto bg-gray-100">
-            <div className="p-4">
+            <div className="sm:p-4 px-2 pt-0">
               <Outlet />
             </div>
           </div>

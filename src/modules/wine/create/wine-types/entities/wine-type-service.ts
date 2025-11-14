@@ -8,7 +8,7 @@ export const wineTypeService = {
 
   create: (wineType: CreateWineTypeParams): Promise<WineType> => api.post(WINE_TYPE_ENDPOINTS.CREATE, wineType).then(response => response.data),
 
-  update: (params: UpdateWineTypeParams): Promise<WineType> => api.put(buildUrl(WINE_TYPE_ENDPOINTS.UPDATE, { wineTypeValue: params.oldValue }), params.newWineType).then(response => response.data),
+  update: (params: UpdateWineTypeParams): Promise<WineType> => api.put(buildUrl(WINE_TYPE_ENDPOINTS.UPDATE, { wineTypeValue: params.wineTypeId }), params.newWineType).then(response => response.data),
 
   delete: (wineTypeValue: string): Promise<void> => api.delete(buildUrl(WINE_TYPE_ENDPOINTS.DELETE, { wineTypeValue })).then(response => response.data),
 }

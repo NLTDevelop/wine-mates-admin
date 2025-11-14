@@ -15,11 +15,13 @@ export const useWineList = () => {
   const [editingWine, setEditingWine] = useState<IWines | null>(null)
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; wineId: string | null; wineName: string }>({ isOpen: false, wineId: null, wineName: '' })
   const [wine, setWine] = useState<{ wineName: string; isConfirm: boolean }>({ wineName: '', isConfirm: false })
+  const [importModal, setImportModal] = useState<{ isOpen: boolean }>({ isOpen: false })
 
   const winesQuery: UseQueryResult<WinesResponse | undefined, Error> = useQuery(wineQueries.list(filters))
   const updateWineMutation = useMutation(wineQueries.update())
   const deleteWineMutation = useMutation(wineQueries.delete())
   const confirmWineMutation = useMutation(wineQueries.confirmWine())
+  const importWinesMutation = useMutation(wineQueries.import())
 
   const { debouncedWrapper } = useDebounce((searchValue: string) => {
     setFilters({ search: searchValue, offset: 0 })
@@ -158,6 +160,23 @@ export const useWineList = () => {
     }
   }, [selectedWineId, confirmWine, closeConfirmModal])
 
+  const openImportModal = useCallback(() => {
+    setImportModal({ isOpen: true })
+  }, [])
+
+  const closeImportModal = useCallback(() => {
+    setImportModal({ isOpen: false })
+  }, [])
+
+  const importWines = useCallback(
+    async (file: File) => {
+      await importWinesMutation.mutateAsync(file)
+      winesQuery.refetch()
+      closeImportModal()
+    },
+    [importWinesMutation, winesQuery, closeImportModal]
+  )
+
   return {
     wines: winesQuery.data?.rows,
     totalCount: winesQuery.data?.totalCount,
@@ -193,6 +212,14 @@ export const useWineList = () => {
       ...deleteModal,
       onClose: closeDeleteModal,
       onSubmit: confirmDeleteWine,
+    },
+
+    importWines: {
+      import: importWines,
+      openModal: openImportModal,
+      closeModal: closeImportModal,
+      isImporting: importWinesMutation.isPending,
+      isOpen: importModal.isOpen,
     },
   }
 }

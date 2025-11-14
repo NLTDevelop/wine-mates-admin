@@ -1,4 +1,157 @@
-import { IWines, WineImage } from './types/types'
+import { WineType } from '@/modules/wine/create/wine-types/entities/types/wine-type'
+import { IWines, WineImage, WinesResponse, WineFilters } from './types/types'
+
+// Моковые типы вин с полем colors
+const mockWineTypes: WineType[] = [
+  {
+    id: 'red',
+    label: 'Красное вино',
+    labelEn: 'Red Wine',
+    colors: [
+      {
+        id: 'red-1',
+        label: 'Темно-красный',
+        labelEn: 'Dark Red',
+        value: '#8B0000',
+      },
+      {
+        id: 'red-2',
+        label: 'Коричнево-красный',
+        labelEn: 'Brown Red',
+        value: '#A52A2A',
+      },
+      {
+        id: 'red-3',
+        label: 'Бордовый',
+        labelEn: 'Burgundy',
+        value: '#800000',
+      },
+      {
+        id: 'red-4',
+        label: 'Глубокий красный',
+        labelEn: 'Deep Red',
+        value: '#5E1914',
+      },
+      {
+        id: 'red-5',
+        label: 'Рубиновый',
+        labelEn: 'Ruby',
+        value: '#722F37',
+      },
+    ],
+  },
+  {
+    id: 'white',
+    label: 'Белое вино',
+    labelEn: 'White Wine',
+    colors: [
+      {
+        id: 'white-1',
+        label: 'Светло-соломенный',
+        labelEn: 'Light Straw',
+        value: '#F5F5DC',
+      },
+      {
+        id: 'white-2',
+        label: 'Золотистый',
+        labelEn: 'Golden',
+        value: '#FFF8DC',
+      },
+      {
+        id: 'white-3',
+        label: 'Бледно-желтый',
+        labelEn: 'Pale Yellow',
+        value: '#FFEBCD',
+      },
+      {
+        id: 'white-4',
+        label: 'Лимонный',
+        labelEn: 'Lemon',
+        value: '#F0E68C',
+      },
+      {
+        id: 'white-5',
+        label: 'Янтарный',
+        labelEn: 'Amber',
+        value: '#EEE8AA',
+      },
+    ],
+  },
+  {
+    id: 'dessert',
+    label: 'Десертное вино',
+    labelEn: 'Dessert Wine',
+    colors: [
+      {
+        id: 'dessert-1',
+        label: 'Розово-золотой',
+        labelEn: 'Pink Gold',
+        value: '#e5bcbc',
+      },
+      {
+        id: 'dessert-2',
+        label: 'Медовый',
+        labelEn: 'Honey',
+        value: '#d8a8a8',
+      },
+      {
+        id: 'dessert-3',
+        label: 'Персиковый',
+        labelEn: 'Peach',
+        value: '#f0d9d9',
+      },
+      {
+        id: 'dessert-4',
+        label: 'Карамельный',
+        labelEn: 'Caramel',
+        value: '#d4a5a5',
+      },
+      {
+        id: 'dessert-5',
+        label: 'Кремовый',
+        labelEn: 'Cream',
+        value: '#ebc4c4',
+      },
+    ],
+  },
+  {
+    id: 'sparkling',
+    label: 'Игристое вино',
+    labelEn: 'Sparkling Wine',
+    colors: [
+      {
+        id: 'sparkling-1',
+        label: 'Бледно-зеленый',
+        labelEn: 'Pale Green',
+        value: '#f3f4e2',
+      },
+      {
+        id: 'sparkling-2',
+        label: 'Серебристый',
+        labelEn: 'Silver',
+        value: '#e8e9d7',
+      },
+      {
+        id: 'sparkling-3',
+        label: 'Жемчужный',
+        labelEn: 'Pearl',
+        value: '#f8f9e6',
+      },
+      {
+        id: 'sparkling-4',
+        label: 'Прозрачно-золотой',
+        labelEn: 'Clear Gold',
+        value: '#dde0c5',
+      },
+      {
+        id: 'sparkling-5',
+        label: 'Кристальный',
+        labelEn: 'Crystal',
+        value: '#f0f2d8',
+      },
+    ],
+  },
+]
 
 const mockWineImages: WineImage[] = [
   {
@@ -30,53 +183,6 @@ const mockWineImages: WineImage[] = [
   },
 ]
 
-const mockWineTypes = [
-  {
-    red: {
-      id: 'red',
-      label: 'Красное вино',
-      labelEn: 'Red Wine',
-      color: '#8B0000',
-      aromas: ['красные ягоды', 'чернослив', 'ваниль', 'дуб'],
-      flavorNotes: ['вишня', 'малина', 'шоколад', 'перец'],
-      flavorCharacteristics: ['полнотелое', 'танинное', 'долгое послевкусие'],
-    },
-  },
-  {
-    white: {
-      id: 'white',
-      label: 'Белое вино',
-      labelEn: 'White Wine',
-      color: '#F5F5DC',
-      aromas: ['цитрусовые', 'тропические фрукты', 'цветы'],
-      flavorNotes: ['яблоко', 'груша', 'персик', 'миндаль'],
-      flavorCharacteristics: ['свежее', 'кислотное', 'фруктовое'],
-    },
-  },
-  {
-    dessert: {
-      id: 'dessert',
-      label: 'Десертное вино',
-      labelEn: 'Dessert Wine',
-      color: '#e5bcbc',
-      aromas: ['мед', 'сухофрукты', 'цветочные ноты'],
-      flavorNotes: ['абрикос', 'изюм', 'карамель', 'орехи'],
-      flavorCharacteristics: ['сладкое', 'бархатистое', 'концентрированное'],
-    },
-  },
-  {
-    sparkling: {
-      id: 'sparkling',
-      label: 'Игристое вино',
-      labelEn: 'Sparkling Wine',
-      color: '#f3f4e2',
-      aromas: ['дрожжи', 'цитрусы', 'зеленое яблоко'],
-      flavorNotes: ['яблоко', 'груша', 'миндаль', 'хлебные ноты'],
-      flavorCharacteristics: ['игристое', 'свежее', 'элегантное'],
-    },
-  },
-]
-
 export const mockWines: IWines[] = [
   {
     id: '1',
@@ -89,7 +195,7 @@ export const mockWines: IWines[] = [
     region: 'Bordeaux',
     subRegion: 'Médoc',
     site: 'Margaux Appellation',
-    type: mockWineTypes[0].red,
+    type: mockWineTypes[0],
     subType: 'Grand Cru Classé',
     designation: 'AOC Margaux',
     classification: 'Premier Grand Cru Classé',
@@ -112,7 +218,7 @@ export const mockWines: IWines[] = [
     region: 'Burgundy',
     subRegion: 'Côte de Nuits',
     site: 'Romanée-Conti Vineyard',
-    type: mockWineTypes[0].red,
+    type: mockWineTypes[0],
     subType: 'Grand Cru',
     designation: 'AOC Romanée-Conti',
     classification: 'Grand Cru',
@@ -135,7 +241,7 @@ export const mockWines: IWines[] = [
     region: 'Tuscany',
     subRegion: 'Bolgheri',
     site: 'Sassicaia Vineyard',
-    type: mockWineTypes[0].red,
+    type: mockWineTypes[0],
     subType: 'Super Tuscan',
     designation: 'DOC Bolgheri Sassicaia',
     classification: 'Iconic Wine',
@@ -158,7 +264,7 @@ export const mockWines: IWines[] = [
     region: 'Marlborough',
     subRegion: 'Wairau Valley',
     site: 'Cloudy Bay Vineyard',
-    type: mockWineTypes[0].white,
+    type: mockWineTypes[1],
     subType: 'Single Vineyard',
     designation: 'Marlborough Sauvignon Blanc',
     classification: 'Premium',
@@ -181,7 +287,7 @@ export const mockWines: IWines[] = [
     region: 'Ribera del Duero',
     subRegion: 'Valbuena',
     site: 'Vega Sicilia Estate',
-    type: mockWineTypes[0].red,
+    type: mockWineTypes[0],
     subType: 'Gran Reserva',
     designation: 'DO Ribera del Duero',
     classification: 'Gran Reserva',
@@ -204,7 +310,7 @@ export const mockWines: IWines[] = [
     region: 'California',
     subRegion: 'Napa Valley',
     site: 'Oakville District',
-    type: mockWineTypes[0].red,
+    type: mockWineTypes[0],
     subType: 'Bordeaux Blend',
     designation: 'Napa Valley Red Wine',
     classification: 'Iconic',
@@ -227,7 +333,7 @@ export const mockWines: IWines[] = [
     region: 'Bordeaux',
     subRegion: 'Sauternes',
     site: 'Yquem Vineyard',
-    type: mockWineTypes[0].dessert,
+    type: mockWineTypes[2],
     subType: 'Liquoreux',
     designation: 'AOC Sauternes',
     classification: 'Premier Cru Supérieur',
@@ -250,7 +356,7 @@ export const mockWines: IWines[] = [
     region: 'South Australia',
     subRegion: 'Barossa Valley',
     site: 'Multiple Vineyards',
-    type: mockWineTypes[0].red,
+    type: mockWineTypes[0],
     subType: 'Shiraz',
     designation: 'South Australian Shiraz',
     classification: 'Iconic',
@@ -273,7 +379,7 @@ export const mockWines: IWines[] = [
     region: 'Tuscany',
     subRegion: 'Bolgheri',
     site: 'Masseto Vineyard',
-    type: mockWineTypes[0].red,
+    type: mockWineTypes[0],
     subType: 'Merlot',
     designation: 'Bolgheri DOC',
     classification: 'Iconic',
@@ -296,7 +402,7 @@ export const mockWines: IWines[] = [
     region: 'Champagne',
     subRegion: 'Reims',
     site: 'Multiple Crus',
-    type: mockWineTypes[0].sparkling,
+    type: mockWineTypes[3],
     subType: 'Prestige Cuvée',
     designation: 'AOC Champagne',
     classification: 'Prestige Cuvée',
@@ -310,9 +416,34 @@ export const mockWines: IWines[] = [
   },
 ]
 
-export const mockWinesResponse = {
+// Мок для ответа с пагинацией
+export const mockWinesResponse: WinesResponse = {
   rows: mockWines,
   totalCount: mockWines.length,
 }
 
-export { mockWineTypes }
+// Мок для фильтров
+export const mockWineFilters: WineFilters = {
+  limit: 10,
+  offset: 0,
+  search: '',
+}
+
+// Мок для подтверждения вина
+export const mockConfirmWineParams = {
+  id: '1',
+  isConfirmed: true,
+}
+
+// Мок для обновления вина
+export const mockUpdateWineParams = {
+  id: '1',
+  data: mockWines[0],
+}
+
+// Мок для импорта вина
+export const mockImportWineParams = {
+  file: new File([''], 'wines.csv', { type: 'text/csv' }),
+}
+
+export { mockWineTypes, mockWineImages }

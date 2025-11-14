@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useWineTaste } from './useWineTaste'
 import { sortColorsByBrightness } from '@/lib/utils'
 import { mockTastes } from '../entities/mock'
+import { CreateWineTasteParams } from '../entities/types/tastes'
 
 export const useTastePalette = () => {
   const tastes = mockTastes
@@ -9,7 +10,7 @@ export const useTastePalette = () => {
 
   const [isFormOpen, setIsFormOpen] = useState<{ [tasteId: string]: boolean }>({})
 
-  const handleAddTaste = (tasteData: { value: string; label: string; labelEn: string }) => {
+  const handleAddTaste = (tasteData: CreateWineTasteParams) => {
     createTaste(tasteData)
   }
 

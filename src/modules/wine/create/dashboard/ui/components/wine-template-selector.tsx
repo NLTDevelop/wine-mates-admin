@@ -42,7 +42,7 @@ export const WineTemplateSelector = ({ selectedTemplate, onTemplateSelect }: Win
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4  gap-4">
         {[...Array(6)].map((_, index) => (
           <Skeleton key={index} className="h-40 rounded-lg" />
         ))}
@@ -53,7 +53,7 @@ export const WineTemplateSelector = ({ selectedTemplate, onTemplateSelect }: Win
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={templates.map(t => t.type)} strategy={rectSortingStrategy}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4 ">
           {templates.map(template => (
             <SortableTemplateCard key={template.type} template={template} isSelected={selectedTemplate === template.type} onSelect={handleTemplateSelect} />
           ))}

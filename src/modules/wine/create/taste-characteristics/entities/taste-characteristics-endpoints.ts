@@ -19,4 +19,9 @@ export const TASTE_CHARACTERISTICS_ENDPOINTS = {
     LIST: '/taste-characteristics/:characteristicId/items',
     CREATE: '/taste-characteristics/:characteristicId/items',
   },
+
+  LEVELS: {
+    UPDATE_ORDER: '/taste-characteristics/:characteristicId/levels/order',
+    UPDATE_LEVEL: '/taste-characteristics/:characteristicId/levels/:levelId',
+  },
 } as const

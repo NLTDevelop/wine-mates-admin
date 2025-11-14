@@ -16,7 +16,7 @@ export const WineDetailHeader: React.FC<WineDetailHeaderProps> = ({ wine }) => {
   const images = wine.images || []
   const hasImages = images.length > 0
 
-  const color = wine.type ? wine.type?.color : '#ffffff'
+  const color = wine.type ? wine.type?.colors[0].value : '#ffffff'
   const { textColorClass } = useContrastText(color)
 
   return (
@@ -55,7 +55,7 @@ export const WineDetailHeader: React.FC<WineDetailHeaderProps> = ({ wine }) => {
 
         <div className="flex flex-wrap gap-2">
           {wine.type && (
-            <Badge className={textColorClass} style={{ backgroundColor: wine.type.color }}>
+            <Badge className={textColorClass} style={{ backgroundColor: wine.type.colors[0].value }}>
               {wine.type.label}
             </Badge>
           )}

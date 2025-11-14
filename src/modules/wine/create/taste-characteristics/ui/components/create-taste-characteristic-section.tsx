@@ -1,66 +1,33 @@
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { Card, CardContent, CardHeader } from '@/UIKit/shadcn/ui/card'
 import { Grape, Plus } from 'lucide-react'
-import { CreateWineTasteCharacteristicParams, LevelItem, WineTasteCharacteristics } from '../../entities/types/taste-characteristics'
 import { LevelManager } from '..'
+import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
+import { adaptFetchOptions } from '@/lib/utils'
+import { useWineOptionsMock } from '../../../general/presenters/useWineOptions'
+import { useCreateTasteCharacteristic } from '../../presenters/useCreateTasteCharacteristic'
 
 interface CreateTasteCharacteristicSectionProps {
-  onCreateCharacteristic: (dto: CreateWineTasteCharacteristicParams & { levels?: LevelItem[] }) => Promise<WineTasteCharacteristics | void>
+  onCreateCharacteristic: (dto: any) => Promise<any>
   isLoading?: boolean
-  characteristicLevels?: LevelItem[]
-  onCharacteristicLevelsChange?: (levels: LevelItem[]) => void
+  characteristicLevels?: any[]
+  onCharacteristicLevelsChange?: (levels: any[]) => void
 }
 
 export const CreateTasteCharacteristicSection = ({ onCreateCharacteristic, isLoading = false, characteristicLevels = [], onCharacteristicLevelsChange }: CreateTasteCharacteristicSectionProps) => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
+  const { fetchColors } = useWineOptionsMock()
 
-  const [isCreating, setIsCreating] = useState(false)
-  const [newCharacteristic, setNewCharacteristic] = useState({
-    label: '',
-    labelEn: '',
+  const { isCreating, newCharacteristic, colorValues, canCreate, handleStartCreating, handleCreate, handleCancel, updateCharacteristic, handleColorChange } = useCreateTasteCharacteristic({
+    onCreateCharacteristic,
+    isLoading,
+    characteristicLevels,
+    onCharacteristicLevelsChange,
+    fetchColors,
   })
-
-  const handleStartCreating = () => {
-    setIsCreating(true)
-
-    const initialLevels = Array.from({ length: 3 }, (_, index) => ({
-      id: `state-${Date.now()}-${index}`,
-      levelName: '',
-      order: index,
-    }))
-
-    if (onCharacteristicLevelsChange) {
-      onCharacteristicLevelsChange(initialLevels)
-    } else {
-      console.error('onCharacteristicLevelsChange is not defined!')
-    }
-  }
-
-  const handleCreate = async () => {
-    if (!newCharacteristic.label.trim()) {
-      return
-    }
-
-    try {
-      await onCreateCharacteristic({
-        label: newCharacteristic.label,
-        labelEn: newCharacteristic.labelEn,
-        levels: characteristicLevels.filter(state => state.levelName.trim() !== ''),
-      })
-      setNewCharacteristic({ label: '', labelEn: '' })
-      onCharacteristicLevelsChange?.([])
-      setIsCreating(false)
-    } catch (error) {
-      console.error('Failed to create characteristic:', error)
-    }
-  }
-
-  const canCreate =
-    newCharacteristic.label.trim().length > 0 && newCharacteristic.labelEn.trim().length > 0 && characteristicLevels.length > 0 && characteristicLevels.every(c => c.levelName.trim() !== '')
 
   if (!isCreating) {
     return (
@@ -87,33 +54,31 @@ export const CreateTasteCharacteristicSection = ({ onCreateCharacteristic, isLoa
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium mb-2 block">{t('taste_characteristics.characteristic_name_ua')} *</label>
-              <Input
-                value={newCharacteristic.label}
-                onChange={e => setNewCharacteristic(prev => ({ ...prev, label: e.target.value }))}
-                placeholder={t('taste_characteristics.characteristic_name_ua')}
-                autoFocus
-              />
+              <Input value={newCharacteristic.label} onChange={e => updateCharacteristic('label', e.target.value)} placeholder={t('taste_characteristics.characteristic_name_ua')} autoFocus />
             </div>
             <div>
               <label className="text-sm font-medium mb-2 block">{t('taste_characteristics.characteristic_name_en')}</label>
-              <Input
-                value={newCharacteristic.labelEn}
-                onChange={e => setNewCharacteristic(prev => ({ ...prev, labelEn: e.target.value }))}
-                placeholder={t('taste_characteristics.characteristic_name_en')}
-              />
+              <Input value={newCharacteristic.labelEn} onChange={e => updateCharacteristic('labelEn', e.target.value)} placeholder={t('taste_characteristics.characteristic_name_en')} />
             </div>
           </div>
 
+          <div className="space-y-2">
+            <label className="text-sm font-medium mb-2 block">{t('color_wine')} *</label>
+            <MultiSelect
+              value={colorValues}
+              onChange={handleColorChange}
+              placeholder={t('flavors.choose_color')}
+              searchLabel={t('flavors.search_color')}
+              fetchOptions={adaptFetchOptions(fetchColors)}
+              mode="multiple"
+              disabled={isLoading}
+            />
+          </div>
+
           <LevelManager states={characteristicLevels} onStatesChange={onCharacteristicLevelsChange || (() => {})} />
+
           <div className="flex justify-end gap-2 flex-col sm:flex-row">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setIsCreating(false)
-                setNewCharacteristic({ label: '', labelEn: '' })
-                onCharacteristicLevelsChange?.([])
-              }}
-            >
+            <Button variant="outline" onClick={handleCancel}>
               {tc('button.cancel')}
             </Button>
             <Button onClick={handleCreate} disabled={!canCreate || isLoading}>

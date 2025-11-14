@@ -12,12 +12,14 @@ import { WarningModal } from '@/modals/warningModal'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { File } from 'lucide-react'
 import { ConfirmModal } from '@/modals/confirmModal'
+import { ImportFileModal } from '@/modals/ImportFileModal'
 
 export const WineView = () => {
   const { t } = useTranslation('wines')
+  const { t: tc } = useTranslation('common')
   const navigate = useNavigate()
 
-  const { wines, filters, onChangeSearch, handleClearSearch, onChangePagination, deleteModal, searchValue, deleteWine, saveWineChanges, wineToConfirm, confirmModal } = useWineList()
+  const { wines, filters, onChangeSearch, handleClearSearch, onChangePagination, deleteModal, searchValue, deleteWine, saveWineChanges, wineToConfirm, confirmModal, importWines } = useWineList()
   const columns = useWineColumns({ onEdit: saveWineChanges, onDelete: deleteWine, onConfirm: confirmModal.open })
   const { table } = useDataTable(wines ?? [], columns)
 
@@ -33,7 +35,7 @@ export const WineView = () => {
   return (
     <ContentLayout title={t('list.wines_list')}>
       <div className="text-end">
-        <Button className="sm:w-auto w-full">
+        <Button className="sm:w-auto w-full" onClick={importWines.openModal}>
           <File className="w-4 h-4 " />
           {t('button.import')}
         </Button>
@@ -66,6 +68,15 @@ export const WineView = () => {
           <p>{modalMessage}</p>
         </div>
       </ConfirmModal>
+      <ImportFileModal
+        isOpen={importWines.isOpen}
+        onClose={importWines.closeModal}
+        onImport={importWines.import}
+        title={t('list.import_wines_list')}
+        importButtonText={tc('button.import')}
+        acceptedFileTypes={['text/csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/json']}
+        maxSizeMB={10}
+      />
     </ContentLayout>
   )
 }
