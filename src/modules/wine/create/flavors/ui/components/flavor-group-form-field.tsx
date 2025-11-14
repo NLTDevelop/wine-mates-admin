@@ -2,46 +2,26 @@ import { useTranslation } from 'react-i18next'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
 import { ColorPicker } from '@/UIKit/shadcn/ui/color-picker'
-import { adaptFetchOptions } from '@/lib/utils'
-import { useWineOptionsMock } from '../../../general/presenters/useWineOptions'
-import { useColorSelection } from '../../../general/presenters/useColorSelection'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { CreateWineAromaGroupParams } from '../../entities/types/flavor-types'
 import { BaseWineColor } from '../../../general/entities/types'
+import { useColorForm } from '../../../general/presenters/useColorForm'
 
 interface FlavorGroupFormFieldsProps {
   formData: Partial<CreateWineAromaGroupParams>
   onFormDataChange: (field: 'nameUa' | 'nameEn' | 'colors' | 'colorHex', value: string | BaseWineColor[]) => void
   isLoading?: boolean
   autoFocus?: boolean
+  cachedColors: BaseWineColor[]
 }
 
-export const FlavorGroupFormFields = ({ formData, onFormDataChange, isLoading = false, autoFocus = true }: FlavorGroupFormFieldsProps) => {
+export const FlavorGroupFormFields = ({ formData, onFormDataChange, isLoading = false, autoFocus = true, cachedColors }: FlavorGroupFormFieldsProps) => {
   const { t } = useTranslation('wines')
 
-  const { fetchColors } = useWineOptionsMock()
-
-  const stableFetchColors = useCallback(() => fetchColors(), [])
-
-  const { selectedColors, colorValues, handleColorChange } = useColorSelection({
-    fetchColors: stableFetchColors,
+  const { colorValues, handleColorChange, fetchOptions } = useColorForm({
+    cachedColors,
     initialColors: formData.colors || [],
+    onColorsChange: colors => onFormDataChange('colors', colors),
   })
-
-  const stableFetchOptions = useMemo(() => {
-    return adaptFetchOptions(stableFetchColors)
-  }, [stableFetchColors])
-
-  const prevSelectedColorsRef = useRef(selectedColors)
-
-  useEffect(() => {
-    const hasChanged = JSON.stringify(selectedColors) !== JSON.stringify(prevSelectedColorsRef.current)
-
-    if (hasChanged) {
-      onFormDataChange('colors', selectedColors)
-      prevSelectedColorsRef.current = selectedColors
-    }
-  }, [selectedColors, onFormDataChange])
 
   return (
     <div className="w-full">
@@ -71,7 +51,7 @@ export const FlavorGroupFormFields = ({ formData, onFormDataChange, isLoading = 
           onChange={handleColorChange}
           placeholder={t('flavors.choose_color')}
           searchLabel={t('flavors.search_color')}
-          fetchOptions={stableFetchOptions}
+          fetchOptions={fetchOptions}
           mode="multiple"
           disabled={isLoading}
         />

@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useTasteStore } from '../entities/wine-taste-store'
 import { tasteQueries } from '../entities/wine-taste-queries'
-import { CreateWineTasteParams, UpdateWineTasteParams, WineTaste } from '../entities/types/tastes'
+import { CreateWineTasteRequest, UpdateWineTasteParams, WineTaste } from '../entities/types/tastes'
 
 export const useWineTaste = () => {
   const queryClient = useQueryClient()
@@ -42,7 +42,7 @@ export const useWineTaste = () => {
     },
   })
 
-  const createTaste = (taste: CreateWineTasteParams) => {
+  const createTaste = (taste: CreateWineTasteRequest) => {
     return createTasteMutation.mutateAsync(taste)
   }
 

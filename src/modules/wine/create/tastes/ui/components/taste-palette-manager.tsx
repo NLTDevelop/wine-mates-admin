@@ -1,32 +1,63 @@
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
-import { CreateTasteSection } from '..'
-import { TasteCard } from './taste-card'
-import { useTastePalette } from '../../presenters/useTastePalette'
+import { PaletteItemActions } from '@/modules/wine/create/general/ui'
 
-export const TastePaletteManager = () => {
-  const { tastes, isLoading, isFormOpen, handleAddTaste, handleDeleteTaste, handleToggleForm, handleCancelEdit } = useTastePalette()
+import { BaseWineColor } from '../../../general/entities/types'
+import { useTastePalette } from '../../presenters/useTastePalette'
+import { CreateTasteSection } from './create-taste-section'
+import { TasteForm } from './taste-form'
+import { cn } from '@/lib/utils'
+
+interface TastePaletteManagerProps {
+  cachedColors: BaseWineColor[]
+  colorsLoading?: boolean
+}
+
+export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: TastePaletteManagerProps) => {
+  const { tastes, isLoading, isFormOpen, handleAddTaste, handleDeleteTaste, handleToggleForm, handleCancelEdit, formData, updateFormData, handleSaveTaste } = useTastePalette()
 
   return (
     <Card>
       <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
         <div>
-          <CreateTasteSection onCreateTaste={handleAddTaste} isLoading={isLoading} />
+          <CreateTasteSection onCreateTaste={handleAddTaste} isLoading={isLoading} cachedColors={cachedColors} />
         </div>
-        <div className="mx-auto flex flex-col justify-center gap-2 w-full  ">
-          <div className="flex gap-2 flex-col">
-            {tastes?.map(taste => (
-              <TasteCard
-                key={taste.id}
-                data={taste}
-                onRemove={handleDeleteTaste}
-                isLoading={isLoading}
-                isEditable={true}
-                onToggleForm={() => handleToggleForm(taste.id)}
-                isFormOpen={isFormOpen[taste.id] || false}
-                onCancel={() => handleCancelEdit(taste.id)}
-              />
-            ))}
-          </div>
+        <div className="mx-auto flex flex-col justify-center gap-2 w-full">
+          {tastes?.map(taste => {
+            const isEditing = isFormOpen[taste.id] || false
+            const currentFormData = formData[taste.id]
+
+            return (
+              <div key={taste.id} className={cn('border-1 border-input rounded-md transition-all cursor-default', isEditing && 'rounded-b-none')} style={{ backgroundColor: taste.value }}>
+                <div className="p-2">
+                  <div className="flex justify-between items-center w-full">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">
+                        {taste.nameUa} ({taste.nameEn})
+                      </span>
+                      {taste.colors?.map(color => (
+                        <div key={color.id} className="bg-muted px-2 py-1 rounded text-xs">
+                          {color.nameUa}
+                        </div>
+                      ))}
+                    </div>
+                    <PaletteItemActions isLoading={isLoading} onRemove={() => handleDeleteTaste(taste.id)} dataId={taste.id} onEdit={() => handleToggleForm(taste.id)} showEditButton={true} isHeader />
+                  </div>
+
+                  {isEditing && currentFormData && (
+                    <TasteForm
+                      formData={currentFormData}
+                      onFormDataChange={(field, value) => updateFormData(taste.id, field, value)}
+                      onSave={() => handleSaveTaste(taste.id)}
+                      onCancel={() => handleCancelEdit(taste.id)}
+                      cachedColors={cachedColors}
+                      isLoading={isLoading || colorsLoading}
+                      mode="edit"
+                    />
+                  )}
+                </div>
+              </div>
+            )
+          })}
         </div>
       </CardContent>
     </Card>

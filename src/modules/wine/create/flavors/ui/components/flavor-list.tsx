@@ -51,7 +51,7 @@ export const FlavorList: React.FC<FlavorListProps> = ({ items, isLoading = false
 
             <PaletteItemActions
               isLoading={isLoading}
-              onRemove={onRemove}
+              onRemove={() => onRemove(item.id)}
               dataId={item.id}
               cardTextColorClass={cardTextColorClass}
               onEdit={isEditable ? () => handleEditClick(item) : undefined}

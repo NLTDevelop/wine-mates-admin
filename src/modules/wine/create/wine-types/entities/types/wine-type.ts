@@ -2,20 +2,25 @@ import { BaseWineColor } from '../../../general/entities/types'
 
 export interface WineType {
   id: string
-  label: string
-  labelEn: string
+  nameUa: string
+  nameEn: string
   colors: BaseWineColor[]
 }
 
 export interface CreateWineTypeParams {
-  label?: string
-  labelEn?: string
-  colors?: BaseWineColor[]
+  nameUa: string
+  nameEn: string
+  colors: BaseWineColor[]
+}
+export interface CreateWineTypeRequest {
+  nameUa: string
+  nameEn: string
+  colorIds: string[]
 }
 
 export interface UpdateWineTypeParams {
   wineTypeId: string
-  newWineType: CreateWineTypeParams
+  newWineType: CreateWineTypeRequest
 }
 
 export interface WineOption {
@@ -31,38 +36,4 @@ export interface WineOption {
     category?: string
     [key: string]: any
   }
-}
-
-export interface WineCharacteristics {
-  sweetness: number
-  acidity: number
-  tanninLevel: number
-  tanninIntensity: number
-  alcohol: number
-  body: number
-  finish: number
-}
-
-export interface WineAging {
-  peakStart: number
-  peakEnd: number
-  potential?: number
-}
-
-export interface WineBasicInfo {
-  name: string
-  fullDescription: string
-  region: string
-  country: string
-  vintage: number
-  imageUrl: string
-  subtitle: string
-  wineType?: 'red' | 'white' | 'rose' | 'sparkling' | 'dessert'
-  grapeVarieties?: string[]
-}
-
-export interface TagsSection {
-  descriptors: string[]
-  intensity?: number
-  complexity?: number
 }

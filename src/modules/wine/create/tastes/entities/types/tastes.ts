@@ -2,20 +2,26 @@ import { BaseWineColor } from '../../../general/entities/types'
 
 export interface WineTaste {
   id: string
-  label: string
-  labelEn: string
+  nameUa: string
+  nameEn: string
   value: string
   colors: BaseWineColor[]
 }
 
 export interface CreateWineTasteParams {
-  label: string
-  labelEn: string
+  nameUa: string
+  nameEn: string
   value: string
   colors: BaseWineColor[]
+}
+export interface CreateWineTasteRequest {
+  nameUa: string
+  nameEn: string
+  value: string
+  colors: string[]
 }
 
 export interface UpdateWineTasteParams {
   tasteId: string
-  newTaste: CreateWineTasteParams
+  newTaste: CreateWineTasteRequest
 }

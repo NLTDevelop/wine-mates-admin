@@ -1,37 +1,25 @@
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { Input } from '@/UIKit/shadcn/ui/input'
 import { Card, CardContent, CardHeader } from '@/UIKit/shadcn/ui/card'
 import { Plus, Grape } from 'lucide-react'
 import { useCreateTaste } from '../../presenters/useCreateTaste'
-import { ColorPicker } from '@/UIKit/shadcn/ui/color-picker'
-import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
-import { adaptFetchOptions } from '@/lib/utils'
-import { useWineOptionsMock } from '../../../general/presenters/useWineOptions'
-import { useEffect } from 'react'
-import { useColorSelection } from '../../../general/presenters/useColorSelection'
-import { CreateWineTasteParams } from '../../entities/types/tastes'
+import { CreateWineTasteRequest } from '../../entities/types/tastes'
+import { BaseWineColor } from '../../../general/entities/types'
+import { TasteForm } from './taste-form'
 
 interface CreateTasteSectionProps {
-  onCreateTaste: (tasteData: CreateWineTasteParams) => void
+  onCreateTaste: (tasteData: CreateWineTasteRequest) => void
   isLoading?: boolean
+  cachedColors: BaseWineColor[]
 }
 
-export const CreateTasteSection = ({ onCreateTaste, isLoading = false }: CreateTasteSectionProps) => {
+export const CreateTasteSection = ({ onCreateTaste, isLoading = false, cachedColors }: CreateTasteSectionProps) => {
   const { t } = useTranslation('wines')
-  const { t: tc } = useTranslation('common')
 
-  const { isExpanded, formData, canCreateTaste, updateFormData, handleCreateTaste, handleCancel, expandForm } = useCreateTaste({
+  const { isExpanded, formData, updateFormData, handleCreateTaste, handleCancel, expandForm } = useCreateTaste({
     onCreateTaste,
     isLoading,
   })
-
-  const { fetchColors } = useWineOptionsMock()
-  const { selectedColors, colorValues, handleColorChange } = useColorSelection({ fetchColors, initialColors: formData.colors })
-
-  useEffect(() => {
-    updateFormData('colors', selectedColors)
-  }, [selectedColors])
 
   if (!isExpanded) {
     return (
@@ -54,47 +42,7 @@ export const CreateTasteSection = ({ onCreateTaste, isLoading = false }: CreateT
             {t('tastes.create_new_taste')}
           </h3>
         </CardHeader>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-          <div>
-            <label className="text-sm font-medium mb-2 block">{t('tastes.taste_name_ua')} *</label>
-            <Input value={formData.label} onChange={e => updateFormData('label', e.target.value)} placeholder={t('tastes.taste_name_ua')} className="w-full" autoFocus />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium mb-2 block">{t('tastes.taste_name_en')} *</label>
-            <Input value={formData.labelEn} onChange={e => updateFormData('labelEn', e.target.value)} placeholder={t('tastes.taste_name_en')} className="w-full" />
-          </div>
-        </div>
-        <div className="mb-4">
-          <label className="text-sm font-medium mb-2 block">{t('tastes.base_color')} *</label>
-          <div className="flex items-center gap-4">
-            <ColorPicker value={formData.value} onChange={color => updateFormData('value', color)} />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium mb-2 block">{t('color_wine')} *</label>
-          <MultiSelect
-            value={colorValues}
-            onChange={handleColorChange}
-            placeholder={t('flavors.choose_color')}
-            searchLabel={t('flavors.search_color')}
-            fetchOptions={adaptFetchOptions(fetchColors)}
-            mode="multiple"
-            disabled={isLoading}
-          />
-        </div>
-
-        <div className="flex justify-end gap-2 mt-6 flex-col sm:flex-row">
-          <Button onClick={handleCancel} variant="outline" disabled={isLoading}>
-            {tc('button.cancel')}
-          </Button>
-          <Button onClick={handleCreateTaste} disabled={!canCreateTaste || isLoading}>
-            <Plus className="w-4 h-4" />
-            {isLoading ? tc('button.saving') : tc('button.save')}
-          </Button>
-        </div>
+        <TasteForm mode="create" formData={formData} onFormDataChange={updateFormData} onSave={handleCreateTaste} onCancel={handleCancel} isLoading={isLoading} cachedColors={cachedColors} />
       </CardContent>
     </Card>
   )

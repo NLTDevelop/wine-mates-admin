@@ -81,7 +81,7 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
                 <span className={cn('text-xs opacity-70', cardTextColorClass)}>UA:</span>
 
                 <Input
-                  value={editValue.label}
+                  value={editValue.nameUa}
                   onChange={e => onEditValueChange('label', e.target.value)}
                   onKeyDown={handleInputKeyDown}
                   disabled={isSaving}
@@ -94,7 +94,7 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
               <div className="flex items-center gap-1 w-full md:w-auto justify-between">
                 <span className={cn('text-xs opacity-70', cardTextColorClass)}>EN:</span>
                 <Input
-                  value={editValue.labelEn}
+                  value={editValue.nameEn}
                   onChange={e => onEditValueChange('labelEn', e.target.value)}
                   onKeyDown={handleInputKeyDown}
                   disabled={isSaving}
@@ -163,10 +163,10 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
           {editValue.colors && editValue.colors.length > 0 && (
             <div className="flex gap-2 mt-2 sm:flex-row flex-col md:w-auto w-full">
               {editValue.colors.map(color => {
-                const { textColorClass } = useContrastText(color.value)
+                const { textColorClass } = useContrastText(color.colorHex)
                 return (
-                  <Badge className={cn('text-label text-[10px] p-1 h-4', textColorClass)} style={{ backgroundColor: color.value }} key={color.id}>
-                    {color.label}
+                  <Badge className={cn('text-label text-[10px] p-1 h-4', textColorClass)} style={{ backgroundColor: color.colorHex }} key={color.id}>
+                    {color.nameUa}
                   </Badge>
                 )
               })}

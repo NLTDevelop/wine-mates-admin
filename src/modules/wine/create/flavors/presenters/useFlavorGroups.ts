@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { CreateWineAromaGroupParams, WineAromaGroup } from '../entities/types/flavor-types'
+import { CreateWineAromaGroupParams, CreateWineAromaGroupRequest, WineAromaGroup } from '../entities/types/flavor-types'
 import { useWineFlavor } from './useWineFlavors'
 import { NewItemData } from '../entities/types/flavor-palette-types'
 
@@ -46,7 +46,6 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
         newSet.add(groupId)
         return newSet
       })
-
       const groupFormData = {
         nameUa: group.nameUa || '',
         nameEn: group.nameEn || '',
@@ -92,16 +91,16 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
 
       try {
         const currentGroupIndex = aromaGroups?.findIndex(g => g.id === groupId) ?? -1
-        const groupDataWithSortNumber = {
+        const newGroupData = {
           ...groupData,
+          colorIds: groupData.colors?.map(color => color.id) || [],
           sortNumber: currentGroupIndex >= 0 ? currentGroupIndex : aromaGroups?.length || 0,
         }
         await updateGroup({
           groupId,
-          newGroup: groupDataWithSortNumber as CreateWineAromaGroupParams,
+          newGroup: newGroupData as CreateWineAromaGroupRequest,
         })
         await refetchGroupsWithParams(['subgroups', 'assigned-colors'])
-
         setOpenAccordions((prev: Set<string>) => {
           const newSet = new Set(prev)
           newSet.delete(groupId)
@@ -160,7 +159,13 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
 
       if (!group || !currentData) return false
 
-      return group.nameUa !== currentData.nameUa || group.nameEn !== currentData.nameEn || group.colorHex !== currentData.colorHex || group.sortNumber !== currentData.sortNumber
+      return (
+        group.nameUa !== currentData.nameUa ||
+        group.nameEn !== currentData.nameEn ||
+        group.colorHex !== currentData.colorHex ||
+        group.sortNumber !== currentData.sortNumber ||
+        JSON.stringify(group.colors?.map(c => c.id)) !== JSON.stringify(currentData.colors?.map(c => c.id))
+      )
     },
     [aromaGroups, editingGroupData]
   )

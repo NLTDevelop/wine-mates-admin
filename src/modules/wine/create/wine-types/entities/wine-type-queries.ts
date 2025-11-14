@@ -1,15 +1,15 @@
 import { wineTypeService } from './wine-type-service'
-import { CreateWineTypeParams, UpdateWineTypeParams } from './types/wine-type'
+import { CreateWineTypeRequest, UpdateWineTypeParams } from './types/wine-type'
 
 export const wineTypeQueries = {
-  list: () => ({
-    queryKey: ['wine-types', 'list'],
-    queryFn: () => wineTypeService.list(),
+  list: (include?: string[]) => ({
+    queryKey: ['wine-types', 'list', ...(include || [])],
+    queryFn: () => wineTypeService.list(include),
   }),
 
   create: () => ({
     mutationKey: ['wine-types', 'create'],
-    mutationFn: (wineType: CreateWineTypeParams) => wineTypeService.create(wineType),
+    mutationFn: (wineType: CreateWineTypeRequest) => wineTypeService.create(wineType),
   }),
 
   update: () => ({

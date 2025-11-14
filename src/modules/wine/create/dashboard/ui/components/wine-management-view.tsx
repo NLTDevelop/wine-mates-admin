@@ -3,26 +3,30 @@ import { useTranslation } from 'react-i18next'
 import { ContentLayout } from '@/layout/components/content-layout'
 import { WineTemplateSelector } from '..'
 import { TastePaletteManager } from '../../../tastes/ui'
-import { ColorPaletteManager } from '../../../colors/ui'
+
 import { TasteCharacteristicsPaletteManager } from '../../../taste-characteristics/ui'
-import { WineTypeManager } from '../../../wine-types/ui'
 import { CreateWineForm } from '../../../wine/ui'
 import { FlavorPaletteManager } from '../../../flavors/ui'
+import { ColorPaletteManager } from '../../../colors/ui'
+import { WineTypeManager } from '../../../wine-types/ui/components/wine-type-manager'
+import { useCachedColors } from '../../../general/presenters/useCachedColors'
 
 export const WineManagementView = () => {
   const { t } = useTranslation('wines')
   const [selectedTemplate, setSelectedTemplate] = useState<string>('')
 
+  const { cachedColors, isLoading: colorsLoading } = useCachedColors()
+
   const renderContent = () => {
     switch (selectedTemplate) {
       case 'wine_type':
-        return <WineTypeManager />
+        return <WineTypeManager cachedColors={cachedColors} colorsLoading={colorsLoading} />
       case 'color_palette':
         return <ColorPaletteManager />
       case 'flavor_palette':
-        return <FlavorPaletteManager />
+        return <FlavorPaletteManager cachedColors={cachedColors} colorsLoading={colorsLoading} />
       case 'taste_palette':
-        return <TastePaletteManager />
+        return <TastePaletteManager cachedColors={cachedColors} colorsLoading={colorsLoading} />
       case 'taste_characteristics_palette':
         return <TasteCharacteristicsPaletteManager />
       case 'wine_creation':

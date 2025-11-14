@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react'
-import { CreateWineAromaGroupParams } from '../entities/types/flavor-types'
+import { CreateWineAromaGroupParams, CreateWineAromaGroupRequest } from '../entities/types/flavor-types'
 import { BaseWineColor } from '../../general/entities/types'
 
 interface UseCreateFlavorGroupProps {
-  onCreateGroup: (groupData: Partial<CreateWineAromaGroupParams>) => void
+  onCreateGroup: (groupData: CreateWineAromaGroupRequest) => void
   isLoading?: boolean
 }
 
@@ -33,7 +33,14 @@ export const useCreateFlavorGroup = ({ onCreateGroup }: UseCreateFlavorGroupProp
 
   const handleCreateGroup = () => {
     if (canCreateGroup) {
-      onCreateGroup(formData)
+      const groupDataForApi: CreateWineAromaGroupRequest = {
+        nameUa: formData.nameUa || '',
+        nameEn: formData.nameEn || '',
+        colorHex: formData.colorHex || '',
+        colorIds: formData.colors?.map(color => color.id) || [],
+      }
+
+      onCreateGroup(groupDataForApi)
       setFormData({ nameUa: '', nameEn: '', colorHex: '', colors: [] })
       setIsExpanded(false)
     }

@@ -1,41 +1,68 @@
 import { WineType } from './types/wine-type'
-
 export const mockColors = [
-  { id: 'white', label: 'Біле', labelEn: 'white', value: '#fdffd4' },
-  { id: 'red', label: 'Червоне', labelEn: 'red', value: '#7c060d' },
-  { id: 'orange', label: 'Помаранчеве', labelEn: 'orange', value: '#f99132' },
-  { id: 'pink', label: 'Рожеве', labelEn: 'pink', value: '#f7b5e6' },
+  {
+    id: 'white',
+    nameUa: 'Біле',
+    nameEn: 'white',
+    colorHex: '#fdffd4',
+    label: 'Біле',
+    value: 'white',
+  },
+  {
+    id: 'red',
+    nameUa: 'Червоне',
+    nameEn: 'red',
+    colorHex: '#7c060d',
+    label: 'Червоне',
+    value: 'red',
+  },
+  {
+    id: 'orange',
+    nameUa: 'Помаранчеве',
+    nameEn: 'orange',
+    colorHex: '#f99132',
+    label: 'Помаранчеве',
+    value: 'orange',
+  },
+  {
+    id: 'pink',
+    nameUa: 'Рожеве',
+    nameEn: 'pink',
+    colorHex: '#f7b5e6',
+    label: 'Рожеве',
+    value: 'pink',
+  },
 ]
 
 export const mockWineTypes: WineType[] = [
   {
     id: 'dry',
-    label: 'Сухе',
-    labelEn: 'Dry Wine',
-    colors: mockColors,
+    nameUa: 'Сухе',
+    nameEn: 'Dry Wine',
+    colors: [mockColors[0], mockColors[1]],
   },
   {
     id: 'semi-dry',
-    label: 'Полусухе вино',
-    labelEn: 'Semi-dry Wine',
-    colors: mockColors,
+    nameUa: 'Полусухе вино',
+    nameEn: 'Semi-dry Wine',
+    colors: [mockColors[1], mockColors[2]],
   },
   {
     id: 'sweet',
-    label: 'Солодке вино',
-    labelEn: 'Sweet Wine',
-    colors: mockColors,
+    nameUa: 'Солодке вино',
+    nameEn: 'Sweet Wine',
+    colors: [mockColors[2], mockColors[3]],
   },
   {
     id: 'sparkling',
-    label: 'Игристое вино',
-    labelEn: 'Sparkling Wine',
-    colors: mockColors,
+    nameUa: 'Игристое вино',
+    nameEn: 'Sparkling Wine',
+    colors: [mockColors[0], mockColors[3]],
   },
   {
     id: 'dessert',
-    label: 'Десертное вино',
-    labelEn: 'Dessert Wine',
+    nameUa: 'Десертное вино',
+    nameEn: 'Dessert Wine',
     colors: mockColors,
   },
 ]

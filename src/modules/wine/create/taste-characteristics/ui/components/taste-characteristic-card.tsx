@@ -8,7 +8,7 @@ import { LevelManager } from '..'
 import { useCallback } from 'react'
 import { useWineTasteCharacteristics } from '../../presenters/useWineTasteCharacteristics'
 import { BaseWineColor } from '../../../general/entities/types'
-import { useWineOptionsMock } from '../../../general/presenters/useWineOptions'
+import { useWineOptions } from '../../../general/presenters/useWineOptions'
 
 interface TasteCharacteristicCardProps {
   data: WineTasteCharacteristics
@@ -49,7 +49,7 @@ export const TasteCharacteristicCard = ({
   const { t: tc } = useTranslation('common')
 
   const { isReorderingCharacteristicLevels, updateCharacteristicLevels } = useWineTasteCharacteristics()
-  const { fetchColors } = useWineOptionsMock()
+  const { fetchColors } = useWineOptions()
 
   const { isEditing, editValue, isSaving, startEditing, handleSaveLabel, cancelEditing, handleKeyDown, setEditValue, updateCurrentLevels, colorValues, handleColorChange } = useEditTasteCharacteristic(
     {

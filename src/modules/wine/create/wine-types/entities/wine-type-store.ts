@@ -62,7 +62,7 @@ export const useWineTypeStore = createStoreDevToolsWrapper<WineTypeStoreState>(
     searchWineType: searchTerm =>
       set(
         (state: WineTypeStoreState) => ({
-          searchResults: state.wineTypes.filter(wt => wt.label.toLowerCase().includes(searchTerm.toLowerCase()) || wt.labelEn?.toLowerCase().includes(searchTerm.toLowerCase())),
+          searchResults: state.wineTypes.filter(wt => wt.nameUa.toLowerCase().includes(searchTerm.toLowerCase()) || wt.nameEn?.toLowerCase().includes(searchTerm.toLowerCase())),
         }),
         false,
         'wineTypes/searchWineTypes'

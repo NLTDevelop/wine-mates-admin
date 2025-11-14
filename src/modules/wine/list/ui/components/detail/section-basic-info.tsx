@@ -10,7 +10,7 @@ export const BasicInfoSection: React.FC<{ wine: IWines }> = ({ wine }) => {
   const fields = [
     { label: t('table.producertitle'), value: wine.producerTitle },
     { label: t('table.wine'), value: wine.wine },
-    { label: t('table.type'), value: wine.type?.label },
+    { label: t('table.type'), value: wine.type?.nameUa },
     { label: t('table.subtype'), value: wine.subType },
   ].filter(field => field.value)
 
