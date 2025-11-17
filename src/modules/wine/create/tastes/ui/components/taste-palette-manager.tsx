@@ -30,15 +30,17 @@ export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: Tas
               <div key={taste.id} className={cn('border-1 border-input rounded-md transition-all cursor-default', isEditing && 'rounded-b-none')} style={{ backgroundColor: taste.value }}>
                 <div className="p-2">
                   <div className="flex justify-between items-center w-full">
-                    <div className="flex items-center gap-2">
+                    <div className="flex gap-2 sm:flex-row flex-col sm:w-auto w-full">
                       <span className="font-medium">
                         {taste.nameUa} ({taste.nameEn})
                       </span>
-                      {taste.colors?.map(color => (
-                        <div key={color.id} className="bg-muted px-2 py-1 rounded text-xs">
-                          {color.nameUa}
-                        </div>
-                      ))}
+                      <div className='flex sm:gap-2 gap-1 sm:flex-row flex-col sm:w-auto w-full'>
+                        {taste.colors?.map(color => (
+                          <div key={color.id} className="bg-muted px-2 py-1 rounded text-xs" >
+                            {color.nameUa}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                     <PaletteItemActions isLoading={isLoading} onRemove={() => handleDeleteTaste(taste.id)} dataId={taste.id} onEdit={() => handleToggleForm(taste.id)} showEditButton={true} isHeader />
                   </div>

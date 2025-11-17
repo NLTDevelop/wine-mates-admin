@@ -1,11 +1,16 @@
+import { FiltersParams } from '@/lib/client-pagination'
 import { CreateWineAromaGroupParams, CreateWineAromaSubgroupParams, UpdateWineAromaGroupParams, UpdateWineAromaSubgroupParams } from './types/flavor-types'
 import { wineFlavorService } from './wine-flavor-service'
 
 export const wineFlavorQueries = {
-  listGroups: (include?: string[]) => ({
-    queryKey: ['aroma-groups', 'list', ...(include || [])],
-    queryFn: () => wineFlavorService.listGroups(include),
-  }),
+   listGroups: (filters: FiltersParams = {}) => ({
+     queryKey: ['aroma-groups', 'list', filters],
+     queryFn: () => wineFlavorService.listGroups(filters),
+   }),
+  // listGroups: (include?: string[]) => ({
+  //   queryKey: ['aroma-groups', 'list', ...(include || [])],
+  //   queryFn: () => wineFlavorService.listGroups(include),
+  // }),
 
   createGroup: () => ({
     mutationKey: ['aroma-groups', 'create'],
@@ -24,7 +29,8 @@ export const wineFlavorQueries = {
 
   createSubgroup: () => ({
     mutationKey: ['aroma-subgroups', 'create'],
-    mutationFn: (subgroup: CreateWineAromaSubgroupParams) => wineFlavorService.createSubgroup(subgroup),
+    mutationFn: ({ subgroupData }: { groupId: string; subgroupData: CreateWineAromaSubgroupParams }) => 
+      wineFlavorService.createSubgroup(subgroupData),
   }),
 
   updateSubgroup: () => ({

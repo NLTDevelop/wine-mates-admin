@@ -66,7 +66,7 @@ export const useWineColor = () => {
 
         if (currentData) {
           const updatedData = {
-            rows: currentData.rows.map(wt => (wt.id === context.optimisticGroup.id ? groupWithShades : wt)),
+            rows: currentData.rows.map(cg => (cg.id === context.optimisticGroup.id ? groupWithShades : cg)),
             count: currentData.count,
           }
 
@@ -122,7 +122,7 @@ export const useWineColor = () => {
         }
 
         queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], (old: DataResponse<WineColorGroup> = { rows: [], count: 0 }) => ({
-          rows: old.rows?.map((wt: WineColorGroup) => (wt.id === updatedGroup.id ? wineTypeWithColors : wt)) || [],
+          rows: old.rows?.map((cg: WineColorGroup) => (cg.id === updatedGroup.id ? wineTypeWithColors : cg)) || [],
           count: old.count,
         }))
       }

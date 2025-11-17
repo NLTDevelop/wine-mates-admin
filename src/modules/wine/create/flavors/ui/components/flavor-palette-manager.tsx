@@ -13,6 +13,9 @@ import { AromasManager, FlavorForm, FlavorGroupFormFields } from '..'
 import { useFlavorPalette } from '../../presenters/useFlavorPalette'
 import { BaseWineColor } from '../../../general/entities/types'
 import { WineAromaGroup } from '../../entities/types/flavor-types'
+import { SkeletonWinePalette } from '../../../general/ui/components/skeleton-wine-palette'
+import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
+import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
 
 interface FlavorPaletteManagerProps {
   cachedColors: BaseWineColor[]
@@ -23,8 +26,24 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
-  const { aromaGroups, isLoading, editingGroup, newItemData, editingGroupData, forceOpenKeys, setOpenAccordions, setEditingGroup, setNewItemData, setEditingGroupData, groups, items, ui } =
-    useFlavorPalette()
+  const {
+    aromaGroups,
+    isLoading,
+    editingGroup,
+    newItemData,
+    editingGroupData,
+    forceOpenKeys,
+    setOpenAccordions,
+    setEditingGroup,
+    setNewItemData,
+    setEditingGroupData,
+    groups,
+    items,
+    ui,
+    totalCount,
+    filters,
+    onChangePagination,
+  } = useFlavorPalette()
 
   const isEditable = true
 
@@ -34,6 +53,17 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
     setNewItemData,
     setEditingGroupData,
   }
+
+  if (isLoading && aromaGroups?.rows?.length === 0) {
+    return (
+      <Card>
+        <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
+          <SkeletonWinePalette />
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Card>
       <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
@@ -41,7 +71,7 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
           <CreateFlavorGroupSection onCreateGroup={groups.handleAddGroup} isLoading={isLoading} cachedColors={cachedColors} />
         </div>
         <div className="mx-auto flex flex-col justify-center gap-2 w-full">
-          {aromaGroups?.map((group: WineAromaGroup) => {
+          {aromaGroups?.rows?.map((group: WineAromaGroup) => {
             const { textColorClass: cardTextColorClass } = useContrastText(group.colorHex)
 
             const isGroupOpen = ui.isAccordionOpen(group.id)
@@ -71,7 +101,7 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
                           {group.nameUa} ({group.nameEn})
                         </span>
                         {group?.colors?.map((c: BaseWineColor) => (
-                          <div className="bg-amber-50 px-2 rounded-md">
+                          <div key={c.id} className="bg-amber-50 px-2 rounded-md">
                             <span className=" text-sm text-foreground">{c.nameUa}</span>
                           </div>
                         ))}
@@ -201,6 +231,7 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
           })}
         </div>
       </CardContent>
+      {totalCount > DEFAULT_PAGINATION_LIMIT && <NLTTablePagination limit={filters.limit} offset={filters.offset} totalRows={aromaGroups?.count || 0} setOffset={onChangePagination} />}
     </Card>
   )
 }

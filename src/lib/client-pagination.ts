@@ -59,3 +59,9 @@ export const applyColorPagination = (data: any[], filters: FiltersParams = {}) =
     searchFields: ['nameUa', 'nameEn', 'colorHex'], 
   })
 }
+export const applyAromaPagination = (data: any[], filters: FiltersParams = {}) => {
+  return applyClientPagination(data, {
+    ...filters,
+    searchFields: ['nameUa', 'nameEn', 'colorHex'], 
+  })
+}

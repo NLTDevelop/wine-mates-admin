@@ -5,7 +5,7 @@ import { useFlavorUI } from './useFlavorUI'
 import { useWineFlavor } from './useWineFlavors'
 
 export const useFlavorPalette = () => {
-  const { aromaGroups, isLoading: wineFlavorLoading, isCreatingGroup } = useWineFlavor()
+  const { aromaGroups, isLoading: wineFlavorLoading, isCreatingGroup, totalCount, filters, onChangePagination } = useWineFlavor()
 
   const {
     state: { openAccordions, editingGroup, newItemData, editingGroupData, forceOpenKeys },
@@ -65,5 +65,9 @@ export const useFlavorPalette = () => {
     items,
 
     ui,
+
+    totalCount,
+    filters,
+    onChangePagination,
   }
 }

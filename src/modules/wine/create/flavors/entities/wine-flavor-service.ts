@@ -2,14 +2,34 @@ import { api } from '@/services'
 import { buildUrl } from '@/lib/utils'
 import { AROMA_CRUD_ENDPOINTS } from './wine-flavor-endpoints'
 import { CreateWineAromaGroupParams, CreateWineAromaSubgroupParams, UpdateWineAromaGroupParams, UpdateWineAromaSubgroupParams, WineAromaGroup, WineAromaSubgroup } from './types/flavor-types'
+import { applyAromaPagination, FiltersParams } from '@/lib/client-pagination'
+import { DataResponse } from '../../general/entities/types'
 
 export const wineFlavorService = {
-  listGroups: (include?: string[]) =>
-    api
-      .get(AROMA_CRUD_ENDPOINTS.GROUP.LIST, {
-        params: include && include.length > 0 ? { include } : {},
+  // listGroups: (include?: string[]) =>
+  //   api
+  //     .get(AROMA_CRUD_ENDPOINTS.GROUP.LIST, {
+  //       params: include && include.length > 0 ? { include } : {},
+  //     })
+  //     .then(response => response.data),
+
+    listGroups: (filters: FiltersParams = {}): Promise<DataResponse<WineAromaGroup>> => {
+      const params: any = {}
+  
+      if (filters.include && filters.include.length > 0) {
+        params.include = filters.include
+      }
+  
+      return api.get(AROMA_CRUD_ENDPOINTS.GROUP.LIST, { params }).then(response => {
+        const data = response.data
+  
+        if (Array.isArray(data)) {
+          return applyAromaPagination(data, filters)
+        }
+  
+        return data
       })
-      .then(response => response.data),
+    },
 
   createGroup: (group: CreateWineAromaGroupParams): Promise<WineAromaGroup> => api.post(AROMA_CRUD_ENDPOINTS.GROUP.CREATE, group).then(response => response.data),
 

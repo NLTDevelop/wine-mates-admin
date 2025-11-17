@@ -14,6 +14,8 @@ import { useColorPalette } from '../../presenters/useColorPalette'
 import { ColorGroupFormFields } from './color-group-form-fields'
 import { ColorForm } from './color-form'
 import { SkeletonWinePalette } from '../../../general/ui/components/skeleton-wine-palette'
+import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
+import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
 
 export const ColorPaletteManager = () => {
   const { t } = useTranslation('wines')
@@ -205,6 +207,7 @@ export const ColorPaletteManager = () => {
           })}
         </div>
       </CardContent>
+      {totalCount>DEFAULT_PAGINATION_LIMIT &&  <NLTTablePagination limit={filters.limit} offset={filters.offset} totalRows={colorGroups?.length || 0} setOffset={onChangePagination} />}
     </Card>
   )
 }

@@ -1,10 +1,16 @@
 import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
 import { WineAromaGroup, WineAromaItem, WineAromaSubgroup } from './types/flavor-types'
+import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 
 interface WineFlavorStoreState {
   aromaGroups: WineAromaGroup[]
   searchResults: WineAromaGroup[]
   currentAromaGroup: WineAromaGroup | null
+  filters: {
+    search: string
+    limit: number
+    offset: number
+  }
 
   setAromaGroups: (groups: WineAromaGroup[]) => void
   setCurrentAromaGroup: (group: WineAromaGroup | null) => void
@@ -13,6 +19,8 @@ interface WineFlavorStoreState {
   deleteAromaGroup: (groupId: string) => void
   searchAromaGroups: (searchTerm: string) => void
   clearSearch: () => void
+  setFilters: (filters: Partial<WineFlavorStoreState['filters']>) => void
+  resetFilters: () => void
 
   addSubgroup: (groupId: string, subgroup: WineAromaSubgroup) => void
   updateSubgroup: (groupId: string, subgroupId: string, newSubgroup: WineAromaSubgroup) => void
@@ -29,6 +37,11 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
     aromaGroups: [],
     searchResults: [],
     currentAromaGroup: null,
+    filters: {
+      search: '',
+      limit: DEFAULT_PAGINATION_LIMIT,
+      offset: 0,
+    },
 
     setAromaGroups: groups => set({ aromaGroups: groups }, false, 'aromaGroups/setAromaGroups'),
 
@@ -82,6 +95,28 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
         }),
         false,
         'aromaGroups/searchAromaGroups'
+      ),
+
+    setFilters: newFilters =>
+      set(
+        (state: WineFlavorStoreState) => ({
+          filters: { ...state.filters, ...newFilters },
+        }),
+        false,
+        'wineTypes/setFilters'
+      ),
+
+    resetFilters: () =>
+      set(
+        {
+          filters: {
+            search: '',
+            limit: DEFAULT_PAGINATION_LIMIT,
+            offset: 0,
+          },
+        },
+        false,
+        'wineTypes/resetFilters'
       ),
 
     clearSearch: () => set({ searchResults: [] }, false, 'aromaGroups/clearSearch'),
