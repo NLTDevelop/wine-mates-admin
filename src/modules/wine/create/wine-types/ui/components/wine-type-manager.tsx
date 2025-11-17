@@ -4,6 +4,8 @@ import { useWineTypePalette } from '../../presenters/useWineTypePalette'
 import { CreateWineTypeSection, WineTypeForm } from '..'
 import { BaseWineColor } from '../../../general/entities/types'
 import { cn } from '@/lib/utils'
+import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
+import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 
 interface WineTypeManagerProps {
   cachedColors: BaseWineColor[]
@@ -11,8 +13,22 @@ interface WineTypeManagerProps {
 }
 
 export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTypeManagerProps) => {
-  const { wineTypes, isLoading, isFormOpen, handleAddWineType, handleDeleteWineType, handleToggleForm, handleCancelEdit, formData, updateFormData, handleSaveWineType, hasChanges } =
-    useWineTypePalette(cachedColors)
+  const {
+    wineTypes,
+    isLoading,
+    isFormOpen,
+    handleAddWineType,
+    handleDeleteWineType,
+    handleToggleForm,
+    handleCancelEdit,
+    formData,
+    updateFormData,
+    handleSaveWineType,
+    hasChanges,
+    totalCount,
+    filters,
+    onChangePagination,
+  } = useWineTypePalette(cachedColors)
 
   return (
     <Card>
@@ -75,6 +91,7 @@ export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTyp
           })}
         </div>
       </CardContent>
+      {totalCount > DEFAULT_PAGINATION_LIMIT && <NLTTablePagination limit={filters.limit} offset={filters.offset} totalRows={totalCount || 0} setOffset={onChangePagination} />}
     </Card>
   )
 }

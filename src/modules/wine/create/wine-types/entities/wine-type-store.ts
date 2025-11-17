@@ -1,10 +1,16 @@
 import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
 import { WineType } from './types/wine-type'
+import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 
 interface WineTypeStoreState {
   wineTypes: WineType[]
   searchResults: WineType[]
   currentWineType: WineType | null
+  filters: {
+    search: string
+    limit: number
+    offset: number
+  }
 
   setWineTypes: (wineTypes: WineType[]) => void
   setCurrentWineType: (wineType: WineType | null) => void
@@ -13,6 +19,8 @@ interface WineTypeStoreState {
   deleteWineType: (wineTypeValue: string) => void
   searchWineType: (searchTerm: string) => void
   clearSearch: () => void
+  setFilters: (filters: Partial<WineTypeStoreState['filters']>) => void
+  resetFilters: () => void
 
   getWineTypeById: (value: string) => WineType | undefined
   hasWineType: (value: string) => boolean
@@ -23,7 +31,11 @@ export const useWineTypeStore = createStoreDevToolsWrapper<WineTypeStoreState>(
     wineTypes: [],
     searchResults: [],
     currentWineType: null,
-
+    filters: {
+      search: '',
+      limit: DEFAULT_PAGINATION_LIMIT,
+      offset: 0,
+    },
     setWineTypes: wineTypes => set({ wineTypes }, false, 'wineTypes/setWineTypes'),
 
     setCurrentWineType: wineType => set({ currentWineType: wineType }, false, 'wineTypes/setCurrentWineType'),
@@ -69,6 +81,28 @@ export const useWineTypeStore = createStoreDevToolsWrapper<WineTypeStoreState>(
       ),
 
     clearSearch: () => set({ searchResults: [] }, false, 'wineTypes/clearSearch'),
+
+    setFilters: newFilters =>
+      set(
+        (state: WineTypeStoreState) => ({
+          filters: { ...state.filters, ...newFilters },
+        }),
+        false,
+        'wineTypes/setFilters'
+      ),
+
+    resetFilters: () =>
+      set(
+        {
+          filters: {
+            search: '',
+            limit: DEFAULT_PAGINATION_LIMIT,
+            offset: 0,
+          },
+        },
+        false,
+        'wineTypes/resetFilters'
+      ),
 
     getWineTypeById: id => {
       return get().wineTypes.find((wt: WineType) => wt.id === id)

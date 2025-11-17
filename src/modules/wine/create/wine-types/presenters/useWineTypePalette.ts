@@ -4,7 +4,8 @@ import { CreateWineTypeParams, CreateWineTypeRequest, UpdateWineTypeParams } fro
 import { BaseWineColor } from '../../general/entities/types'
 
 export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
-  const { wineTypes, isLoading, isCreating, isUpdating, isDeleting, createWineType, updateWineType, deleteWineType, refetchTastesWithParams } = useWineTypes(cachedColors)
+  const { wineTypes, isLoading, isCreating, isUpdating, isDeleting, createWineType, updateWineType, deleteWineType, refetchTastesWithParams, totalCount, filters, onChangePagination } =
+    useWineTypes(cachedColors)
 
   const [isFormOpen, setIsFormOpen] = useState<Record<string, boolean>>({})
   const [formData, setFormData] = useState<Record<string, CreateWineTypeParams>>({})
@@ -92,7 +93,7 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
           newWineType: updateData,
         }
         await updateWineType(updateParams)
-        await refetchTastesWithParams(['assigned-colors'])
+        await refetchTastesWithParams({ include: ['assigned-colors'] })
         setIsFormOpen(prev => ({
           ...prev,
           [wineTypeId]: false,
@@ -127,6 +128,8 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
 
   return {
     wineTypes,
+    totalCount,
+    filters,
     isLoading: isLoadingState,
     isCreating,
     isUpdating,
@@ -140,5 +143,6 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
     handleSaveWineType,
     handleCancelEdit,
     handleDeleteWineType,
+    onChangePagination,
   }
 }
