@@ -13,13 +13,30 @@ import { CreateShadesParams, WineColorGroup } from '../../entities/types/color-t
 import { useColorPalette } from '../../presenters/useColorPalette'
 import { ColorGroupFormFields } from './color-group-form-fields'
 import { ColorForm } from './color-form'
+import { SkeletonWinePalette } from '../../../general/ui/components/skeleton-wine-palette'
 
 export const ColorPaletteManager = () => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
-  const { colorGroups, isLoading, editingGroup, newItemData, editingGroupData, forceOpenKeys, setOpenAccordions, setEditingGroup, setNewItemData, setEditingGroupData, groups, items, ui } =
-    useColorPalette()
+  const {
+    colorGroups,
+    isLoading,
+    editingGroup,
+    newItemData,
+    editingGroupData,
+    forceOpenKeys,
+    setOpenAccordions,
+    setEditingGroup,
+    setNewItemData,
+    setEditingGroupData,
+    groups,
+    items,
+    ui,
+    totalCount,
+    filters,
+    onChangePagination,
+  } = useColorPalette()
 
   const isEditable = true
 
@@ -28,6 +45,16 @@ export const ColorPaletteManager = () => {
     setEditingGroup,
     setNewItemData,
     setEditingGroupData,
+  }
+
+  if (isLoading && colorGroups.length === 0) {
+    return (
+      <Card>
+        <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
+          <SkeletonWinePalette />
+        </CardContent>
+      </Card>
+    )
   }
 
   return (

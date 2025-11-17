@@ -1,10 +1,11 @@
 import { CreateShadesParams, CreateWineColorParams, UpdateWineColorParams } from './types/color-types'
 import { colorService } from './color-service'
+import { FiltersParams } from '../../general/entities/types';
 
 export const wineColorQueries = {
-  listGroups: (include?: string[]) => ({
-    queryKey: ['color-groups', 'list', ...(include || [])],
-    queryFn: () => colorService.list(include),
+  listGroups: (filters: FiltersParams = {}) => ({
+    queryKey: ['color-groups', 'list', filters],
+    queryFn: () => colorService.list(filters),
   }),
 
   createGroup: () => ({

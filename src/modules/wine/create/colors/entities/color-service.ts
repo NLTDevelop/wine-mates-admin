@@ -2,15 +2,27 @@ import { api } from '@/services'
 import { buildUrl } from '@/lib/utils'
 import { COLOR_CRUD_ENDPOINTS } from './colors-endpoints'
 import { CreateShadesParams, CreateWineColorParams, UpdateWineColorParams, WineColorGroup } from './types/color-types'
+import { applyColorPagination, FiltersParams } from '@/lib/client-pagination'
+import { DataResponse } from '../../general/entities/types'
 
 export const colorService = {
-  list: (include?: string[]): Promise<WineColorGroup[]> => {
+
+  list: (filters: FiltersParams = {}): Promise<DataResponse<WineColorGroup>> => {
     const params: any = {}
-    if (include && include.length > 0) {
-      params.include = include.join(',')
+
+    if (filters.include && filters.include.length > 0) {
+      params.include = filters.include
     }
 
-    return api.get(COLOR_CRUD_ENDPOINTS.COLORS.LIST, { params }).then(response => response.data)
+    return api.get(COLOR_CRUD_ENDPOINTS.COLORS.LIST, { params }).then(response => {
+      const data = response.data
+
+      if (Array.isArray(data)) {
+        return applyColorPagination(data, filters)
+      }
+
+      return data
+    })
   },
 
   create: (group: CreateWineColorParams): Promise<WineColorGroup> => {

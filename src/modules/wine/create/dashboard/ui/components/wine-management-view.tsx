@@ -15,7 +15,14 @@ export const WineManagementView = () => {
   const { t } = useTranslation('wines')
   const [selectedTemplate, setSelectedTemplate] = useState<string>('')
 
-  const { cachedColors, isLoading: colorsLoading } = useCachedColors()
+  const { cachedColors, isLoading: colorsLoading,refreshColors } = useCachedColors()
+
+    const handleTemplateSelect = async (template: string) => {
+    if (template === 'wine_type') {
+      await refreshColors() 
+    }
+    setSelectedTemplate(template)
+  }
 
   const renderContent = () => {
     switch (selectedTemplate) {
@@ -32,7 +39,7 @@ export const WineManagementView = () => {
       case 'wine_creation':
         return <CreateWineForm wineTypes={[]} />
       default:
-        return <WineTemplateSelector selectedTemplate={selectedTemplate} onTemplateSelect={setSelectedTemplate} />
+        return <WineTemplateSelector selectedTemplate={selectedTemplate} onTemplateSelect={handleTemplateSelect} />
     }
   }
   const renderTitle = () => {

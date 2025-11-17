@@ -1,24 +1,26 @@
-import { useState, useEffect } from 'react'
 import { useWineOptions } from './useWineOptions'
-import { BaseWineColor } from '../entities/types'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCallback } from 'react'
 
 export const useCachedColors = () => {
   const { fetchColors } = useWineOptions()
-  const [cachedColors, setCachedColors] = useState<BaseWineColor[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const queryClient = useQueryClient()
 
-  useEffect(() => {
-    const loadColors = async () => {
-      setIsLoading(true)
-      try {
-        const colors = await fetchColors()
-        setCachedColors(colors)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    loadColors()
-  }, [fetchColors])
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ['wine-colors'],
+    queryFn: () => fetchColors(),
+    staleTime: 2 * 60 * 1000,
+  })
 
-  return { cachedColors, isLoading }
+  const refreshColors = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['wine-colors'] })
+  }, [queryClient])
+
+  return {
+    cachedColors: data || [],
+    isLoading,
+    isError,
+    error,
+    refreshColors,
+  }
 }

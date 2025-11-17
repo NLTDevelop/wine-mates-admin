@@ -6,7 +6,6 @@ import { queryClient } from '@/lib/react-query'
 
 export const useFeatures = () => {
   const setFeatures = useFeatureStore(state => state.setFeatures)
-  const setFeatureToggle = useFeatureStore(state => state.setFeatureToggle)
 
   const featuresQuery: UseQueryResult<Feature[], Error> = useQuery(featureQueries.list())
 
@@ -14,32 +13,44 @@ export const useFeatures = () => {
     setFeatures(featuresQuery.data)
   }
 
-  const updateToggleMutation = useMutation(featureQueries.updateToggle())
+  const updateToggleMutation = useMutation({
+    ...featureQueries.updateToggle(),
+    onMutate: async ({ key, isEnabled }: { key: Feature['key']; isEnabled: boolean }) => {
+      await queryClient.cancelQueries({ queryKey: ['features', 'list'] })
+
+      const previousFeatures = queryClient.getQueryData<Feature[]>(['features', 'list'])
+
+      const updatedFeatures = previousFeatures?.map(feature => (feature.key === key ? { ...feature, isEnabled } : feature)) || []
+
+      queryClient.setQueryData<Feature[]>(['features', 'list'], updatedFeatures)
+
+      return { previousFeatures }
+    },
+    onError: (_, __, context) => {
+      if (context?.previousFeatures) {
+        queryClient.setQueryData<Feature[]>(['features', 'list'], context.previousFeatures)
+      }
+    },
+    onSuccess: (data, variables) => {
+      const currentFeatures = queryClient.getQueryData<Feature[]>(['features', 'list'])
+      const updatedFeature = currentFeatures?.find(f => f.key === variables.key)
+
+      if (updatedFeature) {
+        const serverSyncedFeature: Feature = {
+          ...updatedFeature,
+          ...data,
+        }
+
+        queryClient.setQueryData<Feature[]>(['features', 'list'], features => features?.map(f => (f.key === variables.key ? serverSyncedFeature : f)))
+      }
+    },
+    onSettled: () => {
+      queryClient.getQueryData<Feature[]>(['features', 'list'])
+    },
+  })
 
   const onToggle = async (key: Feature['key'], isEnabled: boolean) => {
     await updateToggleMutation.mutateAsync({ key, isEnabled })
-
-    const oldFeatures = queryClient.getQueryData<Feature[]>(['features', 'list'])
-
-    const oldFeature = oldFeatures?.find(f => f.key === key)
-
-    if (oldFeature) {
-      const updatedFeature: Feature = {
-        ...oldFeature,
-        key: key,
-        isEnabled: isEnabled,
-      }
-
-      queryClient.setQueryData<Feature[]>(['features', 'list'], features => {
-        if (!features) return [updatedFeature]
-        return features.map(f => (f.key === updatedFeature.key ? updatedFeature : f))
-      })
-
-      setFeatureToggle(updatedFeature.key, updatedFeature.isEnabled)
-    } else {
-      console.error(`Feature with key ${key} not found in query cache.`)
-      queryClient.invalidateQueries({ queryKey: ['features', 'list'] })
-    }
   }
 
   return {

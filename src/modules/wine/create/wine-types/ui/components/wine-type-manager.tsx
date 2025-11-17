@@ -4,8 +4,7 @@ import { useWineTypePalette } from '../../presenters/useWineTypePalette'
 import { CreateWineTypeSection, WineTypeForm } from '..'
 import { BaseWineColor } from '../../../general/entities/types'
 import { cn } from '@/lib/utils'
-import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
-import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
+import { SkeletonWinePalette } from '../../../general/ui/components/skeleton-wine-palette'
 
 interface WineTypeManagerProps {
   cachedColors: BaseWineColor[]
@@ -25,10 +24,17 @@ export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTyp
     updateFormData,
     handleSaveWineType,
     hasChanges,
-    totalCount,
-    filters,
-    onChangePagination,
   } = useWineTypePalette(cachedColors)
+
+  if (isLoading && wineTypes.length === 0) {
+    return (
+      <Card>
+        <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
+          <SkeletonWinePalette />
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <Card>
@@ -40,7 +46,6 @@ export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTyp
           {wineTypes?.map(wineType => {
             const isEditing = isFormOpen[wineType.id] || false
             const currentFormData = formData[wineType.id]
-
             return (
               <div
                 key={wineType.id}
@@ -56,7 +61,7 @@ export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTyp
                         <span className="font-medium">
                           {wineType.nameUa} ({wineType.nameEn})
                         </span>
-                        {wineType.colors?.map(color => (
+                        {wineType.colors?.map((color: BaseWineColor) => (
                           <div key={color.id} className="bg-muted px-2 py-1 rounded text-xs">
                             {color.nameUa}
                           </div>
@@ -91,7 +96,6 @@ export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTyp
           })}
         </div>
       </CardContent>
-      {totalCount > DEFAULT_PAGINATION_LIMIT && <NLTTablePagination limit={filters.limit} offset={filters.offset} totalRows={totalCount || 0} setOffset={onChangePagination} />}
     </Card>
   )
 }

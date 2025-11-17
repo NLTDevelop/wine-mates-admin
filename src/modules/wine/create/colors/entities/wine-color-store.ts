@@ -1,10 +1,16 @@
 import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
 import { WineColorGroup, WineShades } from './types/color-types'
+import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 
 interface WineColorStoreState {
   colorGroups: WineColorGroup[]
   searchResults: WineColorGroup[]
   currentColorGroup: WineColorGroup | null
+  filters: {
+    search: string
+    limit: number
+    offset: number
+  }
 
   setColorGroups: (groups: WineColorGroup[]) => void
   setCurrentColorGroup: (group: WineColorGroup | null) => void
@@ -13,6 +19,8 @@ interface WineColorStoreState {
   deleteColorGroup: (groupId: string) => void
   searchColorGroups: (searchTerm: string) => void
   clearSearch: () => void
+  setFilters: (filters: Partial<WineColorStoreState['filters']>) => void
+  resetFilters: () => void
 
   addShade: (groupId: string, shade: WineShades) => void
   updateShade: (groupId: string, shadeId: string, newShade: WineShades) => void
@@ -28,6 +36,11 @@ export const useWineColorStore = createStoreDevToolsWrapper<WineColorStoreState>
     colorGroups: [],
     searchResults: [],
     currentColorGroup: null,
+    filters: {
+      search: '',
+      limit: DEFAULT_PAGINATION_LIMIT,
+      offset: 0,
+    },
 
     setColorGroups: groups => set({ colorGroups: groups }, false, 'colorGroups/setColorGroups'),
 
@@ -62,6 +75,28 @@ export const useWineColorStore = createStoreDevToolsWrapper<WineColorStoreState>
         }),
         false,
         'colorGroups/deleteColorGroup'
+      ),
+
+    setFilters: newFilters =>
+      set(
+        (state: WineColorStoreState) => ({
+          filters: { ...state.filters, ...newFilters },
+        }),
+        false,
+        'wineTypes/setFilters'
+      ),
+
+    resetFilters: () =>
+      set(
+        {
+          filters: {
+            search: '',
+            limit: DEFAULT_PAGINATION_LIMIT,
+            offset: 0,
+          },
+        },
+        false,
+        'wineTypes/resetFilters'
       ),
 
     searchColorGroups: searchTerm =>

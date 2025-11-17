@@ -1,25 +1,24 @@
 import { useState, useCallback } from 'react'
 import { useWineTypes } from './useWineTypes'
-import { CreateWineTypeParams, CreateWineTypeRequest, UpdateWineTypeParams } from '../entities/types/wine-type'
+import { CreateWineTypeParams, CreateWineTypeRequest, UpdateWineTypeParams, WineType } from '../entities/types/wine-type'
 import { BaseWineColor } from '../../general/entities/types'
 
 export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
-  const { wineTypes, isLoading, isCreating, isUpdating, isDeleting, createWineType, updateWineType, deleteWineType, refetchTastesWithParams, totalCount, filters, onChangePagination } =
-    useWineTypes(cachedColors)
+  const { wineTypes, isLoading, isCreating, isUpdating, isDeleting, createWineType, updateWineType, deleteWineType} = useWineTypes(cachedColors)
 
   const [isFormOpen, setIsFormOpen] = useState<Record<string, boolean>>({})
   const [formData, setFormData] = useState<Record<string, CreateWineTypeParams>>({})
 
   const hasChanges = useCallback(
     (wineTypeId: string): boolean => {
-      const originalWineType = wineTypes.find(wt => wt.id === wineTypeId)
+      const originalWineType = wineTypes.find((wt:WineType) => wt.id === wineTypeId)
       const currentFormData = formData[wineTypeId]
 
       if (!originalWineType || !currentFormData) return false
 
       const nameChanged = originalWineType.nameUa !== currentFormData.nameUa || originalWineType.nameEn !== currentFormData.nameEn
 
-      const originalColorIds = originalWineType.colors?.map(c => c.id) || []
+      const originalColorIds = originalWineType.colors?.map((c:BaseWineColor) => c.id) || []
       const currentColorIds = currentFormData.colors?.map(c => c.id) || []
       const colorsChanged = JSON.stringify(originalColorIds.sort()) !== JSON.stringify(currentColorIds.sort())
 
@@ -43,7 +42,7 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
       }))
 
       if (!formData[wineTypeId]) {
-        const wineType = wineTypes.find(wt => wt.id === wineTypeId)
+        const wineType = wineTypes.find((wt:WineType) => wt.id === wineTypeId)
         if (wineType) {
           setFormData(prev => ({
             ...prev,
@@ -93,7 +92,6 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
           newWineType: updateData,
         }
         await updateWineType(updateParams)
-        await refetchTastesWithParams({ include: ['assigned-colors'] })
         setIsFormOpen(prev => ({
           ...prev,
           [wineTypeId]: false,
@@ -102,7 +100,7 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
         console.error('Failed to update wine type:', error)
       }
     },
-    [formData, updateWineType, refetchTastesWithParams, hasChanges]
+    [formData, updateWineType, hasChanges]
   )
 
   const handleCancelEdit = useCallback((wineTypeId: string) => {
@@ -128,8 +126,6 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
 
   return {
     wineTypes,
-    totalCount,
-    filters,
     isLoading: isLoadingState,
     isCreating,
     isUpdating,
@@ -143,6 +139,5 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
     handleSaveWineType,
     handleCancelEdit,
     handleDeleteWineType,
-    onChangePagination,
   }
 }

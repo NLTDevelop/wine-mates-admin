@@ -1,9 +1,6 @@
 import { BaseWineColor } from '../../../general/entities/types'
 
-export interface WineTypeResponse {
-  count: number
-  rows: WineType[]
-}
+
 export interface WineType {
   id: string
   nameUa: string
