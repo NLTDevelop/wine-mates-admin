@@ -61,7 +61,7 @@ export const NLTTablePagination: FC<IProps> = ({ page, limit, totalRows, setLimi
       {totalPages > 0 && (
         <div className="space-x-2">
           <Button variant="outline" size="sm" disabled={currentPage <= 1} onClick={onPrevious}>
-            {`<<`} ld
+            {`<<`} 
           </Button>
           <span className="text-sm">{`${t('page')} ${currentPage} ${t('of')} ${totalPages}`}</span>
           <Button variant="outline" size="sm" disabled={isLastPage} onClick={onNext}>
