@@ -7,42 +7,40 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 interface IProps {
   limit: number
-  offset: number
+  page: number
   totalRows: number
   setLimit?: (limit: number) => void
-  setOffset: (offset: number) => void
+  setPage: (page: number) => void
 }
 
-export const NLTTablePagination: FC<IProps> = ({ offset, limit, totalRows, setLimit, setOffset }) => {
+export const NLTTablePagination: FC<IProps> = ({ page, limit, totalRows, setLimit, setPage }) => {
   const { t } = useTranslation('common')
 
-  const currentPage = Math.ceil(offset / limit) + 1
+  const currentPage = page
   const totalPages = Math.ceil(totalRows / limit)
   const isLastPage = currentPage >= totalPages
 
   const onChangeLimit = (value: string) => {
-    setOffset(0)
+    setPage(1)
     if (setLimit) setLimit(parseInt(value))
   }
 
   const onPrevious = () => {
-    let nextOffset = offset - limit
-    if (nextOffset < 0) {
-      nextOffset = 0
+    const prevPage = currentPage - 1
+    if (prevPage >= 1) {
+      setPage(prevPage)
     }
-    setOffset(nextOffset)
   }
 
   const onNext = () => {
-    let nextOffset = offset + limit
-    if (nextOffset > totalRows) {
-      nextOffset = totalRows - limit
+    const nextPage = currentPage + 1
+    if (nextPage <= totalPages) {
+      setPage(nextPage)
     }
-    setOffset(nextOffset)
   }
 
   return (
-    <div className="flex items-center justify-end space-x-2 py-4">
+    <div className="flex items-center justify-end space-x-2 pt-4">
       {setLimit && (
         <div className="flex items-center space-x-2">
           <span className="text-sm">{t('rowsPerPage')}</span>
@@ -62,12 +60,12 @@ export const NLTTablePagination: FC<IProps> = ({ offset, limit, totalRows, setLi
       )}
       {totalPages > 0 && (
         <div className="space-x-2">
-          <Button variant="outline" size="sm" disabled={!offset} onClick={onPrevious}>
-            {t('previous')}
+          <Button variant="outline" size="sm" disabled={currentPage <= 1} onClick={onPrevious}>
+            {`<<`} ld
           </Button>
           <span className="text-sm">{`${t('page')} ${currentPage} ${t('of')} ${totalPages}`}</span>
           <Button variant="outline" size="sm" disabled={isLastPage} onClick={onNext}>
-            {t('next')}
+            {`>>`}
           </Button>
         </div>
       )}

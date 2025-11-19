@@ -13,8 +13,8 @@ interface UseCreateTasteCharacteristicProps {
 interface UseCreateTasteCharacteristicReturn {
   isCreating: boolean
   newCharacteristic: {
-    label: string
-    labelEn: string
+    nameUa: string
+    nameEn: string
   }
   selectedColors: BaseWineColor[]
   colorValues: string[]
@@ -23,7 +23,7 @@ interface UseCreateTasteCharacteristicReturn {
   handleStartCreating: () => void
   handleCreate: () => Promise<void>
   handleCancel: () => void
-  updateCharacteristic: (field: 'label' | 'labelEn' | 'colors', value: string) => void
+  updateCharacteristic: (field: 'nameUa' | 'nameEn' | 'colors', value: string) => void
   handleColorChange: (value: string | string[]) => Promise<void>
 }
 
@@ -35,8 +35,8 @@ export const useCreateTasteCharacteristic = ({
 }: UseCreateTasteCharacteristicProps): UseCreateTasteCharacteristicReturn => {
   const [isCreating, setIsCreating] = useState(false)
   const [newCharacteristic, setNewCharacteristic] = useState({
-    label: '',
-    labelEn: '',
+    nameUa: '',
+    nameEn: '',
   })
   const [selectedColors, setSelectedColors] = useState<BaseWineColor[]>([])
 
@@ -47,8 +47,9 @@ export const useCreateTasteCharacteristic = ({
 
     const initialLevels = Array.from({ length: 3 }, (_, index) => ({
       id: `state-${Date.now()}-${index}`,
-      levelName: '',
-      order: index,
+      nameUa: '',
+      nameEn: '',
+      sortNumber: index,
     }))
 
     if (onCharacteristicLevelsChange) {
@@ -71,18 +72,19 @@ export const useCreateTasteCharacteristic = ({
   )
 
   const handleCreate = useCallback(async () => {
-    if (!newCharacteristic.label.trim()) {
+    if (!newCharacteristic.nameUa.trim()) {
       return
     }
 
     try {
       await onCreateCharacteristic({
-        label: newCharacteristic.label,
-        labelEn: newCharacteristic.labelEn,
-        levels: characteristicLevels.filter(state => state.levelName.trim() !== ''),
+        nameUa: newCharacteristic.nameUa,
+        nameEn: newCharacteristic.nameEn,
+        levels: characteristicLevels.filter(state => state.nameUa.trim() !== ''),
         colors: selectedColors,
+        sortNumber: 0,
       })
-      setNewCharacteristic({ label: '', labelEn: '' })
+      setNewCharacteristic({ nameUa: '', nameEn: '' })
       setSelectedColors([])
       onCharacteristicLevelsChange?.([])
       setIsCreating(false)
@@ -93,17 +95,17 @@ export const useCreateTasteCharacteristic = ({
 
   const handleCancel = useCallback(() => {
     setIsCreating(false)
-    setNewCharacteristic({ label: '', labelEn: '' })
+    setNewCharacteristic({ nameUa: '', nameEn: '' })
     setSelectedColors([])
     onCharacteristicLevelsChange?.([])
   }, [onCharacteristicLevelsChange])
 
-  const updateCharacteristic = useCallback((field: 'label' | 'labelEn' | 'colors', value: string) => {
+  const updateCharacteristic = useCallback((field: 'nameUa' | 'nameEn' | 'colors', value: string) => {
     setNewCharacteristic(prev => ({ ...prev, [field]: value }))
   }, [])
 
   const canCreate =
-    newCharacteristic.label.trim().length > 0 && newCharacteristic.labelEn.trim().length > 0 && characteristicLevels.length > 0 && characteristicLevels.every(c => c.levelName.trim() !== '')
+    newCharacteristic.nameUa.trim().length > 0 && newCharacteristic.nameEn.trim().length > 0 && characteristicLevels.length > 0 && characteristicLevels.every(c => c.nameUa.trim() !== '')
 
   return {
     isCreating,

@@ -1,5 +1,5 @@
 import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
-import { LevelItem, WineTasteCharacteristics } from './types/taste-characteristics'
+import { /*LevelItem,*/ WineTasteCharacteristics } from './types/taste-characteristics'
 
 interface WineTasteCharacteristicsStoreState {
   tasteCharacteristics: WineTasteCharacteristics[]
@@ -14,20 +14,20 @@ interface WineTasteCharacteristicsStoreState {
   searchTasteCharacteristics: (searchTerm: string) => void
   clearSearch: () => void
 
-  updateCharacteristicLevels: (characteristicId: string, levels: LevelItem[]) => void
-  addCharacteristicLevel: (characteristicId: string, level: LevelItem) => void
-  updateCharacteristicLevel: (characteristicId: string, levelId: string, updatedLevel: LevelItem) => void
-  deleteCharacteristicLevel: (characteristicId: string, levelId: string) => void
-  reorderCharacteristicLevels: (characteristicId: string, levelIds: string[]) => void
+  // updateCharacteristicLevels: (characteristicId: string, levels: LevelItem[]) => void
+  // addCharacteristicLevel: (characteristicId: string, level: LevelItem) => void
+  // updateCharacteristicLevel: (characteristicId: string, levelId: string, updatedLevel: LevelItem) => void
+  // deleteCharacteristicLevel: (characteristicId: string, levelId: string) => void
+  // reorderCharacteristicLevels: (characteristicId: string, levelIds: string[]) => void
 
-  getTasteCharacteristicById: (id: string) => WineTasteCharacteristics | undefined
-  getTasteCharacteristicByLabel: (label: string) => WineTasteCharacteristics | undefined
-  hasTasteCharacteristic: (id: string) => boolean
-  hasTasteCharacteristicByLabel: (label: string) => boolean
+  // getTasteCharacteristicById: (id: string) => WineTasteCharacteristics | undefined
+  // getTasteCharacteristicByLabel: (label: string) => WineTasteCharacteristics | undefined
+  // hasTasteCharacteristic: (id: string) => boolean
+  // hasTasteCharacteristicByLabel: (label: string) => boolean
 }
 
 export const useWineTasteCharacteristicsStore = createStoreDevToolsWrapper<WineTasteCharacteristicsStoreState>(
-  (set, get) => ({
+  set => ({
     tasteCharacteristics: [],
     searchResults: [],
     currentTasteCharacteristic: null,
@@ -72,9 +72,9 @@ export const useWineTasteCharacteristicsStore = createStoreDevToolsWrapper<WineT
         (state: WineTasteCharacteristicsStoreState) => ({
           searchResults: state.tasteCharacteristics.filter(
             c =>
-              c.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              c.labelEn?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              c.levels?.some(level => level.levelName.toLowerCase().includes(searchTerm.toLowerCase()))
+              c.nameUa.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              c.nameEn?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              c.levels?.some(level => level.nameUa.toLowerCase().includes(searchTerm.toLowerCase()))
           ),
         }),
         false,
@@ -83,114 +83,114 @@ export const useWineTasteCharacteristicsStore = createStoreDevToolsWrapper<WineT
 
     clearSearch: () => set({ searchResults: [] }, false, 'tasteCharacteristics/clearSearch'),
 
-    updateCharacteristicLevels: (characteristicId, levels) =>
-      set(
-        (state: WineTasteCharacteristicsStoreState) => ({
-          tasteCharacteristics: state.tasteCharacteristics.map(c =>
-            c.id === characteristicId
-              ? {
-                  ...c,
-                  levels: levels,
-                }
-              : c
-          ),
-        }),
-        false,
-        'tasteCharacteristics/updateCharacteristicLevels'
-      ),
+    // updateCharacteristicLevels: (characteristicId, levels) =>
+    //   set(
+    //     (state: WineTasteCharacteristicsStoreState) => ({
+    //       tasteCharacteristics: state.tasteCharacteristics.map(c =>
+    //         c.id === characteristicId
+    //           ? {
+    //               ...c,
+    //               levels: levels,
+    //             }
+    //           : c
+    //       ),
+    //     }),
+    //     false,
+    //     'tasteCharacteristics/updateCharacteristicLevels'
+    //   ),
 
-    addCharacteristicLevel: (characteristicId, level) =>
-      set(
-        (state: WineTasteCharacteristicsStoreState) => ({
-          tasteCharacteristics: state.tasteCharacteristics.map(c =>
-            c.id === characteristicId
-              ? {
-                  ...c,
-                  levels: [...(c.levels || []), level],
-                }
-              : c
-          ),
-        }),
-        false,
-        'tasteCharacteristics/addCharacteristicLevel'
-      ),
+    // addCharacteristicLevel: (characteristicId, level) =>
+    //   set(
+    //     (state: WineTasteCharacteristicsStoreState) => ({
+    //       tasteCharacteristics: state.tasteCharacteristics.map(c =>
+    //         c.id === characteristicId
+    //           ? {
+    //               ...c,
+    //               levels: [...(c.levels || []), level],
+    //             }
+    //           : c
+    //       ),
+    //     }),
+    //     false,
+    //     'tasteCharacteristics/addCharacteristicLevel'
+    //   ),
 
-    updateCharacteristicLevel: (characteristicId, levelId, updatedLevel) =>
-      set(
-        (state: WineTasteCharacteristicsStoreState) => ({
-          tasteCharacteristics: state.tasteCharacteristics.map(c =>
-            c.id === characteristicId
-              ? {
-                  ...c,
-                  levels: c.levels?.map(l => (l.id === levelId ? updatedLevel : l)) || [],
-                }
-              : c
-          ),
-        }),
-        false,
-        'tasteCharacteristics/updateCharacteristicLevel'
-      ),
+    // updateCharacteristicLevel: (characteristicId, levelId, updatedLevel) =>
+    //   set(
+    //     (state: WineTasteCharacteristicsStoreState) => ({
+    //       tasteCharacteristics: state.tasteCharacteristics.map(c =>
+    //         c.id === characteristicId
+    //           ? {
+    //               ...c,
+    //               levels: c.levels?.map(l => (l.id === levelId ? updatedLevel : l)) || [],
+    //             }
+    //           : c
+    //       ),
+    //     }),
+    //     false,
+    //     'tasteCharacteristics/updateCharacteristicLevel'
+    //   ),
 
-    deleteCharacteristicLevel: (characteristicId, levelId) =>
-      set(
-        (state: WineTasteCharacteristicsStoreState) => ({
-          tasteCharacteristics: state.tasteCharacteristics.map(c =>
-            c.id === characteristicId
-              ? {
-                  ...c,
-                  levels: c.levels?.filter(l => l.id !== levelId) || [],
-                }
-              : c
-          ),
-        }),
-        false,
-        'tasteCharacteristics/deleteCharacteristicLevel'
-      ),
+    // deleteCharacteristicLevel: (characteristicId, levelId) =>
+    //   set(
+    //     (state: WineTasteCharacteristicsStoreState) => ({
+    //       tasteCharacteristics: state.tasteCharacteristics.map(c =>
+    //         c.id === characteristicId
+    //           ? {
+    //               ...c,
+    //               levels: c.levels?.filter(l => l.id !== levelId) || [],
+    //             }
+    //           : c
+    //       ),
+    //     }),
+    //     false,
+    //     'tasteCharacteristics/deleteCharacteristicLevel'
+    //   ),
 
-    reorderCharacteristicLevels: (characteristicId, levelIds) =>
-      set(
-        (state: WineTasteCharacteristicsStoreState) => {
-          const characteristic = state.tasteCharacteristics.find(c => c.id === characteristicId)
+    // reorderCharacteristicLevels: (characteristicId, levelIds) =>
+    //   set(
+    //     (state: WineTasteCharacteristicsStoreState) => {
+    //       const characteristic = state.tasteCharacteristics.find(c => c.id === characteristicId)
 
-          if (!characteristic?.levels) return state
+    //       if (!characteristic?.levels) return state
 
-          const levelMap = new Map(characteristic.levels.map(l => [l.id, l]))
-          const reorderedLevels = levelIds.map(id => levelMap.get(id)).filter(Boolean) as LevelItem[]
-          const levelsWithUpdatedOrder = reorderedLevels.map((level, index) => ({
-            ...level,
-            order: index,
-          }))
+    //       const levelMap = new Map(characteristic.levels.map(l => [l.id, l]))
+    //       const reorderedLevels = levelIds.map(id => levelMap.get(id)).filter(Boolean) as LevelItem[]
+    //       const levelsWithUpdatedOrder = reorderedLevels.map((level, index) => ({
+    //         ...level,
+    //         order: index,
+    //       }))
 
-          return {
-            tasteCharacteristics: state.tasteCharacteristics.map(c =>
-              c.id === characteristicId
-                ? {
-                    ...c,
-                    levels: levelsWithUpdatedOrder,
-                  }
-                : c
-            ),
-          }
-        },
-        false,
-        'tasteCharacteristics/reorderCharacteristicLevels'
-      ),
+    //       return {
+    //         tasteCharacteristics: state.tasteCharacteristics.map(c =>
+    //           c.id === characteristicId
+    //             ? {
+    //                 ...c,
+    //                 levels: levelsWithUpdatedOrder,
+    //               }
+    //             : c
+    //         ),
+    //       }
+    //     },
+    //     false,
+    //     'tasteCharacteristics/reorderCharacteristicLevels'
+    //   ),
 
-    getTasteCharacteristicById: id => {
-      return get().tasteCharacteristics.find((c: WineTasteCharacteristics) => c.id === id)
-    },
+    // getTasteCharacteristicById: id => {
+    //   return get().tasteCharacteristics.find((c: WineTasteCharacteristics) => c.id === id)
+    // },
 
-    getTasteCharacteristicByLabel: label => {
-      return get().tasteCharacteristics.find((c: WineTasteCharacteristics) => c.label === label)
-    },
+    // getTasteCharacteristicByLabel: label => {
+    //   return get().tasteCharacteristics.find((c: WineTasteCharacteristics) => c.label === label)
+    // },
 
-    hasTasteCharacteristic: id => {
-      return get().tasteCharacteristics.some((c: WineTasteCharacteristics) => c.id === id)
-    },
+    // hasTasteCharacteristic: id => {
+    //   return get().tasteCharacteristics.some((c: WineTasteCharacteristics) => c.id === id)
+    // },
 
-    hasTasteCharacteristicByLabel: label => {
-      return get().tasteCharacteristics.some((c: WineTasteCharacteristics) => c.label === label)
-    },
+    // hasTasteCharacteristicByLabel: label => {
+    //   return get().tasteCharacteristics.some((c: WineTasteCharacteristics) => c.label === label)
+    // },
   }),
   'WineTasteStore'
 )

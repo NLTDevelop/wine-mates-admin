@@ -1,28 +1,35 @@
-// Sweetness,Activity, Tanin (level), Tanin (intensity), Alcohol, Body, Finish, Wine Peak, Complexity, Viscosity, Oak, Fruitness
-
 import { BaseWineColor } from '../../../general/entities/types'
 
 export interface LevelItem {
-  id: string
-  levelName: string
-  order: number
+  id?: string
+  nameUa: string
+  nameEn: string
+  sortNumber?: number
 }
 
 export interface WineTasteCharacteristics {
   id: string
-  label: string
-  labelEn: string
-  order: number
+  nameUa: string
+  nameEn: string
+  sortNumber: number
   levels?: LevelItem[]
   colors: BaseWineColor[]
 }
 
 export interface CreateWineTasteCharacteristicParams {
-  label?: string
-  labelEn?: string
-  order?: number
-  levels?: LevelItem[]
-  colors?: BaseWineColor[]
+  nameUa: string
+  nameEn: string
+  sortNumber: number
+  levels: LevelItem[]
+  colors: BaseWineColor[]
+}
+
+export interface CreateWineTasteCharacteristicRequest {
+  nameUa: string
+  nameEn: string
+  sortNumber?: number
+  levels: LevelItem[]
+  colorIds: string[]
 }
 
 export interface UpdateWineTasteCharacteristicParams {
@@ -30,15 +37,15 @@ export interface UpdateWineTasteCharacteristicParams {
   newCharacteristic: CreateWineTasteCharacteristicParams
 }
 
-export interface CreateWineTasteItemParams {
+export interface CreateWineTasteLevelParams {
   name: string
   nameEn: string
-  order?: number
+  sortNumber?: number
   level?: LevelItem[]
 }
 
-export interface UpdateWineTasteItemParams {
+export interface UpdateWineTasteLevelParams {
   characteristicId?: string
-  itemId: string | number
-  newItem?: CreateWineTasteItemParams
+  levelId: string | number
+  newILevel?: CreateWineTasteLevelParams
 }

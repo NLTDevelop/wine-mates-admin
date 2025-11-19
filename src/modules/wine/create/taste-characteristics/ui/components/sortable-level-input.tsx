@@ -9,16 +9,16 @@ import { useTranslation } from 'react-i18next'
 
 interface SortableLevelInputProps {
   state: LevelItem
-  onUpdate: (id: string, levelName: string) => void
+  onUpdate: (id: string, nameUa: string) => void
   onRemove: (id: string) => void
   isRequired: boolean
-  onBlur?: (id: string, levelName: string) => void
+  onBlur?: (id: string, nameUa: string) => void
 }
 
 export const SortableLevelInput: React.FC<SortableLevelInputProps> = ({ state, onUpdate, onRemove, isRequired, onBlur }) => {
   const { t } = useTranslation('wines')
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: state.id,
+    id: state.id || '',
   })
 
   const style = {
@@ -29,20 +29,20 @@ export const SortableLevelInput: React.FC<SortableLevelInputProps> = ({ state, o
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      onUpdate(state.id, e.target.value)
+      if (state.id) onUpdate(state.id, e.target.value)
     },
     [state.id, onUpdate]
   )
 
   const handleInputBlur = useCallback(
     (e: React.FocusEvent<HTMLInputElement>) => {
-      onBlur?.(state.id, e.target.value)
+      if (state.id) onBlur?.(state.id, e.target.value)
     },
     [state.id, onBlur]
   )
 
   const handleRemoveClick = React.useCallback(() => {
-    onRemove(state.id)
+    if (state.id) onRemove(state.id)
   }, [state.id, onRemove])
 
   return (
@@ -52,7 +52,7 @@ export const SortableLevelInput: React.FC<SortableLevelInputProps> = ({ state, o
       </div>
 
       <div className="w-full">
-        <Input value={state.levelName} onBlur={handleInputBlur} onChange={handleInputChange} placeholder={t('taste_characteristics.entry_level')} className="flex-1 h-8" />
+        <Input value={state.nameUa} onBlur={handleInputBlur} onChange={handleInputChange} placeholder={t('taste_characteristics.entry_level')} className="flex-1 h-8" />
       </div>
 
       {!isRequired && (

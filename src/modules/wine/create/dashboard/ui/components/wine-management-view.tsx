@@ -15,11 +15,11 @@ export const WineManagementView = () => {
   const { t } = useTranslation('wines')
   const [selectedTemplate, setSelectedTemplate] = useState<string>('')
 
-  const { cachedColors, isLoading: colorsLoading,refreshColors } = useCachedColors()
+  const { cachedColors, isLoading: colorsLoading, refreshColors } = useCachedColors()
 
-    const handleTemplateSelect = async (template: string) => {
+  const handleTemplateSelect = async (template: string) => {
     if (template === 'wine_type') {
-      await refreshColors() 
+      await refreshColors()
     }
     setSelectedTemplate(template)
   }

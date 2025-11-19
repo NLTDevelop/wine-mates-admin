@@ -8,8 +8,8 @@ interface EditingGroup {
 }
 
 interface NewCharacteristicData {
-  label: string
-  labelEn: string
+  nameUa: string
+  nameEn: string
 }
 
 export const useTasteCharacteristicsPalette = () => {
@@ -17,13 +17,13 @@ export const useTasteCharacteristicsPalette = () => {
     tasteCharacteristics,
     isLoading,
     createCharacteristic,
-    updateCharacteristic,
+    // updateCharacteristic,
     deleteCharacteristic,
-    updateCharacteristicLevels,
-    addCharacteristicLevel,
-    updateCharacteristicLevel,
-    deleteCharacteristicLevel,
-    reorderCharacteristicLevels,
+    // updateCharacteristicLevels,
+    // addCharacteristicLevel,
+    // updateCharacteristicLevel,
+    // deleteCharacteristicLevel,
+    // reorderCharacteristicLevels,
   } = useWineTasteCharacteristics()
 
   const [isFormOpen, setIsFormOpen] = useState<{ [key: string]: boolean }>({})
@@ -34,8 +34,8 @@ export const useTasteCharacteristicsPalette = () => {
   })
 
   const [newCharacteristicData, setNewCharacteristicData] = useState<NewCharacteristicData>({
-    label: '',
-    labelEn: '',
+    nameUa: '',
+    nameEn: '',
   })
 
   const handleAddCharacteristic = async (dto: CreateWineTasteCharacteristicParams & { levels?: LevelItem[] }) => {
@@ -44,49 +44,49 @@ export const useTasteCharacteristicsPalette = () => {
       levels: characteristicLevels['new-characteristic'] || [],
     })
 
-    setNewCharacteristicData({ label: '', labelEn: '' })
+    setNewCharacteristicData({ nameUa: '', nameEn: '' })
     setCharacteristicLevels(prev => ({ ...prev, ['new-characteristic']: [] }))
 
     return result
   }
 
-  const handleUpdateCharacteristic = async (
-    characteristicId: string,
-    updates: {
-      label?: string
-      labelEn?: string
-      levels?: LevelItem[]
-    }
-  ) => {
-    return updateCharacteristic({
-      characteristicId,
-      newCharacteristic: updates,
-    })
-  }
+  // const handleUpdateCharacteristic = async (
+  //   characteristicId: string,
+  //   updates: {
+  //     nameUa?: string
+  //     nameEn?: string
+  //     levels?: LevelItem[]
+  //   }
+  // ) => {
+  //   return updateCharacteristic({
+  //     characteristicId,
+  //     newCharacteristic: updates,
+  //   })
+  // }
 
   const handleDeleteCharacteristic = async (characteristicId: string) => {
     return deleteCharacteristic(characteristicId)
   }
 
-  const handleUpdateCharacteristicLevels = async (characteristicId: string, levels: LevelItem[]) => {
-    return updateCharacteristicLevels(characteristicId, levels)
-  }
+  // const handleUpdateCharacteristicLevels = async (characteristicId: string, levels: LevelItem[]) => {
+  //   return updateCharacteristicLevels(characteristicId, levels)
+  // }
 
-  const handleAddCharacteristicLevel = async (characteristicId: string, level: LevelItem) => {
-    return addCharacteristicLevel(characteristicId, level)
-  }
+  // const handleAddCharacteristicLevel = async (characteristicId: string, level: LevelItem) => {
+  //   return addCharacteristicLevel(characteristicId, level)
+  // }
 
-  const handleUpdateCharacteristicLevel = async (characteristicId: string, levelId: string, updatedLevel: LevelItem) => {
-    return updateCharacteristicLevel(characteristicId, levelId, updatedLevel)
-  }
+  // const handleUpdateCharacteristicLevel = async (characteristicId: string, levelId: string, updatedLevel: LevelItem) => {
+  //   return updateCharacteristicLevel(characteristicId, levelId, updatedLevel)
+  // }
 
-  const handleDeleteCharacteristicLevel = async (characteristicId: string, levelId: string) => {
-    return deleteCharacteristicLevel(characteristicId, levelId)
-  }
+  // const handleDeleteCharacteristicLevel = async (characteristicId: string, levelId: string) => {
+  //   return deleteCharacteristicLevel(characteristicId, levelId)
+  // }
 
-  const handleReorderCharacteristicLevels = async (characteristicId: string, levelIds: string[]) => {
-    return reorderCharacteristicLevels(characteristicId, levelIds)
-  }
+  // const handleReorderCharacteristicLevels = async (characteristicId: string, levelIds: string[]) => {
+  //   return reorderCharacteristicLevels(characteristicId, levelIds)
+  // }
 
   const updateLocalCharacteristicLevels = (characteristicKey: string, levels: LevelItem[]) => {
     setCharacteristicLevels(prev => ({ ...prev, [characteristicKey]: levels }))
@@ -138,7 +138,7 @@ export const useTasteCharacteristicsPalette = () => {
   }
 
   const canAddCharacteristic = (): boolean => {
-    return !!(newCharacteristicData.label && newCharacteristicData.labelEn)
+    return !!(newCharacteristicData.nameEn && newCharacteristicData.nameUa)
   }
 
   return {
@@ -150,17 +150,17 @@ export const useTasteCharacteristicsPalette = () => {
     characteristicLevels,
 
     handleAddCharacteristic,
-    handleUpdateCharacteristic,
+    // handleUpdateCharacteristic,
     handleDeleteCharacteristic,
     handleToggleForm,
     handleToggleAccordion,
     handleCancelEdit,
 
-    handleUpdateCharacteristicLevels,
-    handleAddCharacteristicLevel,
-    handleUpdateCharacteristicLevel,
-    handleDeleteCharacteristicLevel,
-    handleReorderCharacteristicLevels,
+    // handleUpdateCharacteristicLevels,
+    // handleAddCharacteristicLevel,
+    // handleUpdateCharacteristicLevel,
+    // handleDeleteCharacteristicLevel,
+    // handleReorderCharacteristicLevels,
     handleEditLevel,
 
     updateLocalCharacteristicLevels,

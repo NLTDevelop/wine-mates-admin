@@ -1,8 +1,5 @@
 import { wineTypeService } from './wine-type-service'
 import { CreateWineTypeRequest, UpdateWineTypeParams } from './types/wine-type'
-import { FiltersParams } from '../../general/entities/types'
-
-
 
 export const wineTypeQueries = {
   list: (include?: string[]) => ({

@@ -14,7 +14,7 @@ interface UseColorGroupsProps {
 }
 
 export const useColorGroups = ({ colorGroups, editingGroupData, setEditingGroup, setEditingGroupData, setForceOpenKeys, setOpenAccordions, setNewItemData }: UseColorGroupsProps) => {
-  const { createGroup, updateGroup, deleteGroup, isLoading, refetchGroupsWithParams } = useWineColor()
+  const { createGroup, updateGroup, deleteGroup, isLoading } = useWineColor()
 
   const handleAddGroup = useCallback(
     async (groupData: Partial<CreateWineColorParams>) => {
@@ -102,8 +102,12 @@ export const useColorGroups = ({ colorGroups, editingGroupData, setEditingGroup,
           colorId: groupId,
           newColor: groupDataWithSortNumber as CreateWineColorParams,
         })
-        await refetchGroupsWithParams(['shades'])
 
+        setNewItemData((prev: Record<string, NewShadeData>) => {
+          const newData = { ...prev }
+          delete newData[groupId]
+          return newData
+        })
         setOpenAccordions((prev: Set<string>) => {
           const newSet = new Set(prev)
           newSet.delete(groupId)
@@ -119,7 +123,7 @@ export const useColorGroups = ({ colorGroups, editingGroupData, setEditingGroup,
         console.error('Failed to update color group:', error)
       }
     },
-    [updateGroup, editingGroupData, setEditingGroup, setEditingGroupData, colorGroups, refetchGroupsWithParams]
+    [updateGroup, editingGroupData, setEditingGroup, setEditingGroupData, colorGroups]
   )
 
   const handleCancelGroupEdit = useCallback(

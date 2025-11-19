@@ -13,7 +13,7 @@ interface UseColorItemsProps {
 }
 
 export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEditingGroup, setNewItemData, setOpenAccordions }: UseColorItemsProps) => {
-  const { createShade, updateShade, deleteShade, refetchGroupsWithParams } = useWineColor()
+  const { createShade, updateShade, deleteShade } = useWineColor()
 
   //---------------для реодер пока нет бека -----------
   const [localShadesOrder, setLocalShadesOrder] = useState<Record<string, WineShades[]>>({})
@@ -83,8 +83,7 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
       try {
         const isEditingCurrentItem = editingGroup?.groupId === groupId && editingGroup?.editingItem?.id === shadeId
 
-        await deleteShade(groupId, shadeId)
-        await refetchGroupsWithParams(['shades'])
+        await deleteShade({ groupId, shadeId })
 
         if (isEditingCurrentItem) {
           setEditingGroup(null)
@@ -98,7 +97,7 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
         console.error('Failed to delete shade:', error)
       }
     },
-    [deleteShade, refetchGroupsWithParams, editingGroup, setEditingGroup, setNewItemData]
+    [deleteShade, editingGroup, setEditingGroup, setNewItemData]
   )
 
   const hasChanges = useCallback(
@@ -126,17 +125,12 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
 
   const handleSaveItem = useCallback(
     async (groupId: string) => {
-      const isNewItem = !editingGroup?.editingItem
-
-      if (!isNewItem && !hasChanges(groupId)) {
-        setEditingGroup(null)
-        setNewItemData((prev: Record<string, NewShadeData>) => {
-          const newData = { ...prev }
-          delete newData[groupId]
-          return newData
-        })
-        return
-      }
+      setEditingGroup(null)
+      setNewItemData((prev: Record<string, NewShadeData>) => {
+        const newData = { ...prev }
+        delete newData[groupId]
+        return newData
+      })
 
       if (editingGroup?.editingItem && editingGroup.groupId === groupId) {
         const shadeData: CreateShadesParams = {
@@ -150,8 +144,7 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
         }
 
         try {
-          await updateShade(groupId, editingGroup.editingItem.id, shadeData)
-          await refetchGroupsWithParams(['shades'])
+          await updateShade({ groupId, shadeId: editingGroup.editingItem.id, newShades: shadeData })
           setEditingGroup(null)
           setNewItemData((prev: Record<string, NewShadeData>) => {
             const newData = { ...prev }
@@ -173,8 +166,7 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
         }
 
         try {
-          await createShade(groupId, shadeData)
-          await refetchGroupsWithParams(['shades'])
+          await createShade({ groupId, shadeData })
           setNewItemData((prev: Record<string, NewShadeData>) => {
             const newData = { ...prev }
             delete newData[groupId]
@@ -185,7 +177,7 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
         }
       }
     },
-    [editingGroup, newItemData, updateShade, createShade, setEditingGroup, setNewItemData, refetchGroupsWithParams, hasChanges]
+    [editingGroup, newItemData, updateShade, createShade, setEditingGroup, setNewItemData, hasChanges]
   )
 
   const handleCancelItemEdit = useCallback(

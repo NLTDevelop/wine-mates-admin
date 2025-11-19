@@ -7,7 +7,7 @@ export interface WinesResponse {
 
 export interface WineFilters {
   limit: number
-  offset: number
+  page: number
   search?: string
 }
 

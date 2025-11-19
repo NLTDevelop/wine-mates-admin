@@ -16,6 +16,10 @@ import { WineAromaGroup } from '../../entities/types/flavor-types'
 import { SkeletonWinePalette } from '../../../general/ui/components/skeleton-wine-palette'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
+import { EmptyState } from '../../../general/ui/components/empty-state'
+import { useDeleteModal } from '../../../general/presenters/useDeleteModal'
+import { useCallback } from 'react'
+import { WarningModal } from '@/modals/warningModal'
 
 interface FlavorPaletteManagerProps {
   cachedColors: BaseWineColor[]
@@ -25,6 +29,8 @@ interface FlavorPaletteManagerProps {
 export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: FlavorPaletteManagerProps) => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
+
+  const { deleteModal } = useDeleteModal()
 
   const {
     aromaGroups,
@@ -43,7 +49,7 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
     totalCount,
     filters,
     onChangePagination,
-  } = useFlavorPalette()
+  } = useFlavorPalette(cachedColors)
 
   const isEditable = true
 
@@ -54,7 +60,21 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
     setEditingGroupData,
   }
 
-  if (isLoading && aromaGroups?.rows?.length === 0) {
+  const handleOpenDeleteModal = useCallback(
+    (groupId: string, groupNameUa: string) => {
+      deleteModal.open(groupId, groupNameUa)
+    },
+    [deleteModal]
+  )
+
+  const handleConfirmDelete = useCallback(() => {
+    if (deleteModal.id) {
+      groups.handleDeleteGroup(deleteModal.id)
+      deleteModal.close()
+    }
+  }, [deleteModal, groups])
+
+  if (isLoading && aromaGroups?.length === 0) {
     return (
       <Card>
         <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
@@ -70,8 +90,9 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
         <div>
           <CreateFlavorGroupSection onCreateGroup={groups.handleAddGroup} isLoading={isLoading} cachedColors={cachedColors} />
         </div>
+        {!isLoading && aromaGroups?.length === 0 && totalCount === 0 && <EmptyState type="aromas" />}
         <div className="mx-auto flex flex-col justify-center gap-2 w-full">
-          {aromaGroups?.rows?.map((group: WineAromaGroup) => {
+          {aromaGroups?.map((group: WineAromaGroup) => {
             const { textColorClass: cardTextColorClass } = useContrastText(group.colorHex)
 
             const isGroupOpen = ui.isAccordionOpen(group.id)
@@ -85,7 +106,6 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
             const currentEditingGroupData = editingGroupData[group.id]
             const forceOpenKey = forceOpenKeys[group.id] || 0
             const accordionKey = isGroupOpen && forceOpenKey > 0 ? `forced-${group.id}-${forceOpenKey}` : group.id
-
             return (
               <div key={accordionKey} className="flex flex-col">
                 <AccordionWrapper
@@ -108,12 +128,13 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
                       </div>
                       <PaletteItemActions
                         isLoading={isLoading}
-                        onRemove={() => groups.handleDeleteGroup(group.id)}
+                        onRemove={handleConfirmDelete}
                         dataId={group.id}
                         cardTextColorClass={cardTextColorClass}
                         onEdit={() => groups.startEditingGroup(group.id)}
                         showEditButton={!isGroupEditing}
                         isHeader
+                        deleteModal={() => handleOpenDeleteModal(group.id, group.nameUa)}
                       />
                     </div>
                   }
@@ -230,8 +251,16 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
             )
           })}
         </div>
+        <WarningModal
+          title={t('modal.delete_title', { slug: 'аромат' })}
+          actionTitle={t('modal.delete_action')}
+          description={t('modal.delete_description', { name: deleteModal.nameUa, slug: 'Aромат' })}
+          isOpen={deleteModal.isOpen}
+          onClose={deleteModal.close}
+          onSubmit={handleConfirmDelete}
+        />
       </CardContent>
-      {totalCount > DEFAULT_PAGINATION_LIMIT && <NLTTablePagination limit={filters.limit} offset={filters.offset} totalRows={aromaGroups?.count || 0} setOffset={onChangePagination} />}
+      {totalCount > DEFAULT_PAGINATION_LIMIT && <NLTTablePagination limit={filters.limit} page={filters.page} totalRows={totalCount || 0} setPage={onChangePagination} />}
     </Card>
   )
 }

@@ -14,7 +14,7 @@ export const UsersView = () => {
   const { t } = useTranslation('users')
   const navigate = useNavigate()
 
-  const { users, filters, onChangeSearch, handleClearSearch, onChangePagination, modal, searchValue, userToConfirm } = useUsers()
+  const { users, filters, onChangeSearch, handleClearSearch, onChangePagination, modal, searchValue, userToConfirm, totalCount } = useUsers()
   const columns = useUserColumns({ onConfirmCategory: modal.open })
   const { table } = useDataTable(users ?? [], columns)
 
@@ -43,7 +43,7 @@ export const UsersView = () => {
         ToolBar={<UserFilters filterSearch={searchValue} onChangeFilterSearch={onChangeSearch} onClearSearch={handleClearSearch} />}
         onRowClick={handleRowClick}
       />
-      <NLTTablePagination limit={filters.limit} offset={filters.offset} totalRows={users?.length || 0} setOffset={onChangePagination} />
+      <NLTTablePagination limit={filters.limit} page={filters.page} totalRows={totalCount || 0} setPage={onChangePagination} />
       <ConfirmModal
         title={t('modal.confirm_title')}
         actionTitle={modalActionTitle}

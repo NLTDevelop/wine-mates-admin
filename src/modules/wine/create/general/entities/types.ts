@@ -13,6 +13,6 @@ export interface DataResponse<T> {
 export interface FiltersParams {
   search?: string
   limit?: number
-  offset?: number
+  page?: number
   include?: string[]
 }

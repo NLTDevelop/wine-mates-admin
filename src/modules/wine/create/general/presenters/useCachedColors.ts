@@ -12,12 +12,12 @@ export const useCachedColors = () => {
     staleTime: 2 * 60 * 1000,
   })
 
-  const refreshColors = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: ['wine-colors'] })
+  const refreshColors = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: ['wine-colors'] })
   }, [queryClient])
 
   return {
-    cachedColors: data || [],
+    cachedColors: data?.rows || [],
     isLoading,
     isError,
     error,

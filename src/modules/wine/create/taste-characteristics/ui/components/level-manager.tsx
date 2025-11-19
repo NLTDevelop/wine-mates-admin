@@ -20,8 +20,9 @@ export const LevelManager: React.FC<LevelManagerProps> = ({ states, onStatesChan
   const handleAddState = useCallback(() => {
     const newState: LevelItem = {
       id: `state-${Date.now()}`,
-      levelName: '',
-      order: states.length,
+      nameUa: '',
+      nameEn: '',
+      sortNumber: states.length,
     }
     const newStates = [...states, newState]
     onStatesChange(newStates)
@@ -83,3 +84,89 @@ export const LevelManager: React.FC<LevelManagerProps> = ({ states, onStatesChan
     </div>
   )
 }
+// import React from 'react'
+// import { Button } from '@/UIKit/shadcn/ui/button'
+// import { Plus } from 'lucide-react'
+// import { useTranslation } from 'react-i18next'
+// import { SortableList } from '@/UIKit/app-components/sortable-list'
+// import { SortableInputItem } from '@/UIKit/app-components/sortable-input-item'
+// import { LevelItem } from '../../entities/types/taste-characteristics'
+
+// interface LevelManagerProps {
+//   levels: LevelItem[]
+//   onLevelChange: (levels: LevelItem[]) => void
+// }
+
+// export const LevelManager: React.FC<LevelManagerProps> = ({ levels, onLevelChange }) => {
+//   const { t } = useTranslation('wines')
+
+//   const levelFields = [
+//     {
+//       name: 'nameUa',
+//       placeholder: t('taste_characteristics.characteristic_name_ua'),
+//       label: t('taste_characteristics.characteristic_name_ua'),
+//     },
+//     {
+//       name: 'nameEn',
+//       placeholder: t('taste_characteristics.characteristic_name_en'),
+//       label: t('taste_characteristics.characteristic_name_en'),
+//     },
+//   ]
+
+//   const addNewLevelInput = () => {
+//     const newLevel: LevelItem = {
+//       nameUa: '',
+//       nameEn: '',
+//     }
+//     onLevelChange([...levels, newLevel])
+//   }
+
+//   const updateLevel = (index: number, field: string, value: string) => {
+//     const updatedLevel = levels.map((level, i) => (i === index ? { ...level, [field]: value } : level))
+//     onLevelChange(updatedLevel)
+//   }
+
+//   const removeLevel = (index: number) => {
+//     const updatedLevels = levels.filter((_, i) => i !== index)
+//     onLevelChange(updatedLevels)
+//   }
+
+//   const handleReorder = (reorderedLevels: LevelItem[]) => {
+//     onLevelChange(reorderedLevels)
+//   }
+
+//   const getLevelId = (level: LevelItem, index: number): string => {
+//     return level.id || `level-${index}`
+//   }
+
+//   return (
+//     <div className="space-y-3">
+//       <div className="flex items-center justify-between">
+//         <Button type="button" variant="outline" size="sm" onClick={addNewLevelInput} className="flex items-center gap-2">
+//           <Plus className="w-4 h-4" />
+//           {t('button.add_level')}
+//         </Button>
+//       </div>
+
+//       {levels.length > 0 && (
+//         <SortableList items={levels} onReorder={handleReorder} strategy="vertical" getId={getLevelId}>
+//           <div className="space-y-2">
+//             {levels.map((level, index) => (
+//               <SortableInputItem
+//                 key={getLevelId(level, index)}
+//                 id={getLevelId(level, index)}
+//                 values={{
+//                   nameUa: level.nameUa || '',
+//                   nameEn: level.nameEn || '',
+//                 }}
+//                 fields={levelFields}
+//                 onUpdate={(field, value) => updateLevel(index, field as keyof LevelItem, value)}
+//                 onRemove={() => removeLevel(index)}
+//               />
+//             ))}
+//           </div>
+//         </SortableList>
+//       )}
+//     </div>
+//   )
+// }

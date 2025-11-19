@@ -9,7 +9,7 @@ interface WineState {
   filters: {
     search: string
     limit: number
-    offset: number
+    page: number
   }
   setWines: (wines: IWines[]) => void
   setSearchResults: (results: IWines[]) => void
@@ -28,7 +28,7 @@ export const useWineStore = createStoreDevToolsWrapper<WineState>(
     filters: {
       search: '',
       limit: DEFAULT_PAGINATION_LIMIT,
-      offset: 0,
+      page: 0,
     },
 
     setWines: (wines: IWines[]) => set({ wines }, false, 'wine/setWines'),
@@ -52,7 +52,7 @@ export const useWineStore = createStoreDevToolsWrapper<WineState>(
           filters: {
             search: '',
             limit: DEFAULT_PAGINATION_LIMIT,
-            offset: 0,
+            page: 0,
           },
         },
         false,

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core'
-import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { /*SortableContext, */ sortableKeyboardCoordinates /*, verticalListSortingStrategy*/ } from '@dnd-kit/sortable'
 import { LevelItem } from '../../entities/types/taste-characteristics'
 import { SortableLevelInput } from '..'
 
@@ -61,13 +61,13 @@ export const LevelList: React.FC<LevelListProps> = React.memo(({ states, minFiel
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <SortableContext items={states.map(s => s.id)} strategy={verticalListSortingStrategy}>
-        <div className="space-y-2">
-          {states.map((state, index) => {
-            return <SortableLevelInput key={state.id} onBlur={handleLevelNameBlur} state={state} onUpdate={handleUpdateState} onRemove={handleRemoveState} isRequired={index < minFields} />
-          })}
-        </div>
-      </SortableContext>
+      {/* <SortableContext items={states?.map(s => s.id) } strategy={verticalListSortingStrategy}> */}
+      <div className="space-y-2">
+        {states.map((state, index) => {
+          return <SortableLevelInput key={state.id} onBlur={handleLevelNameBlur} state={state} onUpdate={handleUpdateState} onRemove={handleRemoveState} isRequired={index < minFields} />
+        })}
+      </div>
+      {/* </SortableContext> */}
     </DndContext>
   )
 })

@@ -1,506 +1,285 @@
 import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack/react-query'
-import { useEffect } from 'react'
-import { CreateWineAromaGroupParams, UpdateWineAromaGroupParams, CreateWineAromaSubgroupParams, UpdateWineAromaSubgroupParams, WineAromaGroup, WineAromaSubgroup } from '../entities/types/flavor-types'
+import { BaseWineColor, DataResponse } from '../../general/entities/types'
+import { useEffect, useMemo } from 'react'
 import { useWineFlavorStore } from '../entities/wine-flavor-store'
+import { CreateWineAromaGroupParams, CreateWineAromaSubgroupParams, UpdateWineAromaGroupParams, WineAromaGroup, WineAromaSubgroup } from '../entities/types/flavor-types'
+import { wineFlavorService } from '../entities/wine-flavor-service'
 import { wineFlavorQueries } from '../entities/wine-flavor-queries'
-import { DataResponse } from '../../general/entities/types'
-import { FiltersParams } from '@/lib/client-pagination'
 
-interface DeleteSubgroupParams {
-  subgroupId: string
-  groupId: string
-}
-
-export const useWineFlavor = () => {
+export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
   const queryClient = useQueryClient()
   const store = useWineFlavorStore()
 
-  const groupsQuery: UseQueryResult<DataResponse<WineAromaGroup>, Error> = useQuery({
-    // ...wineFlavorQueries.listGroups(['subgroups', 'assigned-colors']),
-    ...wineFlavorQueries.listGroups({
-      limit: store.filters.limit,
-      offset: store.filters.offset,
-      search: store.filters.search,
-      include: ['subgroups', 'assigned-colors'],
-    }),
+  const stableFilters = useMemo(() => {
+    const filtersWithSubAromas = {
+      ...store.filters,
+      include: Array.from(new Set([...(store.filters.include || []), 'subgroups'])),
+    }
+    return JSON.stringify(filtersWithSubAromas)
+  }, [store.filters])
+
+  const groupsQuery: UseQueryResult<{ rows: WineAromaGroup[]; count: number }, Error> = useQuery({
+    queryKey: ['aroma-groups', 'list', stableFilters],
+    queryFn: () =>
+      wineFlavorService.listGroups({
+        ...store.filters,
+        include: ['subgroups', 'assigned-colors'],
+      }),
+    placeholderData: prev => prev,
   })
 
- const getCurrentAromaGroups = (): DataResponse<WineAromaGroup> => {
-  const data = queryClient.getQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters])
-  return data || { rows: [], count: 0 }
-}
+  useEffect(() => {
+    if (!groupsQuery.data || groupsQuery.isFetching) return
+    store.setAromaGroups(groupsQuery.data.rows)
+  }, [groupsQuery.data, groupsQuery.isFetching])
 
-  const customRefetchGroups = (/*include?: string[]*/ filters?: FiltersParams) => {
-    return queryClient.fetchQuery(wineFlavorQueries.listGroups(/*include*/ filters || store.filters))
+  const aromaGroups = (): WineAromaGroup[] => {
+    const cached = queryClient.getQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters])
+    return cached?.rows ?? []
   }
-
-  // useEffect(() => {
-  //   if (groupsQuery.data) {
-  //     store.setAromaGroups(groupsQuery.data)
-  //   }
-  // }, [groupsQuery.data, store])
 
   const createGroupMutation = useMutation({
     ...wineFlavorQueries.createGroup(),
-    onMutate: async (newColor: CreateWineAromaGroupParams) => {
-      await queryClient.cancelQueries({ queryKey: ['aroma-groups', 'list'] })
 
-      const optimisticGroup: WineAromaGroup = {
-        id: `temp-${Date.now()}`,
-        nameUa: newColor.nameUa,
-        nameEn: newColor.nameEn,
-        colorHex: newColor.colorHex,
-        sortNumber: newColor.sortNumber,
-        subgroups: newColor.subgroups || [],
-        colors: newColor.colors || [],
+    onMutate: async (groupData: CreateWineAromaGroupParams) => {
+      await queryClient.cancelQueries({ queryKey: ['aroma-groups', 'list', stableFilters] })
+      const prev = queryClient.getQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters])
+
+      const tempGroup: WineAromaGroup = {
+        id: 'temp-id-' + Date.now(),
+        ...groupData,
+        colors: groupData.colors || cachedColors || [],
+        subgroups: [],
       }
 
-      const currentRows = groupsQuery.data?.rows || []
-      const currentCount = groupsQuery.data?.count || 0
+      queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters], old => ({
+        ...old,
+        rows: [tempGroup, ...(old?.rows || [])],
+        count: old?.count ?? 0,
+      }))
 
-      const newData = {
-        rows: [...currentRows, optimisticGroup],
-        count: currentCount + 1,
-      }
-
-      queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], newData)
-
-      return { optimisticGroup, previousData: groupsQuery.data }
+      return { prev, tempId: tempGroup.id }
     },
-    onSuccess: (newGroup: WineAromaGroup, _, context) => {
-      // store.addAromaGroup(newGroup)
-      // queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list'] })
-      if (context?.optimisticGroup) {
-        const groupWithDataArr = {
-          ...newGroup,
-          subgroups: newGroup.subgroups && newGroup.subgroups.length > 0 ? newGroup.subgroups : context.optimisticGroup.subgroups,
-          colors: newGroup.colors && newGroup.colors.length > 0 ? newGroup.colors : context.optimisticGroup.colors,
-        }
-        const currentData = queryClient.getQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters])
 
-        queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], (old: DataResponse<WineAromaGroup> = { rows: [], count: 0 }) => ({
-          rows: old.rows.map((ag: WineAromaGroup) => (ag.id === context.optimisticGroup.id ? groupWithDataArr : ag)),
-          count: old.count,
-        }))
-
-        if (currentData) {
-          const updatedData = {
-            rows: currentData.rows.map(ag => (ag.id === context.optimisticGroup.id ? groupWithDataArr : ag)),
-            count: currentData.count,
-          }
-
-          queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], updatedData)
-        }
-      }
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['aroma-groups', 'list', stableFilters], ctx.prev)
     },
-    onError: (_, __, context) => {
-      if (context?.previousData) {
-        queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], context.previousData)
-      }
+
+    onSuccess: (newGroup: WineAromaGroup, _, ctx) => {
+      queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters], old => ({
+        rows: [newGroup, ...(old?.rows?.filter(g => g.id !== ctx.tempId) || [])],
+        count: old?.count ?? 0,
+      }))
     },
+
     onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['aroma-groups', 'list', store.filters],
-        refetchType: 'active',
-      })
+      queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list'], exact: false })
     },
   })
 
   const updateGroupMutation = useMutation({
     ...wineFlavorQueries.updateGroup(),
+
     onMutate: async (params: UpdateWineAromaGroupParams) => {
-      await queryClient.cancelQueries({ queryKey: ['aroma-groups', 'list'] })
+      await queryClient.cancelQueries({ queryKey: ['aroma-groups', 'list', stableFilters] })
+      const prev = queryClient.getQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters])
 
-      const previousGroups = queryClient.getQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters])
+      const currentGroup = prev?.rows.find(g => g.id === params.groupId)
+      const assignedColors = cachedColors.filter(color => params.newGroup.colorIds?.includes(color.id)) || currentGroup?.colors || []
 
-      const optimisticGroup: WineAromaGroup = {
+      const optimistic: WineAromaGroup = {
         id: params.groupId,
         nameUa: params.newGroup.nameUa,
         nameEn: params.newGroup.nameEn,
         colorHex: params.newGroup.colorHex,
-        sortNumber: 0,
-        subgroups: [],
-        colors: [],
+        colors: assignedColors || [],
+        subgroups: currentGroup?.subgroups || [],
+        sortNumber: currentGroup?.sortNumber || 0,
       }
 
-      queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], (old: DataResponse<WineAromaGroup> = { rows: [], count: 0 }) => ({
-        rows: old.rows.map((ag: WineAromaGroup) => (ag.id === params.groupId ? { ...ag, ...optimisticGroup } : ag)),
-        count: old.count,
-      }))
-
-      return { previousGroups, optimisticGroup, params }
-    },
-    onSuccess: (updatedGroup: WineAromaGroup, _, context) => {
-      // store.updateAromaGroup(updatedGroup.id, updatedGroup)
-      // queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list'] })
-      if (!updatedGroup && context?.optimisticGroup) {
-        return
-      }
-
-      if (updatedGroup) {
-        const groupWithDataArr = {
-          ...updatedGroup,
-          subgroups: updatedGroup.subgroups && updatedGroup.subgroups.length > 0 ? updatedGroup.subgroups : context.optimisticGroup.subgroups,
-          colors: updatedGroup.colors && updatedGroup.colors.length > 0 ? updatedGroup.colors : context.optimisticGroup.colors,
+      queryClient.setQueryData<{ rows: WineAromaGroup[]; count: number }>(['aroma-groups', 'list', stableFilters], old => {
+        if (!old) {
+          return { rows: [optimistic], count: 1 }
         }
 
-        queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], (old: DataResponse<WineAromaGroup> = { rows: [], count: 0 }) => ({
-          rows: old.rows?.map((ag: WineAromaGroup) => (ag.id === updatedGroup.id ? groupWithDataArr : ag)) || [],
+        return {
+          rows: old.rows.map(g => (g.id === params.groupId ? optimistic : g)),
           count: old.count,
-        }))
-      }
+        }
+      })
+
+      return { prev }
     },
-    onError: (_, __, context) => {
-      if (context?.previousGroups) {
-        queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], context.previousGroups)
-      }
+
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['aroma-groups', 'list', stableFilters], ctx.prev)
     },
+
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list'] })
+      queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list', stableFilters], exact: false })
     },
   })
 
   const deleteGroupMutation = useMutation({
     ...wineFlavorQueries.deleteGroup(),
-    onMutate: async (colorId: string) => {
-      await queryClient.cancelQueries({ queryKey: ['aroma-groups', 'list'] })
 
-      const previousGroups = queryClient.getQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters])
-      const deletedGroup = previousGroups?.rows.find((ag: WineAromaGroup) => ag.id === colorId)
+    onMutate: async (groupId: string) => {
+      await queryClient.cancelQueries({ queryKey: ['aroma-groups', 'list', stableFilters] })
 
-      queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], (old: DataResponse<WineAromaGroup> = { rows: [], count: 0 }) => ({
-        rows: old.rows.filter((cg: WineAromaGroup) => cg.id !== colorId),
-        count: old.count - 1,
-      }))
+      const prev = queryClient.getQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters])
 
-      return { previousGroups, deletedGroup }
+      queryClient.setQueryData<{ rows: WineAromaGroup[]; count: number }>(['aroma-groups', 'list', stableFilters], old => {
+        if (!old) {
+          return { rows: [], count: 0 }
+        }
+
+        return {
+          rows: old.rows.filter(g => g.id !== groupId),
+          count: Math.max(old.count - 1, 0),
+        }
+      })
+
+      return { prev }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list'] })
+
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['aroma-groups', 'list', stableFilters], ctx.prev)
     },
-    onError: (_, __, context) => {
-      if (context?.previousGroups) {
-        queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], context.previousGroups)
-      }
-    },
+
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list'] })
+      queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list', stableFilters], exact: false })
     },
   })
 
-  const createSubgroupMutation = useMutation({
-  ...wineFlavorQueries.createSubgroup(),
-  onMutate: async ({ groupId, subgroupData }: { groupId: string; subgroupData: CreateWineAromaSubgroupParams }) => {
-    await queryClient.cancelQueries({ queryKey: ['aroma-groups', 'list'] })
+  const createSubgroup = useMutation({
+    ...wineFlavorQueries.createSubgroup(),
 
-    const previousGroups = getCurrentAromaGroups()
+    onMutate: async ({ groupId, subgroupData }: { groupId: string; subgroupData: CreateWineAromaSubgroupParams }) => {
+      await queryClient.cancelQueries({ queryKey: ['aroma-groups', 'list', stableFilters] })
 
-    const optimisticSubgroupData: WineAromaSubgroup = {
-      id: `temp-shade-${Date.now()}`,
-      nameUa: subgroupData.nameUa,
-      nameEn: subgroupData.nameEn,
-      sortNumber: subgroupData.sortNumber || 0,
-      aromas: subgroupData.aromas || [],
-    }
+      const prev = queryClient.getQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters])
 
-    queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], (old: DataResponse<WineAromaGroup> = { rows: [], count: 0 }) => ({
-      rows: old.rows.map((ag: WineAromaGroup) => 
-        ag.id === groupId 
-          ? { 
-              ...ag, 
-              subgroups: [...(ag.subgroups || []), optimisticSubgroupData] 
-            } 
-          : ag
-      ),
-      count: old.count,
-    }))
+      const tempSub: WineAromaSubgroup = {
+        id: 'temp-id-' + Date.now(),
+        nameUa: subgroupData.nameUa,
+        nameEn: subgroupData.nameEn,
+        sortNumber: subgroupData.sortNumber ?? 0,
+        aromas: subgroupData.aromas ?? [],
+        groupId: parseInt(groupId),
+      }
 
-    return { previousGroups, optimisticSubgroupData, groupId, subgroupData }
-  },
-  onSuccess: (newSubgroup: WineAromaSubgroup, variables: { groupId: string; subgroupData: CreateWineAromaSubgroupParams }, context) => {
-    if (context?.optimisticSubgroupData) {
-      queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], (old: DataResponse<WineAromaGroup> = { rows: [], count: 0 }) => ({
-        rows: old.rows.map((ag: WineAromaGroup) =>
-          ag.id === variables.groupId
-            ? {
-                ...ag,
-                subgroups: ag.subgroups.map(sg => 
-                  sg.id === context.optimisticSubgroupData.id ? newSubgroup : sg
-                ),
-              }
-            : ag
-        ),
-        count: old.count,
+      queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters], old => {
+        if (!old) return { rows: [], count: 0 }
+
+        return {
+          ...old,
+          rows: old.rows.map(g => (g.id === groupId ? { ...g, subgroups: [tempSub, ...(g.subgroups || [])] } : g)),
+          count: old.count,
+        }
+      })
+
+      return { prev, tempId: tempSub.id }
+    },
+
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['aroma-groups', 'list', stableFilters], ctx.prev)
+    },
+
+    onSuccess: (newSubgroup, _, ctx) => {
+      queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters], old => ({
+        ...old,
+        rows:
+          old?.rows.map(g =>
+            g.subgroups?.some(s => s.id === ctx?.tempId)
+              ? {
+                  ...g,
+                  shades: g.subgroups.map(s => (s.id === ctx?.tempId ? newSubgroup : s)),
+                }
+              : g
+          ) || [],
+        count: old?.count ?? 0,
       }))
-    }
-    queryClient.invalidateQueries({
-      queryKey: ['aroma-groups', 'list'],
-    })
-  },
-  onError: (_, __, context) => {
-    if (context?.previousGroups) {
-      queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], context.previousGroups)
-    }
-  },
-})
+    },
 
-  const updateSubgroupMutation = useMutation({
-  ...wineFlavorQueries.updateSubgroup(),
-  onMutate: async ({ groupId, subgroupId, newSubgroup }: { groupId: string; subgroupId: string; newSubgroup: CreateWineAromaSubgroupParams }) => {
-    await queryClient.cancelQueries({ queryKey: ['aroma-groups', 'list'] })
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list', stableFilters] })
+    },
+  })
 
-    const previousGroups = getCurrentAromaGroups()
+  const updateSubgroup = useMutation({
+    ...wineFlavorQueries.updateSubgroup(),
 
-    const optimisticSubgroup: WineAromaSubgroup = {
-      id: subgroupId,
-      nameUa: newSubgroup.nameUa,
-      nameEn: newSubgroup.nameEn,
-      sortNumber: newSubgroup.sortNumber || 0,
-      aromas: newSubgroup.aromas || [],
-    }
+    onMutate: async ({ groupId, subgroupId, newSubgroup }: any) => {
+      await queryClient.cancelQueries({ queryKey: ['aroma-groups', 'list', stableFilters] })
 
-    queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], (old: DataResponse<WineAromaGroup> = { rows: [], count: 0 }) => ({
-      rows: old.rows.map((ag: WineAromaGroup) =>
-        ag.id === groupId
-          ? {
-              ...ag,
-              subgroups: ag.subgroups.map(sg => (sg.id === subgroupId ? optimisticSubgroup : sg)),
-            }
-          : ag
-      ),
-      count: old.count,
-    }))
+      const prev = queryClient.getQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters])
 
-    return { previousGroups, optimisticSubgroup, groupId, subgroupId, newSubgroup }
-  },
-  onSuccess: (updatedSubgroup: WineAromaSubgroup, variables: { groupId: string; subgroupId: string; newSubgroup: CreateWineAromaSubgroupParams }, context) => {
-    if (updatedSubgroup && context?.optimisticSubgroup) {
-      queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], (old: DataResponse<WineAromaGroup> = { rows: [], count: 0 }) => ({
-        rows: old.rows.map((ag: WineAromaGroup) =>
-          ag.id === variables.groupId
-            ? {
-                ...ag,
-                subgroups: ag.subgroups.map(sg => (sg.id === variables.subgroupId ? updatedSubgroup : sg)),
-              }
-            : ag
-        ),
-        count: old.count,
-      }))
-    }
-    queryClient.invalidateQueries({
-      queryKey: ['aroma-groups', 'list'],
-    })
-  },
-  onError: (_, __, context) => {
-    if (context?.previousGroups) {
-      queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], context.previousGroups)
-    }
-  },
-})
-  // const createSubgroupMutation = useMutation({
-  //   ...wineFlavorQueries.createSubgroup(),
-  //   onMutate: async ({ groupId, subgroupData }: { groupId: string; subgroupData: CreateWineAromaSubgroupParams }) => {
-  //     await queryClient.cancelQueries({ queryKey: ['aroma-groups', 'list'] })
+      queryClient.setQueryData<{ rows: WineAromaGroup[]; count: number }>(['aroma-groups', 'list', stableFilters], old => {
+        if (!old) return { rows: [], count: 0 }
 
-  //     const previousGroups = getCurrentAromaGroups()
+        return {
+          ...old,
+          rows: old.rows.map(g =>
+            g.id === groupId
+              ? {
+                  ...g,
+                  subgroups: g.subgroups.map(s => (s.id === subgroupId ? { ...s, ...newSubgroup } : s)),
+                }
+              : g
+          ),
+          count: old.count,
+        }
+      })
 
-  //     const optimisticSubgroupData: WineAromaSubgroup = {
-  //       id: `temp-shade-${Date.now()}`,
-  //       nameUa: subgroupData.nameUa,
-  //       nameEn: subgroupData.nameEn,
-  //       sortNumber: subgroupData.sortNumber || 0,
-  //       aromas: subgroupData.aromas || [],
-  //     }
+      return { prev }
+    },
 
-  //     queryClient.setQueryData<DataResponse<WineAromaSubgroup>>(['aroma-groups', 'list', store.filters], (old: DataResponse<WineAromaSubgroup> = { rows: [], count: 0 }) => ({
-  //       rows: old.rows.map((ag: WineAromaSubgroup) => (ag.id === groupId ? { ...ag, aromas: [...(ag.aromas || []), optimisticSubgroupData] } : ag)),
-  //       count: old.count,
-  //     }))
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['aroma-groups', 'list', stableFilters], ctx.prev)
+    },
 
-  //     return { previousGroups, optimisticSubgroupData, groupId }
-  //   },
-  //   onSuccess: (newSubgroup: WineAromaSubgroup, variables: CreateWineAromaSubgroupParams & { groupId: string }, context) => {
-  //     // store.addSubgroup(variables.groupId, newSubgroup)
-  //     // queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list'] })
-  //     if (context?.optimisticSubgroupData) {
-  //       queryClient.setQueryData<DataResponse<WineAromaSubgroup>>(['aroma-groups', 'list', store.filters], (old: DataResponse<WineAromaSubgroup> = { rows: [], count: 0 }) => ({
-  //         rows: old.rows.map((ag: WineAromaSubgroup) =>
-  //           ag.id === variables.groupId
-  //             ? {
-  //                 ...ag,
-  //                 aromas: ag.aromas.map(a => (a.id === context.optimisticSubgroupData.id ? newSubgroup : a)),
-  //               }
-  //             : ag
-  //         ),
-  //         count: old.count,
-  //       }))
-  //     }
-  //     queryClient.invalidateQueries({
-  //       queryKey: ['aroma-groups', 'list'],
-  //     })
-  //   },
-  //   onError: (_, __, context) => {
-  //     if (context?.previousGroups) {
-  //       queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], context.previousGroups)
-  //     }
-  //   },
-  // })
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list', stableFilters] })
+    },
+  })
 
-  // const updateSubgroupMutation = useMutation({
-  //   ...wineFlavorQueries.updateSubgroup(),
-  //   onMutate: async ({ groupId, subgroupId, newSubgroup }: { groupId: string; subgroupId: string; newSubgroup: CreateWineAromaSubgroupParams }) => {
-  //     await queryClient.cancelQueries({ queryKey: ['aroma-groups', 'list'] })
-
-  //     const previousGroups = getCurrentAromaGroups()
-
-  //     const optimisticSubgroup: WineAromaSubgroup = {
-  //       id: subgroupId,
-  //       nameUa: newSubgroup.nameUa,
-  //       nameEn: newSubgroup.nameEn,
-  //       sortNumber: newSubgroup.sortNumber || 0,
-  //       aromas: newSubgroup.aromas || [],
-  //     }
-
-  //     queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], (old: DataResponse<WineAromaGroup> = { rows: [], count: 0 }) => ({
-  //       rows: old.rows.map((ag: WineAromaGroup) =>
-  //         ag.id === groupId
-  //           ? {
-  //               ...ag,
-  //               subgroups: ag.subgroups.map(sg => (sg.id === subgroupId ? optimisticSubgroup : sg)),
-  //             }
-  //           : ag
-  //       ),
-  //       count: old.count,
-  //     }))
-
-  //     return { previousGroups, optimisticSubgroup, groupId, subgroupId }
-  //   },
-  //   onSuccess: (updatedSubgroup: WineAromaSubgroup, variables: UpdateWineAromaSubgroupParams & { groupId: string }, context) => {
-  //     // store.updateSubgroup(variables.groupId, variables.subgroupId, updatedSubgroup)
-  //     // queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list'] })
-  //     if (updatedSubgroup && context?.optimisticSubgroup) {
-  //       queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], (old: DataResponse<WineAromaGroup> = { rows: [], count: 0 }) => ({
-  //         rows: old.rows.map((ag: WineAromaGroup) =>
-  //           ag.id === variables.groupId
-  //             ? {
-  //                 ...ag,
-  //                 subgroups: ag.subgroups.map(sg => (sg.id === variables.subgroupId ? updatedSubgroup : sg)),
-  //               }
-  //             : ag
-  //         ),
-  //         count: old.count,
-  //       }))
-  //     }
-  //     queryClient.invalidateQueries({
-  //       queryKey: ['aroma-groups', 'list'],
-  //     })
-  //   },
-  //   onError: (_, __, context) => {
-  //     if (context?.previousGroups) {
-  //       queryClient.setQueryData<DataResponse<WineAromaGroup>>(['color-groups', 'list', store.filters], context.previousGroups)
-  //     }
-  //   },
-  // })
-
-  const deleteSubgroupMutation = useMutation({
-    // mutationKey: ['aroma-subgroups', 'delete'],
-    // mutationFn: (params: DeleteSubgroupParams) => wineFlavorQueries.deleteSubgroup().mutationFn(params.subgroupId),
-    // onSuccess: (_, variables: DeleteSubgroupParams) => {
-    //   store.deleteSubgroup(variables.groupId, variables.subgroupId)
-    //   queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list'] })
-    // },
+  const deleteSubgroup = useMutation({
     ...wineFlavorQueries.deleteSubgroup(),
-    onMutate: async (subgroupId: string) => {
-      await queryClient.cancelQueries({ queryKey: ['aroma-groups', 'list'] })
 
-      const previousGroups = getCurrentAromaGroups()
+    onMutate: async ({ groupId, subgroupId }) => {
+      await queryClient.cancelQueries({ queryKey: ['aroma-groups', 'list', stableFilters] })
 
-      const groupWithSubgroup = previousGroups?.rows.find(ag => ag.subgroups.some(sg => sg.id === subgroupId))
+      const prev = queryClient.getQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters])
 
-      queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], (old: DataResponse<WineAromaGroup> = { rows: [], count: 0 }) => ({
-        rows: old.rows.map((ag: WineAromaGroup) => (ag.id === groupWithSubgroup?.id ? { ...ag, subgroups: ag.subgroups.filter(sg => sg.id !== subgroupId) } : ag)),
-        count: old.count,
-      }))
+      queryClient.setQueryData<{ rows: WineAromaGroup[]; count: number }>(['aroma-groups', 'list', stableFilters], old => {
+        if (!old) return { rows: [], count: 0 }
 
-      return { previousGroups, deletedSubgroupId: subgroupId, groupId: groupWithSubgroup?.id }
+        return {
+          ...old,
+          rows: old.rows.map(g => (g.id === groupId ? { ...g, subgroups: g.subgroups.filter(s => s.id !== subgroupId) } : g)),
+          count: old.count,
+        }
+      })
+
+      return { prev }
     },
-    onError: (_, __, context) => {
-      if (context?.previousGroups) {
-        queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', store.filters], context.previousGroups)
-      }
+
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['aroma-groups', 'list', stableFilters], ctx.prev)
     },
+
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list'] })
+      queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list', stableFilters] })
     },
   })
 
-  const createGroup = (group: CreateWineAromaGroupParams) => {
-    return createGroupMutation.mutateAsync(group)
-  }
-
-  const updateGroup = (params: UpdateWineAromaGroupParams) => {
-    return updateGroupMutation.mutateAsync(params)
-  }
-
-  const deleteGroup = (groupId: string) => {
-    return deleteGroupMutation.mutateAsync(groupId)
-  }
-
-const createSubgroup = (groupId: string, subgroupData: CreateWineAromaSubgroupParams) => {
-  return createSubgroupMutation.mutateAsync({ groupId, subgroupData })
-}
-
-const updateSubgroup = (groupId: string, params: UpdateWineAromaSubgroupParams) => {
-  return updateSubgroupMutation.mutateAsync({ 
-    groupId, 
-    subgroupId: params.subgroupId, 
-    newSubgroup: params.newSubgroup 
-  })
-}
-
-  const deleteSubgroup = (_: string, subgroupId: string) => {
-    return deleteSubgroupMutation.mutateAsync(subgroupId)
-  }
-
-  const searchAromaGroups = (searchTerm: string) => {
-    store.searchAromaGroups(searchTerm)
-  }
-
-  const clearSearch = () => {
-    store.clearSearch()
-  }
-
-  const setCurrentAromaGroup = (group: WineAromaGroup | null) => {
-    store.setCurrentAromaGroup(group)
-  }
-
-  const getAromaGroupById = (id: string) => {
-    return store.getAromaGroupById(id)
-  }
-
-  const getSubgroupById = (groupId: string, subgroupId: string) => {
-    return store.getSubgroupById(groupId, subgroupId)
-  }
-
-  const getAromaById = (groupId: string, subgroupId: string, aromaId: string) => {
-    return store.getAromaById(groupId, subgroupId, aromaId)
-  }
-
-  const hasAromaGroup = (id: string) => {
-    return store.hasAromaGroup(id)
-  }
-
-  const onChangePagination = (offset: number) => {
-    store.setFilters({ offset })
-  }
+  const onChangePagination = (page: number) => store.setFilters({ page })
 
   return {
-    aromaGroups: groupsQuery.data,
-    searchResults: store.searchResults,
-    currentAromaGroup: store.currentAromaGroup,
-    totalCount: groupsQuery?.data?.count || 0,
-    filters: store.filters,
+    aromaGroups: aromaGroups(),
+    totalCount: groupsQuery.data?.count || 0,
 
+    filters: store.filters,
     isLoading: groupsQuery.isLoading,
     isError: groupsQuery.isError,
     error: groupsQuery.error,
@@ -508,27 +287,18 @@ const updateSubgroup = (groupId: string, params: UpdateWineAromaSubgroupParams) 
     isCreatingGroup: createGroupMutation.isPending,
     isUpdatingGroup: updateGroupMutation.isPending,
     isDeletingGroup: deleteGroupMutation.isPending,
-    isCreatingSubgroup: createSubgroupMutation.isPending,
-    isUpdatingSubgroup: updateSubgroupMutation.isPending,
-    isDeletingSubgroup: deleteSubgroupMutation.isPending,
+    isCreatingSubAroma: createSubgroup.isPending,
+    isUpdatingSubgroup: updateSubgroup.isPending,
+    isDeletingSubgroup: deleteSubgroup.isPending,
 
-    createGroup,
-    updateGroup,
-    deleteGroup,
-    createSubgroup,
-    updateSubgroup,
-    deleteSubgroup,
-    searchAromaGroups,
-    clearSearch,
-    setCurrentAromaGroup,
-    getAromaGroupById,
-    getSubgroupById,
-    getAromaById,
-    hasAromaGroup,
+    createGroup: createGroupMutation.mutateAsync,
+    updateGroup: updateGroupMutation.mutateAsync,
+    deleteGroup: deleteGroupMutation.mutateAsync,
+    createSubgroup: createSubgroup.mutateAsync,
+    updateSubgroup: updateSubgroup.mutateAsync,
+    deleteSubgroup: deleteSubgroup.mutateAsync,
 
-    refetchGroups: groupsQuery.refetch,
-    refetchGroupsWithParams: customRefetchGroups,
-    groupsQuery,
     onChangePagination,
+    refetchGroups: groupsQuery.refetch,
   }
 }

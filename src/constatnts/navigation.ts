@@ -14,7 +14,7 @@ export interface NavItem extends NavSubItem {
   isActive?: boolean
 }
 
-export const DEFAULT_PAGINATION_LIMIT = 30
+export const DEFAULT_PAGINATION_LIMIT = 2
 export const MAX_SYMBOLS_INPUT_REGULAR = 200
 export const MAX_SYMBOLS_INPUT_LARGE = 3000
 

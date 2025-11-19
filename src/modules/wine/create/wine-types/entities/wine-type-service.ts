@@ -4,7 +4,7 @@ import { WINE_TYPE_ENDPOINTS } from './wine-type-endpoints'
 import { WineType, UpdateWineTypeParams, CreateWineTypeRequest } from './types/wine-type'
 
 export const wineTypeService = {
-  list: (include?: string[]) :Promise<WineType[]>=>
+  list: (include?: string[]): Promise<WineType[]> =>
     api
       .get(WINE_TYPE_ENDPOINTS.LIST, {
         params: include && include.length > 0 ? { include } : {},

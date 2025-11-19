@@ -52,7 +52,7 @@ export const useUsers = () => {
   })
 
   const { debouncedWrapper } = useDebounce((searchValue: string) => {
-    setFilters({ search: searchValue, offset: 0 })
+    setFilters({ search: searchValue, page: 0 })
   }, 500)
 
   const findUserById = useCallback(
@@ -76,8 +76,8 @@ export const useUsers = () => {
   }, [resetFilters])
 
   const onChangePagination = useCallback(
-    (offset: number) => {
-      setFilters({ offset })
+    (page: number) => {
+      setFilters({ page })
     },
     [setFilters]
   )
@@ -130,6 +130,7 @@ export const useUsers = () => {
 
   return {
     users: usersQuery.data?.rows,
+    totalCount: usersQuery.data?.count,
     isLoading: usersQuery.isLoading,
     filters,
     searchValue,

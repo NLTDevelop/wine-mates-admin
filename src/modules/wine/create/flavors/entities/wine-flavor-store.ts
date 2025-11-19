@@ -9,7 +9,8 @@ interface WineFlavorStoreState {
   filters: {
     search: string
     limit: number
-    offset: number
+    page: number
+    include?: string[]
   }
 
   setAromaGroups: (groups: WineAromaGroup[]) => void
@@ -40,7 +41,8 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
     filters: {
       search: '',
       limit: DEFAULT_PAGINATION_LIMIT,
-      offset: 0,
+      page: 1,
+      include: ['subgroups', 'assigned-colors'],
     },
 
     setAromaGroups: groups => set({ aromaGroups: groups }, false, 'aromaGroups/setAromaGroups'),
@@ -112,7 +114,7 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
           filters: {
             search: '',
             limit: DEFAULT_PAGINATION_LIMIT,
-            offset: 0,
+            page: 0,
           },
         },
         false,

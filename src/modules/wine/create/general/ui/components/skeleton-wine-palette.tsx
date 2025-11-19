@@ -10,14 +10,6 @@ export const SkeletonWinePalette = ({ itemsCount = 5 }: SkeletonWineTypeManagerP
   return (
     <Card>
       <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
-        {/* <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <Skeleton className="h-10 w-30" />
-            <Skeleton className="h-10 w-48" />
-          </div>
-          
-        </div> */}
-
         <div className="mx-auto flex flex-col justify-center gap-2 w-full">
           {Array.from({ length: itemsCount }).map((_, index) => (
             <div key={index} className={cn('border-1 border-input rounded-md transition-all cursor-default p-2')}>

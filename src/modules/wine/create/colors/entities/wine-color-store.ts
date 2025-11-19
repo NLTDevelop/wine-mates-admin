@@ -9,7 +9,8 @@ interface WineColorStoreState {
   filters: {
     search: string
     limit: number
-    offset: number
+    page: number
+    include?: string[]
   }
 
   setColorGroups: (groups: WineColorGroup[]) => void
@@ -39,7 +40,8 @@ export const useWineColorStore = createStoreDevToolsWrapper<WineColorStoreState>
     filters: {
       search: '',
       limit: DEFAULT_PAGINATION_LIMIT,
-      offset: 0,
+      page: 1,
+      include: ['shades'],
     },
 
     setColorGroups: groups => set({ colorGroups: groups }, false, 'colorGroups/setColorGroups'),
@@ -49,7 +51,7 @@ export const useWineColorStore = createStoreDevToolsWrapper<WineColorStoreState>
     addColorGroup: group =>
       set(
         (state: WineColorStoreState) => ({
-          colorGroups: [...state.colorGroups, group],
+          colorGroups: [group, ...state.colorGroups],
         }),
         false,
         'colorGroups/addColorGroup'
@@ -83,7 +85,7 @@ export const useWineColorStore = createStoreDevToolsWrapper<WineColorStoreState>
           filters: { ...state.filters, ...newFilters },
         }),
         false,
-        'wineTypes/setFilters'
+        'colorGroups/setFilters'
       ),
 
     resetFilters: () =>
@@ -92,11 +94,11 @@ export const useWineColorStore = createStoreDevToolsWrapper<WineColorStoreState>
           filters: {
             search: '',
             limit: DEFAULT_PAGINATION_LIMIT,
-            offset: 0,
+            page: 1,
           },
         },
         false,
-        'wineTypes/resetFilters'
+        'colorGroups/resetFilters'
       ),
 
     searchColorGroups: searchTerm =>

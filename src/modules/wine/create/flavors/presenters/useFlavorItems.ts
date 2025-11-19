@@ -2,20 +2,21 @@ import { useCallback } from 'react'
 import { useWineFlavor } from './useWineFlavors'
 import { WineAromaGroup, WineAromaItem, WineAromaSubgroup } from '../entities/types/flavor-types'
 import { EditingGroupState, NewItemData } from '../entities/types/flavor-palette-types'
-import { DataResponse } from '../../general/entities/types'
+import { BaseWineColor } from '../../general/entities/types'
 
 interface UseFlavorItemsProps {
-  aromaGroups: DataResponse<WineAromaGroup> | undefined
+  aromaGroups: WineAromaGroup[] | undefined
   editingGroup: any
   newItemData: Record<string, any>
   openAccordions: Set<string>
   setEditingGroup: (editingGroup: any) => void
   setNewItemData: (data: any) => void
   setOpenAccordions: (accordions: any) => void
+  cachedColors: BaseWineColor[]
 }
 
-export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setEditingGroup, setNewItemData, setOpenAccordions }: UseFlavorItemsProps) => {
-  const { createSubgroup, updateSubgroup, deleteSubgroup/*, refetchGroupsWithParams*/ } = useWineFlavor()
+export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setEditingGroup, setNewItemData, setOpenAccordions, cachedColors }: UseFlavorItemsProps) => {
+  const { createSubgroup, updateSubgroup, deleteSubgroup } = useWineFlavor(cachedColors)
 
   const handleAddAromaClick = useCallback(
     (groupId: string) => {
@@ -69,8 +70,7 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
       try {
         const isEditingCurrentItem = editingGroup?.groupId === groupId && editingGroup?.editingItem?.id === subgroupId
 
-        await deleteSubgroup(groupId, subgroupId)
-        // await refetchGroupsWithParams(['subgroups', 'assigned-colors'])
+        await deleteSubgroup({ groupId, subgroupId })
 
         if (isEditingCurrentItem) {
           setEditingGroup(null)
@@ -84,7 +84,7 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
         console.error('Failed to delete shade:', error)
       }
     },
-    [deleteSubgroup, /*refetchGroupsWithParams,*/ editingGroup, setEditingGroup, setNewItemData]
+    [deleteSubgroup, editingGroup, setEditingGroup, setNewItemData]
   )
 
   const hasChanges = useCallback(
@@ -126,11 +126,10 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
         }
 
         try {
-          await updateSubgroup(groupId, {
+          await updateSubgroup({
             subgroupId: editingGroup.editingItem.id,
             newSubgroup: subgroupData,
           })
-          // await refetchGroupsWithParams(['subgroups', 'assigned-colors'])
           setEditingGroup(null)
           setNewItemData((prev: Record<string, NewItemData>) => {
             const newData = { ...prev }
@@ -142,14 +141,15 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
         }
       } else if (newItemData[groupId]) {
         const subgroupData = {
+          groupId: parseInt(groupId),
           nameUa: newItemData[groupId].name,
           nameEn: newItemData[groupId].nameEn,
           aromas: newItemData[groupId].aromas || [],
+          sortNumber: 0,
         }
 
         try {
-          await createSubgroup(groupId, subgroupData)
-          // await refetchGroupsWithParams(['subgroups', 'assigned-colors'])
+          await createSubgroup({ groupId, subgroupData })
           setNewItemData((prev: Record<string, NewItemData>) => {
             const newData = { ...prev }
             delete newData[groupId]
@@ -160,7 +160,7 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
         }
       }
     },
-    [editingGroup, newItemData, updateSubgroup, createSubgroup, setEditingGroup, setNewItemData, /*refetchGroupsWithParams,*/ hasChanges]
+    [editingGroup, newItemData, updateSubgroup, createSubgroup, setEditingGroup, setNewItemData, hasChanges]
   )
 
   const handleCancelItemEdit = useCallback(

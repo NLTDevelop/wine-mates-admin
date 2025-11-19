@@ -56,7 +56,7 @@ export interface ConfirmUserCategoryParams {
 
 export interface UserFilters {
   limit: number
-  offset: number
+  page: number
   search?: string
   category?: string
 }

@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import { WineAromaItem, WineAromaSubgroup } from '../../entities/types/flavor-types'
 import { PaletteItemActions } from '../../../general/ui'
+import { useDeleteModal } from '../../../general/presenters/useDeleteModal'
+import { WarningModal } from '@/modals/warningModal'
+import { useTranslation } from 'react-i18next'
 
 interface FlavorListItem {
   id: string
@@ -21,11 +24,29 @@ interface FlavorListProps {
 }
 
 export const FlavorList: React.FC<FlavorListProps> = ({ items, isLoading = false, onRemove, onEdit, getItemName, cardTextColorClass, isEditable = false, showEditButton = false, hexColor }) => {
+  const { t } = useTranslation('wines')
+
   const handleEditClick = (aromaItem: WineAromaSubgroup | undefined) => {
     if (onEdit && isEditable) {
       onEdit(aromaItem)
     }
   }
+
+  const { deleteModal } = useDeleteModal()
+
+  const handleOpenDeleteModal = useCallback(
+    (item: WineAromaSubgroup) => {
+      deleteModal.open(item.id, item.nameUa)
+    },
+    [deleteModal]
+  )
+
+  const handleConfirmDelete = useCallback(() => {
+    if (deleteModal.id) {
+      onRemove(deleteModal.id)
+      deleteModal.close()
+    }
+  }, [deleteModal, onRemove])
 
   return (
     <div className="space-y-3 mt-3 hover:brightness-100 w-full">
@@ -51,16 +72,25 @@ export const FlavorList: React.FC<FlavorListProps> = ({ items, isLoading = false
 
             <PaletteItemActions
               isLoading={isLoading}
-              onRemove={() => onRemove(item.id)}
+              onRemove={handleConfirmDelete}
               dataId={item.id}
               cardTextColorClass={cardTextColorClass}
               onEdit={isEditable ? () => handleEditClick(item) : undefined}
               showEditButton={showEditButton}
               variant="row"
+              deleteModal={() => handleOpenDeleteModal(item)}
             />
           </div>
         )
       })}
+      <WarningModal
+        title={t('modal.delete_title', { slug: 'віддтінок аромату' })}
+        actionTitle={t('modal.delete_action')}
+        description={t('modal.delete_description', { name: deleteModal.nameUa, slug: 'Відтінок аромату' })}
+        isOpen={deleteModal.isOpen}
+        onClose={deleteModal.close}
+        onSubmit={handleConfirmDelete}
+      />
     </div>
   )
 }

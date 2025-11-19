@@ -28,7 +28,7 @@ export const TasteForm: React.FC<TasteFormProps> = ({ formData, onFormDataChange
     onColorsChange: colors => onFormDataChange('colors', colors),
   })
 
-  const canSave = formData.nameUa && formData.nameEn && formData.colors.length && !isLoading && formData.value
+  const canSave = formData.nameUa && formData.nameEn && formData.colors.length && !isLoading && formData.colorHex
 
   const SaveIcon = mode === 'create' ? Plus : Save
   const saveText = isLoading ? tc('button.saving') : mode === 'create' ? tc('button.save') : tc('button.save')
@@ -50,7 +50,7 @@ export const TasteForm: React.FC<TasteFormProps> = ({ formData, onFormDataChange
       <div className="mb-4">
         <label className="text-sm font-medium mb-2 block">{t('tastes.base_color')} *</label>
         <div className="flex items-center gap-4">
-          <ColorPicker value={formData.value} onChange={color => onFormDataChange('value', color)} />
+          <ColorPicker value={formData.colorHex} onChange={color => onFormDataChange('colorHex', color)} />
         </div>
       </div>
 

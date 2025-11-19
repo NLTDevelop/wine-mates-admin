@@ -5,7 +5,7 @@ interface UserState {
   filters: {
     search: string
     limit: number
-    offset: number
+    page: number
   }
   setFilters: (filters: Partial<UserState['filters']>) => void
   resetFilters: () => void
@@ -16,7 +16,7 @@ export const useUserStore = createStoreDevToolsWrapper<UserState>(
     filters: {
       search: '',
       limit: DEFAULT_PAGINATION_LIMIT,
-      offset: 0,
+      page: 1,
     },
     setFilters: newFilters =>
       set(
@@ -32,7 +32,7 @@ export const useUserStore = createStoreDevToolsWrapper<UserState>(
           filters: {
             search: '',
             limit: DEFAULT_PAGINATION_LIMIT,
-            offset: 0,
+            page: 1,
           },
         },
         false,

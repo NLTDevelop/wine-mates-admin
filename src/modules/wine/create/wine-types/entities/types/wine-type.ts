@@ -1,6 +1,5 @@
 import { BaseWineColor } from '../../../general/entities/types'
 
-
 export interface WineType {
   id: string
   nameUa: string

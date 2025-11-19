@@ -14,6 +14,7 @@ export interface WineAromaSubgroup {
   nameEn: string
   sortNumber: number
   aromas: WineAromaItem[]
+  groupId?: number
 }
 
 export interface WineAromaGroup {
@@ -48,6 +49,7 @@ export interface UpdateWineAromaGroupParams {
 }
 
 export interface CreateWineAromaSubgroupParams {
+  groupId?: number
   nameUa: string
   nameEn: string
   sortNumber?: number
@@ -56,5 +58,5 @@ export interface CreateWineAromaSubgroupParams {
 
 export interface UpdateWineAromaSubgroupParams {
   subgroupId: string
-  newSubgroup: CreateWineAromaSubgroupParams
+  newSubgroup?: CreateWineAromaSubgroupParams
 }

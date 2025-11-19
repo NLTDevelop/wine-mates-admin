@@ -36,7 +36,7 @@ export const SortableList = <T,>({ items, onReorder, strategy = 'vertical', chil
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <SortableContext items={items.map((item, index) => getId(item, index))} strategy={sortableStrategy}>
+      <SortableContext items={items?.map((item, index) => getId(item, index))} strategy={sortableStrategy}>
         {children}
       </SortableContext>
     </DndContext>

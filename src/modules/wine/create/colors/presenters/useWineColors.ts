@@ -2,100 +2,93 @@ import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack
 import { useWineColorStore } from '../entities/wine-color-store'
 import { wineColorQueries } from '../entities/wine-color-queries'
 import { CreateShadesParams, CreateWineColorParams, UpdateWineColorParams, WineColorGroup, WineShades } from '../entities/types/color-types'
-import { DataResponse, FiltersParams } from '../../general/entities/types'
+import { DataResponse } from '../../general/entities/types'
+import { useEffect, useMemo } from 'react'
+import { colorService } from '../entities/color-service'
 
 export const useWineColor = () => {
   const queryClient = useQueryClient()
   const store = useWineColorStore()
 
-  const groupsQuery: UseQueryResult<DataResponse<WineColorGroup>, Error> = useQuery({
-    ...wineColorQueries.listGroups({
-      limit: store.filters.limit,
-      offset: store.filters.offset,
-      search: store.filters.search,
-      include: ['shades'],
-    }),
+  const stableFilters = useMemo(() => {
+    const filtersWithShades = {
+      ...store.filters,
+      include: Array.from(new Set([...(store.filters.include || []), 'shades'])),
+    }
+    return JSON.stringify(filtersWithShades)
+  }, [store.filters])
+
+  const groupsQuery: UseQueryResult<DataResponse<WineColorGroup>, Error> = useQuery<DataResponse<WineColorGroup>, Error>({
+    queryKey: ['color-groups', 'list', stableFilters],
+    queryFn: () =>
+      colorService.list({
+        ...store.filters,
+        include: Array.from(new Set([...(store.filters.include || []), 'shades'])),
+      }),
+    placeholderData: prev => prev,
   })
 
-  const getCurrentColorGroups = () => {
-    const data = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters])
-    return data || { rows: [], count: 0 }
+  useEffect(() => {
+    if (!groupsQuery.data || groupsQuery.isFetching) return
+    store.setColorGroups(groupsQuery.data.rows)
+  }, [groupsQuery.data, groupsQuery.isFetching])
+
+  const colorGroups = (): WineColorGroup[] => {
+    const cached = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters])
+    return cached?.rows ?? []
   }
 
-  const customRefetchGroups = (filters?: FiltersParams) => {
-    return queryClient.fetchQuery(wineColorQueries.listGroups(filters))
-  }
+  const createGroupMutation = useMutation<WineColorGroup, Error, CreateWineColorParams, { prev?: DataResponse<WineColorGroup>; tempId: string }>({
+    mutationKey: ['color-groups', 'create'],
+    mutationFn: groupData => colorService.create(groupData),
 
-  const createGroupMutation = useMutation({
-    ...wineColorQueries.createGroup(),
-    onMutate: async (newColor: CreateWineColorParams) => {
+    onMutate: async groupData => {
       await queryClient.cancelQueries({ queryKey: ['color-groups', 'list'] })
 
-      const optimisticGroup: WineColorGroup = {
-        id: `temp-${Date.now()}`,
-        nameUa: newColor.nameUa,
-        nameEn: newColor.nameEn,
-        colorHex: newColor.colorHex,
-        shades: newColor.shades || [],
+      const prev = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters])
+
+      const tempGroup: WineColorGroup = {
+        id: 'temp-id-' + Date.now(),
+        ...groupData,
+        shades: [],
       }
 
-      const currentRows = groupsQuery.data?.rows || []
-      const currentCount = groupsQuery.data?.count || 0
+      queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters], old => ({
+        ...old,
+        rows: [tempGroup, ...(old?.rows || [])],
+        count: old?.count ?? 0,
+      }))
 
-      const newData = {
-        rows: [...currentRows, optimisticGroup],
-        count: currentCount + 1,
-      }
-
-      queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], newData)
-
-      return { optimisticGroup, previousData: groupsQuery.data }
+      return { prev, tempId: tempGroup.id }
     },
-    onSuccess: (newGroup: WineColorGroup, _, context) => {
-      if (context?.optimisticGroup) {
-        const groupWithShades = {
-          ...newGroup,
-          shades: newGroup.shades && newGroup.shades.length > 0 ? newGroup.shades : context.optimisticGroup.shades,
-        }
-        const currentData = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters])
 
-        queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], (old: DataResponse<WineColorGroup> = { rows: [], count: 0 }) => ({
-          rows: old.rows.map((cg: WineColorGroup) => (cg.id === context.optimisticGroup.id ? groupWithShades : cg)),
-          count: old.count,
-        }))
-
-        if (currentData) {
-          const updatedData = {
-            rows: currentData.rows.map(cg => (cg.id === context.optimisticGroup.id ? groupWithShades : cg)),
-            count: currentData.count,
-          }
-
-          queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], updatedData)
-        }
-      }
-      queryClient.invalidateQueries({ queryKey: ['wine-types', 'list'] })
-    },
-    onError: (_, __, context) => {
-      if (context?.previousData) {
-        queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], context.previousData)
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) {
+        queryClient.setQueryData(['color-groups', 'list', stableFilters], ctx.prev)
       }
     },
+
+    onSuccess: (newGroup, _, ctx) => {
+      queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters], old => ({
+        rows: [newGroup, ...(old?.rows?.filter(g => g.id !== ctx.tempId) || [])],
+        count: old?.count ?? 0,
+      }))
+    },
+
     onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['color-groups', 'list', store.filters],
-        refetchType: 'active',
-      })
+      queryClient.invalidateQueries({ queryKey: ['color-groups', 'list'], exact: false })
     },
   })
 
   const updateGroupMutation = useMutation({
     ...wineColorQueries.updateGroup(),
+
     onMutate: async (params: UpdateWineColorParams) => {
       await queryClient.cancelQueries({ queryKey: ['color-groups', 'list'] })
 
-      const previousGroups = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters])
+      const prev = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters])
 
-      const optimisticGroup: WineColorGroup = {
+      const optimistic: WineColorGroup = {
         id: params.colorId,
         nameUa: params.newColor.nameUa,
         nameEn: params.newColor.nameEn,
@@ -103,259 +96,192 @@ export const useWineColor = () => {
         shades: params.newColor.shades || [],
       }
 
-      queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], (old: DataResponse<WineColorGroup> = { rows: [], count: 0 }) => ({
-        rows: old.rows.map((cg: WineColorGroup) => (cg.id === params.colorId ? optimisticGroup : cg)),
+      queryClient.setQueryData(['color-groups', 'list', stableFilters], (old: DataResponse<WineColorGroup>) => ({
+        rows: old.rows.map(g => (g.id === params.colorId ? optimistic : g)),
         count: old.count,
       }))
 
-      return { previousGroups, optimisticGroup, params }
+      return { prev }
     },
-    onSuccess: (updatedGroup: WineColorGroup, _, context) => {
-      if (!updatedGroup && context?.optimisticGroup) {
-        return
-      }
 
-      if (updatedGroup) {
-        const wineTypeWithColors = {
-          ...updatedGroup,
-          colors: updatedGroup.shades && updatedGroup.shades.length > 0 ? updatedGroup.shades : context?.optimisticGroup?.shades || [],
-        }
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['color-groups', 'list', stableFilters], ctx.prev)
+    },
 
-        queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], (old: DataResponse<WineColorGroup> = { rows: [], count: 0 }) => ({
-          rows: old.rows?.map((cg: WineColorGroup) => (cg.id === updatedGroup.id ? wineTypeWithColors : cg)) || [],
-          count: old.count,
-        }))
-      }
-      queryClient.invalidateQueries({ queryKey: ['wine-types', 'list'] })
-    },
-    onError: (_, __, context) => {
-      if (context?.previousGroups) {
-        queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], context.previousGroups)
-      }
-    },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['color-groups', 'list'] })
+      queryClient.invalidateQueries({ queryKey: ['color-groups', 'list'], exact: false })
     },
   })
 
   const deleteGroupMutation = useMutation({
     ...wineColorQueries.deleteGroup(),
-    onMutate: async (colorId: string) => {
+
+    onMutate: async (groupId: string) => {
       await queryClient.cancelQueries({ queryKey: ['color-groups', 'list'] })
 
-      const previousGroups = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters])
-      const deletedGroup = previousGroups?.rows.find((cg: WineColorGroup) => cg.id === colorId)
+      const prev = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters])
 
-      queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], (old: DataResponse<WineColorGroup> = { rows: [], count: 0 }) => ({
-        rows: old.rows.filter((cg: WineColorGroup) => cg.id !== colorId),
+      queryClient.setQueryData(['color-groups', 'list', stableFilters], (old: DataResponse<WineColorGroup>) => ({
+        rows: old.rows.filter(g => g.id !== groupId),
         count: old.count - 1,
       }))
 
-      return { previousGroups, deletedGroup }
+      return { prev }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['wine-types', 'list'] })
+
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['color-groups', 'list', stableFilters], ctx.prev)
     },
-    onError: (_, __, context) => {
-      if (context?.previousGroups) {
-        queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], context.previousGroups)
-      }
-    },
+
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['color-groups', 'list'] })
+      queryClient.invalidateQueries({ queryKey: ['color-groups', 'list'], exact: false })
     },
   })
 
-  const createShadeMutation = useMutation({
-    ...wineColorQueries.createShade(),
-    onMutate: async ({ groupId, shadeData }: { groupId: string; shadeData: CreateShadesParams }) => {
+  const createShadeMutation = useMutation<WineShades, Error, { groupId: string; shadeData: CreateShadesParams }, { prev?: DataResponse<WineColorGroup>; tempId: string }>({
+    mutationKey: ['color-shades', 'create'],
+    mutationFn: ({ groupId, shadeData }) => colorService.createShade(groupId, shadeData),
+
+    onMutate: async ({ groupId, shadeData }) => {
       await queryClient.cancelQueries({ queryKey: ['color-groups', 'list'] })
 
-      const previousGroups = getCurrentColorGroups()
+      const prev = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters])
 
-      const optimisticShade: WineShades = {
-        id: `temp-shade-${Date.now()}`,
-        nameUa: shadeData.nameUa,
-        nameEn: shadeData.nameEn,
-        tonePale: shadeData.tonePale,
-        toneMedium: shadeData.toneMedium,
-        toneDeep: shadeData.toneDeep,
+      const tempShade: WineShades = {
+        id: 'temp-id-' + Date.now(),
+        ...shadeData,
         colorHex: shadeData.colorHex || '',
-        sortNumber: shadeData.sortNumber || 0,
+        sortNumber: shadeData.sortNumber ?? 0,
       }
 
-      queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], (old: DataResponse<WineColorGroup> = { rows: [], count: 0 }) => ({
-        rows: old.rows.map((cg: WineColorGroup) => (cg.id === groupId ? { ...cg, shades: [...(cg.shades || []), optimisticShade] } : cg)),
-        count: old.count,
+      queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters], old => ({
+        ...old,
+        rows:
+          old?.rows.map(g =>
+            g.id === groupId
+              ? {
+                  ...g,
+                  shades: [tempShade, ...(g.shades || [])],
+                }
+              : g
+          ) || [],
+        count: old?.count ?? 0,
       }))
 
-      return { previousGroups, optimisticShade, groupId }
+      return { prev, tempId: tempShade.id }
     },
-    onSuccess: (newShade: WineShades, variables, context) => {
-      if (context?.optimisticShade) {
-        queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], (old: DataResponse<WineColorGroup> = { rows: [], count: 0 }) => ({
-          rows: old.rows.map((cg: WineColorGroup) =>
-            cg.id === variables.groupId
+
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) {
+        queryClient.setQueryData(['color-groups', 'list', stableFilters], ctx.prev)
+      }
+    },
+
+    onSuccess: (newShade, _, ctx) => {
+      queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters], old => ({
+        ...old,
+        rows:
+          old?.rows.map(g =>
+            g.shades?.some(s => s.id === ctx?.tempId)
               ? {
-                  ...cg,
-                  shades: cg.shades.map(shade => (shade.id === context.optimisticShade.id ? newShade : shade)),
+                  ...g,
+                  shades: g.shades.map(s => (s.id === ctx?.tempId ? newShade : s)),
                 }
-              : cg
-          ),
-          count: old.count,
-        }))
-      }
-      queryClient.invalidateQueries({
-        queryKey: ['color-groups', 'list'],
-      })
+              : g
+          ) || [],
+        count: old?.count ?? 0,
+      }))
     },
-    onError: (_, __, context) => {
-      if (context?.previousGroups) {
-        queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], context.previousGroups)
-      }
-    },
+
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['color-groups', 'list'], exact: false }),
   })
 
   const updateShadeMutation = useMutation({
     ...wineColorQueries.updateShade(),
-    onMutate: async ({ groupId, shadeId, newShades }: { groupId: string; shadeId: string; newShades: CreateShadesParams }) => {
+
+    onMutate: async ({ groupId, shadeId, newShades }) => {
       await queryClient.cancelQueries({ queryKey: ['color-groups', 'list'] })
 
-      const previousGroups = getCurrentColorGroups()
+      const prev = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters])
 
-      const optimisticShade: WineShades = {
+      const optimistic: WineShades = {
         id: shadeId,
-        nameUa: newShades.nameUa,
-        nameEn: newShades.nameEn,
-        tonePale: newShades.tonePale,
-        toneMedium: newShades.toneMedium,
-        toneDeep: newShades.toneDeep,
+        ...newShades,
         colorHex: newShades.colorHex || '',
-        sortNumber: newShades.sortNumber || 0,
+        sortNumber: newShades.sortNumber ?? 0,
       }
 
-      queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], (old: DataResponse<WineColorGroup> = { rows: [], count: 0 }) => ({
-        rows: old.rows.map((cg: WineColorGroup) =>
-          cg.id === groupId
+      queryClient.setQueryData(['color-groups', 'list', stableFilters], (old: DataResponse<WineColorGroup>) => ({
+        rows: old.rows.map(g =>
+          g.id === groupId
             ? {
-                ...cg,
-                shades: cg.shades.map(shade => (shade.id === shadeId ? optimisticShade : shade)),
+                ...g,
+                shades: g.shades.map(s => (s.id === shadeId ? optimistic : s)),
               }
-            : cg
+            : g
         ),
         count: old.count,
       }))
 
-      return { previousGroups, optimisticShade, groupId, shadeId }
+      return { prev }
     },
-    onSuccess: (updatedShade: WineShades, variables, context) => {
-      if (updatedShade && context?.optimisticShade) {
-        queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], (old: DataResponse<WineColorGroup> = { rows: [], count: 0 }) => ({
-          rows: old.rows.map((cg: WineColorGroup) =>
-            cg.id === variables.groupId
-              ? {
-                  ...cg,
-                  shades: cg.shades.map(shade => (shade.id === variables.shadeId ? updatedShade : shade)),
-                }
-              : cg
-          ),
-          count: old.count,
-        }))
-      }
-      queryClient.invalidateQueries({
-        queryKey: ['color-groups', 'list'],
-      })
+
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['color-groups', 'list', stableFilters], ctx.prev)
     },
-    onError: (_, __, context) => {
-      if (context?.previousGroups) {
-        queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], context.previousGroups)
-      }
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['color-groups', 'list'], exact: false })
     },
   })
 
-  const deleteShadeMutation = useMutation({
-    ...wineColorQueries.deleteShade(),
-    onMutate: async (shadeId: string) => {
-      await queryClient.cancelQueries({ queryKey: ['color-groups', 'list'] })
+  const deleteShadeMutation = useMutation<void, Error, { groupId: string; shadeId: string }, { prev?: DataResponse<WineColorGroup> }>({
+    mutationKey: ['color-shades', 'delete'],
 
-      const previousGroups = getCurrentColorGroups()
+    mutationFn: ({ shadeId }) => colorService.deleteShade(shadeId),
 
-      const groupWithShade = previousGroups?.rows.find(cg => cg.shades.some(shade => shade.id === shadeId))
+    onMutate: async ({ groupId, shadeId }) => {
+      await queryClient.cancelQueries({
+        queryKey: ['color-groups', 'list'],
+      })
 
-      queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], (old: DataResponse<WineColorGroup> = { rows: [], count: 0 }) => ({
-        rows: old.rows.map((cg: WineColorGroup) => (cg.id === groupWithShade?.id ? { ...cg, shades: cg.shades.filter(shade => shade.id !== shadeId) } : cg)),
+      const prev = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters])
+
+      queryClient.setQueryData(['color-groups', 'list', stableFilters], (old: DataResponse<WineColorGroup>) => ({
+        rows: old.rows.map(g =>
+          g.id === groupId
+            ? {
+                ...g,
+                shades: g.shades.filter(s => s.id !== shadeId),
+              }
+            : g
+        ),
         count: old.count,
       }))
 
-      return { previousGroups, deletedShadeId: shadeId, groupId: groupWithShade?.id }
+      return { prev }
     },
-    onError: (_, __, context) => {
-      if (context?.previousGroups) {
-        queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', store.filters], context.previousGroups)
+
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) {
+        queryClient.setQueryData(['color-groups', 'list', stableFilters], ctx.prev)
       }
     },
+
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['color-groups', 'list'] })
+      queryClient.invalidateQueries({
+        queryKey: ['color-groups', 'list'],
+        exact: false,
+      })
     },
   })
 
-  const createGroup = (group: CreateWineColorParams) => {
-    return createGroupMutation.mutateAsync(group)
-  }
-
-  const updateGroup = (params: UpdateWineColorParams) => {
-    return updateGroupMutation.mutateAsync(params)
-  }
-
-  const deleteGroup = (colorId: string) => {
-    return deleteGroupMutation.mutateAsync(colorId)
-  }
-
-  const createShade = (groupId: string, shadeData: CreateShadesParams) => {
-    return createShadeMutation.mutateAsync({ groupId, shadeData })
-  }
-
-  const updateShade = (groupId: string, shadeId: string, newShades: CreateShadesParams) => {
-    return updateShadeMutation.mutateAsync({ groupId, shadeId, newShades })
-  }
-
-  const deleteShade = (_: string, shadeId: string) => {
-    return deleteShadeMutation.mutateAsync(shadeId)
-  }
-
-  const searchColorGroups = (searchTerm: string) => {
-    store.searchColorGroups(searchTerm)
-  }
-
-  const clearSearch = () => {
-    store.clearSearch()
-  }
-
-  const setCurrentColorGroup = (group: WineColorGroup | null) => {
-    store.setCurrentColorGroup(group)
-  }
-
-  const getColorGroupById = (id: string) => {
-    return store.getColorGroupById(id)
-  }
-
-  const getShadeById = (groupId: string, shadeId: string) => {
-    return store.getShadeById(groupId, shadeId)
-  }
-
-  const hasColorGroup = (id: string) => {
-    return store.hasColorGroup(id)
-  }
-
-  const onChangePagination = (offset: number) => {
-    store.setFilters({ offset })
-  }
-
   return {
-    colorGroups: groupsQuery.data?.rows || [],
+    colorGroups: colorGroups(),
+    totalCount: groupsQuery.data?.count || 0,
+
     searchResults: store.searchResults,
     currentColorGroup: store.currentColorGroup,
-    totalCount: groupsQuery?.data?.count || 0,
     filters: store.filters,
 
     isLoading: groupsQuery.isLoading,
@@ -365,27 +291,28 @@ export const useWineColor = () => {
     isCreatingGroup: createGroupMutation.isPending,
     isUpdatingGroup: updateGroupMutation.isPending,
     isDeletingGroup: deleteGroupMutation.isPending,
+
     isCreatingShade: createShadeMutation.isPending,
     isUpdatingShade: updateShadeMutation.isPending,
     isDeletingShade: deleteShadeMutation.isPending,
 
-    createGroup,
-    updateGroup,
-    deleteGroup,
-    createShade,
-    updateShade,
-    deleteShade,
+    createGroup: createGroupMutation.mutateAsync,
+    updateGroup: updateGroupMutation.mutateAsync,
+    deleteGroup: deleteGroupMutation.mutateAsync,
 
-    searchColorGroups,
-    clearSearch,
-    setCurrentColorGroup,
-    getColorGroupById,
-    getShadeById,
-    hasColorGroup,
-    onChangePagination,
+    createShade: createShadeMutation.mutateAsync,
+    updateShade: updateShadeMutation.mutateAsync,
+    deleteShade: deleteShadeMutation.mutateAsync,
+
+    searchColorGroups: store.searchColorGroups,
+    clearSearch: store.clearSearch,
+    setCurrentColorGroup: store.setCurrentColorGroup,
+    getColorGroupById: store.getColorGroupById,
+    getShadeById: store.getShadeById,
+    hasColorGroup: store.hasColorGroup,
+
+    onChangePagination: (page: number) => store.setFilters({ page }),
 
     refetchGroups: groupsQuery.refetch,
-    refetchGroupsWithParams: customRefetchGroups,
-    groupsQuery,
   }
 }

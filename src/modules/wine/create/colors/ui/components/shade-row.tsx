@@ -3,6 +3,9 @@ import { PaletteItemActions } from '../../../general/ui'
 import { WineShades } from '../../entities/types/color-types'
 import { useContrastText } from '@/hooks/ui/useContrastText'
 import { useTranslation } from 'react-i18next'
+import { useCallback } from 'react'
+import { useDeleteModal } from '../../../general/presenters/useDeleteModal'
+import { WarningModal } from '@/modals/warningModal'
 
 export const ShadeRow: React.FC<{
   item: WineShades
@@ -15,6 +18,20 @@ export const ShadeRow: React.FC<{
   showEditButton: boolean
 }> = ({ item, isLoading, onRemove, onEdit, getItemName, cardTextColorClass, isEditable, showEditButton }) => {
   const { t } = useTranslation('wines')
+
+  const { deleteModal } = useDeleteModal()
+
+  const handleOpenDeleteModal = useCallback(() => {
+    deleteModal.open(item.id, item.nameUa)
+  }, [deleteModal, item.id, item.nameUa])
+
+  const handleConfirmDelete = useCallback(() => {
+    if (deleteModal.id) {
+      onRemove(deleteModal.id)
+      deleteModal.close()
+    }
+  }, [deleteModal, onRemove])
+
   return (
     <div className="flex gap-2 justify-between sm:items-start items-center pl-8">
       <div className="flex gap-2 sm:flex-row flex-col sm:items-center items-start w-full">
@@ -39,12 +56,22 @@ export const ShadeRow: React.FC<{
 
       <PaletteItemActions
         isLoading={isLoading}
-        onRemove={onRemove}
+        onRemove={handleConfirmDelete}
         dataId={item.id}
         cardTextColorClass={cardTextColorClass}
         onEdit={isEditable ? () => onEdit(item) : undefined}
         showEditButton={showEditButton}
         variant="row"
+        deleteModal={handleOpenDeleteModal}
+      />
+
+      <WarningModal
+        title={t('modal.delete_title', { slug: 'віддтінок' })}
+        actionTitle={t('modal.delete_action')}
+        description={t('modal.delete_description', { name: deleteModal.nameUa, slug: 'Відтінок' })}
+        isOpen={deleteModal.isOpen}
+        onClose={deleteModal.close}
+        onSubmit={handleConfirmDelete}
       />
     </div>
   )

@@ -104,12 +104,12 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
                 />
               </div>
 
-              {editValue.value !== undefined && (
+              {editValue.colorHex !== undefined && (
                 <div className="flex items-center gap-1 w-full md:w-auto justify-between">
                   <span className={cn('text-xs opacity-70', cardTextColorClass)}>{`${t('color_taste')}:`}</span>
                   <div className="flex items-center gap-1">
                     <Input
-                      value={editValue.value}
+                      value={editValue.colorHex}
                       onChange={e => onEditValueChange('value', e.target.value)}
                       onKeyDown={handleInputKeyDown}
                       disabled={isSaving}
