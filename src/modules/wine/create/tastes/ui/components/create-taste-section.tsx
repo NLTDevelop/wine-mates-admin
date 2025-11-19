@@ -23,12 +23,14 @@ export const CreateTasteSection = ({ onCreateTaste, isLoading = false, cachedCol
 
   if (!isExpanded) {
     return (
-      <div className="flex justify-between items-center flex-wrap-reverse sm:flex-nowrap gap-6">
-        <h2 className="text-2xl font-bold">{t('tastes.tastes')}</h2>
-        <Button onClick={expandForm} className="w-full sm:w-auto">
-          <Plus className="w-4 h-4" />
-          {t('button.create_new_taste')}
-        </Button>
+      <div>
+        <div className="flex justify-between items-center flex-wrap-reverse sm:flex-nowrap gap-6">
+          <h2 className="text-2xl font-bold">{t('types.wine_types')}</h2>
+          <Button onClick={expandForm} className="w-full sm:w-auto">
+            <Plus className="w-4 h-4" />
+            {t('button.add_new_type')}
+          </Button>
+        </div>
       </div>
     )
   }

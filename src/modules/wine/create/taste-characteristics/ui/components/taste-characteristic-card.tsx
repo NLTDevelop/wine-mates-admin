@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next'
+// import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
 import { useEditTasteCharacteristic } from '../../presenters/useEditTasteCharacteristic'
@@ -6,7 +6,7 @@ import { EditableHeader, PaletteItemActions } from '../../../general/ui'
 import { LevelItem, WineTasteCharacteristics } from '../../entities/types/taste-characteristics'
 import { LevelManager } from '..'
 import { useCallback } from 'react'
-import { useWineTasteCharacteristics } from '../../presenters/useWineTasteCharacteristics'
+// import { useWineTasteCharacteristics } from '../../presenters/useWineTasteCharacteristics'
 import { BaseWineColor } from '../../../general/entities/types'
 import { useWineOptions } from '../../../general/presenters/useWineOptions'
 
@@ -19,7 +19,7 @@ interface TasteCharacteristicCardProps {
   onToggleForm?: () => void
   isFormOpen?: boolean
   onCancel: () => void
-  onUpdateCharacteristic: (id: string, updates: { label?: string; labelEn?: string }) => Promise<WineTasteCharacteristics | void>
+  onUpdateCharacteristic: (id: string, updates: { nameUa?: string; nameEn?: string }) => Promise<WineTasteCharacteristics | void>
   isAccordionOpen: { [characteristicId: string]: boolean }
   handleToggleAccordion: (characteristicId: string, isOpen: boolean) => void
   characteristicLevels?: LevelItem[]
@@ -46,13 +46,13 @@ export const TasteCharacteristicCard = ({
   onCharacteristicLevelsChange,
   onEditDataChange,
 }: TasteCharacteristicCardProps) => {
-  const { t: tc } = useTranslation('common')
+  // const { t: tc } = useTranslation('common')
 
-  const { isReorderingCharacteristicLevels, updateCharacteristicLevels } = useWineTasteCharacteristics()
+  // const { isReorderingCharacteristicLevels, updateCharacteristicLevels } = useWineTasteCharacteristics()
   const { fetchColors } = useWineOptions()
 
-  const { isEditing, editValue, isSaving, startEditing, handleSaveLabel, cancelEditing, handleKeyDown, setEditValue, updateCurrentLevels, colorValues, handleColorChange } = useEditTasteCharacteristic(
-    {
+  const { isEditing, editValue, isSaving, startEditing, handleSaveNameUa, cancelEditing, handleKeyDown, setEditValue, updateCurrentLevels, colorValues, handleColorChange } =
+    useEditTasteCharacteristic({
       data,
       isEditable,
       isFormOpen,
@@ -60,8 +60,7 @@ export const TasteCharacteristicCard = ({
       onToggleForm,
       onUpdateCharacteristic,
       fetchColors,
-    }
-  )
+    })
 
   const handleEditValueChange = (field: string, value: string | BaseWineColor[]) => {
     setEditValue(prev => ({
@@ -70,29 +69,29 @@ export const TasteCharacteristicCard = ({
     }))
   }
 
-  const handleSaveLevelName = useCallback(
-    async (levelId: string, levelName: string) => {
-      try {
-        await updateCharacteristicLevels(data.id, [
-          ...(characteristicLevels.length > 0 ? characteristicLevels : data.levels || []).map(level => (level.id === levelId ? { ...level, levelName } : level)),
-        ])
-      } catch (error) {
-        console.error('Failed to save level name:', error)
-      }
-    },
-    [data.id, characteristicLevels, data.levels, updateCharacteristicLevels]
-  )
+  // const handleSaveLevelName = useCallback(
+  //   async (levelId: string, levelName: string) => {
+  //     try {
+  //       await updateCharacteristicLevels(data.id, [
+  //         ...(characteristicLevels.length > 0 ? characteristicLevels : data.levels || []).map(level => (level.id === levelId ? { ...level, levelName } : level)),
+  //       ])
+  //     } catch (error) {
+  //       console.error('Failed to save level name:', error)
+  //     }
+  //   },
+  //   [data.id, characteristicLevels, data.levels, updateCharacteristicLevels]
+  // )
 
-  const handleSaveLevelsOrder = useCallback(
-    async (levels: LevelItem[]) => {
-      try {
-        await updateCharacteristicLevels(data.id, levels)
-      } catch (error) {
-        console.error('Failed to save levels order:', error)
-      }
-    },
-    [data.id, updateCharacteristicLevels]
-  )
+  // const handleSaveLevelsOrder = useCallback(
+  //   async (levels: LevelItem[]) => {
+  //     try {
+  //       await updateCharacteristicLevels(data.id, levels)
+  //     } catch (error) {
+  //       console.error('Failed to save levels order:', error)
+  //     }
+  //   },
+  //   [data.id, updateCharacteristicLevels]
+  // )
 
   const handleLevelsChange = useCallback(
     (levels: LevelItem[]) => {
@@ -116,7 +115,7 @@ export const TasteCharacteristicCard = ({
 
   return (
     <AccordionWrapper
-      label={`${data.label} (${characteristicLevels.length > 0 ? characteristicLevels.length : data.levels?.length || 0})`}
+      label={`${data.nameUa} (${characteristicLevels.length > 0 ? characteristicLevels.length : data.levels?.length || 0})`}
       isOpen={isOpenAccordion}
       onToggle={handleToggle}
       style={{ backgroundColor: '#fffbfb', padding: '8px' }}
@@ -124,14 +123,14 @@ export const TasteCharacteristicCard = ({
         <EditableHeader
           isEditable={isEditable}
           isEditing={isEditing}
-          isSaving={isSaving || isReorderingCharacteristicLevels}
-          label={data.label}
-          labelEn={data.labelEn || ''}
+          isSaving={isSaving /*|| isReorderingCharacteristicLevels*/}
+          label={data.nameUa}
+          labelEn={data.nameEn || ''}
           value={characteristicLevels.length > 0 ? characteristicLevels.length : data.levels?.length || 0}
           editValue={editValue}
           cardTextColorClass="text-gray-800"
           onStartEditing={startEditing}
-          onSave={handleSaveLabel}
+          onSave={handleSaveNameUa}
           onCancel={cancelEditing}
           onKeyDown={handleKeyDown}
           onEditValueChange={(field, value) => {
@@ -146,13 +145,14 @@ export const TasteCharacteristicCard = ({
           fetchColors={fetchColors}
           actions={
             <PaletteItemActions
-              isLoading={isLoading || isSaving || isReorderingCharacteristicLevels}
-              onRemove={() => onRemove(data.id)}
+              isLoading={isLoading || isSaving /*|| isReorderingCharacteristicLevels*/}
+              onRemove={() => onRemove(data.id)} //исправить
               dataId={data.id}
               cardTextColorClass="text-gray-800"
               onEdit={isEditable ? startEditing : undefined}
               showEditButton={isEditable && !isEditing}
               isHeader
+              deleteModal={() => onRemove(data.id)} //исправить
             />
           }
         />
@@ -170,13 +170,13 @@ export const TasteCharacteristicCard = ({
           <LevelManager
             states={levelsToShow}
             onStatesChange={handleLevelsChange}
-            onLevelNameBlur={handleSaveLevelName}
-            onLevelsOrderChange={handleSaveLevelsOrder}
-            isSaving={isSaving || isReorderingCharacteristicLevels}
+            onLevelNameBlur={() => {} /*handleSaveLevelName*/}
+            onLevelsOrderChange={() => {} /*handleSaveLevelsOrder*/}
+            isSaving={isSaving /*|| isReorderingCharacteristicLevels*/}
           />
 
           {/* индикатор сохранения (может потом уберу) */}
-          {isReorderingCharacteristicLevels && <div className="text-xs text-blue-500 mt-2 text-center">{tc('button.saving')}...</div>}
+          {/* {isReorderingCharacteristicLevels && <div className="text-xs text-blue-500 mt-2 text-center">{tc('button.saving')}...</div>} */}
         </div>
       )}
     </AccordionWrapper>

@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { CreateWineAromaGroupParams, CreateWineAromaGroupRequest, WineAromaGroup } from '../entities/types/flavor-types'
 import { useWineFlavor } from './useWineFlavors'
 import { NewItemData } from '../entities/types/flavor-palette-types'
+import { BaseWineColor } from '../../general/entities/types'
 
 interface UseFlavorGroupsProps {
   aromaGroups: WineAromaGroup[] | undefined
@@ -11,15 +12,25 @@ interface UseFlavorGroupsProps {
   setForceOpenKeys: (keys: any) => void
   setOpenAccordions: (accordions: any) => void
   setNewItemData: (data: any) => void
+  cachedColors: BaseWineColor[]
 }
 
-export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup, setEditingGroupData, setForceOpenKeys, setOpenAccordions, setNewItemData }: UseFlavorGroupsProps) => {
-  const { createGroup, updateGroup, deleteGroup, isLoading, refetchGroupsWithParams } = useWineFlavor()
+export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup, setEditingGroupData, setForceOpenKeys, setOpenAccordions, setNewItemData, cachedColors }: UseFlavorGroupsProps) => {
+  const { createGroup, updateGroup, deleteGroup, isLoading } = useWineFlavor(cachedColors)
 
   const handleAddGroup = useCallback(
     async (groupData: Partial<CreateWineAromaGroupParams>) => {
       try {
-        await createGroup({ ...(groupData as CreateWineAromaGroupParams), sortNumber: aromaGroups?.length || 0 })
+        const params: CreateWineAromaGroupParams = {
+          nameUa: groupData.nameUa || '',
+          nameEn: groupData.nameEn || '',
+          colorHex: groupData.colorHex || '',
+          colors: groupData.colors || [],
+          sortNumber: aromaGroups?.length || 0,
+          subgroups: [],
+        }
+
+        await createGroup(params)
       } catch (error) {
         console.error('Failed to create group:', error)
       }
@@ -100,7 +111,6 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
           groupId,
           newGroup: newGroupData as CreateWineAromaGroupRequest,
         })
-        await refetchGroupsWithParams(['subgroups', 'assigned-colors'])
         setOpenAccordions((prev: Set<string>) => {
           const newSet = new Set(prev)
           newSet.delete(groupId)

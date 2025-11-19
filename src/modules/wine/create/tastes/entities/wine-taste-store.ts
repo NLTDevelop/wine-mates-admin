@@ -1,10 +1,17 @@
 import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
 import { WineTaste } from './types/tastes'
+import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 
 interface TasteStoreState {
   tastes: WineTaste[]
   searchResults: WineTaste[]
   currentTaste: WineTaste | null
+  filters: {
+    search: string
+    limit: number
+    page: number
+    include?: string[]
+  }
 
   setTastes: (tastes: WineTaste[]) => void
   setCurrentTaste: (taste: WineTaste | null) => void
@@ -13,6 +20,8 @@ interface TasteStoreState {
   deleteTaste: (tasteId: string) => void
   searchTastes: (searchTerm: string) => void
   clearSearch: () => void
+  setFilters: (filters: Partial<TasteStoreState['filters']>) => void
+  resetFilters: () => void
 
   getTasteById: (id: string) => WineTaste | undefined
   getTasteByValue: (value: string) => WineTaste | undefined
@@ -25,6 +34,12 @@ export const useTasteStore = createStoreDevToolsWrapper<TasteStoreState>(
     tastes: [],
     searchResults: [],
     currentTaste: null,
+    filters: {
+      search: '',
+      limit: DEFAULT_PAGINATION_LIMIT,
+      page: 1,
+      include: ['assigned-colors'],
+    },
 
     setTastes: tastes => set({ tastes }, false, 'tastes/setTastes'),
 
@@ -61,6 +76,28 @@ export const useTasteStore = createStoreDevToolsWrapper<TasteStoreState>(
         'tastes/deleteTaste'
       ),
 
+    setFilters: newFilters =>
+      set(
+        (state: TasteStoreState) => ({
+          filters: { ...state.filters, ...newFilters },
+        }),
+        false,
+        'tastes/setFilters'
+      ),
+
+    resetFilters: () =>
+      set(
+        {
+          filters: {
+            search: '',
+            limit: DEFAULT_PAGINATION_LIMIT,
+            page: 0,
+          },
+        },
+        false,
+        'tastes/resetFilters'
+      ),
+
     searchTastes: searchTerm =>
       set(
         (state: TasteStoreState) => ({
@@ -77,7 +114,7 @@ export const useTasteStore = createStoreDevToolsWrapper<TasteStoreState>(
     },
 
     getTasteByValue: value => {
-      return get().tastes.find((t: WineTaste) => t.value === value)
+      return get().tastes.find((t: WineTaste) => t.colorHex === value)
     },
 
     hasTaste: id => {
@@ -85,7 +122,7 @@ export const useTasteStore = createStoreDevToolsWrapper<TasteStoreState>(
     },
 
     hasTasteByValue: value => {
-      return get().tastes.some((t: WineTaste) => t.value === value)
+      return get().tastes.some((t: WineTaste) => t.colorHex === value)
     },
   }),
   'TasteStore'

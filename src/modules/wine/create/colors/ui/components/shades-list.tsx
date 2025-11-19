@@ -36,24 +36,26 @@ export const ShadesList: React.FC<ShadesListProps> = ({ items, isLoading = false
 
   return (
     <div className="mt-3 w-full">
-      <SortableList items={items} onReorder={handleReorder} strategy="vertical" getId={getShadeId}>
-        <div className="space-y-3">
-          {items.map((item, index) => (
-            <SortableItem key={getShadeId(item, index)} id={getShadeId(item, index)} className="cursor-default" handleClassName="-top-1.5">
-              <ShadeRow
-                item={item}
-                isLoading={isLoading}
-                onRemove={onRemove}
-                onEdit={handleEditClick}
-                getItemName={getItemName}
-                cardTextColorClass={cardTextColorClass}
-                isEditable={isEditable}
-                showEditButton={showEditButton}
-              />
-            </SortableItem>
-          ))}
-        </div>
-      </SortableList>
+      {items?.length && (
+        <SortableList items={items} onReorder={handleReorder} strategy="vertical" getId={getShadeId}>
+          <div className="space-y-3">
+            {items?.map((item, index) => (
+              <SortableItem key={getShadeId(item, index)} id={getShadeId(item, index)} className="cursor-default" handleClassName="-top-1.5">
+                <ShadeRow
+                  item={item}
+                  isLoading={isLoading}
+                  onRemove={onRemove}
+                  onEdit={handleEditClick}
+                  getItemName={getItemName}
+                  cardTextColorClass={cardTextColorClass}
+                  isEditable={isEditable}
+                  showEditButton={showEditButton}
+                />
+              </SortableItem>
+            ))}
+          </div>
+        </SortableList>
+      )}
     </div>
   )
 }

@@ -13,21 +13,64 @@ import { CreateShadesParams, WineColorGroup } from '../../entities/types/color-t
 import { useColorPalette } from '../../presenters/useColorPalette'
 import { ColorGroupFormFields } from './color-group-form-fields'
 import { ColorForm } from './color-form'
+import { SkeletonWinePalette } from '../../../general/ui/components/skeleton-wine-palette'
+import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
+import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
+import { useDeleteModal } from '../../../general/presenters/useDeleteModal'
+import { useCallback } from 'react'
+import { WarningModal } from '@/modals/warningModal'
 
 export const ColorPaletteManager = () => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
-  const { colorGroups, isLoading, editingGroup, newItemData, editingGroupData, forceOpenKeys, setOpenAccordions, setEditingGroup, setNewItemData, setEditingGroupData, groups, items, ui } =
-    useColorPalette()
+  const { deleteModal } = useDeleteModal()
 
-  const isEditable = true
-
-  const toggleCallbacks = {
+  const {
+    colorGroups,
+    isLoading,
+    editingGroup,
+    newItemData,
+    editingGroupData,
+    forceOpenKeys,
     setOpenAccordions,
     setEditingGroup,
     setNewItemData,
     setEditingGroupData,
+    groups,
+    items,
+    ui,
+    totalCount,
+    filters,
+    onChangePagination,
+  } = useColorPalette()
+
+  const isEditable = true
+
+  const toggleCallbacks = { setOpenAccordions, setEditingGroup, setNewItemData, setEditingGroupData }
+
+  const handleOpenDeleteModal = useCallback(
+    (groupId: string, groupNameUa: string) => {
+      deleteModal.open(groupId, groupNameUa)
+    },
+    [deleteModal]
+  )
+
+  const handleConfirmDelete = useCallback(() => {
+    if (deleteModal.id) {
+      groups.handleDeleteGroup(deleteModal.id)
+      deleteModal.close()
+    }
+  }, [deleteModal, groups])
+
+  if (isLoading && colorGroups.length === 0) {
+    return (
+      <Card>
+        <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
+          <SkeletonWinePalette />
+        </CardContent>
+      </Card>
+    )
   }
 
   return (
@@ -67,12 +110,13 @@ export const ColorPaletteManager = () => {
                       </div>
                       <PaletteItemActions
                         isLoading={isLoading}
-                        onRemove={() => groups.handleDeleteGroup(group.id)}
+                        onRemove={handleConfirmDelete}
                         dataId={group.id}
                         cardTextColorClass={cardTextColorClass}
                         onEdit={() => groups.startEditingGroup(group.id)}
                         showEditButton={!isGroupEditing}
                         isHeader
+                        deleteModal={() => handleOpenDeleteModal(group.id, group.nameUa)}
                       />
                     </div>
                   }
@@ -110,7 +154,7 @@ export const ColorPaletteManager = () => {
                           onReorder={reorderedShades => items.handleReorderShades(group.id, reorderedShades)}
                         />
 
-                        {isItemFormOpen && group.shades.length > 0 && <Separator className="mt-2" style={{ backgroundColor: group.colorHex }} />}
+                        {isItemFormOpen && group?.shades?.length > 0 && <Separator className="mt-2" style={{ backgroundColor: group.colorHex }} />}
                       </>
                     )}
 
@@ -177,7 +221,16 @@ export const ColorPaletteManager = () => {
             )
           })}
         </div>
+        <WarningModal
+          title={t('modal.delete_title', { slug: 'колір' })}
+          actionTitle={t('modal.delete_action')}
+          description={t('modal.delete_description', { name: deleteModal.nameUa, slug: 'Колір' })}
+          isOpen={deleteModal.isOpen}
+          onClose={deleteModal.close}
+          onSubmit={handleConfirmDelete}
+        />
       </CardContent>
+      {totalCount > DEFAULT_PAGINATION_LIMIT && <NLTTablePagination limit={filters.limit} page={filters.page} totalRows={totalCount || 0} setPage={onChangePagination} />}
     </Card>
   )
 }

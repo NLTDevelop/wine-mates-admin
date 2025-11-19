@@ -10,9 +10,10 @@ interface PaletteItemActionsProps {
   showEditButton?: boolean
   variant?: 'row' | 'col'
   isHeader?: boolean
+  deleteModal: () => void
 }
 
-export const PaletteItemActions = ({ onRemove, dataId, cardTextColorClass, onEdit, showEditButton = false, variant = 'row', isHeader = false }: PaletteItemActionsProps) => {
+export const PaletteItemActions = ({ cardTextColorClass, onEdit, showEditButton = false, variant = 'row', isHeader = false, deleteModal }: PaletteItemActionsProps) => {
   return (
     <div className={cn('flex gap-1 items-center cursor-default', variant !== 'row' ? 'flex-col sm:flex-row' : 'flex-row')}>
       {showEditButton && onEdit && (
@@ -33,7 +34,8 @@ export const PaletteItemActions = ({ onRemove, dataId, cardTextColorClass, onEdi
         onClick={e => {
           e.stopPropagation()
           e.preventDefault()
-          onRemove(dataId)
+          deleteModal()
+          // onRemove(dataId)
         }}
         className={cn(isHeader && cardTextColorClass, 'p-1.5 opacity-70 hover:opacity-100 flex-shrink-0 cursor-pointer')}
         title="Delete"

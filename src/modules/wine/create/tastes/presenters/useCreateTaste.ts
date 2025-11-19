@@ -9,7 +9,7 @@ interface UseCreateTasteProps {
 interface UseCreateTasteReturn {
   isExpanded: boolean
   formData: CreateWineTasteParams
-  updateFormData: (field: 'nameUa' | 'nameEn' | 'colors' | 'value', value: any) => void
+  updateFormData: (field: 'nameUa' | 'nameEn' | 'colors' | 'colorHex', value: any) => void
   handleCreateTaste: () => void
   handleCancel: () => void
   expandForm: () => void
@@ -20,7 +20,7 @@ export const useCreateTaste = ({ onCreateTaste, isLoading = false }: UseCreateTa
   const [formData, setFormData] = useState<CreateWineTasteParams>({
     nameUa: '',
     nameEn: '',
-    value: '',
+    colorHex: '',
     colors: [],
   })
 
@@ -33,17 +33,17 @@ export const useCreateTaste = ({ onCreateTaste, isLoading = false }: UseCreateTa
       const tasteDataForApi: CreateWineTasteRequest = {
         nameUa: formData.nameUa,
         nameEn: formData.nameEn,
-        value: formData.value,
-        colors: formData.colors.map(color => color.id),
+        colorHex: formData.colorHex,
+        colorIds: formData.colors.map(color => color.id),
       }
       onCreateTaste(tasteDataForApi)
-      setFormData({ nameUa: '', nameEn: '', value: '', colors: [] })
+      setFormData({ nameUa: '', nameEn: '', colorHex: '', colors: [] })
       setIsExpanded(false)
     }
   }, [isLoading, onCreateTaste, formData])
 
   const handleCancel = useCallback(() => {
-    setFormData({ nameEn: '', nameUa: '', value: '', colors: [] })
+    setFormData({ nameEn: '', nameUa: '', colorHex: '', colors: [] })
     setIsExpanded(false)
   }, [])
 

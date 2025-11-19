@@ -1,5 +1,5 @@
 export interface ListUsersDto {
-  offset?: number
+  page?: number
   limit?: number
   search?: string
 }

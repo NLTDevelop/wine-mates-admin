@@ -1,11 +1,10 @@
 import { useCallback, useState } from 'react'
 import { useWineTaste } from './useWineTaste'
-import { mockTastes } from '../entities/mock'
 import { CreateWineTasteParams, CreateWineTasteRequest, UpdateWineTasteParams } from '../entities/types/tastes'
+import { BaseWineColor } from '../../general/entities/types'
 
-export const useTastePalette = () => {
-  const tastes = mockTastes
-  const { /*tastes,*/ isLoading, isCreating, isUpdating, isDeleting, createTaste, updateTaste, deleteTaste } = useWineTaste()
+export const useTastePalette = (cachedColors?: BaseWineColor[]) => {
+  const { tastes, isLoading, isCreating, isUpdating, isDeleting, createTaste, updateTaste, deleteTaste, totalCount, filters, onChangePagination } = useWineTaste(cachedColors)
 
   const [isFormOpen, setIsFormOpen] = useState<Record<string, boolean>>({})
   const [formData, setFormData] = useState<Record<string, CreateWineTasteParams>>({})
@@ -23,7 +22,6 @@ export const useTastePalette = () => {
         ...prev,
         [tasteId]: !prev[tasteId],
       }))
-
       if (!formData[tasteId]) {
         const taste = tastes.find(t => t.id === tasteId)
         if (taste) {
@@ -32,7 +30,7 @@ export const useTastePalette = () => {
             [tasteId]: {
               nameUa: taste.nameUa || '',
               nameEn: taste.nameEn || '',
-              value: taste.value || '',
+              colorHex: taste.colorHex || '',
               colors: taste.colors || [],
             },
           }))
@@ -59,19 +57,25 @@ export const useTastePalette = () => {
         const updateData: CreateWineTasteRequest = {
           nameUa: data.nameUa,
           nameEn: data.nameEn,
-          value: data.value,
-          colors: data.colors.map(color => color.id),
+          colorHex: data.colorHex,
+          colorIds: data.colors.map(color => color.id),
         }
 
         const updateParams: UpdateWineTasteParams = {
           tasteId,
           newTaste: updateData,
         }
-        await updateTaste(updateParams)
         setIsFormOpen(prev => ({
           ...prev,
           [tasteId]: false,
         }))
+
+        setFormData(prev => {
+          const newData = { ...prev }
+          delete newData[tasteId]
+          return newData
+        })
+        await updateTaste(updateParams)
       }
     },
     [formData, updateTaste]
@@ -100,6 +104,8 @@ export const useTastePalette = () => {
 
   return {
     tastes,
+    totalCount,
+    filters,
 
     isLoading: isLoadingState,
     isCreating,
@@ -116,5 +122,6 @@ export const useTastePalette = () => {
     handleSaveTaste,
     handleCancelEdit,
     handleDeleteTaste,
+    onChangePagination,
   }
 }

@@ -425,7 +425,7 @@ export const mockWinesResponse: WinesResponse = {
 // Мок для фильтров
 export const mockWineFilters: WineFilters = {
   limit: 10,
-  offset: 0,
+  page: 1,
   search: '',
 }
 

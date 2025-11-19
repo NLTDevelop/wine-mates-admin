@@ -1,4 +1,4 @@
-export type FeatureKey = 'tasting_notes' | 'wine_clubs' | 'user_management' | 'sommelier_chat' | 'shop_integration' //ключи функционала
+export type FeatureKey = 'tasting_notes' | 'wine_clubs' | 'user_management' | 'sommelier_chat' | 'shop_integration'
 
 export interface Feature {
   id: number

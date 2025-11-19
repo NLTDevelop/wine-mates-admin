@@ -2,12 +2,14 @@ import { api } from '@/services'
 import { buildUrl } from '@/lib/utils'
 import { COLOR_CRUD_ENDPOINTS } from './colors-endpoints'
 import { CreateShadesParams, CreateWineColorParams, UpdateWineColorParams, WineColorGroup } from './types/color-types'
+import { DataResponse, FiltersParams } from '../../general/entities/types'
 
 export const colorService = {
-  list: (include?: string[]): Promise<WineColorGroup[]> => {
-    const params: any = {}
-    if (include && include.length > 0) {
-      params.include = include.join(',')
+  list: (filters: FiltersParams = {}): Promise<DataResponse<WineColorGroup>> => {
+    const params: any = { ...filters }
+
+    if (filters.include && filters.include.length > 0) {
+      params.include = filters.include
     }
 
     return api.get(COLOR_CRUD_ENDPOINTS.COLORS.LIST, { params }).then(response => response.data)

@@ -221,6 +221,13 @@ export const uk = {
     classification_info: 'Класифікація',
     color_wine: 'Коліри вина',
     color_taste: 'Колір смаку',
+    empty: '{{slug}} відсутні',
+    empty_description: 'Натисніть кнопку, щоб додати перший {{slug}}',
+    modal: {
+      delete_title: 'Видалити {{slug}}?',
+      delete_action: 'Видалити',
+      delete_description: "{{slug}} '{{name}}' буде остаточно видалено з каталогу. Усі пов'язані з ним дані будуть втрачені.",
+    },
     list: {
       wines_list: 'Список вин',
       import_wines_list: 'Імпорт списку вин',

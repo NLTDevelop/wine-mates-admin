@@ -54,11 +54,11 @@ export const CreateTasteCharacteristicSection = ({ onCreateCharacteristic, isLoa
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium mb-2 block">{t('taste_characteristics.characteristic_name_ua')} *</label>
-              <Input value={newCharacteristic.label} onChange={e => updateCharacteristic('label', e.target.value)} placeholder={t('taste_characteristics.characteristic_name_ua')} autoFocus />
+              <Input value={newCharacteristic.nameUa} onChange={e => updateCharacteristic('nameUa', e.target.value)} placeholder={t('taste_characteristics.characteristic_name_ua')} autoFocus />
             </div>
             <div>
               <label className="text-sm font-medium mb-2 block">{t('taste_characteristics.characteristic_name_en')}</label>
-              <Input value={newCharacteristic.labelEn} onChange={e => updateCharacteristic('labelEn', e.target.value)} placeholder={t('taste_characteristics.characteristic_name_en')} />
+              <Input value={newCharacteristic.nameEn} onChange={e => updateCharacteristic('nameEn', e.target.value)} placeholder={t('taste_characteristics.characteristic_name_en')} />
             </div>
           </div>
 

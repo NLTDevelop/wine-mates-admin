@@ -47,7 +47,7 @@ export const WineView = () => {
         onRowClick={handleRowClick}
       />
 
-      <NLTTablePagination limit={filters.limit} offset={filters.offset} totalRows={wines?.length || 0} setOffset={onChangePagination} />
+      <NLTTablePagination limit={filters.limit} page={filters.page} totalRows={wines?.length || 0} setPage={onChangePagination} />
       <WarningModal
         title={t('list.wine_delete')}
         actionTitle={t('button.delete')}

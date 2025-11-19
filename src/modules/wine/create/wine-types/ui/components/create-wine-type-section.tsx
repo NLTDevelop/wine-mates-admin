@@ -6,16 +6,14 @@ import { CreateWineTypeRequest } from '../../entities/types/wine-type'
 import { useCreateWineType } from '../../presenters/useCreateWineType'
 import { WineTypeForm } from './wine-type-form'
 import { BaseWineColor } from '../../../general/entities/types'
-import { EmptyState } from '../../../general/ui/components/empty-state'
 
 interface CreateWineTypeSectionProps {
   onCreateWineType: (wineTypeData: CreateWineTypeRequest) => void
   isLoading?: boolean
   cachedColors: BaseWineColor[]
-  isShowEmptyState?: boolean
 }
 
-export const CreateWineTypeSection = ({ onCreateWineType, isLoading = false, cachedColors, isShowEmptyState }: CreateWineTypeSectionProps) => {
+export const CreateWineTypeSection = ({ onCreateWineType, isLoading = false, cachedColors }: CreateWineTypeSectionProps) => {
   const { t } = useTranslation('wines')
 
   const { isExpanded, formData, updateFormData, handleCreateWineType, handleCancel, expandForm } = useCreateWineType({
@@ -25,15 +23,12 @@ export const CreateWineTypeSection = ({ onCreateWineType, isLoading = false, cac
 
   if (!isExpanded) {
     return (
-      <div>
-        <div className="flex justify-between items-center flex-wrap-reverse sm:flex-nowrap gap-6">
-          <h2 className="text-2xl font-bold">{t('types.wine_types')}</h2>
-          <Button onClick={expandForm} className="w-full sm:w-auto">
-            <Plus className="w-4 h-4" />
-            {t('button.add_new_type')}
-          </Button>
-        </div>
-        {isShowEmptyState && <EmptyState type="wine-types" />}
+      <div className="flex justify-between items-center flex-wrap-reverse sm:flex-nowrap gap-6">
+        <h2 className="text-2xl font-bold">{t('types.wine_types')}</h2>
+        <Button onClick={expandForm} className="w-full sm:w-auto">
+          <Plus className="w-4 h-4" />
+          {t('button.add_new_type')}
+        </Button>
       </div>
     )
   }

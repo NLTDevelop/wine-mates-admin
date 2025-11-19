@@ -1,22 +1,39 @@
-import { Tags, Palette } from 'lucide-react'
+import { Tags, Palette, Grape, Flower } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 interface EmptyStateProps {
-  type: 'wine-types' | 'colors'
+  type: 'wine-types' | 'colors' | 'aromas' | 'taste' | 'taste-characteristics'
   className?: string
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({ type, className }) => {
+  const { t } = useTranslation('wines')
   const config = {
     'wine-types': {
       icon: Tags,
-      title: 'Типи вина відсутні',
-      description: 'Натисніть кнопку, щоб створити перший тип вина',
+      title: t('empty', { slug: 'Типи вина' }),
+      description: t('empty_description', { slug: 'тип вина' }),
     },
     colors: {
       icon: Palette,
-      title: 'Кольори відсутні',
-      description: 'Натисніть кнопку, щоб додати перший колір',
+      title: t('empty', { slug: 'Кольори' }),
+      description: t('empty_description', { slug: 'колір' }),
+    },
+    aromas: {
+      icon: Flower,
+      title: t('empty', { slug: 'Аромати' }),
+      description: t('empty_description', { slug: 'аромат' }),
+    },
+    taste: {
+      icon: Grape,
+      title: t('empty', { slug: 'Смакові ноти' }),
+      description: t('empty_description', { slug: 'смакову ноту' }),
+    },
+    'taste-characteristics': {
+      icon: Grape,
+      title: t('empty', { slug: 'Смакові характеристики' }),
+      description: t('empty_description', { slug: 'смакову характеристику' }),
     },
   }
 

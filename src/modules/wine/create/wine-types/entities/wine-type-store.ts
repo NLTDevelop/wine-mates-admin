@@ -1,116 +1,78 @@
 import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
 import { WineType } from './types/wine-type'
-import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 
 interface WineTypeStoreState {
   wineTypes: WineType[]
   searchResults: WineType[]
   currentWineType: WineType | null
-  filters: {
-    search: string
-    limit: number
-    offset: number
-  }
 
   setWineTypes: (wineTypes: WineType[]) => void
   setCurrentWineType: (wineType: WineType | null) => void
   addWineType: (wineType: WineType) => void
-  updateWineType: (oldValue: string, newWineType: WineType) => void
+  updateWineType: (wineTypeValue: string, updatedWineType: Partial<WineType>) => void
   deleteWineType: (wineTypeValue: string) => void
   searchWineType: (searchTerm: string) => void
   clearSearch: () => void
-  setFilters: (filters: Partial<WineTypeStoreState['filters']>) => void
-  resetFilters: () => void
 
   getWineTypeById: (value: string) => WineType | undefined
   hasWineType: (value: string) => boolean
 }
 
-export const useWineTypeStore = createStoreDevToolsWrapper<WineTypeStoreState>(
-  (set, get) => ({
-    wineTypes: [],
-    searchResults: [],
-    currentWineType: null,
-    filters: {
-      search: '',
-      limit: DEFAULT_PAGINATION_LIMIT,
-      offset: 0,
-    },
-    setWineTypes: wineTypes => set({ wineTypes }, false, 'wineTypes/setWineTypes'),
+export const useWineTypeStore = createStoreDevToolsWrapper<WineTypeStoreState>((set, get) => ({
+  wineTypes: [],
+  searchResults: [],
+  currentWineType: null,
 
-    setCurrentWineType: wineType => set({ currentWineType: wineType }, false, 'wineTypes/setCurrentWineType'),
+  setWineTypes: wineTypes => set({ wineTypes }, false, 'wineTypes/setWineTypes'),
 
-    addWineType: wineType =>
-      set(
-        (state: WineTypeStoreState) => ({
-          wineTypes: [...state.wineTypes, wineType],
-        }),
-        false,
-        'wineTypes/addWineType'
-      ),
+  setCurrentWineType: wineType => set({ currentWineType: wineType }, false, 'wineTypes/setCurrentWineType'),
 
-    updateWineType: (oldValue, newWineType) =>
-      set(
-        (state: WineTypeStoreState) => ({
-          wineTypes: state.wineTypes.map(wt => (wt.id === oldValue ? newWineType : wt)),
-          currentWineType: state.currentWineType?.id === oldValue ? newWineType : state.currentWineType,
-          searchResults: state.searchResults.map(wt => (wt.id === oldValue ? newWineType : wt)),
-        }),
-        false,
-        'wineTypes/updateWineType'
-      ),
+  addWineType: wineType =>
+    set(
+      (state: WineTypeStoreState) => ({
+        wineTypes: [...state.wineTypes, wineType],
+      }),
+      false,
+      'wineTypes/addWineType'
+    ),
 
-    deleteWineType: wineTypeValue =>
-      set(
-        (state: WineTypeStoreState) => ({
-          wineTypes: state.wineTypes.filter(wt => wt.id !== wineTypeValue),
-          currentWineType: state.currentWineType?.id === wineTypeValue ? null : state.currentWineType,
-          searchResults: state.searchResults.filter(wt => wt.id !== wineTypeValue),
-        }),
-        false,
-        'wineTypes/deleteWineType'
-      ),
+  updateWineType: (wineTypeValue, updatedWineType) =>
+    set(
+      (state: WineTypeStoreState) => ({
+        wineTypes: state.wineTypes.map(wt => (wt.id === wineTypeValue ? { ...wt, ...updatedWineType } : wt)),
+      }),
+      false,
+      'wineTypes/updateWineType'
+    ),
 
-    searchWineType: searchTerm =>
-      set(
-        (state: WineTypeStoreState) => ({
-          searchResults: state.wineTypes.filter(wt => wt.nameUa.toLowerCase().includes(searchTerm.toLowerCase()) || wt.nameEn?.toLowerCase().includes(searchTerm.toLowerCase())),
-        }),
-        false,
-        'wineTypes/searchWineTypes'
-      ),
+  deleteWineType: wineTypeValue =>
+    set(
+      (state: WineTypeStoreState) => ({
+        wineTypes: state.wineTypes.filter(wt => wt.id !== wineTypeValue),
+      }),
+      false,
+      'wineTypes/deleteWineType'
+    ),
 
-    clearSearch: () => set({ searchResults: [] }, false, 'wineTypes/clearSearch'),
+  searchWineType: searchTerm => {
+    const { wineTypes } = get()
+    if (!searchTerm.trim()) {
+      set({ searchResults: [] }, false, 'wineTypes/searchWineType')
+      return
+    }
 
-    setFilters: newFilters =>
-      set(
-        (state: WineTypeStoreState) => ({
-          filters: { ...state.filters, ...newFilters },
-        }),
-        false,
-        'wineTypes/setFilters'
-      ),
+    const filtered = wineTypes.filter((wt: WineType) => wt.nameUa.toLowerCase().includes(searchTerm.toLowerCase()) || wt.nameEn?.toLowerCase().includes(searchTerm.toLowerCase()))
 
-    resetFilters: () =>
-      set(
-        {
-          filters: {
-            search: '',
-            limit: DEFAULT_PAGINATION_LIMIT,
-            offset: 0,
-          },
-        },
-        false,
-        'wineTypes/resetFilters'
-      ),
+    set({ searchResults: filtered }, false, 'wineTypes/searchWineType')
+  },
 
-    getWineTypeById: id => {
-      return get().wineTypes.find((wt: WineType) => wt.id === id)
-    },
+  clearSearch: () => set({ searchResults: [] }, false, 'wineTypes/clearSearch'),
 
-    hasWineType: id => {
-      return get().wineTypes.some((wt: WineType) => wt.id === id)
-    },
-  }),
-  'WineTypeStore'
-)
+  getWineTypeById: id => {
+    return get().wineTypes.find((wt: WineType) => wt.id === id)
+  },
+
+  hasWineType: id => {
+    return get().wineTypes.some((wt: WineType) => wt.id === id)
+  },
+}))

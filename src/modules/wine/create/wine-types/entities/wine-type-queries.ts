@@ -1,17 +1,10 @@
 import { wineTypeService } from './wine-type-service'
 import { CreateWineTypeRequest, UpdateWineTypeParams } from './types/wine-type'
 
-export interface WineTypeFilters {
-  search?: string
-  limit?: number
-  offset?: number
-  include?: string[]
-}
-
 export const wineTypeQueries = {
-  list: (filters: WineTypeFilters = {}) => ({
-    queryKey: ['wine-types', 'list', filters],
-    queryFn: () => wineTypeService.list(filters),
+  list: (include?: string[]) => ({
+    queryKey: ['wine-types', 'list', ...(include || [])],
+    queryFn: () => wineTypeService.list(include),
   }),
 
   create: () => ({

@@ -1,10 +1,11 @@
+import { FiltersParams } from '../../general/entities/types'
 import { CreateWineTasteRequest, UpdateWineTasteParams } from './types/tastes'
 import { tasteService } from './wine-taste-service'
 
 export const tasteQueries = {
-  list: () => ({
-    queryKey: ['tastes', 'list'],
-    queryFn: () => tasteService.list(),
+  list: (filters: FiltersParams = {}) => ({
+    queryKey: ['tastes', 'list', filters],
+    queryFn: () => tasteService.list(filters),
   }),
 
   create: () => ({

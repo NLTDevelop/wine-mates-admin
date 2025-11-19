@@ -1,4 +1,4 @@
-import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query'
 import { useCallback, useState } from 'react'
 import { useDebounce } from '@/hooks/ui/useDebounce'
 import { useUserStore } from '../entities/user-store'
@@ -6,6 +6,7 @@ import { userQueries } from '../entities/user-queries'
 import { IUserResponse, IUserTable } from '../entities/IUser'
 
 export const useUsers = () => {
+  const queryClient = useQueryClient()
   const { filters, setFilters, resetFilters } = useUserStore()
 
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false)
@@ -22,10 +23,36 @@ export const useUsers = () => {
   })
 
   const usersQuery: UseQueryResult<IUserResponse, Error> = useQuery(userQueries.list(filters))
-  const confirmCategoryMutation = useMutation(userQueries.confirmCategory())
+  const confirmCategoryMutation = useMutation({
+    ...userQueries.confirmCategory(),
+    onMutate: async ({ id, isConfirmed }: { id: string; isConfirmed: boolean }) => {
+      await queryClient.cancelQueries({ queryKey: ['users', 'list', filters] })
+
+      const previousUsers = queryClient.getQueryData<IUserResponse>(['users', 'list', filters])
+
+      if (previousUsers) {
+        const updatedUsers = {
+          ...previousUsers,
+          rows: previousUsers.rows.map((user: IUserTable) => (user.id === id ? { ...user, isConfirmed } : user)),
+        }
+
+        queryClient.setQueryData(['users', 'list', filters], updatedUsers)
+      }
+
+      return { previousUsers }
+    },
+    onError: (_, __, context) => {
+      if (context?.previousUsers) {
+        queryClient.setQueryData(['users', 'list', filters], context.previousUsers)
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['users', 'list', filters] })
+    },
+  })
 
   const { debouncedWrapper } = useDebounce((searchValue: string) => {
-    setFilters({ search: searchValue, offset: 0 })
+    setFilters({ search: searchValue, page: 0 })
   }, 500)
 
   const findUserById = useCallback(
@@ -46,11 +73,11 @@ export const useUsers = () => {
   const handleClearSearch = useCallback(() => {
     setSearchValue('')
     resetFilters()
-  }, [setFilters])
+  }, [resetFilters])
 
   const onChangePagination = useCallback(
-    (offset: number) => {
-      setFilters({ offset })
+    (page: number) => {
+      setFilters({ page })
     },
     [setFilters]
   )
@@ -103,6 +130,7 @@ export const useUsers = () => {
 
   return {
     users: usersQuery.data?.rows,
+    totalCount: usersQuery.data?.count,
     isLoading: usersQuery.isLoading,
     filters,
     searchValue,

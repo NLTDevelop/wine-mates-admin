@@ -24,7 +24,7 @@ export const useWineList = () => {
   const importWinesMutation = useMutation(wineQueries.import())
 
   const { debouncedWrapper } = useDebounce((searchValue: string) => {
-    setFilters({ search: searchValue, offset: 0 })
+    setFilters({ search: searchValue, page: 0 })
   }, 500)
 
   const findWineById = useCallback(
@@ -48,8 +48,8 @@ export const useWineList = () => {
   }, [resetFilters])
 
   const onChangePagination = useCallback(
-    (offset: number) => {
-      setFilters({ offset })
+    (page: number) => {
+      setFilters({ page })
     },
     [setFilters]
   )

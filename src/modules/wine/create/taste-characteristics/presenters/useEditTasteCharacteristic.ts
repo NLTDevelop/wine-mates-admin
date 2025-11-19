@@ -18,8 +18,8 @@ export const useEditTasteCharacteristic = ({ data, isEditable, onCancel, onToggl
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [editValue, setEditValue] = useState<Partial<CreateWineTasteCharacteristicParams>>({
-    label: data.label,
-    labelEn: data.labelEn || '',
+    nameUa: data.nameUa,
+    nameEn: data.nameEn || '',
     colors: data.colors || [],
   })
   const [originalLevels, setOriginalLevels] = useState<LevelItem[]>(data.levels || [])
@@ -29,24 +29,24 @@ export const useEditTasteCharacteristic = ({ data, isEditable, onCancel, onToggl
     if (!isEditable) return
     setIsEditing(true)
     setEditValue({
-      label: data.label,
-      labelEn: data.labelEn || '',
+      nameUa: data.nameUa,
+      nameEn: data.nameEn || '',
       colors: data.colors || [],
     })
     setOriginalLevels(data.levels || [])
     setCurrentLevels(data.levels || [])
-  }, [isEditable, data.label, data.labelEn, data.levels])
+  }, [isEditable, data.nameUa, data.nameEn, data.levels])
 
   const cancelEditing = useCallback(() => {
     setIsEditing(false)
     setEditValue({
-      label: data.label,
-      labelEn: data.labelEn || '',
+      nameUa: data.nameUa,
+      nameEn: data.nameEn || '',
       colors: data.colors || [],
     })
     setCurrentLevels(originalLevels)
     onCancel(data.id)
-  }, [data.label, data.labelEn, data.id, onCancel, originalLevels])
+  }, [data.nameUa, data.nameEn, data.id, onCancel, originalLevels])
 
   const handleColorChange = useCallback(
     async (value: string | string[]) => {
@@ -64,14 +64,14 @@ export const useEditTasteCharacteristic = ({ data, isEditable, onCancel, onToggl
     [fetchColors]
   )
 
-  const handleSaveLabel = useCallback(async () => {
-    if (!editValue.label?.trim()) return
+  const handleSaveNameUa = useCallback(async () => {
+    if (!editValue.nameUa?.trim()) return
 
     setIsSaving(true)
     try {
       await onUpdateCharacteristic(data.id, {
-        label: editValue.label,
-        labelEn: editValue.labelEn,
+        nameUa: editValue.nameUa,
+        nameEn: editValue.nameEn,
         colors: editValue.colors,
       })
       setIsEditing(false)
@@ -80,7 +80,7 @@ export const useEditTasteCharacteristic = ({ data, isEditable, onCancel, onToggl
     } finally {
       setIsSaving(false)
     }
-  }, [editValue.label, editValue.labelEn, data.id, onUpdateCharacteristic])
+  }, [editValue.nameUa, editValue.nameEn, data.id, onUpdateCharacteristic])
 
   const handleSaveLevelsOrder = useCallback(async () => {
     if (!onSaveLevelsOrder) return
@@ -107,12 +107,12 @@ export const useEditTasteCharacteristic = ({ data, isEditable, onCancel, onToggl
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Enter') {
-        handleSaveLabel()
+        handleSaveNameUa()
       } else if (e.key === 'Escape') {
         cancelEditing()
       }
     },
-    [handleSaveLabel, cancelEditing]
+    [handleSaveNameUa, cancelEditing]
   )
 
   const handleAddItemClick = useCallback(() => {
@@ -142,7 +142,7 @@ export const useEditTasteCharacteristic = ({ data, isEditable, onCancel, onToggl
     setEditValue,
     startEditing,
     cancelEditing,
-    handleSaveLabel,
+    handleSaveNameUa,
     handleSaveLevelsOrder,
     updateCurrentLevels,
     handleKeyDown,
