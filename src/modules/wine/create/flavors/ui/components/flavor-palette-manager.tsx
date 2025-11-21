@@ -5,7 +5,7 @@ import { FlavorList } from './flavor-list'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Save } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { cn, lightenColor } from '@/lib/utils'
+import { cn, createTranslations, getDisplayNames, lightenColor } from '@/lib/utils'
 import { Separator } from '@/UIKit/shadcn/ui/separator'
 import { PaletteItemActions } from '@/modules/wine/create/general/ui'
 import { useContrastText } from '@/hooks/ui/useContrastText'
@@ -106,23 +106,27 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
             const currentEditingGroupData = editingGroupData[group.id]
             const forceOpenKey = forceOpenKeys[group.id] || 0
             const accordionKey = isGroupOpen && forceOpenKey > 0 ? `forced-${group.id}-${forceOpenKey}` : group.id
+            const { nameUa, nameEn } = getDisplayNames(group.translations)
+
             return (
               <div key={accordionKey} className="flex flex-col">
                 <AccordionWrapper
-                  label={`${group.nameUa} (${group.nameEn})`}
+                  label={`${nameUa} (${nameEn})`}
+                  // label={`${group.nameUa} (${group.nameEn})`}
                   isOpen={isGroupOpen}
                   onToggle={() => ui.handleToggleAccordion(group.id, toggleCallbacks)}
                   style={{ backgroundColor: group.colorHex, padding: '8px' }}
                   chevronStyle={cardTextColorClass}
                   header={
-                    <div className="flex justify-between items-center w-full ">
-                      <div className="flex items-center gap-2">
+                    <div className="flex justify-between items-center w-full relative z-10">
+                      <div className="flex md:items-center items-start gap-2 md:flex-row flex-col flex-1">
                         <span className={cn('font-medium', cardTextColorClass)}>
-                          {group.nameUa} ({group.nameEn})
+                          {/* {group.nameUa} ({group.nameEn}) */}
+                          {nameUa} ({nameEn})
                         </span>
                         {group?.colors?.map((c: BaseWineColor) => (
-                          <div key={c.id} className="bg-amber-50 px-2 rounded-md">
-                            <span className=" text-sm text-foreground">{c.nameUa}</span>
+                          <div key={c.id} className="flex items-center bg-amber-50 px-2 rounded-md md:w-auto w-full">
+                            <span className=" text-sm text-foreground">{nameUa}</span>
                           </div>
                         ))}
                       </div>
@@ -134,17 +138,16 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
                         onEdit={() => groups.startEditingGroup(group.id)}
                         showEditButton={!isGroupEditing}
                         isHeader
-                        deleteModal={() => handleOpenDeleteModal(group.id, group.nameUa)}
+                        deleteModal={() => handleOpenDeleteModal(group.id, /*group.*/ nameUa)}
                       />
                     </div>
                   }
                 >
                   <div
                     className={cn(
-                      'relative flex flex-col h-auto min-h-8 w-full items-start justify-between pl-1 pr-1 sm:pl-3 sm:pr-6 pb-2 pt-0 mt-2 transition-all flex-1 bg-muted',
+                      'relative flex flex-col h-auto min-h-8 w-full items-start justify-between pl-1 pr-1 sm:pl-3 sm:pr-6 pb-2 pt-0 mt-2 transition-all flex-1 bg-muted z-20',
                       isItemFormOpen ? 'rounded-t-md rounded-b-0' : 'rounded-t-none rounded-b-md',
                       'cursor-default',
-                      'group',
                       itemsList.length > 0 ? 'gap-2 items-start' : 'gap-4'
                     )}
                   >
@@ -180,8 +183,10 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
                       <>
                         <FlavorForm
                           data={{
-                            name: newItemData[group.id]?.name || '',
-                            nameEn: newItemData[group.id]?.nameEn || '',
+                            translations: newItemData[group.id]?.translations || createTranslations('', ''),
+                            // name: newItemData[group.id]?.name || '',
+                            // nameEn: newItemData[group.id]?.nameEn || '',
+                            colorHex: newItemData[group.id].colorHex || ""
                           }}
                           onDataChange={(field, value) => {
                             items.updateItemFormData(group.id, field as 'name' | 'nameEn', value)
@@ -194,7 +199,7 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
                         />
 
                         <AromasManager
-                          aromas={newItemData[group.id]?.aromas || []}
+                          aromas={items.getAromasForGroup(subgroup.id, newItemData[group.id]?.aromas || [])}
                           onAromasChange={newAromas => {
                             setNewItemData(prev => ({
                               ...prev,
@@ -204,6 +209,7 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
                               },
                             }))
                           }}
+                          onReorder={(reorderedAromas) => items.handleReorderAromas(subgroup.id, reorderedAromas)}
                         />
                       </>
                     )}
@@ -237,7 +243,7 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
                           onClick={() => {
                             items.handleSaveItem(group.id)
                           }}
-                          disabled={!items.canAddItem(group.id) || isLoading}
+                          disabled={!items.canAddItem(group.id) || isLoading || !items.hasChanges(group.id)}
                           size="sm"
                         >
                           <Save className="w-4 h-4" />

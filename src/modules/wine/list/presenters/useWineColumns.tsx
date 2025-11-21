@@ -5,6 +5,7 @@ import { IWines } from '../entities/types/types'
 import { useMemo } from 'react'
 import { NLTTooltip } from '@/UIKit/components/NLTTooltip'
 import { useTranslation } from 'react-i18next'
+import { getDisplayNames } from '@/lib/utils'
 
 const columnHelper = createColumnHelper<IWines>()
 
@@ -142,7 +143,8 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         header: t('table.type'),
         cell: info => {
           const type = info.getValue()
-          return type?.nameUa || type?.nameEn || '-'
+          const {nameUa, nameEn} = getDisplayNames(type?.translations || [])
+          return /*type?.*/nameUa || /*type?.*/nameEn || '-'
         },
         size: 120,
         meta: { cellClassName: 'text-start' },

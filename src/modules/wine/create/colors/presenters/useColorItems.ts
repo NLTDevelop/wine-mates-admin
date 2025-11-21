@@ -2,6 +2,9 @@ import { useCallback, useState } from 'react'
 import { useWineColor } from './useWineColors'
 import { EditingGroupState, NewShadeData } from '../entities/types/color-palette-types'
 import { CreateShadesParams, WineShades } from '../entities/types/color-types'
+import { arraysEqual, createTranslations, getDisplayNames } from '@/lib/utils'
+import { NameDictionary } from '../../general/entities/types'
+import { colorService } from '../entities/color-service'
 
 interface UseColorItemsProps {
   editingGroup: any
@@ -13,7 +16,7 @@ interface UseColorItemsProps {
 }
 
 export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEditingGroup, setNewItemData, setOpenAccordions }: UseColorItemsProps) => {
-  const { createShade, updateShade, deleteShade } = useWineColor()
+  const { createShade, updateShade, deleteShade, reorderShade } = useWineColor()
 
   //---------------для реодер пока нет бека -----------
   const [localShadesOrder, setLocalShadesOrder] = useState<Record<string, WineShades[]>>({})
@@ -31,8 +34,9 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
         setNewItemData((prev: Record<string, NewShadeData>) => ({
           ...prev,
           [groupId]: {
-            nameUa: '',
-            nameEn: '',
+            // nameUa: '',
+            // nameEn: '',
+            translations: createTranslations('', ''),
             tonePale: '',
             toneMedium: '',
             toneDeep: '',
@@ -61,8 +65,9 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
       setNewItemData((prev: Record<string, NewShadeData>) => ({
         ...prev,
         [groupId]: {
-          nameUa: shade.nameUa || '',
-          nameEn: shade.nameEn || '',
+          // nameUa: shade.nameUa || '',
+          // nameEn: shade.nameEn || '',
+          translations: shade.translations || [],
           tonePale: shade.tonePale || '',
           toneMedium: shade.toneMedium || '',
           toneDeep: shade.toneDeep || '',
@@ -111,14 +116,17 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
 
       if (!currentData) return false
 
-      return (
-        editingItem.nameUa !== currentData.nameUa ||
-        editingItem.nameEn !== currentData.nameEn ||
-        editingItem.tonePale !== currentData.tonePale ||
-        editingItem.toneMedium !== currentData.toneMedium ||
-        editingItem.toneDeep !== currentData.toneDeep ||
-        editingItem.colorHex !== currentData.colorHex
-      )
+      // ----------
+      const { nameUa: currentNameUa, nameEn: currentNameEn } = getDisplayNames(currentData.translations || [])
+      const { nameUa: editingNameUa, nameEn: editingNameEn } = getDisplayNames(editingItem.translations || [])
+      // ---------
+
+      const namesChanged = editingNameUa !== currentNameUa || editingNameEn !== currentNameEn
+      const tonesChanged = editingItem.tonePale !== currentData.tonePale || editingItem.toneMedium !== currentData.toneMedium || editingItem.toneDeep !== currentData.toneDeep
+      const colorHexChanged = editingItem.colorHex !== currentData.colorHex
+      const translationsChanged = !arraysEqual(editingItem.translations || [], currentData.translations || [])
+
+      return namesChanged || tonesChanged || colorHexChanged || translationsChanged
     },
     [editingGroup, newItemData]
   )
@@ -134,8 +142,9 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
 
       if (editingGroup?.editingItem && editingGroup.groupId === groupId) {
         const shadeData: CreateShadesParams = {
-          nameUa: newItemData[groupId]?.nameUa || editingGroup.editingItem.nameUa,
-          nameEn: newItemData[groupId]?.nameEn || editingGroup.editingItem.nameEn,
+          // nameUa: newItemData[groupId]?.nameUa || editingGroup.editingItem.nameUa,
+          // nameEn: newItemData[groupId]?.nameEn || editingGroup.editingItem.nameEn,
+          translations: newItemData[groupId]?.translations || editingGroup.editingItem.translations,
           tonePale: newItemData[groupId]?.tonePale || editingGroup.editingItem.tonePale,
           toneMedium: newItemData[groupId]?.toneMedium || editingGroup.editingItem.toneMedium,
           toneDeep: newItemData[groupId]?.toneDeep || editingGroup.editingItem.toneDeep,
@@ -156,8 +165,9 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
         }
       } else if (newItemData[groupId]) {
         const shadeData: CreateShadesParams = {
-          nameUa: newItemData[groupId].nameUa,
-          nameEn: newItemData[groupId].nameEn,
+          // nameUa: newItemData[groupId].nameUa,
+          // nameEn: newItemData[groupId].nameEn,
+          translations: newItemData[groupId].translations,
           tonePale: newItemData[groupId].tonePale,
           toneMedium: newItemData[groupId].toneMedium,
           toneDeep: newItemData[groupId].toneDeep,
@@ -193,7 +203,7 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
   )
 
   const updateItemFormData = useCallback(
-    (groupId: string, field: keyof CreateShadesParams, value: string) => {
+    (groupId: string, field: keyof CreateShadesParams, value: string | NameDictionary[]) => {
       setNewItemData((prev: Record<string, NewShadeData>) => {
         const newData = {
           ...prev,
@@ -214,7 +224,9 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
       if (!data) {
         return false
       }
-      const hasRequiredFields = data.nameUa?.trim() && data.nameEn?.trim() && data.tonePale?.trim() && data.toneMedium?.trim() && data.toneDeep?.trim() && data.colorHex?.trim()
+
+      const { nameUa, nameEn } = getDisplayNames(data.translations || [])
+      const hasRequiredFields = /*data.*/ nameUa?.trim() && /*data.*/ nameEn?.trim() && data.tonePale?.trim() && data.toneMedium?.trim() && data.toneDeep?.trim() && data.colorHex?.trim()
 
       if (!hasRequiredFields) {
         return false
@@ -232,31 +244,53 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
   )
 
   const getItemName = useCallback((item: WineShades) => {
-    return item.nameUa || ''
+    const { nameUa } = getDisplayNames(/*data.*/ item.translations || [])
+    return /*item.*/ nameUa || ''
   }, [])
 
   //--------------------------reorder локальній пока нет бека-----------------------------------------------
-  const handleReorderShades = useCallback((groupId: string, reorderedShades: WineShades[]) => {
-    setLocalShadesOrder(prev => ({
-      ...prev,
-      [groupId]: reorderedShades.map((shade, index) => ({
-        ...shade,
-        sortNumber: index,
-      })),
+  const handleReorderShadesLocale = useCallback((groupId: string, reorderedShades: WineShades[]) => {
+    console.log(
+      'Before reorder:',
+      reorderedShades.map(s => ({
+        name: getDisplayNames(s.translations || []).nameUa,
+        originalSort: s.sortNumber,
+      }))
+    )
+
+    const updatedShades = reorderedShades.map((shade, newIndex) => ({
+      ...shade,
+      sortNumber: newIndex,
     }))
 
     console.log(
-      'Reordered shades for group',
-      groupId,
-      ':',
-      reorderedShades.map(s => ({ id: s.id, name: s.nameUa, sort: s.sortNumber }))
+      'After reorder:',
+      updatedShades.map(s => ({
+        name: getDisplayNames(s.translations || []).nameUa,
+        newSort: s.sortNumber,
+      }))
     )
-    // ------------когда будет бек---------------
-    // await reorderShades({ colorId: groupId, shadeIds: reorderedShades.map(s => s.id) })
+
+    setLocalShadesOrder(prev => ({
+      ...prev,
+      [groupId]: updatedShades,
+    }))
   }, [])
+  // -------------------------------------------------------
+
+  // ------------когда будет бек---------------
+  const handleReorderShades = useCallback(
+    async (groupId: string, reorderedShades: WineShades[]) => {
+      const shadeIds = reorderedShades.map(s => s.id)
+      await reorderShade({ colorId: groupId, shadeIds })
+    },
+    [reorderShade]
+  )
+  // -----------------------------------
 
   const getShadesForGroup = useCallback(
     (groupId: string, originalShades: WineShades[]) => {
+      //----------локальній реодер---------
       if (localShadesOrder[groupId]) {
         return localShadesOrder[groupId]
       }
@@ -265,8 +299,6 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
     },
     [localShadesOrder]
   )
-
-  //----------------------------------------------------------------------------------------------------------
 
   return {
     handleAddShadeClick,
@@ -277,7 +309,8 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
     updateItemFormData,
     canAddItem,
     getItemName,
-    handleReorderShades,
+    handleReorderShades: handleReorderShadesLocale,
+    // handleReorderShades, // для бека
     getShadesForGroup,
   }
 }

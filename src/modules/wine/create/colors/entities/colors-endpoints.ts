@@ -5,10 +5,14 @@ export const COLOR_CRUD_ENDPOINTS = {
     UPDATE: '/v1/admin/wine-colors/{id}',
     DELETE: '/v1/admin/wine-colors/{id}',
   },
-
+  
   COLOR_SHADES: {
     CREATE: '/v1/admin/wine-color-shades',
     UPDATE: '/v1/admin/wine-color-shades/{id}',
     DELETE: '/v1/admin/wine-color-shades/{id}',
+    REORDER: '/v1/admin/wine-color-shades/{id}/reorder',
   },
+  AROMAS: {
+    REORDER: '/v1/admin/wine-color-shades-aromas/{id}/reorder',
+  }
 } as const

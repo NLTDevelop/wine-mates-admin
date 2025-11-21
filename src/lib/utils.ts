@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import i18n from 'i18next'
+import { NameDictionary } from '@/modules/wine/create/general/entities/types'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -126,12 +127,71 @@ export const validateImageField = (value: unknown): value is File | string => {
   return isFile(value) || isImageUrl(value)
 }
 
-export const adaptFetchOptions = (fetchFn: (search?: string) => Promise<{ id: string; nameUa: string }[]>) => {
+// export const adaptFetchOptions = (fetchFn: (search?: string) => Promise<{ id: string; nameUa: string }[]>) => {
+//   return async (search?: string) => {
+//     const data = await fetchFn(search)
+//     return data.map(item => ({
+//       value: item.id,
+//       label: item.nameUa,
+//     }))
+//   }
+// }
+
+export const adaptFetchOptions = (fetchFn: (search?: string) => Promise<any[]>) => {
   return async (search?: string) => {
     const data = await fetchFn(search)
-    return data.map(item => ({
-      value: item.id,
-      label: item.nameUa,
-    }))
+    return data.map(item => {
+      let label = item.label
+      
+      if (!label) {
+        const { nameUa } = getDisplayNames(item.translations || [])
+        label = nameUa || item.nameUa || item.id
+      }
+      
+      return {
+        value: item.id || item.value,
+        label: label,
+      }
+    })
   }
+}
+
+
+export interface DisplayNames {
+  nameUa: string
+  nameEn: string
+}
+
+export const getDisplayNames = (translations: NameDictionary[]): DisplayNames => {
+  if (!translations || !Array.isArray(translations)) {
+    return { nameUa: '', nameEn: '' }
+  }
+
+  const nameUa = translations.find(t => t.language === 'ua')?.name || ''
+  const nameEn = translations.find(t => t.language === 'en')?.name || ''
+
+  return { nameUa, nameEn }
+}
+
+export const createTranslations = (nameUa: string, nameEn: string): NameDictionary[] => [
+  { name: nameUa, language: 'ua' },
+  { name: nameEn, language: 'en' }
+]
+
+export const arraysEqual = <T>(
+  a: T[], 
+  b: T[], 
+  comparator?: (itemA: T, itemB: T) => boolean
+): boolean => {
+  if (a.length !== b.length) return false
+  
+  if (comparator) {
+    return a.every((item, index) => comparator(item, b[index]))
+  }
+  
+  if (a.length > 0 && typeof a[0] === 'object') {
+    return JSON.stringify(a) === JSON.stringify(b)
+  }
+  
+  return a.every((item, index) => item === b[index])
 }

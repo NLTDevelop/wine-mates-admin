@@ -1,8 +1,9 @@
 export interface BaseWineColor {
   id: string
-  nameUa: string
-  nameEn: string
+  // nameUa: string
+  // nameEn: string
   colorHex: string
+  translations: NameDictionary[]
 }
 
 export interface DataResponse<T> {
@@ -15,4 +16,12 @@ export interface FiltersParams {
   limit?: number
   page?: number
   include?: string[]
+}
+
+
+export type Language = "en" | "ua" | "fr" | "pl"|"de"|"es"|"it"
+
+export interface NameDictionary{
+   name: string, 
+   language: Language
 }

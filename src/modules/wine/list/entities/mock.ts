@@ -1,155 +1,40 @@
 import { WineType } from '@/modules/wine/create/wine-types/entities/types/wine-type'
 import { IWines, WineImage, WinesResponse, WineFilters } from './types/types'
+import { mockBaseWineColors } from '../../create/general/entities/mockBaseColor'
 
 // Моковые типы вин с полем colors
 const mockWineTypes: WineType[] = [
   {
     id: 'red',
-    nameUa: 'Красное вино',
-    nameEn: 'Red Wine',
-    colors: [
-      {
-        id: 'red-1',
-        nameUa: 'Темно-красный',
-        nameEn: 'Dark Red',
-        colorHex: '#8B0000',
-      },
-      {
-        id: 'red-2',
-        nameUa: 'Коричнево-красный',
-        nameEn: 'Brown Red',
-        colorHex: '#A52A2A',
-      },
-      {
-        id: 'red-3',
-        nameUa: 'Бордовый',
-        nameEn: 'Burgundy',
-        colorHex: '#800000',
-      },
-      {
-        id: 'red-4',
-        nameUa: 'Глубокий красный',
-        nameEn: 'Deep Red',
-        colorHex: '#5E1914',
-      },
-      {
-        id: 'red-5',
-        nameUa: 'Рубиновый',
-        nameEn: 'Ruby',
-        colorHex: '#722F37',
-      },
+    translations: [
+      { name: 'Червоне вино', language: 'ua' },
+      { name: 'Red Wine', language: 'en' }
     ],
+    colors: mockBaseWineColors
   },
   {
     id: 'white',
-    nameUa: 'Белое вино',
-    nameEn: 'White Wine',
-    colors: [
-      {
-        id: 'white-1',
-        nameUa: 'Светло-соломенный',
-        nameEn: 'Light Straw',
-        colorHex: '#F5F5DC',
-      },
-      {
-        id: 'white-2',
-        nameUa: 'Золотистый',
-        nameEn: 'Golden',
-        colorHex: '#FFF8DC',
-      },
-      {
-        id: 'white-3',
-        nameUa: 'Бледно-желтый',
-        nameEn: 'Pale Yellow',
-        colorHex: '#FFEBCD',
-      },
-      {
-        id: 'white-4',
-        nameUa: 'Лимонный',
-        nameEn: 'Lemon',
-        colorHex: '#F0E68C',
-      },
-      {
-        id: 'white-5',
-        nameUa: 'Янтарный',
-        nameEn: 'Amber',
-        colorHex: '#EEE8AA',
-      },
+    translations: [
+      { name: 'Біле вино', language: 'ua' },
+      { name: 'White Wine', language: 'en' }
     ],
+    colors: mockBaseWineColors
   },
   {
     id: 'dessert',
-    nameUa: 'Десертное вино',
-    nameEn: 'Dessert Wine',
-    colors: [
-      {
-        id: 'dessert-1',
-        nameUa: 'Розово-золотой',
-        nameEn: 'Pink Gold',
-        colorHex: '#e5bcbc',
-      },
-      {
-        id: 'dessert-2',
-        nameUa: 'Медовый',
-        nameEn: 'Honey',
-        colorHex: '#d8a8a8',
-      },
-      {
-        id: 'dessert-3',
-        nameUa: 'Персиковый',
-        nameEn: 'Peach',
-        colorHex: '#f0d9d9',
-      },
-      {
-        id: 'dessert-4',
-        nameUa: 'Карамельный',
-        nameEn: 'Caramel',
-        colorHex: '#d4a5a5',
-      },
-      {
-        id: 'dessert-5',
-        nameUa: 'Кремовый',
-        nameEn: 'Cream',
-        colorHex: '#ebc4c4',
-      },
+    translations: [
+      { name: 'Десертне вино', language: 'ua' },
+      { name: 'Dessert Wine', language: 'en' }
     ],
+    colors: mockBaseWineColors
   },
   {
     id: 'sparkling',
-    nameUa: 'Игристое вино',
-    nameEn: 'Sparkling Wine',
-    colors: [
-      {
-        id: 'sparkling-1',
-        nameUa: 'Бледно-зеленый',
-        nameEn: 'Pale Green',
-        colorHex: '#f3f4e2',
-      },
-      {
-        id: 'sparkling-2',
-        nameUa: 'Серебристый',
-        nameEn: 'Silver',
-        colorHex: '#e8e9d7',
-      },
-      {
-        id: 'sparkling-3',
-        nameUa: 'Жемчужный',
-        nameEn: 'Pearl',
-        colorHex: '#f8f9e6',
-      },
-      {
-        id: 'sparkling-4',
-        nameUa: 'Прозрачно-золотой',
-        nameEn: 'Clear Gold',
-        colorHex: '#dde0c5',
-      },
-      {
-        id: 'sparkling-5',
-        nameUa: 'Кристальный',
-        nameEn: 'Crystal',
-        colorHex: '#f0f2d8',
-      },
+    translations: [
+      { name: 'Ігристе вино', language: 'ua' },
+      { name: 'Sparkling Wine', language: 'en' }
     ],
+    colors: mockBaseWineColors
   },
 ]
 

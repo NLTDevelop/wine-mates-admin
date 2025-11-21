@@ -1,22 +1,18 @@
 import React, { useCallback } from 'react'
-import { cn } from '@/lib/utils'
+import { cn, getDisplayNames } from '@/lib/utils'
 import { WineAromaItem, WineAromaSubgroup } from '../../entities/types/flavor-types'
 import { PaletteItemActions } from '../../../general/ui'
 import { useDeleteModal } from '../../../general/presenters/useDeleteModal'
 import { WarningModal } from '@/modals/warningModal'
 import { useTranslation } from 'react-i18next'
 
-interface FlavorListItem {
-  id: string
-  items?: WineAromaItem[]
-}
 
 interface FlavorListProps {
   items: WineAromaSubgroup[]
   isLoading?: boolean
   onRemove: (id: string) => void
   onEdit?: (item: WineAromaSubgroup | undefined) => void
-  getItemName: (item: FlavorListItem) => string
+  getItemName: (item: WineAromaSubgroup) => string
   cardTextColorClass: string
   isEditable?: boolean
   showEditButton?: boolean
@@ -36,7 +32,8 @@ export const FlavorList: React.FC<FlavorListProps> = ({ items, isLoading = false
 
   const handleOpenDeleteModal = useCallback(
     (item: WineAromaSubgroup) => {
-      deleteModal.open(item.id, item.nameUa)
+      const { nameUa } = getDisplayNames(item.translations)
+      deleteModal.open(item.id, nameUa)
     },
     [deleteModal]
   )
@@ -48,14 +45,21 @@ export const FlavorList: React.FC<FlavorListProps> = ({ items, isLoading = false
     }
   }, [deleteModal, onRemove])
 
+  const getAromaName = (aroma: WineAromaItem) => {
+    const { nameUa } = getDisplayNames(aroma.translations || [])
+    return nameUa || ''
+  }
+
+  
   return (
     <div className="space-y-3 mt-3 hover:brightness-100 w-full">
       {items?.map((item, index) => {
+      const itemColor = item.colorHex || hexColor
         return (
           <div key={item.id || index} className="flex gap-2 justify-between sm:items-start items-center">
             <div className="flex gap-2 sm:flex-row flex-col sm:items-center items-start w-full">
               <div className="flex gap-2 items-center w-1/5">
-                <div className="h-5 w-5 rounded-full flex-shrink-0" style={{ backgroundColor: hexColor }} />
+                <div className="h-5 w-5 rounded-full flex-shrink-0" style={{ backgroundColor: itemColor }} />
                 <div className="text-sm font-medium">{getItemName(item)}</div>
               </div>
 
@@ -63,7 +67,7 @@ export const FlavorList: React.FC<FlavorListProps> = ({ items, isLoading = false
                 <div className="flex flex-wrap gap-2 mr-4">
                   {item.aromas.map((a: WineAromaItem) => (
                     <span key={a.id} className={cn('px-2 py-1 text-xs rounded-md border', 'border-current/30 bg-current/10')}>
-                      {a.nameUa}
+                       {getAromaName(a)}
                     </span>
                   ))}
                 </div>

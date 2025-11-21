@@ -1,40 +1,44 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useWineTemplateStore } from '../entities/wine-template-store'
-import { ReorderWineTemplatesParams, WineTemplate } from '../entities/types'
-import { useEffect, useState } from 'react'
-import { wineTemplateService } from '../entities/wine-template-service'
+import { WineTemplate } from '../entities/types'
+import { useEffect } from 'react'
 import { getWineTemplates } from './wine-templates'
 import { useTranslation } from 'react-i18next'
 
 export const useWineTemplates = () => {
-  const queryClient = useQueryClient()
   const store = useWineTemplateStore()
   const { t } = useTranslation('wines')
 
-  const [staticTemplates] = useState(() => getWineTemplates(t))
+  // ============ пока нет бека ============
+  useEffect(() => {
+    if (store.wineTemplates.length === 0) {
+      const staticTemplates = getWineTemplates(t)
+      store.setWineTemplates(staticTemplates)
+    }
+  }, [t, store])
 
+  const handleReorderTemplates = (templates: WineTemplate[]) => {
+    store.reorderTemplates(templates)
+  }
+
+  // ============ когда будет бек ============
+  /*
+  const queryClient = useQueryClient()
+  
   const templatesQuery = useQuery({
     queryKey: ['wine-templates', 'list'],
-    queryFn: () => wineTemplateService.list(),
-    initialData: staticTemplates,
+    queryFn: async () => {
+      const templatesData = await wineTemplateService.list()
+      const staticTemplates = getWineTemplates(t)
+
+      return templatesData.map(templateItem => {
+        const staticData = staticTemplates.find(t => t.id === templateItem.id)
+        return {
+          ...staticData,
+          ...templateItem
+        }
+      })
+    }
   })
-
-  //-----------------когда будет бек---------------------
-  // const templatesQuery = useQuery({
-  //   queryKey: ['wine-templates', 'list'],
-  //   queryFn: async () => {
-  //     const backendData = await wineTemplateService.list()
-  //     const staticTemplates = getWineTemplates(t)
-
-  //     return backendData.map(backendItem => {
-  //       const staticData = staticTemplates.find(t => t.id === backendItem.id)
-  //       return {
-  //         ...staticData,
-  //         ...backendItem
-  //       }
-  //     })
-  //   }
-  // })
 
   useEffect(() => {
     if (templatesQuery.data) {
@@ -51,24 +55,22 @@ export const useWineTemplates = () => {
   })
 
   const handleReorderTemplates = (templates: WineTemplate[]) => {
-    store.reorderTemplates(templates)
-
     const reorderParams: ReorderWineTemplatesParams = {
       templates: templates.map((template, index) => ({
         id: template.id,
         order: index,
       })),
     }
-
     reorderMutation.mutate(reorderParams)
   }
+  */
 
   return {
-    templates: store.getSortedTemplates(),
+    templates: store.wineTemplates,
     selectedTemplateType: store.selectedTemplateType,
 
-    isLoading: templatesQuery.isLoading,
-    isReordering: reorderMutation.isPending,
+    isLoading: false, // для локального
+    isReordering: false,
 
     setSelectedTemplateType: store.setSelectedTemplateType,
     reorderTemplates: handleReorderTemplates,

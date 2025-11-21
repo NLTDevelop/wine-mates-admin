@@ -7,6 +7,9 @@ import { ColorPicker } from '@/UIKit/shadcn/ui/color-picker'
 import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Plus, Save } from 'lucide-react'
+import { useTranslationsName } from '../../../general/presenters/useTranslationName'
+import { mockBaseWineColors } from '../../../general/entities/mockBaseColor'
+import { AdditionalTranslations } from '../../../general/ui/components/additional-translations'
 
 interface TasteFormProps {
   formData: CreateWineTasteParams
@@ -16,19 +19,37 @@ interface TasteFormProps {
   isLoading?: boolean
   cachedColors: BaseWineColor[]
   mode?: 'create' | 'edit'
+  hasChanges?: boolean
 }
 
-export const TasteForm: React.FC<TasteFormProps> = ({ formData, onFormDataChange, onSave, onCancel, isLoading = false, cachedColors, mode = 'edit' }) => {
+export const TasteForm: React.FC<TasteFormProps> = ({ formData, onFormDataChange, onSave, onCancel, isLoading = false, /*cachedColors,*/ mode = 'edit', hasChanges }) => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
   const { colorValues, handleColorChange, fetchOptions } = useColorForm({
-    cachedColors,
+    cachedColors: mockBaseWineColors, //временно мок
     initialColors: formData.colors || [],
     onColorsChange: colors => onFormDataChange('colors', colors),
   })
 
-  const canSave = formData.nameUa && formData.nameEn && formData.colors.length && !isLoading && formData.colorHex
+  const {
+    nameUa,
+    nameEn,
+    additionalTranslations,
+    handleNameUaChange,
+    handleNameEnChange,
+    handleAddTranslation,
+    handleRemoveTranslation,
+    handleLanguageChange,
+    handleTranslationValueChange,
+    getAvailableLanguages,
+  } = useTranslationsName({
+    initialTranslations: formData.translations || [],
+    onTranslationsChange: translations => onFormDataChange('translations', translations),
+  })
+
+  // const canSave = formData.nameUa && formData.nameEn && formData.colors.length && !isLoading && formData.colorHex
+  const canSave = mode === 'create' ? nameUa && nameEn && formData.colors.length && !isLoading : nameUa && nameEn && formData.colors.length && hasChanges && !isLoading
 
   const SaveIcon = mode === 'create' ? Plus : Save
   const saveText = isLoading ? tc('button.saving') : mode === 'create' ? tc('button.save') : tc('button.save')
@@ -38,12 +59,14 @@ export const TasteForm: React.FC<TasteFormProps> = ({ formData, onFormDataChange
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
         <div>
           <label className="text-sm font-medium mb-2 block">{t('tastes.taste_name_ua')} *</label>
-          <Input value={formData.nameUa} onChange={e => onFormDataChange('nameUa', e.target.value)} placeholder={t('tastes.taste_name_ua')} className="w-full" autoFocus />
+          <Input value={nameUa} onChange={e => handleNameUaChange(e.target.value)} placeholder={t('tastes.taste_name_ua')} className="w-full" autoFocus />
+          {/* <Input value={formData.nameUa} onChange={e => onFormDataChange('nameUa', e.target.value)} placeholder={t('tastes.taste_name_ua')} className="w-full" autoFocus /> */}
         </div>
 
         <div>
           <label className="text-sm font-medium mb-2 block">{t('tastes.taste_name_en')} *</label>
-          <Input value={formData.nameEn} onChange={e => onFormDataChange('nameEn', e.target.value)} placeholder={t('tastes.taste_name_en')} className="w-full" />
+          <Input value={nameEn} onChange={e => handleNameEnChange(e.target.value)} placeholder={t('tastes.taste_name_en')} className="w-full" />
+          {/* <Input value={formData.nameEn} onChange={e => onFormDataChange('nameEn', e.target.value)} placeholder={t('tastes.taste_name_en')} className="w-full" /> */}
         </div>
       </div>
 
@@ -53,6 +76,15 @@ export const TasteForm: React.FC<TasteFormProps> = ({ formData, onFormDataChange
           <ColorPicker value={formData.colorHex} onChange={color => onFormDataChange('colorHex', color)} />
         </div>
       </div>
+
+      <AdditionalTranslations
+        additionalTranslations={additionalTranslations}
+        onAddTranslation={handleAddTranslation}
+        onRemoveTranslation={handleRemoveTranslation}
+        onLanguageChange={handleLanguageChange}
+        onTranslationValueChange={handleTranslationValueChange}
+        getAvailableLanguages={getAvailableLanguages}
+      />
 
       <div className="space-y-2">
         <label className="text-sm font-medium mb-2 block">{t('color_wine')} *</label>

@@ -3,7 +3,7 @@ import { PaletteItemActions } from '@/modules/wine/create/general/ui'
 import { useWineTypePalette } from '../../presenters/useWineTypePalette'
 import { CreateWineTypeSection, WineTypeForm } from '..'
 import { BaseWineColor } from '../../../general/entities/types'
-import { cn } from '@/lib/utils'
+import { cn, getDisplayNames } from '@/lib/utils'
 import { SkeletonWinePalette } from '../../../general/ui/components/skeleton-wine-palette'
 import { useDeleteModal } from '../../../general/presenters/useDeleteModal'
 import { useCallback } from 'react'
@@ -58,6 +58,7 @@ export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTyp
           {wineTypes?.map(wineType => {
             const isEditing = isFormOpen[wineType.id] || false
             const currentFormData = formData[wineType.id]
+             const { nameUa, nameEn } = getDisplayNames(wineType.translations)
             return (
               <div
                 key={wineType.id}
@@ -71,11 +72,13 @@ export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTyp
                     <div className="flex justify-between items-center w-full">
                       <div className="flex items-center gap-2">
                         <span className="font-medium">
-                          {wineType.nameUa} ({wineType.nameEn})
+                          {/* {wineType.nameUa} ({wineType.nameEn}) */}
+                          {nameUa} ({nameEn})
                         </span>
-                        {wineType.colors?.map((color: BaseWineColor) => (
-                          <div key={color.id} className="bg-muted px-2 py-1 rounded text-xs">
-                            {color.nameUa}
+                        {wineType.colors?.map((color: BaseWineColor, idx: number) => (
+                          <div key={color?.id+idx} className="bg-muted px-2 py-1 rounded text-xs">
+                            {nameUa}
+                            {/* {color.nameUa} */}
                           </div>
                         ))}
                       </div>
@@ -86,7 +89,7 @@ export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTyp
                         onEdit={() => handleToggleForm(wineType.id)}
                         showEditButton={true}
                         isHeader
-                        deleteModal={() => handleOpenDeleteModal(wineType.id, wineType.nameUa)}
+                        deleteModal={() => handleOpenDeleteModal(wineType.id, /*wineType.*/nameUa)}
                       />
                     </div>
                   ) : (
@@ -99,7 +102,7 @@ export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTyp
                         cachedColors={cachedColors}
                         isLoading={isLoading || colorsLoading}
                         mode="edit"
-                        hasChanges={hasChanges(wineType.id)}
+                       hasChanges={hasChanges(wineType.id)}
                       />
                     )
                   )}

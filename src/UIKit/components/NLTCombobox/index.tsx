@@ -119,7 +119,7 @@ export const NLTCombobox: React.FC<NLTComboboxProps> = ({ value, onChange, place
           <Command shouldFilter={false}>
             <CommandInput placeholder={searchLabel} value={searchTerm} onValueChange={handleSearchChange} />
             <CommandList>
-              {!loading && <CommandEmpty>{t('foundNothing')}</CommandEmpty>}
+              {!loading && <CommandEmpty>{t('no_results')}</CommandEmpty>}
               <CommandGroup>
                 {loading ? (
                   <div className="flex justify-center">

@@ -1,4 +1,5 @@
-import { mockColors } from '../../wine-types/entities/mock'
+
+import { mockWineColorGroups } from '../../colors/entities/types/mockColor'
 import { WineTasteCharacteristics } from './types/taste-characteristics'
 
 export const mockTasteCharacteristics: WineTasteCharacteristics[] = [
@@ -33,7 +34,7 @@ export const mockTasteCharacteristics: WineTasteCharacteristics[] = [
         sortNumber: 4,
       },
     ],
-    colors: mockColors,
+    colors: mockWineColorGroups,
   },
   {
     id: 'acidity',
@@ -61,7 +62,7 @@ export const mockTasteCharacteristics: WineTasteCharacteristics[] = [
         sortNumber: 3,
       },
     ],
-    colors: mockColors,
+    colors: mockWineColorGroups,
   },
   {
     id: 'tannin-level',
@@ -89,7 +90,7 @@ export const mockTasteCharacteristics: WineTasteCharacteristics[] = [
         sortNumber: 3,
       },
     ],
-    colors: mockColors,
+    colors: mockWineColorGroups,
   },
   {
     id: 'tannin-intensity',
@@ -123,7 +124,7 @@ export const mockTasteCharacteristics: WineTasteCharacteristics[] = [
         sortNumber: 4,
       },
     ],
-    colors: mockColors,
+    colors: mockWineColorGroups,
   },
   {
     id: 'alcohol',
@@ -163,7 +164,7 @@ export const mockTasteCharacteristics: WineTasteCharacteristics[] = [
         sortNumber: 5,
       },
     ],
-    colors: mockColors,
+    colors: mockWineColorGroups,
   },
   {
     id: 'body',
@@ -203,7 +204,7 @@ export const mockTasteCharacteristics: WineTasteCharacteristics[] = [
         sortNumber: 5,
       },
     ],
-    colors: mockColors,
+    colors: mockWineColorGroups,
   },
   {
     id: 'finish',
@@ -243,7 +244,7 @@ export const mockTasteCharacteristics: WineTasteCharacteristics[] = [
         sortNumber: 5,
       },
     ],
-    colors: mockColors,
+    colors: mockWineColorGroups,
   },
   {
     id: 'wine-peak',
@@ -283,7 +284,7 @@ export const mockTasteCharacteristics: WineTasteCharacteristics[] = [
         sortNumber: 5,
       },
     ],
-    colors: mockColors,
+    colors: mockWineColorGroups,
   },
   {
     id: 'complexity',
@@ -317,7 +318,7 @@ export const mockTasteCharacteristics: WineTasteCharacteristics[] = [
         sortNumber: 4,
       },
     ],
-    colors: mockColors,
+    colors: mockWineColorGroups,
   },
   {
     id: 'viscosity',
@@ -357,7 +358,7 @@ export const mockTasteCharacteristics: WineTasteCharacteristics[] = [
         sortNumber: 5,
       },
     ],
-    colors: mockColors,
+    colors: mockWineColorGroups,
   },
   {
     id: 'oak',
@@ -397,7 +398,7 @@ export const mockTasteCharacteristics: WineTasteCharacteristics[] = [
         sortNumber: 5,
       },
     ],
-    colors: mockColors,
+    colors: mockWineColorGroups,
   },
   {
     id: 'fruitness',
@@ -437,6 +438,6 @@ export const mockTasteCharacteristics: WineTasteCharacteristics[] = [
         sortNumber: 5,
       },
     ],
-    colors: mockColors,
+    colors: mockWineColorGroups,
   },
 ]

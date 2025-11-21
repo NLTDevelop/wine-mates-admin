@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { CreateWineTypeParams, CreateWineTypeRequest } from '../entities/types/wine-type'
+import { createTranslations } from '@/lib/utils'
 
 interface UseCreateWineTypeProps {
   onCreateWineType: (wineTypeData: CreateWineTypeRequest) => void
@@ -9,7 +10,7 @@ interface UseCreateWineTypeProps {
 interface UseCreateWineTypeReturn {
   isExpanded: boolean
   formData: CreateWineTypeParams
-  updateFormData: (field: 'nameUa' | 'nameEn' | 'colors', value: any) => void
+  updateFormData: (field: /*'nameUa' | 'nameEn'*/'translations' | 'colors', value: any) => void
   handleCreateWineType: () => void
   handleCancel: () => void
   expandForm: () => void
@@ -18,8 +19,9 @@ interface UseCreateWineTypeReturn {
 export const useCreateWineType = ({ onCreateWineType, isLoading = false }: UseCreateWineTypeProps): UseCreateWineTypeReturn => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [formData, setFormData] = useState<CreateWineTypeParams>({
-    nameUa: '',
-    nameEn: '',
+    // nameUa: '',
+    // nameEn: '',
+    translations: createTranslations('',''),
     colors: [],
   })
 
@@ -30,18 +32,19 @@ export const useCreateWineType = ({ onCreateWineType, isLoading = false }: UseCr
   const handleCreateWineType = useCallback(() => {
     if (!isLoading) {
       const wineTypeDataForApi: CreateWineTypeRequest = {
-        nameUa: formData.nameUa,
-        nameEn: formData.nameEn,
+        // nameUa: formData.nameUa,
+        // nameEn: formData.nameEn,
+         translations: formData.translations || [],
         colorIds: formData.colors.map(color => color.id),
       }
       onCreateWineType(wineTypeDataForApi)
-      setFormData({ nameUa: '', nameEn: '', colors: [] })
+      setFormData({ /*nameUa: '', nameEn: ''*/translations: createTranslations('',''), colors: [] })
       setIsExpanded(false)
     }
   }, [isLoading, onCreateWineType, formData])
 
   const handleCancel = useCallback(() => {
-    setFormData({ nameUa: '', nameEn: '', colors: [] })
+    setFormData({ /*nameUa: '', nameEn: ''*/translations: createTranslations('',''), colors: [] })
     setIsExpanded(false)
   }, [])
 

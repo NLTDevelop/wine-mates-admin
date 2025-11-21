@@ -1,5 +1,6 @@
 import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
 import { WineType } from './types/wine-type'
+import { getDisplayNames } from '@/lib/utils'
 
 interface WineTypeStoreState {
   wineTypes: WineType[]
@@ -61,7 +62,13 @@ export const useWineTypeStore = createStoreDevToolsWrapper<WineTypeStoreState>((
       return
     }
 
-    const filtered = wineTypes.filter((wt: WineType) => wt.nameUa.toLowerCase().includes(searchTerm.toLowerCase()) || wt.nameEn?.toLowerCase().includes(searchTerm.toLowerCase()))
+    const searchTermLower = searchTerm.toLowerCase()
+
+    const filtered = wineTypes.filter((wt: WineType) => {
+      const { nameUa: groupNameUa, nameEn: groupNameEn } = getDisplayNames(wt.translations)
+
+      return groupNameUa.toLowerCase().includes(searchTermLower) || (groupNameEn && groupNameEn.toLowerCase().includes(searchTermLower))
+    })
 
     set({ searchResults: filtered }, false, 'wineTypes/searchWineType')
   },

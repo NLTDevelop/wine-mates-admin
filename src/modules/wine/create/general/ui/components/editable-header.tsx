@@ -1,6 +1,6 @@
 import { MouseEvent, useState } from 'react'
 import { Check, X } from 'lucide-react'
-import { adaptFetchOptions, cn } from '@/lib/utils'
+import { adaptFetchOptions, cn, getDisplayNames } from '@/lib/utils'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { useTranslation } from 'react-i18next'
 import { CreateWineTasteParams } from '../../../tastes/entities/types/tastes'
@@ -71,6 +71,9 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
     onKeyDown(e)
   }
 
+  const {nameUa, nameEn} = getDisplayNames(editValue.translations || [])
+ 
+
   return (
     <div className="flex items-center gap-2 justify-between w-full cursor-default ">
       {isEditable && isEditing ? (
@@ -81,7 +84,7 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
                 <span className={cn('text-xs opacity-70', cardTextColorClass)}>UA:</span>
 
                 <Input
-                  value={editValue.nameUa}
+                  value={nameUa}
                   onChange={e => onEditValueChange('label', e.target.value)}
                   onKeyDown={handleInputKeyDown}
                   disabled={isSaving}
@@ -94,7 +97,7 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
               <div className="flex items-center gap-1 w-full md:w-auto justify-between">
                 <span className={cn('text-xs opacity-70', cardTextColorClass)}>EN:</span>
                 <Input
-                  value={editValue.nameEn}
+                  value={nameEn}
                   onChange={e => onEditValueChange('labelEn', e.target.value)}
                   onKeyDown={handleInputKeyDown}
                   disabled={isSaving}
@@ -164,9 +167,10 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
             <div className="flex gap-2 mt-2 sm:flex-row flex-col md:w-auto w-full">
               {editValue.colors.map(color => {
                 const { textColorClass } = useContrastText(color.colorHex)
+                 const {nameUa:colorNameUa} = getDisplayNames(color.translations || [])
                 return (
                   <Badge className={cn('text-label text-[10px] p-1 h-4', textColorClass)} style={{ backgroundColor: color.colorHex }} key={color.id}>
-                    {color.nameUa}
+                    {colorNameUa}
                   </Badge>
                 )
               })}

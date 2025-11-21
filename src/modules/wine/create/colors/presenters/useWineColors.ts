@@ -1,10 +1,11 @@
 import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack/react-query'
 import { useWineColorStore } from '../entities/wine-color-store'
 import { wineColorQueries } from '../entities/wine-color-queries'
-import { CreateShadesParams, CreateWineColorParams, UpdateWineColorParams, WineColorGroup, WineShades } from '../entities/types/color-types'
+import { CreateShadesParams, CreateWineColorParams, ReorderShadesParams, UpdateWineColorParams, WineColorGroup, WineShades } from '../entities/types/color-types'
 import { DataResponse } from '../../general/entities/types'
 import { useEffect, useMemo } from 'react'
 import { colorService } from '../entities/color-service'
+import { mockWineColorGroups } from '../entities/types/mockColor'
 
 export const useWineColor = () => {
   const queryClient = useQueryClient()
@@ -90,8 +91,9 @@ export const useWineColor = () => {
 
       const optimistic: WineColorGroup = {
         id: params.colorId,
-        nameUa: params.newColor.nameUa,
-        nameEn: params.newColor.nameEn,
+        translations: params.newColor.translations,
+        // nameUa: params.newColor.nameUa,
+        // nameEn: params.newColor.nameEn,
         colorHex: params.newColor.colorHex,
         shades: params.newColor.shades || [],
       }
@@ -276,7 +278,53 @@ export const useWineColor = () => {
     },
   })
 
+  const reorderShadeMutation = useMutation({
+    ...wineColorQueries.reorderShades(),
+    onMutate: async (params: ReorderShadesParams) => {
+      await queryClient.cancelQueries({ queryKey: ['color-groups', 'list'] })
+
+      const previousGroups = queryClient.getQueryData(['color-groups', 'list'])
+
+      queryClient.setQueryData(['color-groups', 'list'], (old: any) => {
+        if (!old) return old
+
+        const reorderShadesInGroup = (shades: any[], newOrderIds: string[]) => {
+          const shadeMap = new Map(shades.map(shade => [shade.id, shade]))
+          return newOrderIds
+            .map((id, index) => ({
+              ...shadeMap.get(id),
+              sortNumber: index,
+            }))
+            .filter(Boolean)
+        }
+
+        return old.map((group: any) => {
+          if (group.id === params.colorId) {
+            return {
+              ...group,
+              shades: reorderShadesInGroup(group.shades, params.shadeIds),
+            }
+          }
+          return group
+        })
+      })
+
+      return { previousGroups }
+    },
+
+    onError: (_, __, context) => {
+      if (context?.previousGroups) {
+        queryClient.setQueryData(['color-groups', 'list'], context.previousGroups)
+      }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['color-groups', 'list'] })
+    },
+  })
+
   return {
+    // colorGroups: mockWineColorGroups,
     colorGroups: colorGroups(),
     totalCount: groupsQuery.data?.count || 0,
 
@@ -303,6 +351,7 @@ export const useWineColor = () => {
     createShade: createShadeMutation.mutateAsync,
     updateShade: updateShadeMutation.mutateAsync,
     deleteShade: deleteShadeMutation.mutateAsync,
+    reorderShade: reorderShadeMutation.mutateAsync,
 
     searchColorGroups: store.searchColorGroups,
     clearSearch: store.clearSearch,

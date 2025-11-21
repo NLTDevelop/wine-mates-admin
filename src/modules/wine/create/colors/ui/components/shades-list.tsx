@@ -36,7 +36,7 @@ export const ShadesList: React.FC<ShadesListProps> = ({ items, isLoading = false
 
   return (
     <div className="mt-3 w-full">
-      {items?.length && (
+      {items?.length ? (
         <SortableList items={items} onReorder={handleReorder} strategy="vertical" getId={getShadeId}>
           <div className="space-y-3">
             {items?.map((item, index) => (
@@ -55,7 +55,7 @@ export const ShadesList: React.FC<ShadesListProps> = ({ items, isLoading = false
             ))}
           </div>
         </SortableList>
-      )}
+      ):null}
     </div>
   )
 }

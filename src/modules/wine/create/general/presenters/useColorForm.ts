@@ -15,6 +15,7 @@ export const useColorForm = ({ cachedColors, initialColors = [], onColorsChange 
     initialColors,
   })
 
+
   const fetchOptions = useCallback(
     async (search?: string) => {
       return adaptFetchOptions(() => Promise.resolve(cachedColors))(search)

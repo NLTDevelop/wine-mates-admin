@@ -223,6 +223,9 @@ export const uk = {
     color_taste: 'Колір смаку',
     empty: '{{slug}} відсутні',
     empty_description: 'Натисніть кнопку, щоб додати перший {{slug}}',
+    translation: 'Переклад',
+    language: 'Мова',
+    select_language: 'Оберіть мову',  
     modal: {
       delete_title: 'Видалити {{slug}}?',
       delete_action: 'Видалити',
@@ -278,6 +281,7 @@ export const uk = {
       create_new_group: 'Створення нової групи ароматів',
       choose_color: 'Оберіть колір вина',
       search_color: 'Пошук кольору вина',
+      subgroup_color: 'Колір підгрупи аромату',
     },
     tastes: {
       tastes: 'Смаки',
@@ -333,6 +337,7 @@ export const uk = {
       import: 'Імпортувати список вин',
       confirm: 'Підтвердити вино',
       cancel_confirm: 'Вино підтверждено. Скасувати?',
+      add_translation: 'Додати переклад',
     },
   },
 }

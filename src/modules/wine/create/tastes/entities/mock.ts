@@ -1,145 +1,69 @@
-// import { mockColors } from '../../wine-types/entities/mock'
-// import { WineTaste } from './types/tastes'
+import { mockBaseWineColors } from "../../general/entities/mockBaseColor";
+import { WineTaste } from "./types/tastes";
 
-// export const mockTastes: WineTaste[] = [
-//   {
-//     id: '1',
-//     nameUa: 'Солодкий',
-//     nameEn: 'Sweet',
-//     value: '#FF6B6B',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '2',
-//     nameUa: 'Кислий',
-//     nameEn: 'Sour',
-//     value: '#4ECDC4',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '3',
-//     nameUa: 'Гіркий',
-//     nameEn: 'Bitter',
-//     value: '#45B7D1',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '4',
-//     nameUa: 'Солоний',
-//     nameEn: 'Salty',
-//     value: '#96CEB4',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '5',
-//     nameUa: 'Пряний',
-//     nameEn: 'Spicy',
-//     value: '#FFEAA7',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '6',
-//     nameUa: 'Терпкий',
-//     nameEn: 'Astringent',
-//     value: '#DDA0DD',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '7',
-//     nameUa: 'Мʼякий',
-//     nameEn: 'Soft',
-//     value: '#98D8C8',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '8',
-//     nameUa: 'Насичений',
-//     nameEn: 'Rich',
-//     value: '#F7DC6F',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '9',
-//     nameUa: 'Легкий',
-//     nameEn: 'Light',
-//     value: '#BB8FCE',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '10',
-//     nameUa: 'Повний',
-//     nameEn: 'Full',
-//     value: '#85C1E9',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '11',
-//     nameUa: 'Фруктовий',
-//     nameEn: 'Fruity',
-//     value: '#F1948A',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '12',
-//     nameUa: 'Квітковий',
-//     nameEn: 'Floral',
-//     value: '#C39BD3',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '13',
-//     nameUa: 'Деревний',
-//     nameEn: 'Woody',
-//     value: '#A569BD',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '14',
-//     nameUa: 'Земляний',
-//     nameEn: 'Earthy',
-//     value: '#AF7AC5',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '15',
-//     nameUa: 'Травʼянистий',
-//     nameEn: 'Herbaceous',
-//     value: '#52BE80',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '16',
-//     nameUa: 'Мінеральний',
-//     nameEn: 'Mineral',
-//     value: '#7F8C8D',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '17',
-//     nameUa: 'Кремовий',
-//     nameEn: 'Creamy',
-//     value: '#F7DC6F',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '18',
-//     nameUa: 'Масляний',
-//     nameEn: 'Buttery',
-//     value: '#F8C471',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '19',
-//     nameUa: 'Димний',
-//     nameEn: 'Smoky',
-//     value: '#566573',
-//     colors: mockColors,
-//   },
-//   {
-//     id: '20',
-//     nameUa: 'Ванільний',
-//     nameEn: 'Vanilla',
-//     value: '#E8DAEF',
-//     colors: mockColors,
-//   },
-// ]
+
+export const mockWineTastes: WineTaste[] = [
+  {
+    id: 'fruity',
+    translations: [
+      { language: 'ua', name: 'Фруктовий' },
+      { language: 'en', name: 'Fruity' }
+    ],
+    colorHex: '#FF6B6B',
+    colors: [mockBaseWineColors[1], mockBaseWineColors[2]],
+  },
+  {
+    id: 'dry',
+    translations: [
+      { language: 'ua', name: 'Сухий' },
+      { language: 'en', name: 'Dry' }
+    ],
+    colorHex: '#D4A76A',
+    colors: [mockBaseWineColors[2], mockBaseWineColors[3]],
+  },
+  {
+    id: 'sweet',
+    translations: [
+      { language: 'ua', name: 'Солодкий' },
+      { language: 'en', name: 'Sweet' }
+    ],
+    colorHex: '#FFD700',
+    colors: [mockBaseWineColors[3], mockBaseWineColors[4]],
+  },
+  {
+    id: 'acidic',
+    translations: [
+      { language: 'ua', name: 'Кислий' },
+      { language: 'en', name: 'Acidic' }
+    ],
+    colorHex: '#90EE90',
+    colors: [mockBaseWineColors[0], mockBaseWineColors[1]],
+  },
+  {
+    id: 'tannic',
+    translations: [
+      { language: 'ua', name: 'Таніновий' },
+      { language: 'en', name: 'Tannic' }
+    ],
+    colorHex: '#8B4513',
+    colors: mockBaseWineColors,
+  },
+  {
+    id: 'oaky',
+    translations: [
+      { language: 'ua', name: 'Дубовий' },
+      { language: 'en', name: 'Oaky' }
+    ],
+    colorHex: '#A0522D',
+    colors: [mockBaseWineColors[2], mockBaseWineColors[4]],
+  },
+  {
+    id: 'spicy',
+    translations: [
+      { language: 'ua', name: 'Пряний' },
+      { language: 'en', name: 'Spicy' }
+    ],
+    colorHex: '#FF4500',
+    colors: [mockBaseWineColors[1], mockBaseWineColors[3]],
+  }
+]

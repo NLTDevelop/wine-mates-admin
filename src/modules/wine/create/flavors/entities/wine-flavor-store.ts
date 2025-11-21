@@ -1,6 +1,7 @@
 import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
 import { WineAromaGroup, WineAromaItem, WineAromaSubgroup } from './types/flavor-types'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
+import { getDisplayNames } from '@/lib/utils'
 
 interface WineFlavorStoreState {
   aromaGroups: WineAromaGroup[]
@@ -82,21 +83,27 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
 
     searchAromaGroups: searchTerm =>
       set(
-        (state: WineFlavorStoreState) => ({
-          searchResults: state.aromaGroups.filter(
-            g =>
-              g.nameUa.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              g.nameEn?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              g.subgroups?.some(
-                subgroup =>
-                  subgroup.nameUa.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  subgroup.nameEn?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  subgroup.aromas?.some(aroma => aroma.nameUa.toLowerCase().includes(searchTerm.toLowerCase()) || aroma.nameEn?.toLowerCase().includes(searchTerm.toLowerCase()))
-              )
-          ),
-        }),
+        (state: WineFlavorStoreState) => {
+          const searchTermLower = searchTerm.toLowerCase()
+
+          return {
+            searchResults: state.aromaGroups.filter(group => {
+              const { nameUa: groupNameUa, nameEn: groupNameEn } = getDisplayNames(group.translations)
+
+              const groupMatch = groupNameUa.toLowerCase().includes(searchTermLower) || groupNameEn.toLowerCase().includes(searchTermLower)
+
+              const subgroupsMatch = group.subgroups?.some(subgroups => {
+                const { nameUa: subgroupsNameUa, nameEn: subgroupsNameEn } = getDisplayNames(subgroups.translations)
+                return subgroupsNameUa.toLowerCase().includes(searchTermLower) || subgroupsNameEn.toLowerCase().includes(searchTermLower)
+              })
+              const aromaMatch = group.subgroups?.some(subgroup => subgroup.aromas?.some(aroma => aroma.translations?.some(translation => translation.name.toLowerCase().includes(searchTermLower))))
+
+              return groupMatch || subgroupsMatch || aromaMatch
+            }),
+          }
+        },
         false,
-        'aromaGroups/searchAromaGroups'
+        'colorGroups/searchColorGroups'
       ),
 
     setFilters: newFilters =>

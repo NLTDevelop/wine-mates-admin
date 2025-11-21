@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { CreateWineAromaGroupParams, CreateWineAromaGroupRequest } from '../entities/types/flavor-types'
-import { BaseWineColor } from '../../general/entities/types'
+import { BaseWineColor, NameDictionary } from '../../general/entities/types'
+import { createTranslations, getDisplayNames } from '@/lib/utils'
 
 interface UseCreateFlavorGroupProps {
   onCreateGroup: (groupData: CreateWineAromaGroupRequest) => void
@@ -9,10 +10,10 @@ interface UseCreateFlavorGroupProps {
 
 interface UseCreateFlavorGroupReturn {
   isExpanded: boolean
-  formData: Partial<CreateWineAromaGroupParams>
+  formData: Omit<CreateWineAromaGroupParams, 'sortNumber' | 'subgroups'>
   canCreateGroup: boolean
   setIsExpanded: (expanded: boolean) => void
-  updateFormData: (field: 'nameUa' | 'nameEn' | 'colors' | 'colorHex', value: string | BaseWineColor[]) => void
+  updateFormData: (field: /*'nameUa' | 'nameEn'*/"translations" | 'colors' | 'colorHex', value: string | BaseWineColor[] | NameDictionary[]) => void
   handleCreateGroup: () => void
   handleCancel: () => void
   expandForm: () => void
@@ -20,9 +21,10 @@ interface UseCreateFlavorGroupReturn {
 
 export const useCreateFlavorGroup = ({ onCreateGroup }: UseCreateFlavorGroupProps): UseCreateFlavorGroupReturn => {
   const [isExpanded, setIsExpanded] = useState(false)
-  const [formData, setFormData] = useState<Partial<CreateWineAromaGroupParams>>({
-    nameUa: '',
-    nameEn: '',
+  const [formData, setFormData] = useState<Omit<CreateWineAromaGroupParams, 'sortNumber' | 'subgroups'>> ({
+    // nameUa: '',
+    // nameEn: '',
+     translations: createTranslations('',''),
     colorHex: '',
     colors: [],
   })
@@ -34,20 +36,21 @@ export const useCreateFlavorGroup = ({ onCreateGroup }: UseCreateFlavorGroupProp
   const handleCreateGroup = () => {
     if (canCreateGroup) {
       const groupDataForApi: CreateWineAromaGroupRequest = {
-        nameUa: formData.nameUa || '',
-        nameEn: formData.nameEn || '',
+        // nameUa: formData.nameUa || '',
+        // nameEn: formData.nameEn || '',
+        translations: formData.translations || [],
         colorHex: formData.colorHex || '',
-        colorIds: formData.colors?.map(color => color.id) || [],
+        colorIds: formData.colors.map(color => color.id),
       }
 
       onCreateGroup(groupDataForApi)
-      setFormData({ nameUa: '', nameEn: '', colorHex: '', colors: [] })
+      setFormData({ /*nameUa: '', nameEn: ''*/translations: createTranslations('',''), colorHex: '', colors: [] })
       setIsExpanded(false)
     }
   }
 
   const handleCancel = () => {
-    setFormData({ nameUa: '', nameEn: '', colorHex: '', colors: [] })
+    setFormData({ /*nameUa: '', nameEn: ''*/translations: createTranslations('',''), colorHex: '', colors: [] })
     setIsExpanded(false)
   }
 
@@ -55,7 +58,8 @@ export const useCreateFlavorGroup = ({ onCreateGroup }: UseCreateFlavorGroupProp
     setIsExpanded(true)
   }
 
-  const canCreateGroup = !!(formData.nameUa && formData.nameEn && formData.colors && formData.colors.length > 0)
+   const { nameUa, nameEn } = getDisplayNames(formData.translations || [])
+  const canCreateGroup = !!(/*formData.*/nameUa && /*formData.*/nameEn && formData.colors && formData.colors.length > 0 )
 
   return {
     isExpanded,

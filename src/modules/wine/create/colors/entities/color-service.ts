@@ -1,7 +1,7 @@
 import { api } from '@/services'
 import { buildUrl } from '@/lib/utils'
 import { COLOR_CRUD_ENDPOINTS } from './colors-endpoints'
-import { CreateShadesParams, CreateWineColorParams, UpdateWineColorParams, WineColorGroup } from './types/color-types'
+import { CreateShadesParams, CreateWineColorParams, ReorderShadesParams, UpdateWineColorParams, WineColorGroup } from './types/color-types'
 import { DataResponse, FiltersParams } from '../../general/entities/types'
 
 export const colorService = {
@@ -47,6 +47,5 @@ export const colorService = {
     return api.delete(buildUrl(COLOR_CRUD_ENDPOINTS.COLOR_SHADES.DELETE, { id: shadeId })).then(response => response.data)
   },
 
-  // reorderShades: (params: ReorderShadesParams): Promise<void> =>
-  //   api.post(buildUrl(COLOR_CRUD_ENDPOINTS.COLOR_SHADES.REORDER, { id: params.colorId }), { shades: params.shades }).then(response => response.data),
+  reorderShades: (params: ReorderShadesParams): Promise<void> => api.patch(buildUrl(COLOR_CRUD_ENDPOINTS.COLOR_SHADES.REORDER, { id: params.colorId }), { shadeIds: params.shadeIds }).then(response => response.data),
 }

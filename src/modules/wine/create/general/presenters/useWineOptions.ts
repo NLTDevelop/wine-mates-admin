@@ -1,33 +1,30 @@
 import { useCallback } from 'react'
-import { mockColors } from '../../wine-types/entities/mock'
 import { useQuery } from '@tanstack/react-query'
 import { wineOptionsQueries } from '../../wine-types/entities/wine-options-queries'
+import { getDisplayNames } from '@/lib/utils';
+import { BaseWineColor } from '../entities/types';
+import { mockWineColorGroups } from '../../colors/entities/types/mockColor';
 
 //для мок
+
 export const useWineOptionsMock = () => {
   const fetchColors = useCallback(async (search?: string) => {
-    return mockColors.filter(color => !search || color.nameUa.toLowerCase().includes(search.toLowerCase()))
-  }, [])
-
-  // const fetchAromas = useCallback(async (search?: string) => {
-  //   return mockAromas.filter(aroma => !search || aroma.label.toLowerCase().includes(search.toLowerCase()))
-  // }, [])
-
-  // const fetchFlavorNotes = useCallback(async (search?: string) => {
-  //   return mockFlavorNotes.filter(note => !search || note.label.toLowerCase().includes(search.toLowerCase()))
-  // }, [])
-
-  // const fetchFlavorCharacteristics = useCallback(async (search?: string) => {
-  //   return mockFlavorCharacteristics.filter(char => !search || char.label.toLowerCase().includes(search.toLowerCase()))
-  // }, [])
+    if (!search) return mockWineColorGroups;
+    
+    const searchTerm = search.toLowerCase();
+    
+    return mockWineColorGroups.filter((color:BaseWineColor) => {
+      const { nameUa, nameEn } = getDisplayNames(color.translations);
+      
+      return nameUa.toLowerCase().includes(searchTerm) || 
+             (nameEn && nameEn.toLowerCase().includes(searchTerm));
+    });
+  }, []);
 
   return {
     fetchColors,
-    // fetchAromas,
-    // fetchFlavorNotes,
-    // fetchFlavorCharacteristics,
-  }
-}
+  };
+};
 
 // -----------------------------------------------------------------------------
 

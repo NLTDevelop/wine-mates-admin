@@ -123,7 +123,7 @@ export const FormCombobox: React.FC<FormComboboxProps> = ({ value, onChange, pla
           <Command shouldFilter={false}>
             <CommandInput placeholder={searchLabel} value={searchTerm} onValueChange={handleSearchChange} />
             <CommandList>
-              <CommandEmpty>{t('foundNothing')}</CommandEmpty>
+              <CommandEmpty>{t('no_results')}</CommandEmpty>
               <CommandGroup>
                 {loading ? (
                   <div className="flex justify-center py-4">

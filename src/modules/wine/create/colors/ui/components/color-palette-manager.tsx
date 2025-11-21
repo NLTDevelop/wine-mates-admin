@@ -5,7 +5,7 @@ import { ShadesList } from './shades-list'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Save } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { cn, lightenColor } from '@/lib/utils'
+import { cn, createTranslations,  getDisplayNames, lightenColor } from '@/lib/utils'
 import { Separator } from '@/UIKit/shadcn/ui/separator'
 import { PaletteItemActions } from '@/modules/wine/create/general/ui'
 import { useContrastText } from '@/hooks/ui/useContrastText'
@@ -92,11 +92,13 @@ export const ColorPaletteManager = () => {
             const currentEditingGroupData = editingGroupData[group.id]
             const forceOpenKey = forceOpenKeys[group.id] || 0
             const accordionKey = isGroupOpen && forceOpenKey > 0 ? `forced-${group.id}-${forceOpenKey}` : group.id
+            const {nameUa, nameEn} = getDisplayNames(group.translations)
 
             return (
               <div key={accordionKey} className="flex flex-col">
                 <AccordionWrapper
-                  label={`${group.nameUa} (${group.nameEn})`}
+                  label={`${nameUa} (${nameEn})`}
+                  // label={`${group.nameUa} (${group.nameEn})`}
                   isOpen={isGroupOpen}
                   onToggle={() => ui.handleToggleAccordion(group.id, toggleCallbacks)}
                   style={{ backgroundColor: group.colorHex, padding: '8px' }}
@@ -105,7 +107,8 @@ export const ColorPaletteManager = () => {
                     <div className="flex justify-between items-center w-full">
                       <div className="flex items-center gap-2">
                         <span className={cn('font-medium', cardTextColorClass)}>
-                          {group.nameUa} ({group.nameEn})
+                          {/* {group.nameUa} ({group.nameEn}) */}
+                          {nameUa} ({nameEn})
                         </span>
                       </div>
                       <PaletteItemActions
@@ -116,7 +119,8 @@ export const ColorPaletteManager = () => {
                         onEdit={() => groups.startEditingGroup(group.id)}
                         showEditButton={!isGroupEditing}
                         isHeader
-                        deleteModal={() => handleOpenDeleteModal(group.id, group.nameUa)}
+                        deleteModal={() => handleOpenDeleteModal(group.id, nameUa)}
+                        // deleteModal={() => handleOpenDeleteModal(group.id, group.nameUa)}
                       />
                     </div>
                   }
@@ -162,8 +166,9 @@ export const ColorPaletteManager = () => {
                       <>
                         <ColorForm
                           data={{
-                            nameUa: newItemData[group.id]?.nameUa || '',
-                            nameEn: newItemData[group.id]?.nameEn || '',
+                           translations: newItemData[group.id]?.translations || createTranslations('', ''),
+                            // nameUa: newItemData[group.id]?.nameUa || '',
+                            // nameEn: newItemData[group.id]?.nameEn || '',
                             tonePale: newItemData[group.id]?.tonePale || '',
                             toneMedium: newItemData[group.id]?.toneMedium || '',
                             toneDeep: newItemData[group.id]?.toneDeep || '',
