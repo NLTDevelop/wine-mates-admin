@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { CreateWineColorParams, WineColorGroup } from '../entities/types/color-types'
 import { NewShadeData } from '../entities/types/color-palette-types'
 import { useWineColor } from './useWineColors'
+import { arraysEqual, getDisplayNames } from '@/lib/utils'
 
 interface UseColorGroupsProps {
   colorGroups: WineColorGroup[] | undefined
@@ -51,8 +52,7 @@ export const useColorGroups = ({ colorGroups, editingGroupData, setEditingGroup,
       })
 
       const groupFormData = {
-        nameUa: group.nameUa || '',
-        nameEn: group.nameEn || '',
+        translations: group.translations || [],
         colorHex: group.colorHex || '',
         // sortNumber: group.sortNumber || 0,
         shades: group.shades || [],
@@ -97,6 +97,7 @@ export const useColorGroups = ({ colorGroups, editingGroupData, setEditingGroup,
         const groupDataWithSortNumber = {
           ...groupData,
           sortNumber: currentGroupIndex >= 0 ? currentGroupIndex : colorGroups?.length || 0,
+          translations: groupData.translations || [],
         }
         await updateGroup({
           colorId: groupId,
@@ -154,7 +155,10 @@ export const useColorGroups = ({ colorGroups, editingGroupData, setEditingGroup,
   const canSaveGroup = useCallback(
     (groupId: string) => {
       const data = editingGroupData[groupId]
-      return data?.nameUa && data?.nameEn && data?.colorHex
+      if (!data?.translations) return false
+
+      const { nameUa, nameEn } = getDisplayNames(data.translations)
+      return nameUa && nameEn && data?.colorHex
     },
     [editingGroupData]
   )
@@ -166,8 +170,15 @@ export const useColorGroups = ({ colorGroups, editingGroupData, setEditingGroup,
 
       if (!group || !currentData) return false
 
-      return group.nameUa !== currentData.nameUa || group.nameEn !== currentData.nameEn || group.colorHex !== currentData.colorHex
-      //  || group.sortNumber !== currentData.sortNumber
+      const { nameUa: currentNameUa, nameEn: currentNameEn } = getDisplayNames(currentData.translations || [])
+      const { nameUa: originalNameUa, nameEn: originalNameEn } = getDisplayNames(group.translations)
+
+      const namesChanged = originalNameUa !== currentNameUa || originalNameEn !== currentNameEn
+      const colorHexChanged = group.colorHex !== currentData.colorHex
+      const translationsChanged = !arraysEqual(group.translations || [], currentData.translations || [])
+
+      return namesChanged || colorHexChanged || translationsChanged
+      // || group.sortNumber !== currentData.sortNumber
     },
     [colorGroups, editingGroupData]
   )

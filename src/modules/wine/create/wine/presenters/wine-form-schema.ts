@@ -1,3 +1,4 @@
+import i18n from 'i18next'
 import { z } from 'zod'
 
 const fileSchema = z.instanceof(File, { message: 'Must be a file' })
@@ -15,9 +16,9 @@ const optionalNumberSchema = z.preprocess(
   },
   z
     .number()
-    .int('Рік має бути цілим числом')
-    .min(1900, 'Рік має бути не раніше 1900')
-    .max(new Date().getFullYear() + 50, 'Рік не може бути більше ніж на 50 років вперед')
+    .int(i18n.t('messages:integer_year'))
+    .min(1900, i18n.t('messages:old_year'))
+    .max(new Date().getFullYear() + 50, i18n.t('messages:big_year'))
     .optional()
 )
 
@@ -31,28 +32,28 @@ const requiredNumberSchema = z.preprocess(
   },
   z
     .number({
-      message: "Поле обов'язкове",
+      message: i18n.t('messages:field_require'),
     })
     .refine(val => !isNaN(val), {
-      message: 'Введіть коректний рік',
+      message: i18n.t('messages:incorrect_year'),
     })
     .refine(val => val >= 1900, {
-      message: 'Рік має бути не раніше 1900',
+      message: i18n.t('messages:old_year'),
     })
     .refine(val => val <= new Date().getFullYear(), {
-      message: 'Рік не може бути у майбутньому',
+      message: i18n.t('messages:feature_year'),
     })
 )
 
 export const wineFormSchema = z
   .object({
-    displayName: z.string().min(1, "Назва обов'язкова").max(200, 'Назва задовга'),
-    producerTitle: z.string().min(1, "Назва виробника обов'язкова").max(200),
-    producerName: z.string().min(1, "Ім'я виробника обов'язкове").max(200),
-    wine: z.string().min(1, "Назва вина обов'язкова").max(200),
-    grapeVariety: z.string().min(1, "Сорт винограду обов'язкове поле").max(200),
+    displayName: z.string().min(1, i18n.t('messages:name_require')).max(200, i18n.t('messages:long_name')),
+    producerTitle: z.string().min(1, i18n.t('messages:producer_require')).max(200),
+    producerName: z.string().min(1, i18n.t('messages:producer_name_require')).max(200),
+    wine: z.string().min(1, i18n.t('messages:wine_name_require')).max(200),
+    grapeVariety: z.string().min(1, i18n.t('messages:grape_require')).max(200),
 
-    country: z.string().min(1, "Країна обов'язкова"),
+    country: z.string().min(1, i18n.t('messages:country_require')),
     region: z.string().optional(),
     subRegion: z.string().optional(),
 
@@ -63,21 +64,21 @@ export const wineFormSchema = z
     reference: z.string().max(200).optional(),
     description: z.string().max(2000).optional(),
 
-    type: z.string().min(1, "Тип вина обов'язковий"),
+    type: z.string().min(1, i18n.t('messages:wine_type_require')),
 
     vintageConfig: requiredNumberSchema
-      .refine(val => val !== undefined && val >= 1900, 'Рік винтажу має бути не раніше 1900')
-      .refine(val => val !== undefined && val <= new Date().getFullYear(), 'Рік винтажу не може бути у майбутньому'),
+      .refine(val => val !== undefined && val >= 1900, i18n.t('messages:old_vintage'))
+      .refine(val => val !== undefined && val <= new Date().getFullYear(), i18n.t('messages:feature_vintage')),
 
     firstVintage: optionalNumberSchema
-      .refine(val => val === undefined || val >= 1900, 'Рік початку має бути не раніше 1900')
-      .refine(val => val === undefined || val <= new Date().getFullYear(), 'Рік початку не може бути у майбутньому'),
+      .refine(val => val === undefined || val >= 1900, i18n.t('messages:old_start_year'))
+      .refine(val => val === undefined || val <= new Date().getFullYear(), i18n.t('messages:feature_start_year')),
 
     finalVintage: optionalNumberSchema
-      .refine(val => val === undefined || val >= 1900, 'Рік завершення має бути не раніше 1900')
-      .refine(val => val === undefined || val <= new Date().getFullYear() + 50, 'Рік завершення не може бути більше ніж на 50 років вперед'),
+      .refine(val => val === undefined || val >= 1900, i18n.t('messages:old_end_year'))
+      .refine(val => val === undefined || val <= new Date().getFullYear() + 50, i18n.t('messages:feature_end_year')),
 
-    media: z.array(fileSchema).min(1, "Принаймні одне зображення обов'язкове").max(10, 'Максимум 10 зображень'),
+    media: z.array(fileSchema).min(1, i18n.t('messages:img_require')).max(10, i18n.t('messages:max_imgs')),
   })
   .refine(
     data => {
@@ -87,7 +88,7 @@ export const wineFormSchema = z
       return true
     },
     {
-      message: 'Кінцевий винтаж має бути після початкового',
+      message: i18n.t('messages:end_vintage'),
       path: ['finalVintage'],
     }
   )
@@ -99,7 +100,7 @@ export const wineFormSchema = z
       return true
     },
     {
-      message: "Регіон обов'язковий при виборі країни",
+      message: i18n.t('messages:region_require'),
       path: ['region'],
     }
   )

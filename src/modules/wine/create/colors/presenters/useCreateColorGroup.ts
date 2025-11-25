@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react'
 import { CreateWineColorParams } from '../entities/types/color-types'
+import { createTranslations, getDisplayNames } from '@/lib/utils'
+import { NameDictionary } from '../../general/entities/types'
 
 interface UseCreateColorGroupProps {
   onCreateGroup: (groupData: Partial<CreateWineColorParams>) => void
@@ -11,7 +13,7 @@ interface UseCreateColorGroupReturn {
   formData: Partial<CreateWineColorParams>
   canCreateGroup: boolean
   setIsExpanded: (expanded: boolean) => void
-  updateFormData: (field: 'nameUa' | 'nameEn' | 'colorHex', value: string) => void
+  updateFormData: (field: 'translations' | 'colorHex', value: string | NameDictionary[]) => void
   handleCreateGroup: () => void
   handleCancel: () => void
   expandForm: () => void
@@ -19,26 +21,24 @@ interface UseCreateColorGroupReturn {
 
 export const useCreateColorGroup = ({ onCreateGroup }: UseCreateColorGroupProps): UseCreateColorGroupReturn => {
   const [isExpanded, setIsExpanded] = useState(false)
-  const [formData, setFormData] = useState<Partial<CreateWineColorParams>>({
-    nameUa: '',
-    nameEn: '',
-    colorHex: '',
-  })
 
-  const updateFormData = useCallback((field: keyof CreateWineColorParams, value: string) => {
+  const initialData = { translations: createTranslations('', ''), colorHex: '' }
+  const [formData, setFormData] = useState<Partial<CreateWineColorParams>>(initialData)
+
+  const updateFormData = useCallback((field: keyof CreateWineColorParams, value: string | NameDictionary[]) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }, [])
 
   const handleCreateGroup = () => {
     if (canCreateGroup) {
       onCreateGroup(formData)
-      setFormData({ nameUa: '', nameEn: '', colorHex: '' })
+      setFormData(initialData)
       setIsExpanded(false)
     }
   }
 
   const handleCancel = () => {
-    setFormData({ nameUa: '', nameEn: '', colorHex: '' })
+    setFormData(initialData)
     setIsExpanded(false)
   }
 
@@ -46,7 +46,8 @@ export const useCreateColorGroup = ({ onCreateGroup }: UseCreateColorGroupProps)
     setIsExpanded(true)
   }
 
-  const canCreateGroup = !!(formData.nameUa && formData.nameEn && formData.colorHex)
+  const { nameUa, nameEn } = getDisplayNames(formData.translations || [])
+  const canCreateGroup = !!(nameUa && nameEn && formData.colorHex)
 
   return {
     isExpanded,

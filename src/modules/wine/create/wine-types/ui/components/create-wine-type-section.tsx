@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next'
+import { useCreateWineType } from '../../presenters/useCreateWineType'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Card, CardContent, CardHeader } from '@/UIKit/shadcn/ui/card'
-import { Plus, Tags } from 'lucide-react'
 import { CreateWineTypeRequest } from '../../entities/types/wine-type'
-import { useCreateWineType } from '../../presenters/useCreateWineType'
-import { WineTypeForm } from './wine-type-form'
 import { BaseWineColor } from '../../../general/entities/types'
+import { WineTypeForm } from '..'
+import { Plus, Tags } from 'lucide-react'
 
 interface CreateWineTypeSectionProps {
   onCreateWineType: (wineTypeData: CreateWineTypeRequest) => void

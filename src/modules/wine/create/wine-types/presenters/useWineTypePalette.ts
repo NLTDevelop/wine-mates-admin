@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import { useWineTypes } from './useWineTypes'
 import { CreateWineTypeParams, CreateWineTypeRequest, UpdateWineTypeParams, WineType } from '../entities/types/wine-type'
 import { BaseWineColor } from '../../general/entities/types'
+import { arraysEqual, getDisplayNames } from '@/lib/utils'
 
 export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
   const { wineTypes, isLoading, isCreating, isUpdating, isDeleting, createWineType, updateWineType, deleteWineType } = useWineTypes(cachedColors)
@@ -11,21 +12,27 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
 
   const hasChanges = useCallback(
     (wineTypeId: string): boolean => {
-      const originalWineType = wineTypes.find((wt: WineType) => wt.id === wineTypeId)
+      const originalWineType = wineTypes.find((wt: WineType) => wt?.id === wineTypeId)
       const currentFormData = formData[wineTypeId]
 
       if (!originalWineType || !currentFormData) return false
 
-      const nameChanged = originalWineType.nameUa !== currentFormData.nameUa || originalWineType.nameEn !== currentFormData.nameEn
+      const { nameUa: currentNameUa, nameEn: currentNameEn } = getDisplayNames(currentFormData.translations || [])
+      const { nameUa: originalNameUa, nameEn: originalNameEn } = getDisplayNames(originalWineType.translations)
 
-      const originalColorIds = originalWineType.colors?.map((c: BaseWineColor) => c.id) || []
-      const currentColorIds = currentFormData.colors?.map(c => c.id) || []
+      const nameChanged = originalNameUa !== currentNameUa || originalNameEn !== currentNameEn
+
+      const originalColorIds = originalWineType.colors?.map((c: BaseWineColor) => c?.id) || []
+      const currentColorIds = currentFormData.colors?.map(c => c?.id) || []
       const colorsChanged = JSON.stringify(originalColorIds.sort()) !== JSON.stringify(currentColorIds.sort())
+      const translationsChanged = !arraysEqual(originalWineType.translations, currentFormData.translations)
 
-      return nameChanged || colorsChanged
+      return nameChanged || colorsChanged || translationsChanged
     },
     [wineTypes, formData]
   )
+
+  const isLoadingState = isLoading || isCreating || isUpdating || isDeleting
 
   const handleAddWineType = useCallback(
     async (wineTypeData: CreateWineTypeRequest) => {
@@ -40,15 +47,13 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
         ...prev,
         [wineTypeId]: !prev[wineTypeId],
       }))
-
       if (!formData[wineTypeId]) {
-        const wineType = wineTypes.find((wt: WineType) => wt.id === wineTypeId)
+        const wineType = wineTypes.find((wt: WineType) => wt?.id === wineTypeId)
         if (wineType) {
           setFormData(prev => ({
             ...prev,
             [wineTypeId]: {
-              nameUa: wineType.nameUa || '',
-              nameEn: wineType.nameEn || '',
+              translations: wineType.translations || [],
               colors: wineType.colors || [],
             },
           }))
@@ -83,9 +88,8 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
 
       try {
         const updateData: CreateWineTypeRequest = {
-          nameUa: data.nameUa,
-          nameEn: data.nameEn,
-          colorIds: data.colors.map(color => color.id),
+          translations: data.translations || [],
+          colorIds: data.colors.map(color => color?.id),
         }
         const updateParams: UpdateWineTypeParams = {
           wineTypeId,
@@ -121,8 +125,6 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
     },
     [deleteWineType]
   )
-
-  const isLoadingState = isLoading || isCreating || isUpdating || isDeleting
 
   return {
     wineTypes,

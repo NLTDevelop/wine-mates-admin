@@ -28,6 +28,7 @@ export const SortableInputItem: React.FC<SortableInputItemProps> = ({ id, values
   }
 
   return (
+    <div>
     <div ref={setNodeRef} style={style} className={`flex items-center gap-2 w-full ${className}`}>
       <div {...attributes} {...listeners} className="flex-shrink-0 cursor-grab active:cursor-grabbing p-1 hover:bg-gray-100 rounded">
         <GripVertical className="w-4 h-4 text-gray-400" />
@@ -42,6 +43,8 @@ export const SortableInputItem: React.FC<SortableInputItemProps> = ({ id, values
       <Button type="button" variant="ghost" size="sm" onClick={onRemove} className="h-8 w-8 p-0 hover:bg-red-50 flex-shrink-0">
         <X className="w-4 h-4 text-red-600" />
       </Button>
+    </div>
+
     </div>
   )
 }

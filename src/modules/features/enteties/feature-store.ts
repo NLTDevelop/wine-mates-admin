@@ -1,5 +1,5 @@
 import { Feature, FeatureKey, FeatureStateMap } from './types'
-import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
+import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 
 interface FeatureStoreState {
   featuresState: Partial<FeatureStateMap>

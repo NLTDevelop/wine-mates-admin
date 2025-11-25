@@ -1,5 +1,5 @@
 import { FiltersParams } from '../../general/entities/types'
-import { CreateWineAromaGroupParams, CreateWineAromaSubgroupParams, UpdateWineAromaGroupParams, UpdateWineAromaSubgroupParams } from './types/flavor-types'
+import { CreateWineAromaGroupRequest, CreateWineAromaSubgroupParams, ReorderAromasParams, ReorderSubgroupParams, UpdateWineAromaGroupParams, UpdateWineAromaSubgroupParams } from './types/flavor-types'
 import { wineFlavorService } from './wine-flavor-service'
 
 export const wineFlavorQueries = {
@@ -8,9 +8,14 @@ export const wineFlavorQueries = {
     queryFn: () => wineFlavorService.listGroups(filters),
   }),
 
+  listSubgroup: (include?: string[]) => ({
+    queryKey: ['aroma-subgroups', 'list', ...(include || [])],
+    queryFn: () => wineFlavorService.listSubgroup(include),
+  }),
+
   createGroup: () => ({
     mutationKey: ['aroma-groups', 'create'],
-    mutationFn: (group: CreateWineAromaGroupParams) => wineFlavorService.createGroup(group),
+    mutationFn: (group: CreateWineAromaGroupRequest) => wineFlavorService.createGroup(group),
   }),
 
   updateGroup: () => ({
@@ -40,5 +45,15 @@ export const wineFlavorQueries = {
   deleteSubgroup: () => ({
     mutationKey: ['aroma-subgroups', 'delete'],
     mutationFn: ({ subgroupId }: { groupId: string; subgroupId: string }) => wineFlavorService.deleteSubgroup(subgroupId),
+  }),
+
+  reorderSubgroup: () => ({
+    mutationKey: ['aroma-subgroups', 'reorder'],
+    mutationFn: (params: ReorderSubgroupParams) => wineFlavorService.reorderSubgroup(params),
+  }),
+
+  reorderAromas: () => ({
+    mutationKey: ['aroma-items', 'reorder'],
+    mutationFn: (params: ReorderAromasParams) => wineFlavorService.reorderAromas(params),
   }),
 }

@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn, getDisplayNames } from '@/lib/utils'
 import { PaletteItemActions } from '../../../general/ui'
 import { WineShades } from '../../entities/types/color-types'
 import { useContrastText } from '@/hooks/ui/useContrastText'
@@ -22,8 +22,9 @@ export const ShadeRow: React.FC<{
   const { deleteModal } = useDeleteModal()
 
   const handleOpenDeleteModal = useCallback(() => {
-    deleteModal.open(item.id, item.nameUa)
-  }, [deleteModal, item.id, item.nameUa])
+  const { nameUa } = getDisplayNames(item.translations)
+  deleteModal.open(item.id, nameUa)
+}, [deleteModal, item.id, item.translations])
 
   const handleConfirmDelete = useCallback(() => {
     if (deleteModal.id) {
@@ -66,9 +67,9 @@ export const ShadeRow: React.FC<{
       />
 
       <WarningModal
-        title={t('modal.delete_title', { slug: 'віддтінок' })}
+        title={t('modal.delete_title', { slug: t("colors.shade").toLowerCase() })}
         actionTitle={t('modal.delete_action')}
-        description={t('modal.delete_description', { name: deleteModal.nameUa, slug: 'Відтінок' })}
+        description={t('modal.delete_description', { name: deleteModal.nameUa, slug: t("colors.shade") })}
         isOpen={deleteModal.isOpen}
         onClose={deleteModal.close}
         onSubmit={handleConfirmDelete}

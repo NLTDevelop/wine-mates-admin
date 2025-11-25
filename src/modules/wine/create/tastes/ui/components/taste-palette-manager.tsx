@@ -1,20 +1,22 @@
-import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
-import { PaletteItemActions } from '@/modules/wine/create/general/ui'
-
-import { BaseWineColor } from '../../../general/entities/types'
-import { useTastePalette } from '../../presenters/useTastePalette'
-import { CreateTasteSection } from './create-taste-section'
-import { TasteForm } from './taste-form'
-import { cn } from '@/lib/utils'
-import { SkeletonWinePalette } from '../../../general/ui/components/skeleton-wine-palette'
-import { EmptyState } from '../../../general/ui/components/empty-state'
-import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
-import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
-import { useContrastText } from '@/hooks/ui/useContrastText'
-import { useDeleteModal } from '../../../general/presenters/useDeleteModal'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useTastePalette } from '../../presenters/useTastePalette'
+import { useContrastText } from '@/hooks/ui/useContrastText'
+import { useReorderListTastes } from '../../../general/presenters/usePaletteReorder'
+import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
+import { cn, getDisplayNames } from '@/lib/utils'
+import { PaletteItemActions } from '@/modules/wine/create/general/ui'
+import { EmptyState } from '../../../general/ui/components/empty-state'
+import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
+import { SortableList } from '@/UIKit/app-components/sortable-list'
+import { SortableItem } from '@/UIKit/app-components/sortable-item'
+import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
+import { SkeletonWinePalette } from '../../../general/ui/components/skeleton-wine-palette'
+import { useDeleteModal } from '../../../general/presenters/useDeleteModal'
+import { BaseWineColor } from '../../../general/entities/types'
+import { WineTaste } from '../../entities/types/tastes'
 import { WarningModal } from '@/modals/warningModal'
+import { CreateTasteSection, TasteForm } from '..'
 
 interface TastePaletteManagerProps {
   cachedColors: BaseWineColor[]
@@ -23,8 +25,25 @@ interface TastePaletteManagerProps {
 
 export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: TastePaletteManagerProps) => {
   const { t } = useTranslation('wines')
-  const { tastes, isLoading, isFormOpen, handleAddTaste, handleDeleteTaste, handleToggleForm, handleCancelEdit, formData, updateFormData, handleSaveTaste, totalCount, filters, onChangePagination } =
-    useTastePalette(cachedColors)
+
+  const { reorder } = useReorderListTastes()
+
+  const {
+    tastes,
+    loadings,
+    isFormOpen,
+    handleAddTaste,
+    handleDeleteTaste,
+    handleToggleForm,
+    handleCancelEdit,
+    formData,
+    updateFormData,
+    handleSaveTaste,
+    totalCount,
+    filters,
+    onChangePagination,
+    hasChanges,
+  } = useTastePalette(cachedColors)
 
   const { deleteModal } = useDeleteModal()
 
@@ -42,7 +61,16 @@ export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: Tas
     }
   }, [deleteModal, handleDeleteTaste])
 
-  if (isLoading && tastes?.length === 0) {
+  const handleReorderWineTastes = (reorderedWineTastes: WineTaste[]) => {
+    const items = reorderedWineTastes.map((wt, index) => ({
+      id: wt.id,
+      order: index,
+    }))
+
+    reorder({ entityType: 'tastes', items })
+  }
+
+  if (loadings.isLoadingData && tastes?.length === 0) {
     return (
       <Card>
         <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
@@ -56,62 +84,68 @@ export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: Tas
     <Card>
       <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
         <div>
-          <CreateTasteSection onCreateTaste={handleAddTaste} isLoading={isLoading} cachedColors={cachedColors} />
+          <CreateTasteSection onCreateTaste={handleAddTaste} isLoading={loadings.isCreating} cachedColors={cachedColors} />
         </div>
-        {!isLoading && tastes?.length === 0 && totalCount === 0 && <EmptyState type="taste" />}
-        <div className="mx-auto flex flex-col justify-center gap-2 w-full">
-          {tastes?.map(taste => {
-            const isEditing = isFormOpen[taste.id] || false
-            const currentFormData = formData[taste.id]
-            const { textColorClass } = useContrastText(taste.colorHex)
-            return (
-              <div key={taste.id} className={cn('border-1 border-input rounded-md transition-all cursor-default', isEditing && 'rounded-b-none')} style={{ backgroundColor: taste.colorHex }}>
-                <div className="p-2">
-                  <div className="flex justify-between items-center w-full">
-                    <div className="flex gap-2 sm:flex-row flex-col sm:w-auto w-full">
-                      <span className={cn('font-medium', textColorClass)}>
-                        {taste.nameUa} ({taste.nameEn})
-                      </span>
-                      <div className="flex sm:gap-2 gap-1 sm:flex-row flex-col sm:w-auto w-full">
-                        {taste.colors?.map(color => (
-                          <div key={color.id} className="bg-muted px-2 py-1 rounded text-xs">
-                            {color.nameUa}
+        {!loadings.isLoadingData && tastes?.length === 0 && totalCount === 0 && <EmptyState type="taste" />}
+        <SortableList items={tastes} onReorder={handleReorderWineTastes}>
+          <div className="mx-auto flex flex-col justify-center gap-2 w-full">
+            {tastes?.map((taste, idx) => {
+              const isEditing = isFormOpen[taste.id] || false
+              const currentFormData = formData[taste.id]
+              const { textColorClass } = useContrastText(taste.colorHex)
+              const { nameUa, nameEn } = getDisplayNames(taste.translations)
+              return (
+                <SortableItem key={`${taste?.id} - ${idx}`} id={taste.id} gridColor={textColorClass} handleClassName="top-2 hover:bg-transparent">
+                  <div className={cn('pl-8 border-1 border-input rounded-md transition-all cursor-default', isEditing && 'rounded-b-none')} style={{ backgroundColor: taste.colorHex }}>
+                    <div className="p-2">
+                      <div className="flex justify-between items-center w-full">
+                        <div className="flex gap-2 sm:flex-row flex-col sm:w-auto w-full">
+                          <span className={cn('font-medium', textColorClass)}>
+                            {nameUa} ({nameEn})
+                          </span>
+                          <div className="flex sm:gap-2 gap-1 sm:flex-row flex-col sm:w-auto w-full">
+                            {taste.colors?.map((color, i) => (
+                              <div key={`${color?.id} - ${i}`} className="bg-muted px-2 py-1 rounded text-xs">
+                                {color?.name}
+                              </div>
+                            ))}
                           </div>
-                        ))}
+                        </div>
+                        <PaletteItemActions
+                          isLoading={loadings.isLoading}
+                          onRemove={handleConfirmDelete}
+                          dataId={taste.id}
+                          onEdit={() => handleToggleForm(taste.id)}
+                          showEditButton={true}
+                          isHeader
+                          cardTextColorClass={textColorClass}
+                          deleteModal={() => handleOpenDeleteModal(taste.id, nameUa)}
+                        />
                       </div>
-                    </div>
-                    <PaletteItemActions
-                      isLoading={isLoading}
-                      onRemove={handleConfirmDelete}
-                      dataId={taste.id}
-                      onEdit={() => handleToggleForm(taste.id)}
-                      showEditButton={true}
-                      isHeader
-                      cardTextColorClass={textColorClass}
-                      deleteModal={() => handleOpenDeleteModal(taste.id, taste.nameUa)}
-                    />
-                  </div>
 
-                  {isEditing && currentFormData && (
-                    <TasteForm
-                      formData={currentFormData}
-                      onFormDataChange={(field, value) => updateFormData(taste.id, field, value)}
-                      onSave={() => handleSaveTaste(taste.id)}
-                      onCancel={() => handleCancelEdit(taste.id)}
-                      cachedColors={cachedColors}
-                      isLoading={isLoading || colorsLoading}
-                      mode="edit"
-                    />
-                  )}
-                </div>
-              </div>
-            )
-          })}
-        </div>
+                      {isEditing && currentFormData && (
+                        <TasteForm
+                          formData={currentFormData}
+                          onFormDataChange={(field, value) => updateFormData(taste.id, field, value)}
+                          onSave={() => handleSaveTaste(taste.id)}
+                          onCancel={() => handleCancelEdit(taste.id)}
+                          cachedColors={cachedColors}
+                          isLoading={loadings.isUpdating || colorsLoading}
+                          mode="edit"
+                          hasChanges={hasChanges(taste.id)}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </SortableItem>
+              )
+            })}
+          </div>
+        </SortableList>
         <WarningModal
-          title={t('modal.delete_title', { slug: 'смакову ноту' })}
+          title={t('modal.delete_title', { slug: t('tastes.taste') })}
           actionTitle={t('modal.delete_action')}
-          description={t('modal.delete_description', { name: deleteModal.nameUa, slug: 'Смакова нота' })}
+          description={t('modal.delete_description', { name: deleteModal.nameUa, slug: t('tastes.taste_note') })}
           isOpen={deleteModal.isOpen}
           onClose={deleteModal.close}
           onSubmit={handleConfirmDelete}

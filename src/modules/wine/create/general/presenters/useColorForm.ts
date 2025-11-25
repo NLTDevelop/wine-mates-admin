@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react'
-import { BaseWineColor } from '../entities/types'
 import { useColorSelection } from '../presenters/useColorSelection'
 import { adaptFetchOptions } from '@/lib/utils'
+import { BaseWineColor } from '../entities/types'
 
 interface UseColorFormProps {
   cachedColors: BaseWineColor[]

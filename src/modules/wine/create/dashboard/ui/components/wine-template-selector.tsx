@@ -35,7 +35,6 @@ export const WineTemplateSelector = ({ selectedTemplate, onTemplateSelect }: Win
         ...template,
         order: index,
       }))
-
       reorderTemplates(newTemplates)
     }
   }

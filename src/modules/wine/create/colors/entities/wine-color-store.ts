@@ -1,6 +1,7 @@
-import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
+import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 import { WineColorGroup, WineShades } from './types/color-types'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
+import { getDisplayNames } from '@/lib/utils'
 
 interface WineColorStoreState {
   colorGroups: WineColorGroup[]
@@ -103,14 +104,24 @@ export const useWineColorStore = createStoreDevToolsWrapper<WineColorStoreState>
 
     searchColorGroups: searchTerm =>
       set(
-        (state: WineColorStoreState) => ({
-          searchResults: state.colorGroups.filter(
-            g =>
-              g.nameUa.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              g.nameEn?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              g.shades?.some(shade => shade.nameUa.toLowerCase().includes(searchTerm.toLowerCase()) || shade.nameEn?.toLowerCase().includes(searchTerm.toLowerCase()))
-          ),
-        }),
+        (state: WineColorStoreState) => {
+          const searchTermLower = searchTerm.toLowerCase()
+
+          return {
+            searchResults: state.colorGroups.filter(group => {
+              const { nameUa: groupNameUa, nameEn: groupNameEn } = getDisplayNames(group.translations)
+
+              const groupMatch = groupNameUa.toLowerCase().includes(searchTermLower) || groupNameEn.toLowerCase().includes(searchTermLower)
+
+              const shadesMatch = group.shades?.some(shade => {
+                const { nameUa: shadeNameUa, nameEn: shadeNameEn } = getDisplayNames(shade.translations)
+                return shadeNameUa.toLowerCase().includes(searchTermLower) || shadeNameEn.toLowerCase().includes(searchTermLower)
+              })
+
+              return groupMatch || shadesMatch
+            }),
+          }
+        },
         false,
         'colorGroups/searchColorGroups'
       ),

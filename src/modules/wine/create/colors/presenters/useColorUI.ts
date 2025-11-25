@@ -36,9 +36,9 @@ export const useColorUI = ({ openAccordions, editingGroup, newItemData }: UseCol
 
   const isAccordionOpen = useCallback((groupId: string) => openAccordions.has(groupId), [openAccordions])
 
-  const isFormGroupOpen = useCallback((groupId: string) => editingGroup?.groupId === groupId && editingGroup.isEditingGroup, [editingGroup])
+  const isFormGroupOpen = useCallback((groupId: string) => editingGroup?.groupId === groupId && editingGroup?.isEditingGroup, [editingGroup])
 
-  const isFormItemOpen = useCallback((groupId: string) => !!newItemData[groupId] || (editingGroup?.groupId === groupId && !!editingGroup.editingItem), [newItemData, editingGroup])
+  const isFormItemOpen = useCallback((groupId: string) => !!newItemData[groupId] || (editingGroup?.groupId === groupId && !!editingGroup?.editingItem), [newItemData, editingGroup])
 
   const isEditing = useCallback((groupId: string) => editingGroup?.groupId === groupId, [editingGroup])
 

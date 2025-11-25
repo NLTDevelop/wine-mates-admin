@@ -1,8 +1,9 @@
 import { useCallback } from 'react'
-import { CreateWineAromaGroupParams, CreateWineAromaGroupRequest, WineAromaGroup } from '../entities/types/flavor-types'
 import { useWineFlavor } from './useWineFlavors'
+import { CreateWineAromaGroupParams, CreateWineAromaGroupRequest, WineAromaGroup } from '../entities/types/flavor-types'
 import { NewItemData } from '../entities/types/flavor-palette-types'
 import { BaseWineColor } from '../../general/entities/types'
+import { arraysEqual, getDisplayNames } from '@/lib/utils'
 
 interface UseFlavorGroupsProps {
   aromaGroups: WineAromaGroup[] | undefined
@@ -19,15 +20,12 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
   const { createGroup, updateGroup, deleteGroup, isLoading } = useWineFlavor(cachedColors)
 
   const handleAddGroup = useCallback(
-    async (groupData: Partial<CreateWineAromaGroupParams>) => {
+    async (groupData: CreateWineAromaGroupRequest) => {
       try {
-        const params: CreateWineAromaGroupParams = {
-          nameUa: groupData.nameUa || '',
-          nameEn: groupData.nameEn || '',
+        const params: CreateWineAromaGroupRequest = {
+          translations: groupData.translations || [],
           colorHex: groupData.colorHex || '',
-          colors: groupData.colors || [],
-          sortNumber: aromaGroups?.length || 0,
-          subgroups: [],
+          colorIds: groupData.colorIds || [],
         }
 
         await createGroup(params)
@@ -58,8 +56,7 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
         return newSet
       })
       const groupFormData = {
-        nameUa: group.nameUa || '',
-        nameEn: group.nameEn || '',
+        translations: group.translations || [],
         colorHex: group.colorHex || '',
         sortNumber: group.sortNumber || 0,
         subgroups: group.subgroups || [],
@@ -106,6 +103,7 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
           ...groupData,
           colorIds: groupData.colors?.map(color => color.id) || [],
           sortNumber: currentGroupIndex >= 0 ? currentGroupIndex : aromaGroups?.length || 0,
+          translations: groupData.translations || [],
         }
         await updateGroup({
           groupId,
@@ -157,7 +155,10 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
   const canSaveGroup = useCallback(
     (groupId: string) => {
       const data = editingGroupData[groupId]
-      return data?.nameUa && data?.nameEn && data?.colorHex
+      if (!data?.translations) return false
+
+      const { nameUa, nameEn } = getDisplayNames(data.translations)
+      return nameUa && nameEn && data?.colorHex
     },
     [editingGroupData]
   )
@@ -169,13 +170,16 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
 
       if (!group || !currentData) return false
 
-      return (
-        group.nameUa !== currentData.nameUa ||
-        group.nameEn !== currentData.nameEn ||
-        group.colorHex !== currentData.colorHex ||
-        group.sortNumber !== currentData.sortNumber ||
-        JSON.stringify(group.colors?.map(c => c.id)) !== JSON.stringify(currentData.colors?.map(c => c.id))
-      )
+      const { nameUa: currentNameUa, nameEn: currentNameEn } = getDisplayNames(currentData.translations || [])
+      const { nameUa: originalNameUa, nameEn: originalNameEn } = getDisplayNames(group.translations)
+
+      const namesChanged = originalNameUa !== currentNameUa || originalNameEn !== currentNameEn
+      const colorHexChanged = group.colorHex !== currentData.colorHex
+      const sortNumberChanged = group.sortNumber !== currentData.sortNumber
+      const colorsChanged = JSON.stringify(group.colors?.map(c => c.id)) !== JSON.stringify(currentData.colors?.map(c => c.id))
+      const translationsChanged = !arraysEqual(group.translations || [], currentData.translations || [])
+
+      return namesChanged || colorHexChanged || sortNumberChanged || colorsChanged || translationsChanged
     },
     [aromaGroups, editingGroupData]
   )

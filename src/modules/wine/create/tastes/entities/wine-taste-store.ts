@@ -1,6 +1,7 @@
-import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
 import { WineTaste } from './types/tastes'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
+import { getDisplayNames } from '@/lib/utils'
+import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 
 interface TasteStoreState {
   tastes: WineTaste[]
@@ -98,14 +99,23 @@ export const useTasteStore = createStoreDevToolsWrapper<TasteStoreState>(
         'tastes/resetFilters'
       ),
 
-    searchTastes: searchTerm =>
-      set(
-        (state: TasteStoreState) => ({
-          searchResults: state.tastes.filter(t => t.nameUa.toLowerCase().includes(searchTerm.toLowerCase()) || t.nameEn?.toLowerCase().includes(searchTerm.toLowerCase())),
-        }),
-        false,
-        'tastes/searchTastes'
-      ),
+    searchTastes: searchTerm => {
+      const { tastes } = get()
+      if (!searchTerm.trim()) {
+        set({ searchResults: [] }, false, 'tastes/searchTastes')
+        return
+      }
+
+      const searchTermLower = searchTerm.toLowerCase()
+
+      const filtered = tastes.filter((t: WineTaste) => {
+        const { nameUa: groupNameUa, nameEn: groupNameEn } = getDisplayNames(t.translations)
+
+        return groupNameUa.toLowerCase().includes(searchTermLower) || (groupNameEn && groupNameEn.toLowerCase().includes(searchTermLower))
+      })
+
+      set({ searchResults: filtered }, false, 'tastes/searchTastes')
+    },
 
     clearSearch: () => set({ searchResults: [] }, false, 'tastes/clearSearch'),
 

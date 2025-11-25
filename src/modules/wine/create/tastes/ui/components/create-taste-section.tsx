@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next'
+import { useCreateTaste } from '../../presenters/useCreateTaste'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Card, CardContent, CardHeader } from '@/UIKit/shadcn/ui/card'
-import { Plus, Grape } from 'lucide-react'
-import { useCreateTaste } from '../../presenters/useCreateTaste'
 import { CreateWineTasteRequest } from '../../entities/types/tastes'
 import { BaseWineColor } from '../../../general/entities/types'
-import { TasteForm } from './taste-form'
+import { Plus, Grape } from 'lucide-react'
+import { TasteForm } from '..'
 
 interface CreateTasteSectionProps {
   onCreateTaste: (tasteData: CreateWineTasteRequest) => void
@@ -16,19 +16,16 @@ interface CreateTasteSectionProps {
 export const CreateTasteSection = ({ onCreateTaste, isLoading = false, cachedColors }: CreateTasteSectionProps) => {
   const { t } = useTranslation('wines')
 
-  const { isExpanded, formData, updateFormData, handleCreateTaste, handleCancel, expandForm } = useCreateTaste({
-    onCreateTaste,
-    isLoading,
-  })
+  const { isExpanded, formData, updateFormData, handleCreateTaste, handleCancel, expandForm } = useCreateTaste({ onCreateTaste, isLoading })
 
   if (!isExpanded) {
     return (
       <div>
         <div className="flex justify-between items-center flex-wrap-reverse sm:flex-nowrap gap-6">
-          <h2 className="text-2xl font-bold">{t('types.wine_types')}</h2>
+          <h2 className="text-2xl font-bold">{t('tastes.tastes')}</h2>
           <Button onClick={expandForm} className="w-full sm:w-auto">
             <Plus className="w-4 h-4" />
-            {t('button.add_new_type')}
+            {t('button.create_new_taste')}
           </Button>
         </div>
       </div>

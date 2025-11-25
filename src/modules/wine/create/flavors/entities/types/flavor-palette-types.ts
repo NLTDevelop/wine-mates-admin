@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from 'react'
 import { CreateWineAromaGroupParams, WineAromaItem, WineAromaSubgroup } from './flavor-types'
+import { NameDictionary } from '../../../general/entities/types'
 
 export interface EditingGroupState {
   groupId: string
@@ -8,9 +9,9 @@ export interface EditingGroupState {
 }
 
 export interface NewItemData {
-  name: string
-  nameEn: string
+  translations: NameDictionary[]
   aromas?: WineAromaItem[] | null
+  colorHex: string
 }
 
 export interface ToggleCallbacks {

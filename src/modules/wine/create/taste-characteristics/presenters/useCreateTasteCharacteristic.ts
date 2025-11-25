@@ -1,123 +1,78 @@
 import { useState, useCallback } from 'react'
-import { CreateWineTasteCharacteristicParams, LevelItem, WineTasteCharacteristics } from '../entities/types/taste-characteristics'
-import { BaseWineColor } from '../../general/entities/types'
+import { getDisplayNames } from '@/lib/utils'
+import { CreateWineTasteCharacteristicParams, CreateWineTasteCharacteristicRequest, LevelItem } from '../entities/taste-characteristics'
 
 interface UseCreateTasteCharacteristicProps {
-  onCreateCharacteristic: (dto: CreateWineTasteCharacteristicParams & { levels?: LevelItem[]; colors?: BaseWineColor[] }) => Promise<WineTasteCharacteristics | void>
+  onCreateTasteCharacteristic: (wineTypeData: CreateWineTasteCharacteristicRequest) => void
   isLoading?: boolean
-  characteristicLevels?: LevelItem[]
-  onCharacteristicLevelsChange?: (levels: LevelItem[]) => void
-  fetchColors?: () => Promise<BaseWineColor[]>
 }
 
 interface UseCreateTasteCharacteristicReturn {
-  isCreating: boolean
-  newCharacteristic: {
-    nameUa: string
-    nameEn: string
-  }
-  selectedColors: BaseWineColor[]
-  colorValues: string[]
-  canCreate: boolean
-
-  handleStartCreating: () => void
-  handleCreate: () => Promise<void>
+  isExpanded: boolean
+  formData: CreateWineTasteCharacteristicParams
+  updateFormData: (field: 'translations' | 'colors' | 'colorHex' | 'description' | 'levels', value: any) => void
+  handleCreateTasteCharacteristic: () => void
   handleCancel: () => void
-  updateCharacteristic: (field: 'nameUa' | 'nameEn' | 'colors', value: string) => void
-  handleColorChange: (value: string | string[]) => Promise<void>
+  expandForm: () => void
+  canCreate: boolean
 }
 
-export const useCreateTasteCharacteristic = ({
-  onCreateCharacteristic,
-  characteristicLevels = [],
-  onCharacteristicLevelsChange,
-  fetchColors,
-}: UseCreateTasteCharacteristicProps): UseCreateTasteCharacteristicReturn => {
-  const [isCreating, setIsCreating] = useState(false)
-  const [newCharacteristic, setNewCharacteristic] = useState({
-    nameUa: '',
-    nameEn: '',
-  })
-  const [selectedColors, setSelectedColors] = useState<BaseWineColor[]>([])
+export const useCreateTasteCharacteristic = ({ onCreateTasteCharacteristic, isLoading = false }: UseCreateTasteCharacteristicProps): UseCreateTasteCharacteristicReturn => {
+  const [isExpanded, setIsExpanded] = useState(false)
 
-  const colorValues = selectedColors.map(color => color.id)
-
-  const handleStartCreating = useCallback(() => {
-    setIsCreating(true)
-
-    const initialLevels = Array.from({ length: 3 }, (_, index) => ({
-      id: `state-${Date.now()}-${index}`,
-      nameUa: '',
-      nameEn: '',
+  const createEmptyLevels = (qty: number): LevelItem[] => {
+    return Array.from({ length: qty }, (_, index) => ({
+      id: `temp-level-${Date.now()}-${index}`,
       sortNumber: index,
     }))
+  }
 
-    if (onCharacteristicLevelsChange) {
-      onCharacteristicLevelsChange(initialLevels)
-    } else {
-      console.error('onCharacteristicLevelsChange is not defined!')
-    }
-  }, [onCharacteristicLevelsChange])
+  const initialData = {
+    colors: [],
+    colorHex: '',
+    levels: createEmptyLevels(3),
+    description: '',
+  }
+  const [formData, setFormData] = useState<CreateWineTasteCharacteristicParams>(initialData)
 
-  const handleColorChange = useCallback(
-    async (value: string | string[]) => {
-      if (!fetchColors) return
-
-      const selectedValues = Array.isArray(value) ? value : [value]
-      const allColors = await fetchColors()
-      const selectedColorObjects = allColors.filter(color => selectedValues.includes(color.id))
-      setSelectedColors(selectedColorObjects)
-    },
-    [fetchColors]
-  )
-
-  const handleCreate = useCallback(async () => {
-    if (!newCharacteristic.nameUa.trim()) {
-      return
-    }
-
-    try {
-      await onCreateCharacteristic({
-        nameUa: newCharacteristic.nameUa,
-        nameEn: newCharacteristic.nameEn,
-        levels: characteristicLevels.filter(state => state.nameUa.trim() !== ''),
-        colors: selectedColors,
-        sortNumber: 0,
-      })
-      setNewCharacteristic({ nameUa: '', nameEn: '' })
-      setSelectedColors([])
-      onCharacteristicLevelsChange?.([])
-      setIsCreating(false)
-    } catch (error) {
-      console.error('Failed to create characteristic:', error)
-    }
-  }, [newCharacteristic, characteristicLevels, selectedColors, onCreateCharacteristic, onCharacteristicLevelsChange])
-
-  const handleCancel = useCallback(() => {
-    setIsCreating(false)
-    setNewCharacteristic({ nameUa: '', nameEn: '' })
-    setSelectedColors([])
-    onCharacteristicLevelsChange?.([])
-  }, [onCharacteristicLevelsChange])
-
-  const updateCharacteristic = useCallback((field: 'nameUa' | 'nameEn' | 'colors', value: string) => {
-    setNewCharacteristic(prev => ({ ...prev, [field]: value }))
+  const updateFormData = useCallback((field: keyof CreateWineTasteCharacteristicParams, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
   }, [])
 
-  const canCreate =
-    newCharacteristic.nameUa.trim().length > 0 && newCharacteristic.nameEn.trim().length > 0 && characteristicLevels.length > 0 && characteristicLevels.every(c => c.nameUa.trim() !== '')
+  const handleCreateTasteCharacteristic = useCallback(() => {
+    if (!isLoading) {
+      const characteristicDataForApi: CreateWineTasteCharacteristicRequest = {
+        translations: formData.translations || [],
+        colorIds: formData.colors.map(color => color.id),
+        colorHex: formData.colorHex,
+        levels: formData.levels,
+        description: formData.description,
+      }
+      onCreateTasteCharacteristic(characteristicDataForApi)
+      setFormData(initialData)
+      setIsExpanded(false)
+    }
+  }, [isLoading, onCreateTasteCharacteristic, formData])
+
+  const handleCancel = useCallback(() => {
+    setFormData(initialData)
+    setIsExpanded(false)
+  }, [])
+
+  const expandForm = useCallback(() => {
+    setIsExpanded(true)
+  }, [])
+
+  const { nameUa, nameEn } = getDisplayNames(formData.translations || [])
+  const canCreate = !!(nameUa && nameEn && formData.colors && formData.colors.length > 0 && formData.levels && formData.levels.length > 2)
 
   return {
-    isCreating,
-    newCharacteristic,
-    selectedColors,
-    colorValues,
-    canCreate,
-
-    handleStartCreating,
-    handleCreate,
+    isExpanded,
+    formData,
+    updateFormData,
+    handleCreateTasteCharacteristic,
     handleCancel,
-    updateCharacteristic,
-    handleColorChange,
+    expandForm,
+    canCreate,
   }
 }

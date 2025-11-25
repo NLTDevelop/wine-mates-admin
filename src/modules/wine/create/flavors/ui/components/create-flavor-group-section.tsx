@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next'
+import { useCreateFlavorGroup } from '../../presenters/useCreateFlavorGroup'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Card, CardContent, CardHeader } from '@/UIKit/shadcn/ui/card'
-import { Plus, Flower } from 'lucide-react'
-import { useCreateFlavorGroup } from '../../presenters/useCreateFlavorGroup'
 import { CreateWineAromaGroupRequest } from '../../entities/types/flavor-types'
-import { FlavorGroupFormFields } from './flavor-group-form-field'
 import { BaseWineColor } from '../../../general/entities/types'
+import { Plus, Flower } from 'lucide-react'
+import { FlavorGroupFormFields } from '..'
 
 interface CreateFlavorGroupSectionProps {
   onCreateGroup: (groupData: CreateWineAromaGroupRequest) => void
@@ -26,10 +26,10 @@ export const CreateFlavorGroupSection = ({ onCreateGroup, isLoading = false, cac
     return (
       <div>
         <div className="flex justify-between items-center flex-wrap-reverse sm:flex-nowrap gap-6">
-          <h2 className="text-2xl font-bold">{t('types.wine_types')}</h2>
+          <h2 className="text-2xl font-bold">{t('flavors.flavors')}</h2>
           <Button onClick={expandForm} className="w-full sm:w-auto">
             <Plus className="w-4 h-4" />
-            {t('button.add_new_type')}
+            {t('button.add_new_aroma')}
           </Button>
         </div>
       </div>

@@ -1,14 +1,16 @@
+import { NameDictionary } from "../../../general/entities/types"
+
 export interface WineColorGroup {
   id: string
-  nameUa: string
-  nameEn: string
+  translations: NameDictionary[]
+  nameUa?: string
+  nameEn?: string
   colorHex: string
   shades: WineShades[]
 }
 export interface WineShades {
   id: string
-  nameUa: string
-  nameEn: string
+  translations: NameDictionary[]
   tonePale: string
   toneMedium: string
   toneDeep: string
@@ -17,8 +19,7 @@ export interface WineShades {
 }
 
 export interface CreateWineColorParams {
-  nameUa: string
-  nameEn: string
+  translations: NameDictionary[]
   colorHex: string
   shades?: WineShades[]
 }
@@ -29,8 +30,7 @@ export interface UpdateWineColorParams {
 }
 
 export interface CreateShadesParams {
-  nameUa: string
-  nameEn: string
+  translations: NameDictionary[]
   tonePale: string
   toneMedium: string
   toneDeep: string
@@ -41,4 +41,9 @@ export interface CreateShadesParams {
 export interface UpdateShadesParams {
   shadeId: string
   newShades: CreateShadesParams
+}
+
+export interface ReorderShadesParams {
+  colorId: string;
+  shadeIds: string[];
 }

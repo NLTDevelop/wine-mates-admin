@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { useWineTaste } from './useWineTaste'
-import { CreateWineTasteParams, CreateWineTasteRequest, UpdateWineTasteParams } from '../entities/types/tastes'
+import { arraysEqual, getDisplayNames } from '@/lib/utils'
+import { CreateWineTasteParams, CreateWineTasteRequest, UpdateWineTasteParams, WineTaste } from '../entities/types/tastes'
 import { BaseWineColor } from '../../general/entities/types'
 
 export const useTastePalette = (cachedColors?: BaseWineColor[]) => {
@@ -8,6 +9,30 @@ export const useTastePalette = (cachedColors?: BaseWineColor[]) => {
 
   const [isFormOpen, setIsFormOpen] = useState<Record<string, boolean>>({})
   const [formData, setFormData] = useState<Record<string, CreateWineTasteParams>>({})
+
+  const isLoadingState = isLoading || isCreating || isUpdating || isDeleting
+
+  const hasChanges = useCallback(
+    (wineTasteId: string): boolean => {
+      const originalWineTaste = tastes.find((wt: WineTaste) => wt?.id === wineTasteId)
+      const currentFormData = formData[wineTasteId]
+
+      if (!originalWineTaste || !currentFormData) return false
+
+      const { nameUa: currentNameUa, nameEn: currentNameEn } = getDisplayNames(currentFormData.translations || [])
+      const { nameUa: originalNameUa, nameEn: originalNameEn } = getDisplayNames(originalWineTaste.translations)
+
+      const nameChanged = originalNameUa !== currentNameUa || originalNameEn !== currentNameEn
+
+      const originalColorIds = originalWineTaste.colors?.map((c: BaseWineColor) => c?.id) || []
+      const currentColorIds = currentFormData.colors?.map(c => c?.id) || []
+      const colorsChanged = JSON.stringify(originalColorIds.sort()) !== JSON.stringify(currentColorIds.sort())
+      const translationsChanged = !arraysEqual(originalWineTaste.translations, currentFormData.translations)
+
+      return nameChanged || colorsChanged || translationsChanged
+    },
+    [tastes, formData]
+  )
 
   const handleAddTaste = useCallback(
     (tasteData: CreateWineTasteRequest) => {
@@ -28,8 +53,7 @@ export const useTastePalette = (cachedColors?: BaseWineColor[]) => {
           setFormData(prev => ({
             ...prev,
             [tasteId]: {
-              nameUa: taste.nameUa || '',
-              nameEn: taste.nameEn || '',
+              translations: taste.translations || [],
               colorHex: taste.colorHex || '',
               colors: taste.colors || [],
             },
@@ -55,8 +79,7 @@ export const useTastePalette = (cachedColors?: BaseWineColor[]) => {
       const data = formData[tasteId]
       if (data) {
         const updateData: CreateWineTasteRequest = {
-          nameUa: data.nameUa,
-          nameEn: data.nameEn,
+          translations: data.translations || [],
           colorHex: data.colorHex,
           colorIds: data.colors.map(color => color.id),
         }
@@ -100,17 +123,18 @@ export const useTastePalette = (cachedColors?: BaseWineColor[]) => {
     [deleteTaste]
   )
 
-  const isLoadingState = isLoading || isCreating || isUpdating || isDeleting
-
   return {
     tastes,
     totalCount,
     filters,
 
-    isLoading: isLoadingState,
-    isCreating,
-    isUpdating,
-    isDeleting,
+    loadings: {
+      isLoading: isLoadingState,
+      isLoadingData: isLoading,
+      isCreating,
+      isUpdating,
+      isDeleting,
+    },
 
     isFormOpen,
     formData,
@@ -123,5 +147,6 @@ export const useTastePalette = (cachedColors?: BaseWineColor[]) => {
     handleCancelEdit,
     handleDeleteTaste,
     onChangePagination,
+    hasChanges,
   }
 }

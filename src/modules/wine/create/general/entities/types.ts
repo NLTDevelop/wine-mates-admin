@@ -1,8 +1,8 @@
 export interface BaseWineColor {
   id: string
-  nameUa: string
-  nameEn: string
   colorHex: string
+  translations?: NameDictionary[]
+  name?: string
 }
 
 export interface DataResponse<T> {
@@ -15,4 +15,22 @@ export interface FiltersParams {
   limit?: number
   page?: number
   include?: string[]
+}
+
+
+export type Language = "en" | "uk" | "fr" | "pl"|"de"|"es"|"it"
+
+export interface NameDictionary{
+   name: string, 
+   language: Language
+}
+
+export type ReorderEntityType = 'color' | 'flavors' | 'tastes' | 'taste-characteristics' | 'wine-types'
+
+export interface ReorderParams {
+  entityType: ReorderEntityType
+  items: Array<{
+    id: string
+    order: number
+  }>
 }

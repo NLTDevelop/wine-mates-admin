@@ -1,11 +1,10 @@
 import { useTranslation } from 'react-i18next'
+import { useWineForm } from '../../presenters/useWineForm'
 import { Form } from '@/UIKit/shadcn/ui/form'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { BasicInfoSection } from './forms/basic-info-section'
-
 import { WineType } from '../../../wine-types/entities/types/wine-type'
-import { useWineForm } from '../../presenters/useWineForm'
 import { WineFormData } from '../../presenters/wine-form-schema'
+import { BasicInfoSection } from '..'
 
 interface CreateWineFormProps {
   wineTypes: WineType[]

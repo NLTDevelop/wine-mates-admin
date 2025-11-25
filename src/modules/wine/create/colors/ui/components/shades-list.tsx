@@ -2,7 +2,7 @@ import React from 'react'
 import { WineShades } from '../../entities/types/color-types'
 import { SortableList } from '@/UIKit/app-components/sortable-list'
 import { SortableItem } from '@/UIKit/app-components/sortable-item'
-import { ShadeRow } from './shade-row'
+import { ShadeRow } from '..'
 
 interface ShadesListProps {
   items: WineShades[]
@@ -13,7 +13,6 @@ interface ShadesListProps {
   cardTextColorClass: string
   isEditable?: boolean
   showEditButton?: boolean
-  hexColor: string
   onReorder?: (items: WineShades[]) => void
 }
 
@@ -36,7 +35,7 @@ export const ShadesList: React.FC<ShadesListProps> = ({ items, isLoading = false
 
   return (
     <div className="mt-3 w-full">
-      {items?.length && (
+      {items?.length ? (
         <SortableList items={items} onReorder={handleReorder} strategy="vertical" getId={getShadeId}>
           <div className="space-y-3">
             {items?.map((item, index) => (
@@ -55,7 +54,7 @@ export const ShadesList: React.FC<ShadesListProps> = ({ items, isLoading = false
             ))}
           </div>
         </SortableList>
-      )}
+      ) : null}
     </div>
   )
 }

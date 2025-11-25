@@ -1,6 +1,6 @@
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
-import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
 import { IWines } from './types/types'
+import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 
 interface WineState {
   wines: IWines[]

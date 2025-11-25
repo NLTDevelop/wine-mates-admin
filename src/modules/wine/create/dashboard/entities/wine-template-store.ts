@@ -1,4 +1,4 @@
-import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
+import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 import { WineTemplate } from './types'
 
 interface WineTemplateStoreState {

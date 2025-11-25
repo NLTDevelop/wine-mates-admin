@@ -7,8 +7,13 @@ export const AROMA_CRUD_ENDPOINTS = {
   },
 
   SUBGROUP: {
+    LIST: '/v1/admin/wine-aroma-subgroups',
     CREATE: '/v1/admin/wine-aroma-subgroups',
     UPDATE: '/v1/admin/wine-aroma-subgroups/:id',
     DELETE: '/v1/admin/wine-aroma-subgroups/:id',
+    REORDER: '/v1/admin/wine-aroma-subgroups/:id/reorder',
+  },
+  AROMAS: {
+    REORDER: '/v1/admin/wine-aroma-subgroups/:id/aromas/reorder',
   },
 } as const
