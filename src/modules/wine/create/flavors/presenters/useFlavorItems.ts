@@ -3,8 +3,7 @@ import { useWineFlavor } from './useWineFlavors'
 import { WineAromaGroup, WineAromaItem, WineAromaSubgroup } from '../entities/types/flavor-types'
 import { EditingGroupState, NewItemData } from '../entities/types/flavor-palette-types'
 import { BaseWineColor, NameDictionary } from '../../general/entities/types'
-import { arraysEqual, createTranslations, getDisplayNames } from '@/lib/utils'
-import { wineFlavorService } from '../entities/wine-flavor-service'
+import { areNestedArrEqual, arraysEqual, createTranslations, getDisplayNames } from '@/lib/utils'
 
 interface UseFlavorItemsProps {
   aromaGroups: WineAromaGroup[] | undefined
@@ -17,8 +16,8 @@ interface UseFlavorItemsProps {
   cachedColors: BaseWineColor[]
 }
 
-export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setEditingGroup, setNewItemData, setOpenAccordions, cachedColors }: UseFlavorItemsProps) => {
-  const { createSubgroup, updateSubgroup, deleteSubgroup,reorderSubgroup, reorderAromas } = useWineFlavor(cachedColors)
+export const useFlavorItems = ({aromaGroups, editingGroup, newItemData, openAccordions, setEditingGroup, setNewItemData, setOpenAccordions, cachedColors }: UseFlavorItemsProps) => {
+  const { createSubgroup, updateSubgroup, deleteSubgroup /*reorderSubgroup, reorderAromas*/ } = useWineFlavor(cachedColors)
 
   //---------------для реодер пока нет бека -----------
   const [localSubgroupOrder, setLocalSubgroupOrder] = useState<Record<string, WineAromaSubgroup[]>>({})
@@ -36,7 +35,7 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
       } else {
         setNewItemData((prev: Record<string, NewItemData>) => ({
           ...prev,
-          [groupId]: { /*name: '', nameEn: ''*/ translations: createTranslations('', ''), aromas: [], colorHex: '' },
+          [groupId]: { translations: createTranslations('', ''), aromas: [], colorHex: '' },
         }))
         if (editingGroup?.groupId === groupId && editingGroup.isEditingGroup) {
           setEditingGroup(null)
@@ -59,8 +58,6 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
       setNewItemData((prev: Set<string>) => ({
         ...prev,
         [groupId]: {
-          // name: item.nameUa || '',
-          // nameEn: item.nameEn || '',
           translations: item.translations || [],
           aromas: item.aromas || [],
           colorHex: item.colorHex || '',
@@ -101,26 +98,31 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
       const editingItem = editingGroup?.editingItem
       const currentData = newItemData[groupId]
 
+      const hasSubgroupReorderChanges = !!localSubgroupOrder[groupId]
+
+      const subgroup = aromaGroups?.find(g => g.id === groupId)?.subgroups?.[0]
+      const hasAromaReorderChanges = subgroup ? !!localAromaOrder[subgroup.id] : false
+
       if (!editingItem) {
         const { nameUa, nameEn } = getDisplayNames(currentData?.translations || [])
-        return !!(nameUa && nameEn && currentData?.colorHex)
+        const hasFormChanges = !!(nameUa && nameEn && currentData?.colorHex)
+        return hasFormChanges || hasSubgroupReorderChanges || hasAromaReorderChanges
       }
 
       if (!currentData) return false
 
-      // ----------
       const { nameUa: currentNameUa, nameEn: currentNameEn } = getDisplayNames(currentData.translations || [])
       const { nameUa: editingNameUa, nameEn: editingNameEn } = getDisplayNames(editingItem.translations || [])
-      // ---------
 
       const namesChanged = editingNameUa !== currentNameUa || editingNameEn !== currentNameEn
       const colorHexChanged = editingItem.colorHex !== currentData.colorHex
-      const aromasChanged = !areAromasEqual(editingItem.aromas || [], currentData.aromas || [])
+      const aromasChanged = !areNestedArrEqual(editingItem.aromas || [], currentData.aromas || [])
       const translationsChanged = !arraysEqual(editingItem.translations || [], currentData.translations || [])
 
-      return namesChanged || colorHexChanged || aromasChanged || translationsChanged
+      return namesChanged || colorHexChanged || aromasChanged || translationsChanged || 
+           hasSubgroupReorderChanges || hasAromaReorderChanges
     },
-    [editingGroup, newItemData]
+    [editingGroup, newItemData, localSubgroupOrder, localAromaOrder, aromaGroups]
   )
 
   const handleSaveItem = useCallback(
@@ -139,8 +141,6 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
 
       if (editingGroup?.editingItem && editingGroup.groupId === groupId) {
         const subgroupData = {
-          // nameUa: newItemData[groupId]?.name || editingGroup.editingItem.nameUa,
-          // nameEn: newItemData[groupId]?.nameEn || editingGroup.editingItem.nameEn,
           translations: newItemData[groupId]?.translations || editingGroup.editingItem.translations,
           aromas: newItemData[groupId]?.aromas || editingGroup.editingItem.aromas || [],
           sortNumber: editingGroup.editingItem.sortNumber,
@@ -164,8 +164,6 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
       } else if (newItemData[groupId]) {
         const subgroupData = {
           groupId: parseInt(groupId),
-          // nameUa: newItemData[groupId].name,
-          // nameEn: newItemData[groupId].nameEn,
           translations: newItemData[groupId].translations,
           aromas: newItemData[groupId].aromas || [],
           sortNumber: 0,
@@ -220,8 +218,6 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
       const data = newItemData[groupId]
       if (!data) return false
 
-      // const subgroupNameUa = data.nameUa || data.name
-      // const subgroupNameEn = data.nameEn
       const { nameUa: subgroupNameUa, nameEn: subgroupNameEn } = getDisplayNames(data.translations || [])
 
       if (!subgroupNameUa?.trim() || !subgroupNameEn?.trim() || !data.colorHex) {
@@ -229,7 +225,6 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
       }
 
       if (data.aromas && data.aromas.length > 0) {
-        // const hasInvalidAromas = data.aromas.some((aroma: WineAromaItem) => !aroma.nameUa?.trim() || !aroma.nameEn?.trim())
         const hasInvalidAromas = data.aromas.some((aroma: WineAromaItem) => {
           const { nameUa: aromaNameUa, nameEn: aromaNameEn } = getDisplayNames(aroma.translations || [])
           return !aromaNameUa?.trim() || !aromaNameEn?.trim()
@@ -256,7 +251,7 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
 
   //--------------------------reorder локальній пока нет бека-----------------------------------------------
   const handleReorderLocale = useCallback((groupId: string, reorderedItem: WineAromaSubgroup[]) => {
-     console.log(
+    console.log(
       'Before reorder:',
       reorderedItem.map(s => ({
         name: getDisplayNames(s.translations || []).nameUa,
@@ -264,7 +259,7 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
       }))
     )
 
-     const updatedItem = reorderedItem.map((subgroup, newIndex) => ({
+    const updatedItem = reorderedItem.map((subgroup, newIndex) => ({
       ...subgroup,
       sortNumber: newIndex,
     }))
@@ -274,28 +269,25 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
       [groupId]: updatedItem,
     }))
 
-        console.log(
+    console.log(
       'After reorder:',
       updatedItem.map(s => ({
         name: getDisplayNames(s.translations || []).nameUa,
         newSort: s.sortNumber,
       }))
     )
-
   }, [])
   // ----------------------------------------------------------------------------------------------
 
-
   // ------------когда будет бек---------------
-    const handleReorderSubgr = useCallback(
-      async (groupId: string, reorderedSubgr: WineAromaSubgroup[]) => {
-            const subgroupIds = reorderedSubgr.map(s => s.id)
-            await reorderSubgroup({ groupId, subgroupIds })
-          },
-          [reorderSubgroup]
-  )
-    // -----------------------------------
-
+  //   const handleReorderSubgr = useCallback(
+  //     async (groupId: string, reorderedSubgr: WineAromaSubgroup[]) => {
+  //           const subgroupIds = reorderedSubgr.map(s => s.id)
+  //           await reorderSubgroup({ groupId, subgroupIds })
+  //         },
+  //         [reorderSubgroup]
+  // )
+  // -----------------------------------
 
   const getSubgroupForGroup = useCallback(
     (groupId: string, originalShades: WineAromaSubgroup[]) => {
@@ -311,59 +303,55 @@ export const useFlavorItems = ({ editingGroup, newItemData, openAccordions, setE
 
   //----------------------------------------------------------------------------------------------------------
 
+  //---------------реордер ароматов -----------
+  const handleReorderAromasLocale = useCallback((subgrId: string, reorderedAromas: WineAromaItem[]) => {
+    console.log(
+      'Before aroma reorder:',
+      subgrId,
+      reorderedAromas.map(a => ({
+        name: getDisplayNames(a.translations || []).nameUa,
+        originalSort: a.sortNumber,
+      }))
+    )
 
-
-
-
-//---------------реордер ароматов -----------
-const handleReorderAromasLocale = useCallback((subgrId: string, reorderedAromas: WineAromaItem[]) => {
-  console.log(
-    'Before aroma reorder:',
-    subgrId,
-    reorderedAromas.map(a => ({
-      name: getDisplayNames(a.translations || []).nameUa,
-      originalSort: a.sortNumber,
+    const updatedAromas = reorderedAromas.map((aroma, newIndex) => ({
+      ...aroma,
+      sortNumber: newIndex,
     }))
-  )
 
-  const updatedAromas = reorderedAromas.map((aroma, newIndex) => ({
-    ...aroma,
-    sortNumber: newIndex,
-  }))
-
-  setLocalAromaOrder(prev => ({
-    ...prev,
-    [subgrId]: updatedAromas,
-  }))
-
-  console.log(
-    'After aroma reorder:',
-    updatedAromas.map(a => ({
-      name: getDisplayNames(a.translations || []).nameUa,
-      newSort: a.sortNumber,
+    setLocalAromaOrder(prev => ({
+      ...prev,
+      [subgrId]: updatedAromas,
     }))
-  )
-}, [])
+
+    console.log(
+      'After aroma reorder:',
+      updatedAromas.map(a => ({
+        name: getDisplayNames(a.translations || []).nameUa,
+        newSort: a.sortNumber,
+      }))
+    )
+  }, [])
 
   // ------------когда будет бек---------------
-    const handleReorderAromas = useCallback(
-      async (subgrId: string, reorderedAromas: WineAromaItem[]) => {
-            const aromasIds = reorderedAromas.map(a => a.id).filter((id): id is string => id !== undefined)
-            await reorderAromas({ subgrId, aromasIds })
-          },
-          [reorderAromas]
-  )
-    // -----------------------------------
+  //   const handleReorderAromas = useCallback(
+  //     async (subgrId: string, reorderedAromas: WineAromaItem[]) => {
+  //           const aromasIds = reorderedAromas.map(a => a.id).filter((id): id is string => id !== undefined)
+  //           await reorderAromas({ subgrId, aromasIds })
+  //         },
+  //         [reorderAromas]
+  // )
+  // -----------------------------------
 
-const getAromasForGroup = useCallback(
-  (subgrId: string, originalAromas: WineAromaItem[]) => {
-    if (localAromaOrder[subgrId]) {
-      return localAromaOrder[subgrId]
-    }
-    return originalAromas
-  },
-  [localAromaOrder]
-)
+  const getAromasForGroup = useCallback(
+    (subgrId: string, originalAromas: WineAromaItem[]) => {
+      if (localAromaOrder[subgrId]) {
+        return localAromaOrder[subgrId]
+      }
+      return originalAromas
+    },
+    [localAromaOrder]
+  )
 
   return {
     handleAddAromaClick,
@@ -375,41 +363,14 @@ const getAromasForGroup = useCallback(
     canAddItem,
     getItemName,
 
-    handleReorderSubgr:handleReorderLocale,
+    handleReorderSubgr: handleReorderLocale,
     // handleReorderSubgr,//когда будет бек
     getSubgroupForGroup,
 
-    handleReorderAromas:handleReorderAromasLocale,
+    handleReorderAromas: handleReorderAromasLocale,
     // handleReorderAromas,//когда будет бек
     getAromasForGroup,
 
     hasChanges,
   }
-}
-
-const areAromasEqual = (a: any[], b: any[]): boolean => {
-  if (a.length !== b.length) {
-    return false
-  }
-
-  const sortedA = [...a].sort((x, y) => (x.id || '').localeCompare(y.id || ''))
-  const sortedB = [...b].sort((x, y) => (x.id || '').localeCompare(y.id || ''))
-
-  const result = sortedA.every((aromaA, index) => {
-    const aromaB = sortedB[index]
-
-    if (aromaA.id !== aromaB.id) {
-      return false
-    }
-
-    const translationsEqual = arraysEqual(aromaA.translations || [], aromaB.translations || [])
-
-    if (!translationsEqual) {
-      return false
-    }
-
-    return true
-  })
-
-  return result
 }

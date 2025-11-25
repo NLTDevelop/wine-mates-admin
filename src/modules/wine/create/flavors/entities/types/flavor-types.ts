@@ -2,8 +2,6 @@ import { BaseWineColor, NameDictionary } from '../../../general/entities/types'
 
 export interface WineAromaItem {
   id?: string
-  // nameUa: string
-  // nameEn: string
   translations: NameDictionary[]
   colorHex?: string
   sortNumber?: number
@@ -11,8 +9,6 @@ export interface WineAromaItem {
 
 export interface WineAromaSubgroup {
   id: string
-  // nameUa: string
-  // nameEn: string
   translations: NameDictionary[]
   sortNumber: number
   aromas: WineAromaItem[]
@@ -32,8 +28,6 @@ export interface WineAromaGroup {
 }
 
 export interface CreateWineAromaGroupParams {
-  // nameUa: string
-  // nameEn: string
   translations: NameDictionary[]
   colorHex: string
   sortNumber: number
@@ -42,8 +36,6 @@ export interface CreateWineAromaGroupParams {
 }
 
 export interface CreateWineAromaGroupRequest {
-  // nameUa: string
-  // nameEn: string
   translations: NameDictionary[]
   colorHex: string
   colorIds: string[]
@@ -57,8 +49,6 @@ export interface UpdateWineAromaGroupParams {
 export interface CreateWineAromaSubgroupParams {
   groupId?: number
   translations: NameDictionary[]
-  // nameUa: string
-  // nameEn: string
   sortNumber?: number
   aromas: WineAromaItem[]
   colorHex: string

@@ -2,21 +2,18 @@ import { BaseWineColor, NameDictionary } from '../../../general/entities/types'
 
 export interface WineType {
   id: string
-  // nameUa: string
-  // nameEn: string
-   translations: NameDictionary[]
+  translations: NameDictionary[]
   colors: BaseWineColor[]
+  sortNumber: number,
+  nameUa?:string
+  nameEn?:string
 }
 
 export interface CreateWineTypeParams {
-  // nameUa: string
-  // nameEn: string
   translations: NameDictionary[]
   colors: BaseWineColor[]
 }
 export interface CreateWineTypeRequest {
-  // nameUa: string
-  // nameEn: string
   translations: NameDictionary[]
   colorIds: string[]
 }
@@ -26,10 +23,9 @@ export interface UpdateWineTypeParams {
   newWineType: CreateWineTypeRequest
 }
 
+
 export interface WineOption {
   id: string
-  // name: string
-  // nameEn?: string
   translations: NameDictionary[]
   value?: string
   color?: string

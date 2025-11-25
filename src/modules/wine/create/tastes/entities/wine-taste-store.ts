@@ -1,7 +1,7 @@
-import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
 import { WineTaste } from './types/tastes'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { getDisplayNames } from '@/lib/utils'
+import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 
 interface TasteStoreState {
   tastes: WineTaste[]
@@ -116,6 +116,7 @@ export const useTasteStore = createStoreDevToolsWrapper<TasteStoreState>(
 
       set({ searchResults: filtered }, false, 'tastes/searchTastes')
     },
+
     clearSearch: () => set({ searchResults: [] }, false, 'tastes/clearSearch'),
 
     getTasteById: id => {

@@ -1,15 +1,16 @@
 import { useTranslation } from 'react-i18next'
-import { BaseWineColor } from '../../../general/entities/types'
-import { CreateWineTasteParams } from '../../entities/types/tastes'
+import { useTranslationsName } from '../../../general/presenters/useTranslationName'
 import { useColorForm } from '../../../general/presenters/useColorForm'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { ColorPicker } from '@/UIKit/shadcn/ui/color-picker'
 import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { Plus, Save } from 'lucide-react'
-import { useTranslationsName } from '../../../general/presenters/useTranslationName'
-import { mockBaseWineColors } from '../../../general/entities/mockBaseColor'
 import { AdditionalTranslations } from '../../../general/ui/components/additional-translations'
+import { BaseWineColor } from '../../../general/entities/types'
+import { CreateWineTasteParams } from '../../entities/types/tastes'
+import { Plus, Save } from 'lucide-react'
+
+import { mockBaseWineColors } from '../../../general/entities/mockBaseColor'
 
 interface TasteFormProps {
   formData: CreateWineTasteParams
@@ -48,11 +49,10 @@ export const TasteForm: React.FC<TasteFormProps> = ({ formData, onFormDataChange
     onTranslationsChange: translations => onFormDataChange('translations', translations),
   })
 
-  // const canSave = formData.nameUa && formData.nameEn && formData.colors.length && !isLoading && formData.colorHex
   const canSave = mode === 'create' ? nameUa && nameEn && formData.colors.length && !isLoading : nameUa && nameEn && formData.colors.length && hasChanges && !isLoading
 
   const SaveIcon = mode === 'create' ? Plus : Save
-  const saveText = isLoading ? tc('button.saving') : mode === 'create' ? tc('button.save') : tc('button.save')
+  const saveText = isLoading ? (mode === 'create' ? tc('button.saving') : tc('button.updating')) : tc('button.save')
 
   return (
     <div className="space-y-4 pl-1 pr-1 sm:pl-6 sm:pr-6 pb-2 pt-0 mt-2 transition-all flex-1 bg-muted rounded-t-none rounded-b-md">
@@ -60,13 +60,11 @@ export const TasteForm: React.FC<TasteFormProps> = ({ formData, onFormDataChange
         <div>
           <label className="text-sm font-medium mb-2 block">{t('tastes.taste_name_ua')} *</label>
           <Input value={nameUa} onChange={e => handleNameUaChange(e.target.value)} placeholder={t('tastes.taste_name_ua')} className="w-full" autoFocus />
-          {/* <Input value={formData.nameUa} onChange={e => onFormDataChange('nameUa', e.target.value)} placeholder={t('tastes.taste_name_ua')} className="w-full" autoFocus /> */}
         </div>
 
         <div>
           <label className="text-sm font-medium mb-2 block">{t('tastes.taste_name_en')} *</label>
           <Input value={nameEn} onChange={e => handleNameEnChange(e.target.value)} placeholder={t('tastes.taste_name_en')} className="w-full" />
-          {/* <Input value={formData.nameEn} onChange={e => onFormDataChange('nameEn', e.target.value)} placeholder={t('tastes.taste_name_en')} className="w-full" /> */}
         </div>
       </div>
 

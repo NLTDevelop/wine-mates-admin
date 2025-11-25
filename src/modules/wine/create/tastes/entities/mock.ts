@@ -1,13 +1,14 @@
+
+
 import { mockBaseWineColors } from "../../general/entities/mockBaseColor";
 import { WineTaste } from "./types/tastes";
-
 
 export const mockWineTastes: WineTaste[] = [
   {
     id: 'fruity',
     translations: [
-      { language: 'ua', name: 'Фруктовий' },
-      { language: 'en', name: 'Fruity' }
+      { name: 'Фруктовий', language: 'uk' },
+      { name: 'Fruity', language: 'en' }
     ],
     colorHex: '#FF6B6B',
     colors: [mockBaseWineColors[1], mockBaseWineColors[2]],
@@ -15,8 +16,8 @@ export const mockWineTastes: WineTaste[] = [
   {
     id: 'dry',
     translations: [
-      { language: 'ua', name: 'Сухий' },
-      { language: 'en', name: 'Dry' }
+      { name: 'Сухий', language: 'uk' },
+      { name: 'Dry', language: 'en' }
     ],
     colorHex: '#D4A76A',
     colors: [mockBaseWineColors[2], mockBaseWineColors[3]],
@@ -24,8 +25,8 @@ export const mockWineTastes: WineTaste[] = [
   {
     id: 'sweet',
     translations: [
-      { language: 'ua', name: 'Солодкий' },
-      { language: 'en', name: 'Sweet' }
+      { name: 'Солодкий', language: 'uk' },
+      { name: 'Sweet', language: 'en' }
     ],
     colorHex: '#FFD700',
     colors: [mockBaseWineColors[3], mockBaseWineColors[4]],
@@ -33,8 +34,8 @@ export const mockWineTastes: WineTaste[] = [
   {
     id: 'acidic',
     translations: [
-      { language: 'ua', name: 'Кислий' },
-      { language: 'en', name: 'Acidic' }
+      { name: 'Кислий', language: 'uk' },
+      { name: 'Acidic', language: 'en' }
     ],
     colorHex: '#90EE90',
     colors: [mockBaseWineColors[0], mockBaseWineColors[1]],
@@ -42,8 +43,8 @@ export const mockWineTastes: WineTaste[] = [
   {
     id: 'tannic',
     translations: [
-      { language: 'ua', name: 'Таніновий' },
-      { language: 'en', name: 'Tannic' }
+      { name: 'Таніновий', language: 'uk' },
+      { name: 'Tannic', language: 'en' }
     ],
     colorHex: '#8B4513',
     colors: mockBaseWineColors,
@@ -51,8 +52,8 @@ export const mockWineTastes: WineTaste[] = [
   {
     id: 'oaky',
     translations: [
-      { language: 'ua', name: 'Дубовий' },
-      { language: 'en', name: 'Oaky' }
+      { name: 'Дубовий', language: 'uk' },
+      { name: 'Oaky', language: 'en' }
     ],
     colorHex: '#A0522D',
     colors: [mockBaseWineColors[2], mockBaseWineColors[4]],
@@ -60,8 +61,8 @@ export const mockWineTastes: WineTaste[] = [
   {
     id: 'spicy',
     translations: [
-      { language: 'ua', name: 'Пряний' },
-      { language: 'en', name: 'Spicy' }
+      { name: 'Пряний', language: 'uk' },
+      { name: 'Spicy', language: 'en' }
     ],
     colorHex: '#FF4500',
     colors: [mockBaseWineColors[1], mockBaseWineColors[3]],

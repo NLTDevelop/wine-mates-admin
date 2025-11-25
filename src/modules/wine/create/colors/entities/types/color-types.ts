@@ -10,8 +10,6 @@ export interface WineColorGroup {
 }
 export interface WineShades {
   id: string
-  // nameUa: string
-  // nameEn: string
   translations: NameDictionary[]
   tonePale: string
   toneMedium: string
@@ -21,8 +19,6 @@ export interface WineShades {
 }
 
 export interface CreateWineColorParams {
-  // nameUa: string
-  // nameEn: string
   translations: NameDictionary[]
   colorHex: string
   shades?: WineShades[]
@@ -34,8 +30,6 @@ export interface UpdateWineColorParams {
 }
 
 export interface CreateShadesParams {
-  // nameUa: string
-  // nameEn: string
   translations: NameDictionary[]
   tonePale: string
   toneMedium: string

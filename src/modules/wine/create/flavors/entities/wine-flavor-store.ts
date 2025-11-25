@@ -1,4 +1,4 @@
-import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
+import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 import { WineAromaGroup, WineAromaItem, WineAromaSubgroup } from './types/flavor-types'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { getDisplayNames } from '@/lib/utils'
@@ -27,6 +27,7 @@ interface WineFlavorStoreState {
   addSubgroup: (groupId: string, subgroup: WineAromaSubgroup) => void
   updateSubgroup: (groupId: string, subgroupId: string, newSubgroup: WineAromaSubgroup) => void
   deleteSubgroup: (groupId: string, subgroupId: string) => void
+  reorderSubgroups: (groupId: string, subgroups: WineAromaSubgroup[]) => void
 
   getAromaGroupById: (id: string) => WineAromaGroup | undefined
   getSubgroupById: (groupId: string, subgroupId: string) => WineAromaSubgroup | undefined
@@ -176,6 +177,22 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
         }),
         false,
         'aromaGroups/deleteSubgroup'
+      ),
+
+    reorderSubgroups: (groupId, subgroups) =>
+      set(
+        (state: WineFlavorStoreState) => ({
+          aromaGroups: state.aromaGroups.map(g =>
+            g.id === groupId
+              ? {
+                  ...g,
+                  subgroups: subgroups,
+                }
+              : g
+          ),
+        }),
+        false,
+        'aromaGroups/reorderSubgroups'
       ),
 
     getAromaGroupById: id => {

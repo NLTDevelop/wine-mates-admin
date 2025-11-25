@@ -1,13 +1,13 @@
 import { MouseEvent, useState } from 'react'
-import { Check, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { useContrastText } from '@/hooks/ui/useContrastText'
 import { adaptFetchOptions, cn, getDisplayNames } from '@/lib/utils'
 import { Input } from '@/UIKit/shadcn/ui/input'
-import { useTranslation } from 'react-i18next'
-import { CreateWineTasteParams } from '../../../tastes/entities/types/tastes'
 import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
-import { BaseWineColor } from '../../entities/types'
 import { Badge } from '@/UIKit/shadcn/ui/badge'
-import { useContrastText } from '@/hooks/ui/useContrastText'
+import { CreateWineTasteParams } from '../../../tastes/entities/types/tastes'
+import { BaseWineColor } from '../../entities/types'
+import { Check, X } from 'lucide-react'
 
 interface EditableHeaderProps {
   isEditable: boolean
@@ -71,8 +71,7 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
     onKeyDown(e)
   }
 
-  const {nameUa, nameEn} = getDisplayNames(editValue.translations || [])
- 
+  const { nameUa, nameEn } = getDisplayNames(editValue.translations || [])
 
   return (
     <div className="flex items-center gap-2 justify-between w-full cursor-default ">
@@ -167,7 +166,7 @@ export const EditableHeader: React.FC<EditableHeaderProps> = ({
             <div className="flex gap-2 mt-2 sm:flex-row flex-col md:w-auto w-full">
               {editValue.colors.map(color => {
                 const { textColorClass } = useContrastText(color.colorHex)
-                 const {nameUa:colorNameUa} = getDisplayNames(color.translations || [])
+                const { nameUa: colorNameUa } = getDisplayNames(color.translations || [])
                 return (
                   <Badge className={cn('text-label text-[10px] p-1 h-4', textColorClass)} style={{ backgroundColor: color.colorHex }} key={color.id}>
                     {colorNameUa}

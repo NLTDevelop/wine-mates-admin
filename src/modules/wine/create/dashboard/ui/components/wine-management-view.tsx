@@ -3,13 +3,12 @@ import { useTranslation } from 'react-i18next'
 import { ContentLayout } from '@/layout/components/content-layout'
 import { WineTemplateSelector } from '..'
 import { TastePaletteManager } from '../../../tastes/ui'
-
-import { TasteCharacteristicsPaletteManager } from '../../../taste-characteristics/ui'
 import { CreateWineForm } from '../../../wine/ui'
 import { FlavorPaletteManager } from '../../../flavors/ui'
 import { ColorPaletteManager } from '../../../colors/ui'
 import { WineTypeManager } from '../../../wine-types/ui/components/wine-type-manager'
 import { useCachedColors } from '../../../general/presenters/useCachedColors'
+import { TasteCharacteristicsPaletteManager } from '../../../taste-characteristics/ui'
 
 export const WineManagementView = () => {
   const { t } = useTranslation('wines')
@@ -35,7 +34,7 @@ export const WineManagementView = () => {
       case 'taste_palette':
         return <TastePaletteManager cachedColors={cachedColors} colorsLoading={colorsLoading} />
       case 'taste_characteristics_palette':
-        return <TasteCharacteristicsPaletteManager />
+        return <TasteCharacteristicsPaletteManager cachedColors={cachedColors} colorsLoading={colorsLoading} />
       case 'wine_creation':
         return <CreateWineForm wineTypes={[]} />
       default:
@@ -52,6 +51,8 @@ export const WineManagementView = () => {
         return t('flavor_palette')
       case 'taste_palette':
         return t('taste_palette')
+      case 'taste_characteristics_palette':
+        return t('taste_characteristics.characteristics')
       case 'wine_creation':
         return t('create_wine')
       default:

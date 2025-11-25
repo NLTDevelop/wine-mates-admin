@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next'
+import { useCreateFlavorGroup } from '../../presenters/useCreateFlavorGroup'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Card, CardContent, CardHeader } from '@/UIKit/shadcn/ui/card'
-import { Plus, Flower } from 'lucide-react'
-import { useCreateFlavorGroup } from '../../presenters/useCreateFlavorGroup'
 import { CreateWineAromaGroupRequest } from '../../entities/types/flavor-types'
-import { FlavorGroupFormFields } from './flavor-group-form-field'
 import { BaseWineColor } from '../../../general/entities/types'
+import { Plus, Flower } from 'lucide-react'
+import { FlavorGroupFormFields } from '..'
 
 interface CreateFlavorGroupSectionProps {
   onCreateGroup: (groupData: CreateWineAromaGroupRequest) => void

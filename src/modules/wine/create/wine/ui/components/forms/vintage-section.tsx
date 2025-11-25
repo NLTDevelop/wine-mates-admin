@@ -1,7 +1,7 @@
-import { UseFormReturn } from 'react-hook-form'
-import { WineFormData } from '../../../presenters/wine-form-schema'
-import { useTranslation } from 'react-i18next'
 import { memo } from 'react'
+import { UseFormReturn } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { WineFormData } from '../../../presenters/wine-form-schema'
 import { YearPickerFormField } from '@/UIKit/app-components/year-picker-form-field'
 
 export const VintageSection = memo(({ form }: { form: UseFormReturn<WineFormData> }) => {

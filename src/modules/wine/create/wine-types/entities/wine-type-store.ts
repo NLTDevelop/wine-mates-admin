@@ -1,4 +1,4 @@
-import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
+import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 import { WineType } from './types/wine-type'
 import { getDisplayNames } from '@/lib/utils'
 

@@ -53,8 +53,6 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
           setFormData(prev => ({
             ...prev,
             [wineTypeId]: {
-              // nameUa: wineType.nameUa || '',
-              // nameEn: wineType.nameEn || '',
               translations: wineType.translations || [],
               colors: wineType.colors || [],
             },
@@ -90,8 +88,6 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
 
       try {
         const updateData: CreateWineTypeRequest = {
-          // nameUa: data.nameUa,
-          // nameEn: data.nameEn,
           translations: data.translations || [],
           colorIds: data.colors.map(color => color?.id),
         }
@@ -147,5 +143,3 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
     handleDeleteWineType,
   }
 }
-
-

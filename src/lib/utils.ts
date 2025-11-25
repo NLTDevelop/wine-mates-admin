@@ -127,15 +127,6 @@ export const validateImageField = (value: unknown): value is File | string => {
   return isFile(value) || isImageUrl(value)
 }
 
-// export const adaptFetchOptions = (fetchFn: (search?: string) => Promise<{ id: string; nameUa: string }[]>) => {
-//   return async (search?: string) => {
-//     const data = await fetchFn(search)
-//     return data.map(item => ({
-//       value: item.id,
-//       label: item.nameUa,
-//     }))
-//   }
-// }
 
 export const adaptFetchOptions = (fetchFn: (search?: string) => Promise<any[]>) => {
   return async (search?: string) => {
@@ -145,7 +136,7 @@ export const adaptFetchOptions = (fetchFn: (search?: string) => Promise<any[]>) 
       
       if (!label) {
         const { nameUa } = getDisplayNames(item.translations || [])
-        label = nameUa || item.nameUa || item.id
+        label = nameUa || item.nameUa || item.name
       }
       
       return {
@@ -167,14 +158,14 @@ export const getDisplayNames = (translations: NameDictionary[]): DisplayNames =>
     return { nameUa: '', nameEn: '' }
   }
 
-  const nameUa = translations.find(t => t.language === 'ua')?.name || ''
+  const nameUa = translations.find(t => t.language === 'uk')?.name || ''
   const nameEn = translations.find(t => t.language === 'en')?.name || ''
 
   return { nameUa, nameEn }
 }
 
 export const createTranslations = (nameUa: string, nameEn: string): NameDictionary[] => [
-  { name: nameUa, language: 'ua' },
+  { name: nameUa, language: 'uk' },
   { name: nameEn, language: 'en' }
 ]
 
@@ -194,4 +185,31 @@ export const arraysEqual = <T>(
   }
   
   return a.every((item, index) => item === b[index])
+}
+
+export const areNestedArrEqual = (a: any[], b: any[]): boolean => {
+  if (a.length !== b.length) {
+    return false
+  }
+
+  const sortedA = [...a].sort((x, y) => (x.id || '').localeCompare(y.id || ''))
+  const sortedB = [...b].sort((x, y) => (x.id || '').localeCompare(y.id || ''))
+
+  const result = sortedA.every((itemA, index) => {
+    const itemB = sortedB[index]
+
+    if (itemA.id !== itemB.id) {
+      return false
+    }
+
+    const translationsEqual = arraysEqual(itemA.translations || [], itemB.translations || [])
+
+    if (!translationsEqual) {
+      return false
+    }
+
+    return true
+  })
+
+  return result
 }

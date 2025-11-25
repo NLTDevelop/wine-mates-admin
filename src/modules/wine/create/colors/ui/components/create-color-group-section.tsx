@@ -1,11 +1,10 @@
 import { useTranslation } from 'react-i18next'
+import { useCreateColorGroup } from '../../presenters/useCreateColorGroup'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Card, CardContent, CardHeader } from '@/UIKit/shadcn/ui/card'
 import { Plus, Palette } from 'lucide-react'
-
 import { CreateWineColorParams } from '../../entities/types/color-types'
 import { ColorGroupFormFields } from './color-group-form-fields'
-import { useCreateColorGroup } from '../../presenters/useCreateColorGroup'
 
 interface CreateColorGroupSectionProps {
   onCreateGroup: (groupData: Partial<CreateWineColorParams>) => void

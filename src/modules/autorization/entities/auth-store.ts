@@ -1,6 +1,6 @@
 import { ADMIN_TOKEN, ADMIN_USER } from '@/constatnts/locale-storage'
 import { User } from '@/modules/autorization/entities/types'
-import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
+import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 
 interface AuthState {
   user: User | null

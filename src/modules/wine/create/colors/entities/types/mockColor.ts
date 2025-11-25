@@ -6,14 +6,14 @@ export const mockWineColorGroups: WineColorGroup[] = [
     id: "1",
     colorHex: "#8B0000",
     translations: [
-      { name: "Червоні вина", language: "ua" },
+      { name: "Червоні вина", language: "uk" },
       { name: "Red Wines", language: "en" }
     ],
     shades: [
       {
         id: "1-1",
         translations: [
-          { name: "Бордовий", language: "ua" },
+          { name: "Бордовий", language: "uk" },
           { name: "Burgundy", language: "en" }
         ],
         tonePale: "#A52A2A",
@@ -25,7 +25,7 @@ export const mockWineColorGroups: WineColorGroup[] = [
       {
         id: "1-2",
         translations: [
-          { name: "Рубіновий", language: "ua" },
+          { name: "Рубіновий", language: "uk" },
           { name: "Ruby", language: "en" }
         ],
         tonePale: "#DC143C",
@@ -40,14 +40,14 @@ export const mockWineColorGroups: WineColorGroup[] = [
     id: "2",
     colorHex: "#FFD700",
     translations: [
-      { name: "Білі вина", language: "ua" },
+      { name: "Білі вина", language: "uk" },
       { name: "White Wines", language: "en" }
     ],
     shades: [
       {
         id: "2-1",
         translations: [
-          { name: "Солом'яний", language: "ua" },
+          { name: "Солом'яний", language: "uk" },
           { name: "Straw", language: "en" }
         ],
         tonePale: "#FFF8DC",
@@ -59,7 +59,7 @@ export const mockWineColorGroups: WineColorGroup[] = [
       {
         id: "2-2",
         translations: [
-          { name: "Золотий", language: "ua" },
+          { name: "Золотий", language: "uk" },
           { name: "Golden", language: "en" }
         ],
         tonePale: "#FFD700",
@@ -71,7 +71,7 @@ export const mockWineColorGroups: WineColorGroup[] = [
       {
         id: "2-3",
         translations: [
-          { name: "Бурштиновий", language: "ua" },
+          { name: "Бурштиновий", language: "uk" },
           { name: "Amber", language: "en" }
         ],
         tonePale: "#FFBF00",
@@ -86,14 +86,14 @@ export const mockWineColorGroups: WineColorGroup[] = [
     id: "3",
     colorHex: "#FF69B4",
     translations: [
-      { name: "Рожеві вина", language: "ua" },
+      { name: "Рожеві вина", language: "uk" },
       { name: "Rosé Wines", language: "en" }
     ],
     shades: [
       {
         id: "3-1",
         translations: [
-          { name: "Світло-рожевий", language: "ua" },
+          { name: "Світло-рожевий", language: "uk" },
           { name: "Light Pink", language: "en" }
         ],
         tonePale: "#FFB6C1",
@@ -105,7 +105,7 @@ export const mockWineColorGroups: WineColorGroup[] = [
       {
         id: "3-2",
         translations: [
-          { name: "Лососевий", language: "ua" },
+          { name: "Лососевий", language: "uk" },
           { name: "Salmon", language: "en" }
         ],
         tonePale: "#FFA07A",
@@ -120,14 +120,14 @@ export const mockWineColorGroups: WineColorGroup[] = [
     id: "4",
     colorHex: "#4B0082",
     translations: [
-      { name: "Помаранчеві вина", language: "ua" },
+      { name: "Помаранчеві вина", language: "uk" },
       { name: "Orange Wines", language: "en" }
     ],
     shades: [
       {
         id: "4-1",
         translations: [
-          { name: "Мідний", language: "ua" },
+          { name: "Мідний", language: "uk" },
           { name: "Copper", language: "en" }
         ],
         tonePale: "#CD853F",
@@ -139,7 +139,7 @@ export const mockWineColorGroups: WineColorGroup[] = [
       {
         id: "4-2",
         translations: [
-          { name: "Бурштиновий", language: "ua" },
+          { name: "Бурштиновий", language: "uk" },
           { name: "Amber", language: "en" }
         ],
         tonePale: "#FFA500",
@@ -154,7 +154,7 @@ export const mockWineColorGroups: WineColorGroup[] = [
     id: "5",
     colorHex: "#800020",
     translations: [
-      { name: "Ігристі вина", language: "ua" },
+      { name: "Ігристі вина", language: "uk" },
       { name: "Sparkling Wines", language: "en" }
     ],
     shades: [

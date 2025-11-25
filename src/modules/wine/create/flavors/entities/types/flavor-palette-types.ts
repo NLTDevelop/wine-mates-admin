@@ -9,8 +9,6 @@ export interface EditingGroupState {
 }
 
 export interface NewItemData {
-  // name: string
-  // nameEn: string
   translations: NameDictionary[]
   aromas?: WineAromaItem[] | null
   colorHex: string

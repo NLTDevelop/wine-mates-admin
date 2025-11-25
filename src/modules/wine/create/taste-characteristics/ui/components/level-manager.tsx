@@ -1,172 +1,140 @@
-import React, { useCallback } from 'react'
-import { LevelItem } from '../../entities/types/taste-characteristics'
-import { LevelList } from '..'
-import { Button } from '@/UIKit/shadcn/ui/button'
-import { Plus } from 'lucide-react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { useTranslationsName } from '../../../general/presenters/useTranslationName'
+import { createTranslations } from '@/lib/utils'
+import { Button } from '@/UIKit/shadcn/ui/button'
+import { SortableList } from '@/UIKit/app-components/sortable-list'
+import { SortableItem } from '@/UIKit/app-components/sortable-item'
+import { Input } from '@/UIKit/shadcn/ui/input'
+import { Checkbox } from '@/UIKit/shadcn/ui/checkbox'
+import { AdditionalTranslations } from '../../../general/ui/components/additional-translations'
+import { Plus, X } from 'lucide-react'
+import { LevelItem } from '../../entities/taste-characteristics'
 
-interface LevelManagerProps {
-  states: LevelItem[]
-  onStatesChange: (states: LevelItem[]) => void
-  onLevelNameBlur?: (levelId: string, levelName: string) => void
-  onLevelsOrderChange?: (levels: LevelItem[]) => void
-  minFields?: number
-  isSaving?: boolean
+interface LevelsManagerProps {
+  levels: LevelItem[]
+  onLevelsChange: (levels: LevelItem[]) => void
+  onReorder?: (reorderedLevel: LevelItem[]) => void
 }
 
-export const LevelManager: React.FC<LevelManagerProps> = ({ states, onStatesChange, onLevelNameBlur, onLevelsOrderChange, minFields = 3, isSaving = false }) => {
+export const LevelsManager: React.FC<LevelsManagerProps> = ({ levels, onLevelsChange, onReorder }) => {
   const { t } = useTranslation('wines')
 
-  const handleAddState = useCallback(() => {
-    const newState: LevelItem = {
-      id: `state-${Date.now()}`,
-      nameUa: '',
-      nameEn: '',
-      sortNumber: states.length,
+  const addNewInput = () => {
+    const newLevel: LevelItem = {
+      translations: createTranslations('', ''),
+      isShowed: true,
     }
-    const newStates = [...states, newState]
-    onStatesChange(newStates)
-  }, [states, onStatesChange])
+    onLevelsChange([...levels, newLevel])
+  }
 
-  const handleUpdateState = useCallback(
-    (stateId: string, levelName: string) => {
-      const updatedStates = states.map(state => (state.id === stateId ? { ...state, levelName } : state))
-      onStatesChange(updatedStates)
-    },
-    [states, onStatesChange]
-  )
+  const update = (index: number, updatedLevel: LevelItem) => {
+    const updated = levels.map((l, i) => (i === index ? updatedLevel : l))
+    onLevelsChange(updated)
+  }
 
-  const handleRemoveState = useCallback(
-    (stateId: string) => {
-      if (states.length > minFields) {
-        const updatedStates = states.filter(state => state.id !== stateId)
-        onStatesChange(updatedStates)
-        //Todo добавить апи для удаления
-      }
-    },
-    [states, minFields, onStatesChange]
-  )
+  const remove = (index: number) => {
+    const updated = levels.filter((_, i) => i !== index)
+    onLevelsChange(updated)
+  }
 
-  const handleReorderStates = useCallback(
-    (reorderedStates: LevelItem[]) => {
-      onStatesChange(reorderedStates)
-      if (onLevelsOrderChange) {
-        onLevelsOrderChange(reorderedStates)
-      }
-    },
-    [onStatesChange]
-  )
+  const handleReorder = (reorderedLevel: LevelItem[]) => {
+    onLevelsChange(reorderedLevel)
+    onReorder?.(reorderedLevel)
+  }
 
-  const handleLevelNameBlur = useCallback(
-    (levelId: string, levelName: string) => {
-      if (onLevelNameBlur) {
-        onLevelNameBlur(levelId, levelName)
-      }
-    },
-    [onLevelNameBlur]
-  )
+  const getLevelId = (level: LevelItem, index: number): string => {
+    return level.id || `level-${index}`
+  }
 
   return (
     <div className="space-y-3">
-      <Button type="button" variant="ghost" size="sm" onClick={handleAddState} className="flex items-center gap-2 mt-3 border-1 hover:bg-muted-foreground hover:text-input" disabled={isSaving}>
-        <Plus className="w-4 h-4" />
-        {t('button.add_level')}
-      </Button>
+      <div className="flex items-center justify-between">
+        <Button type="button" variant="outline" size="sm" onClick={addNewInput} className="flex items-center gap-2">
+          <Plus className="w-4 h-4" />
+          {t('button.add_level')}
+        </Button>
+      </div>
 
-      <LevelList
-        states={states}
-        minFields={minFields}
-        onLevelNameBlur={handleLevelNameBlur}
-        onUpdateState={handleUpdateState}
-        onRemoveState={handleRemoveState}
-        onReorderStates={handleReorderStates}
-      />
+      {levels.length > 0 && (
+        <SortableList items={levels} onReorder={handleReorder} strategy="vertical" getId={getLevelId}>
+          <div className="flex gap-2 flex-wrap">
+            {levels.map((l, index) => (
+              <LevelItemWithTranslations key={getLevelId(l, index)} level={l} index={index} onUpdate={update} onRemove={remove} />
+            ))}
+          </div>
+        </SortableList>
+      )}
     </div>
   )
 }
-// import React from 'react'
-// import { Button } from '@/UIKit/shadcn/ui/button'
-// import { Plus } from 'lucide-react'
-// import { useTranslation } from 'react-i18next'
-// import { SortableList } from '@/UIKit/app-components/sortable-list'
-// import { SortableInputItem } from '@/UIKit/app-components/sortable-input-item'
-// import { LevelItem } from '../../entities/types/taste-characteristics'
 
-// interface LevelManagerProps {
-//   levels: LevelItem[]
-//   onLevelChange: (levels: LevelItem[]) => void
-// }
+interface LevelItemWithTranslationsProps {
+  level: LevelItem
+  index: number
+  onUpdate: (index: number, level: LevelItem) => void
+  onRemove: (index: number) => void
+}
 
-// export const LevelManager: React.FC<LevelManagerProps> = ({ levels, onLevelChange }) => {
-//   const { t } = useTranslation('wines')
+const LevelItemWithTranslations: React.FC<LevelItemWithTranslationsProps> = ({ level, index, onUpdate, onRemove }) => {
+  const { t } = useTranslation('wines')
 
-//   const levelFields = [
-//     {
-//       name: 'nameUa',
-//       placeholder: t('taste_characteristics.characteristic_name_ua'),
-//       label: t('taste_characteristics.characteristic_name_ua'),
-//     },
-//     {
-//       name: 'nameEn',
-//       placeholder: t('taste_characteristics.characteristic_name_en'),
-//       label: t('taste_characteristics.characteristic_name_en'),
-//     },
-//   ]
+  const {
+    nameUa,
+    nameEn,
+    additionalTranslations,
+    handleNameUaChange,
+    handleNameEnChange,
+    handleAddTranslation,
+    handleRemoveTranslation,
+    handleLanguageChange,
+    handleTranslationValueChange,
+    getAvailableLanguages,
+  } = useTranslationsName({
+    initialTranslations: level.translations || [],
+    onTranslationsChange: translations => onUpdate(index, { ...level, translations }),
+  })
 
-//   const addNewLevelInput = () => {
-//     const newLevel: LevelItem = {
-//       nameUa: '',
-//       nameEn: '',
-//     }
-//     onLevelChange([...levels, newLevel])
-//   }
+  const handleShowChange = (isShowed: boolean) => {
+    onUpdate(index, { ...level, isShowed })
+  }
 
-//   const updateLevel = (index: number, field: string, value: string) => {
-//     const updatedLevel = levels.map((level, i) => (i === index ? { ...level, [field]: value } : level))
-//     onLevelChange(updatedLevel)
-//   }
+  const getLevelId = () => {
+    return level.id || `level-${index}`
+  }
 
-//   const removeLevel = (index: number) => {
-//     const updatedLevels = levels.filter((_, i) => i !== index)
-//     onLevelChange(updatedLevels)
-//   }
+  return (
+    <SortableItem id={getLevelId()} className="flex border border-gray-200 rounded-lg p-3 bg-muted-foreground/5" handleClassName="left-0">
+      <div className="flex-1">
+        <div className="flex items-start justify-between pl-5">
+          <div>
+            <div className="flex items-center space-x-2 mb-3">
+              <Checkbox id={`show-level-${index}`} checked={level.isShowed ?? true} onCheckedChange={handleShowChange} />
 
-//   const handleReorder = (reorderedLevels: LevelItem[]) => {
-//     onLevelChange(reorderedLevels)
-//   }
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 ">
+                <Input value={nameUa} onChange={e => handleNameUaChange(e.target.value)} placeholder={t('taste_characteristics.level_name_ua')} className="h-9 w-full" />
 
-//   const getLevelId = (level: LevelItem, index: number): string => {
-//     return level.id || `level-${index}`
-//   }
-
-//   return (
-//     <div className="space-y-3">
-//       <div className="flex items-center justify-between">
-//         <Button type="button" variant="outline" size="sm" onClick={addNewLevelInput} className="flex items-center gap-2">
-//           <Plus className="w-4 h-4" />
-//           {t('button.add_level')}
-//         </Button>
-//       </div>
-
-//       {levels.length > 0 && (
-//         <SortableList items={levels} onReorder={handleReorder} strategy="vertical" getId={getLevelId}>
-//           <div className="space-y-2">
-//             {levels.map((level, index) => (
-//               <SortableInputItem
-//                 key={getLevelId(level, index)}
-//                 id={getLevelId(level, index)}
-//                 values={{
-//                   nameUa: level.nameUa || '',
-//                   nameEn: level.nameEn || '',
-//                 }}
-//                 fields={levelFields}
-//                 onUpdate={(field, value) => updateLevel(index, field as keyof LevelItem, value)}
-//                 onRemove={() => removeLevel(index)}
-//               />
-//             ))}
-//           </div>
-//         </SortableList>
-//       )}
-//     </div>
-//   )
-// }
+                <Input value={nameEn} onChange={e => handleNameEnChange(e.target.value)} placeholder={t('taste_characteristics.level_name_en')} className="h-9 w-full" />
+              </div>
+              <Button type="button" variant="ghost" size="sm" onClick={() => onRemove(index)} className="h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground">
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="pl-5 pr-8">
+              <AdditionalTranslations
+                additionalTranslations={additionalTranslations}
+                onAddTranslation={handleAddTranslation}
+                onRemoveTranslation={handleRemoveTranslation}
+                onLanguageChange={handleLanguageChange}
+                onTranslationValueChange={handleTranslationValueChange}
+                getAvailableLanguages={getAvailableLanguages}
+                isLabel={false}
+                customHeight="36px"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </SortableItem>
+  )
+}

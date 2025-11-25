@@ -9,15 +9,21 @@ export const useWineTemplates = () => {
   const { t } = useTranslation('wines')
 
   // ============ пока нет бека ============
+   const wineTemplates = useWineTemplateStore((state) => state.wineTemplates)
+  const setWineTemplates = useWineTemplateStore((state) => state.setWineTemplates)
+  const reorderTemplates = useWineTemplateStore((state) => state.reorderTemplates)
+
   useEffect(() => {
-    if (store.wineTemplates.length === 0) {
+    if (wineTemplates.length === 0) {
       const staticTemplates = getWineTemplates(t)
-      store.setWineTemplates(staticTemplates)
+      console.log('Setting initial templates:', staticTemplates.map(t => t.type))
+      setWineTemplates(staticTemplates)
     }
-  }, [t, store])
+  }, [t, wineTemplates.length, setWineTemplates])
 
   const handleReorderTemplates = (templates: WineTemplate[]) => {
-    store.reorderTemplates(templates)
+    console.log('Reordering templates to:', templates.map(t => t.type))
+    reorderTemplates(templates)
   }
 
   // ============ когда будет бек ============
@@ -66,7 +72,7 @@ export const useWineTemplates = () => {
   */
 
   return {
-    templates: store.wineTemplates,
+    templates: wineTemplates,
     selectedTemplateType: store.selectedTemplateType,
 
     isLoading: false, // для локального

@@ -1,231 +1,195 @@
+import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useCharacteristicPalette } from '../../presenters/useCharacteristicsPalette'
+import { useContrastText } from '@/hooks/ui/useContrastText'
+import { useReorderListTasteCharacteristics } from '../../../general/presenters/usePaletteReorder'
+import { useDeleteModal } from '../../../general/presenters/useDeleteModal'
+import { cn, getDisplayNames } from '@/lib/utils'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
-import { TasteCharacteristicCard, CreateTasteCharacteristicSection } from '..'
-import { useTasteCharacteristicsPalette } from '../../presenters/useTasteCharacteristicsPalette'
-import { mockTasteCharacteristics } from '../../entities/mocks'
-import { useState } from 'react'
+import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
+import { Button } from '@/UIKit/shadcn/ui/button'
+import { SortableList } from '@/UIKit/app-components/sortable-list'
+import { SortableItem } from '@/UIKit/app-components/sortable-item'
+import { Save } from 'lucide-react'
 import { BaseWineColor } from '../../../general/entities/types'
+import { SkeletonWinePalette } from '../../../general/ui/components/skeleton-wine-palette'
+import { EmptyState } from '../../../general/ui/components/empty-state'
+import { WarningModal } from '@/modals/warningModal'
+import { PaletteItemActions } from '@/modules/wine/create/general/ui'
+import { CharacteristicLevelsDisplay, CharacteristicFormFields, CreateTasteCharacteristicSection } from '..'
+import { WineTasteCharacteristics } from '../../entities/taste-characteristics'
 
-export const TasteCharacteristicsPaletteManager = () => {
-  const tasteCharacteristics = mockTasteCharacteristics
+interface TasteCharacteristicsPaletteManagerProps {
+  cachedColors: BaseWineColor[]
+  colorsLoading?: boolean
+}
+
+export const TasteCharacteristicsPaletteManager = ({ cachedColors, colorsLoading = false }: TasteCharacteristicsPaletteManagerProps) => {
+  const { t } = useTranslation('wines')
+  const { t: tc } = useTranslation('common')
+
+  const { reorder } = useReorderListTasteCharacteristics()
+  const { deleteModal } = useDeleteModal()
+
   const {
+    tasteCharacteristics,
     isLoading,
-    isFormOpen,
-    isAccordionOpen,
-    characteristicLevels,
-    handleAddCharacteristic,
-    handleDeleteCharacteristic,
-    handleToggleForm,
-    handleCancelEdit,
-    handleToggleAccordion,
-    // handleUpdateCharacteristic,
-    updateLocalCharacteristicLevels,
-  } = useTasteCharacteristicsPalette()
+    editingCharacteristicData,
+    forceOpenKeys,
+    setOpenAccordions,
+    setEditingCharacteristic,
+    setNewCharacteristicData,
+    setEditingCharacteristicData,
+    characteristics,
+    ui,
+  } = useCharacteristicPalette(cachedColors)
 
-  const [editData, setEditData] = useState<{ [key: string]: { label: string; labelEn: string } }>({})
+  const toggleCallbacks = { setOpenAccordions, setEditingCharacteristic, setNewCharacteristicData, setEditingCharacteristicData }
 
-  const handleEditDataChange = (characteristicId: string, field: string, value: string | BaseWineColor[]) => {
-    setEditData(prev => ({
-      ...prev,
-      [characteristicId]: {
-        ...(prev[characteristicId] || { label: '', labelEn: '' }),
-        [field]: value,
-      },
+  const handleOpenDeleteModal = useCallback(
+    (groupId: string, groupNameUa: string) => {
+      deleteModal.open(groupId, groupNameUa)
+    },
+    [deleteModal]
+  )
+
+  const handleConfirmDelete = useCallback(() => {
+    if (deleteModal.id) {
+      characteristics.handleDeleteCharacteristic(deleteModal.id)
+      deleteModal.close()
+    }
+  }, [deleteModal, characteristics])
+
+  const handleReorder = (reordered: WineTasteCharacteristics[]) => {
+    const items = reordered.map((tc, index) => ({
+      id: tc.id,
+      order: index,
     }))
+
+    reorder({ entityType: 'taste-characteristics', items })
   }
 
-  const handleSaveCharacteristic = async (characteristicId: string) => {
-    const data = editData[characteristicId]
-    if (data) {
-      // await handleUpdateCharacteristic(characteristicId, {
-      //   label: data.label,
-      //   labelEn: data.labelEn,
-      // })
-      setEditData(prev => {
-        const newData = { ...prev }
-        delete newData[characteristicId]
-        return newData
-      })
-    }
+  if (isLoading && tasteCharacteristics?.length === 0) {
+    return (
+      <Card>
+        <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
+          <SkeletonWinePalette />
+        </CardContent>
+      </Card>
+    )
   }
 
   return (
     <Card>
       <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
         <div>
-          <CreateTasteCharacteristicSection
-            onCreateCharacteristic={handleAddCharacteristic}
-            isLoading={isLoading}
-            characteristicLevels={characteristicLevels['new-characteristic'] || []}
-            onCharacteristicLevelsChange={levels => {
-              updateLocalCharacteristicLevels('new-characteristic', levels)
-            }}
-          />
+          <CreateTasteCharacteristicSection onCreateCharacteristic={characteristics.handleAddCharacteristic} isLoading={isLoading} cachedColors={cachedColors} />
         </div>
-        <div className="mx-auto flex flex-col justify-center gap-2 w-full">
-          {tasteCharacteristics.map(characteristic => {
-            const currentEditData = editData[characteristic.id]
+        {!isLoading && tasteCharacteristics?.length === 0 && <EmptyState type="taste-characteristics" />}
+        <SortableList items={tasteCharacteristics} onReorder={handleReorder}>
+          <div className="mx-auto flex flex-col justify-center gap-2 w-full">
+            {tasteCharacteristics?.map((group: WineTasteCharacteristics) => {
+              const { textColorClass: cardTextColorClass } = useContrastText(group.colorHex)
 
-            return (
-              <div key={characteristic.id} className="flex flex-col">
-                <TasteCharacteristicCard
-                  data={characteristic}
-                  onRemove={handleDeleteCharacteristic}
-                  isLoading={isLoading}
-                  isEditable={true}
-                  onToggleForm={() => handleToggleForm(characteristic.id)}
-                  isFormOpen={isFormOpen[characteristic.id] || false}
-                  onCancel={() => {
-                    handleCancelEdit(characteristic.id)
-                    setEditData(prev => {
-                      const newData = { ...prev }
-                      delete newData[characteristic.id]
-                      return newData
-                    })
-                  }}
-                  onUpdateCharacteristic={id => handleSaveCharacteristic(id)}
-                  isAccordionOpen={isAccordionOpen}
-                  handleToggleAccordion={handleToggleAccordion}
-                  characteristicLevels={characteristicLevels[characteristic.id] || []}
-                  onCharacteristicLevelsChange={levels => {
-                    updateLocalCharacteristicLevels(characteristic.id, levels)
-                  }}
-                  editData={currentEditData}
-                  onEditDataChange={(field, value) => handleEditDataChange(characteristic.id, field, value)}
-                />
-              </div>
-            )
-          })}
-        </div>
+              const isGroupOpen = ui.isAccordionOpen(group.id)
+              const isGroupEditing = ui.isEditing(group.id)
+              const isItemFormOpen = ui.isFormItemOpen(group.id)
+              const isGroupFormOpen = ui.isFormGroupOpen(group.id)
+
+              const currentEditingGroupData = editingCharacteristicData[group.id]
+              const forceOpenKey = forceOpenKeys[group.id] || 0
+              const accordionKey = isGroupOpen && forceOpenKey > 0 ? `forced-${group.id}-${forceOpenKey}` : group.id
+              const { nameUa, nameEn } = getDisplayNames(group?.translations || [])
+
+              return (
+                <SortableItem key={accordionKey} id={group.id} className="flex flex-col" handleClassName="top-1.5 hover:bg-transparent" gridColor={cardTextColorClass}>
+                  <AccordionWrapper
+                    label={`${nameUa} (${nameEn})`}
+                    isOpen={isGroupOpen}
+                    onToggle={() => ui.handleToggleAccordion(group.id, toggleCallbacks)}
+                    style={{ backgroundColor: group.colorHex, padding: '8px' }}
+                    chevronStyle={cardTextColorClass}
+                    header={
+                      <div className="flex justify-between items-center w-full pl-8">
+                        <div className="flex md:items-center items-start gap-2 md:flex-row flex-col flex-1">
+                          <span className={cn('font-medium', cardTextColorClass)}>
+                            {nameUa} ({nameEn})
+                          </span>
+                          {group?.colors.map((c: BaseWineColor, idx: number) => (
+                            <div key={`${c?.id}-${idx}`} className="flex items-center bg-amber-50 px-2 rounded-md md:w-auto w-full">
+                              <span className=" text-sm text-foreground">{c?.name}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <PaletteItemActions
+                          isLoading={isLoading}
+                          onRemove={handleConfirmDelete}
+                          dataId={group.id}
+                          cardTextColorClass={cardTextColorClass}
+                          onEdit={() => characteristics.startEditingCharacteristic(group.id)}
+                          showEditButton={!isGroupEditing}
+                          isHeader
+                          deleteModal={() => handleOpenDeleteModal(group.id, nameUa)}
+                        />
+                      </div>
+                    }
+                  >
+                    <div
+                      className={cn(
+                        'relative flex flex-col h-auto min-h-8 w-full items-start justify-between pl-1 pr-1 sm:pl-3 sm:pr-6 pb-2 pt-0 mt-2 transition-all flex-1 bg-muted z-20',
+                        isItemFormOpen ? 'rounded-t-md rounded-b-0' : 'rounded-t-none rounded-b-md',
+                        'cursor-default'
+                      )}
+                    >
+                      {isGroupOpen && !isGroupFormOpen && (
+                        <div className="mt-4">
+                          <CharacteristicLevelsDisplay levels={group.levels || []} description={group.description} colorBadge={{ backgroundColor: group.colorHex, color: cardTextColorClass }} />
+                        </div>
+                      )}
+
+                      {isGroupFormOpen && currentEditingGroupData && (
+                        <CharacteristicFormFields
+                          formData={currentEditingGroupData}
+                          onFormDataChange={(field, value) => characteristics.updateFormData(group.id, field, value)}
+                          cachedColors={cachedColors}
+                          isLoading={isLoading || colorsLoading}
+                          autoFocus={true}
+                        />
+                      )}
+
+                      <div className={cn('w-full flex gap-3 justify-end mt-3')}>
+                        {isGroupFormOpen && (
+                          <>
+                            <Button size="sm" variant="ghost" className="border-1 hover:bg-muted-foreground hover:text-input" onClick={() => characteristics.handleCancelCharacteristicEdit(group.id)}>
+                              {tc('button.cancel')}
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => characteristics.handleSaveCharacteristic(group.id)}
+                              disabled={!characteristics.canSave(group.id) || isLoading || !characteristics.hasChanges(group.id)}
+                            >
+                              <Save className="w-4 h-4" />
+                              {isLoading ? tc('button.saving') : tc('button.save')}
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </AccordionWrapper>
+                </SortableItem>
+              )
+            })}
+          </div>
+        </SortableList>
+        <WarningModal
+          title={t('modal.delete_title', { slug: t('taste_characteristics.taste_characteristic') })}
+          actionTitle={t('modal.delete_action')}
+          description={t('modal.delete_description', { name: deleteModal.nameUa, slug: t('taste_characteristics.characteristic') })}
+          isOpen={deleteModal.isOpen}
+          onClose={deleteModal.close}
+          onSubmit={handleConfirmDelete}
+        />
       </CardContent>
     </Card>
   )
 }
-// import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
-// import { PaletteItemActions } from '@/modules/wine/create/general/ui'
-
-// import { BaseWineColor } from '../../../general/entities/types'
-// import { cn } from '@/lib/utils'
-// import { SkeletonWinePalette } from '../../../general/ui/components/skeleton-wine-palette'
-// import { useDeleteModal } from '../../../general/presenters/useDeleteModal'
-// import { useCallback } from 'react'
-// import { WarningModal } from '@/modals/warningModal'
-// import { useTranslation } from 'react-i18next'
-// import { CreateTasteCharacteristicSection } from './create-taste-characteristic-section'
-// import { EmptyState } from '../../../general/ui/components/empty-state'
-// import { TasteCharacteristicsForm } from './taste-characteristics-form'
-// import { WineTasteCharacteristics } from '../../entities/types/taste-characteristics'
-
-// interface TasteCharacteristicsPaletteProps {
-//   cachedColors: BaseWineColor[]
-//   colorsLoading?: boolean
-// }
-
-// export const TasteCharacteristicsPaletteManager = ({ cachedColors, colorsLoading = false }: TasteCharacteristicsPaletteProps) => {
-//   const { t } = useTranslation('wines')
-//   const { deleteModal } = useDeleteModal()
-//   const { tasteCharacteristics, isLoading, isFormOpen, handleAddTasteCharacteristics, handleDeleteTasteCharacteristics, handleToggleForm, handleCancelEdit, formData, updateFormData, handleSaveTasteCharacteristics, hasChanges,updateLocalCharacteristicLevels } =
-//     useTasteCharacteristicsPalette(cachedColors)
-
-//   const handleOpenDeleteModal = useCallback(
-//     (groupId: string, groupNameUa: string) => {
-//       deleteModal.open(groupId, groupNameUa)
-//     },
-//     [deleteModal]
-//   )
-
-//   const handleConfirmDelete = useCallback(() => {
-//     if (deleteModal.id) {
-//       handleDeleteTasteCharacteristics(deleteModal.id)
-//       deleteModal.close()
-//     }
-//   }, [deleteModal, handleDeleteTasteCharacteristics])
-
-//   if (isLoading && tasteCharacteristics.length === 0) {
-//     return (
-//       <Card>
-//         <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
-//           <SkeletonWinePalette />
-//         </CardContent>
-//       </Card>
-//     )
-//   }
-
-//   return (
-//     <Card>
-//       <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
-//         <div>
-//           <CreateTasteCharacteristicSection onCreateCharacteristic={handleAddTasteCharacteristics} isLoading={isLoading} cachedColors={cachedColors} characteristicLevels={characteristicLevels['new-characteristic'] || []}
-//             onCharacteristicLevelsChange={levels => {
-//               updateLocalCharacteristicLevels('new-characteristic', levels)
-//             }}/>
-//         </div>
-//          {!isLoading && tasteCharacteristics?.length === 0 && <EmptyState type="taste-characteristics" />}
-//         <div className="mx-auto flex flex-col justify-center gap-2 w-full">
-//           {tasteCharacteristics?.map((tc:WineTasteCharacteristics) => {
-//             const isEditing = isFormOpen[tc.id] || false
-//             const currentFormData = formData[tc.id]
-//             return (
-//               <div
-//                 key={tc.id}
-//                 className={cn(
-//                   'border-1 border-input rounded-md transition-all cursor-default',
-//                   isEditing && 'rounded-md bg-card text-card-foreground shadow-sm card-spacing box-border border-border transition-colors border-dashed p-0'
-//                 )}
-//               >
-//                 <div className={cn(!isEditing && 'p-2')}>
-//                   {!isEditing ? (
-//                     <div className="flex justify-between items-center w-full">
-//                       <div className="flex items-center gap-2">
-//                         <span className="font-medium">
-//                           {tс.nameUa} ({tс.nameEn})
-//                         </span>
-//                         {tс.colors?.map((color: BaseWineColor) => (
-//                           <div key={color.id} className="bg-muted px-2 py-1 rounded text-xs">
-//                             {color.nameUa}
-//                           </div>
-//                         ))}
-//                       </div>
-//                       <PaletteItemActions
-//                         isLoading={isLoading}
-//                         onRemove={handleConfirmDelete}
-//                         dataId={tс.id}
-//                         onEdit={() => handleToggleForm(tс.id)}
-//                         showEditButton={true}
-//                         isHeader
-//                         deleteModal={() => handleOpenDeleteModal(tс.id, tс.nameUa)}
-//                       />
-//                     </div>
-//                   ) : (
-//                     currentFormData && (
-//                       <TasteCharacteristicsForm
-//                         formData={currentFormData}
-//                         onFormDataChange={(field, value) => updateFormData(tc.id, field, value)}
-//                         onSave={() => handleSaveTasteCharacteristics(tc.id)}
-//                         onCancel={() => handleCancelEdit(tc.id)}
-//                         cachedColors={cachedColors}
-//                         isLoading={isLoading || colorsLoading}
-//                         mode="edit"
-//                         hasChanges={hasChanges(tc.id)}
-//                         levels={tc.levels || []}
-//                         setNewLevelItemData={()=>updateLocalCharacteristicLevels('new-characteristic',tc.levels)}
-//                         characteristicId={tc.id}
-//                       />
-//                     )
-//                   )}
-//                 </div>
-//               </div>
-//             )
-//           })}
-//         </div>
-//         <WarningModal
-//           title={t('modal.delete_title', { slug: 'тип вина' })}
-//           actionTitle={t('modal.delete_action')}
-//           description={t('modal.delete_description', { name: deleteModal.nameUa, slug: 'Тип вина' })}
-//           isOpen={deleteModal.isOpen}
-//           onClose={deleteModal.close}
-//           onSubmit={handleConfirmDelete}
-//         />
-//       </CardContent>
-//     </Card>
-//   )
-// }

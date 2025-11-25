@@ -10,7 +10,7 @@ interface UseCreateTasteProps {
 interface UseCreateTasteReturn {
   isExpanded: boolean
   formData: CreateWineTasteParams
-  updateFormData: (field: /*'nameUa' | 'nameEn'*/"translations" | 'colors' | 'colorHex', value: any) => void
+  updateFormData: (field: 'translations' | 'colors' | 'colorHex', value: any) => void
   handleCreateTaste: () => void
   handleCancel: () => void
   expandForm: () => void
@@ -18,13 +18,9 @@ interface UseCreateTasteReturn {
 
 export const useCreateTaste = ({ onCreateTaste, isLoading = false }: UseCreateTasteProps): UseCreateTasteReturn => {
   const [isExpanded, setIsExpanded] = useState(false)
-  const [formData, setFormData] = useState<CreateWineTasteParams>({
-    // nameUa: '',
-    // nameEn: '',
-    translations: createTranslations('',''),
-    colorHex: '',
-    colors: [],
-  })
+
+  const initialData = { translations: createTranslations('', ''), colorHex: '', colors: [] }
+  const [formData, setFormData] = useState<CreateWineTasteParams>(initialData)
 
   const updateFormData = useCallback((field: keyof CreateWineTasteParams, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -33,20 +29,18 @@ export const useCreateTaste = ({ onCreateTaste, isLoading = false }: UseCreateTa
   const handleCreateTaste = useCallback(() => {
     if (!isLoading) {
       const tasteDataForApi: CreateWineTasteRequest = {
-        // nameUa: formData.nameUa,
-        // nameEn: formData.nameEn,
         translations: formData.translations || [],
         colorHex: formData.colorHex,
         colorIds: formData.colors.map(color => color.id),
       }
       onCreateTaste(tasteDataForApi)
-      setFormData({ /*nameUa: '', nameEn: ''*/translations: createTranslations('',''), colorHex: '', colors: [] })
+      setFormData(initialData)
       setIsExpanded(false)
     }
   }, [isLoading, onCreateTaste, formData])
 
   const handleCancel = useCallback(() => {
-    setFormData({ /*nameUa: '', nameEn: ''*/translations: createTranslations('',''), colorHex: '', colors: [] })
+    setFormData(initialData)
     setIsExpanded(false)
   }, [])
 

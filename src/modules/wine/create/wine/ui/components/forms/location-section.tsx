@@ -55,11 +55,11 @@ export const LocationSection = memo(({ form, countryValue, regionValue }: Locati
           await new Promise(resolve => setTimeout(resolve, 300))
 
           const allCountries = [
-            { value: 'ua', label: 'Украина' },
-            { value: 'fr', label: 'Франция' },
-            { value: 'it', label: 'Италия' },
-            { value: 'es', label: 'Испания' },
-            { value: 'de', label: 'Германия' },
+            { value: 'uk', label: 'Україна' },
+            { value: 'fr', label: 'Франція' },
+            { value: 'it', label: 'Італія' },
+            { value: 'es', label: 'Іспанія' },
+            { value: 'de', label: 'Німеччина' },
             { value: 'us', label: 'США' },
           ]
 

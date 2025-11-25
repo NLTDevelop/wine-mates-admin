@@ -1,5 +1,5 @@
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
-import { createStoreDevToolsWrapper } from '@/stores/creare-store-devtools-wrapper'
+import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 
 interface UserState {
   filters: {

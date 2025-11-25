@@ -2,9 +2,19 @@ import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack
 import { BaseWineColor, DataResponse } from '../../general/entities/types'
 import { useEffect, useMemo } from 'react'
 import { useWineFlavorStore } from '../entities/wine-flavor-store'
-import {  CreateWineAromaGroupRequest, CreateWineAromaSubgroupParams, ReorderAromasParams, ReorderSubgroupParams, UpdateWineAromaGroupParams, WineAromaGroup, WineAromaItem, WineAromaSubgroup } from '../entities/types/flavor-types'
+import {
+  CreateWineAromaGroupRequest,
+  CreateWineAromaSubgroupParams,
+  ReorderAromasParams,
+  ReorderSubgroupParams,
+  UpdateWineAromaGroupParams,
+  WineAromaGroup,
+  WineAromaItem,
+  WineAromaSubgroup,
+} from '../entities/types/flavor-types'
 import { wineFlavorService } from '../entities/wine-flavor-service'
 import { wineFlavorQueries } from '../entities/wine-flavor-queries'
+
 import { mockAromaGroups } from '../entities/mock'
 
 export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
@@ -52,7 +62,7 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
         ...groupData,
         colors: assignedColors,
         subgroups: [],
-        sortNumber:0
+        sortNumber: 0,
       }
 
       queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters], old => ({
@@ -92,8 +102,6 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
 
       const optimistic: WineAromaGroup = {
         id: params.groupId,
-        // nameUa: params.newGroup.nameUa,
-        // nameEn: params.newGroup.nameEn,
         translations: params.newGroup.translations,
         colorHex: params.newGroup.colorHex,
         colors: assignedColors || [],
@@ -165,13 +173,11 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
 
       const tempSub: WineAromaSubgroup = {
         id: 'temp-id-' + Date.now(),
-        // nameUa: subgroupData.nameUa,
-        // nameEn: subgroupData.nameEn,
         translations: subgroupData.translations ?? [],
         sortNumber: subgroupData.sortNumber ?? 0,
         aromas: subgroupData.aromas ?? [],
         groupId: parseInt(groupId),
-        colorHex: subgroupData.colorHex ?? ""
+        colorHex: subgroupData.colorHex ?? '',
       }
 
       queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters], old => {
@@ -325,49 +331,49 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
   })
 
   const reorderAromasMutation = useMutation({
-  ...wineFlavorQueries.reorderAromas(), 
-  onMutate: async (params: ReorderAromasParams) => {
-    await queryClient.cancelQueries({ queryKey: ['aroma-subgroups', 'list', ['assigned-colors', 'aromas']] })
+    ...wineFlavorQueries.reorderAromas(),
+    onMutate: async (params: ReorderAromasParams) => {
+      await queryClient.cancelQueries({ queryKey: ['aroma-subgroups', 'list', ['assigned-colors', 'aromas']] })
 
-    const previousSubgroups = queryClient.getQueryData(['aroma-subgroups', 'list', ['assigned-colors', 'aromas']])
+      const previousSubgroups = queryClient.getQueryData(['aroma-subgroups', 'list', ['assigned-colors', 'aromas']])
 
-    queryClient.setQueryData(['aroma-subgroups', 'list', ['assigned-colors', 'aromas']], (old: any) => {
-      if (!old) return old
+      queryClient.setQueryData(['aroma-subgroups', 'list', ['assigned-colors', 'aromas']], (old: any) => {
+        if (!old) return old
 
-      const reorderAromasInSubgroup = (aromas: WineAromaItem[], newOrderIds: string[]) => {
-        const aromaMap = new Map(aromas.map(aroma => [aroma.id, aroma]))
-        return newOrderIds
-          .map((id, index) => ({
-            ...aromaMap.get(id),
-            sortNumber: index,
-          }))
-          .filter(Boolean)
-      }
-
-      return old.map((subgroup: WineAromaSubgroup) => {
-        if (subgroup.id === params.subgrId) { 
-          return {
-            ...subgroup,
-            aromas: reorderAromasInSubgroup(subgroup.aromas, params.aromasIds),
-          }
+        const reorderAromasInSubgroup = (aromas: WineAromaItem[], newOrderIds: string[]) => {
+          const aromaMap = new Map(aromas.map(aroma => [aroma.id, aroma]))
+          return newOrderIds
+            .map((id, index) => ({
+              ...aromaMap.get(id),
+              sortNumber: index,
+            }))
+            .filter(Boolean)
         }
-        return subgroup
+
+        return old.map((subgroup: WineAromaSubgroup) => {
+          if (subgroup.id === params.subgrId) {
+            return {
+              ...subgroup,
+              aromas: reorderAromasInSubgroup(subgroup.aromas, params.aromasIds),
+            }
+          }
+          return subgroup
+        })
       })
-    })
 
-    return { previousSubgroups }
-  },
+      return { previousSubgroups }
+    },
 
-  onError: (_, __, context) => {
-    if (context?.previousSubgroups) {
-      queryClient.setQueryData(['aroma-subgroups', 'list', ['assigned-colors', 'aromas']], context.previousSubgroups)
-    }
-  },
+    onError: (_, __, context) => {
+      if (context?.previousSubgroups) {
+        queryClient.setQueryData(['aroma-subgroups', 'list', ['assigned-colors', 'aromas']], context.previousSubgroups)
+      }
+    },
 
-  onSettled: () => {
-    queryClient.invalidateQueries({ queryKey: ['aroma-subgroups', 'list', ['assigned-colors', 'aromas']] })
-  },
-})
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['aroma-subgroups', 'list', ['assigned-colors', 'aromas']] })
+    },
+  })
 
   const onChangePagination = (page: number) => store.setFilters({ page })
 

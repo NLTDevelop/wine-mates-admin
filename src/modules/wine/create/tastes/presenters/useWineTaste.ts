@@ -5,6 +5,7 @@ import { tasteQueries } from '../entities/wine-taste-queries'
 import { CreateWineTasteRequest, UpdateWineTasteParams, WineTaste } from '../entities/types/tastes'
 import { tasteService } from '../entities/wine-taste-service'
 import { BaseWineColor, DataResponse } from '../../general/entities/types'
+
 import { mockWineTastes } from '../entities/mock'
 
 export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
@@ -43,8 +44,6 @@ export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
       const assignedColors = cachedColors?.filter(color => newWineTaste.colorIds.includes(color.id)) || []
       const optimisticWineTaste: WineTaste = {
         id: `temp-${Date.now()}`,
-        // nameUa: newWineTaste.nameUa,
-        // nameEn: newWineTaste.nameEn,
         translations: newWineTaste.translations ?? [],
         colorHex: newWineTaste.colorHex,
         colors: assignedColors,
@@ -96,9 +95,7 @@ export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
 
       const optimisticWineTaste: WineTaste = {
         id: params.tasteId,
-        // nameUa: params.newTaste.nameUa,
-        // nameEn: params.newTaste.nameEn,
-         translations: params.newTaste.translations ,
+        translations: params.newTaste.translations,
         colorHex: params.newTaste.colorHex,
         colors: assignedColors,
       }
@@ -131,7 +128,7 @@ export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
         const tasteWithColors = {
           ...updatedTaste,
           colors: updatedTaste.colors && updatedTaste.colors.length > 0 ? updatedTaste.colors : old.rows.find(t => t.id === updatedTaste.id)?.colors || [],
-           translations: updatedTaste.translations || []
+          translations: updatedTaste.translations || [],
         }
 
         return {

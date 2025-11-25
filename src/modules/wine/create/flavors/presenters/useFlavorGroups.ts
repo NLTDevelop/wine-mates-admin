@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
-import { CreateWineAromaGroupParams, CreateWineAromaGroupRequest, WineAromaGroup } from '../entities/types/flavor-types'
 import { useWineFlavor } from './useWineFlavors'
+import { CreateWineAromaGroupParams, CreateWineAromaGroupRequest, WineAromaGroup } from '../entities/types/flavor-types'
 import { NewItemData } from '../entities/types/flavor-palette-types'
 import { BaseWineColor } from '../../general/entities/types'
 import { arraysEqual, getDisplayNames } from '@/lib/utils'
@@ -23,8 +23,6 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
     async (groupData: CreateWineAromaGroupRequest) => {
       try {
         const params: CreateWineAromaGroupRequest = {
-          // nameUa: groupData.nameUa || '',
-          // nameEn: groupData.nameEn || '',
           translations: groupData.translations || [],
           colorHex: groupData.colorHex || '',
           colorIds: groupData.colorIds || [],
@@ -58,8 +56,6 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
         return newSet
       })
       const groupFormData = {
-        // nameUa: group.nameUa || '',
-        // nameEn: group.nameEn || '',
         translations: group.translations || [],
         colorHex: group.colorHex || '',
         sortNumber: group.sortNumber || 0,
@@ -159,7 +155,6 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
   const canSaveGroup = useCallback(
     (groupId: string) => {
       const data = editingGroupData[groupId]
-      // return data?.nameUa && data?.nameEn && data?.colorHex
       if (!data?.translations) return false
 
       const { nameUa, nameEn } = getDisplayNames(data.translations)

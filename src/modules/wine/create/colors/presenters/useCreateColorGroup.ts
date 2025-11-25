@@ -13,7 +13,7 @@ interface UseCreateColorGroupReturn {
   formData: Partial<CreateWineColorParams>
   canCreateGroup: boolean
   setIsExpanded: (expanded: boolean) => void
-  updateFormData: (field: /*'nameUa' | 'nameEn'*/"translations" | 'colorHex', value: string | NameDictionary[]) => void
+  updateFormData: (field: 'translations' | 'colorHex', value: string | NameDictionary[]) => void
   handleCreateGroup: () => void
   handleCancel: () => void
   expandForm: () => void
@@ -21,12 +21,9 @@ interface UseCreateColorGroupReturn {
 
 export const useCreateColorGroup = ({ onCreateGroup }: UseCreateColorGroupProps): UseCreateColorGroupReturn => {
   const [isExpanded, setIsExpanded] = useState(false)
-  const [formData, setFormData] = useState<Partial<CreateWineColorParams>>({
-    // nameUa: '',
-    // nameEn: '',
-    translations: createTranslations('',''),
-    colorHex: '',
-  })
+
+  const initialData = { translations: createTranslations('', ''), colorHex: '' }
+  const [formData, setFormData] = useState<Partial<CreateWineColorParams>>(initialData)
 
   const updateFormData = useCallback((field: keyof CreateWineColorParams, value: string | NameDictionary[]) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -35,13 +32,13 @@ export const useCreateColorGroup = ({ onCreateGroup }: UseCreateColorGroupProps)
   const handleCreateGroup = () => {
     if (canCreateGroup) {
       onCreateGroup(formData)
-      setFormData({ /*nameUa: '', nameEn: '',*/translations: createTranslations('',''), colorHex: '' })
+      setFormData(initialData)
       setIsExpanded(false)
     }
   }
 
   const handleCancel = () => {
-    setFormData({ /*nameUa: '', nameEn: '',*/translations: createTranslations('',''), colorHex: '' })
+    setFormData(initialData)
     setIsExpanded(false)
   }
 
@@ -50,7 +47,7 @@ export const useCreateColorGroup = ({ onCreateGroup }: UseCreateColorGroupProps)
   }
 
   const { nameUa, nameEn } = getDisplayNames(formData.translations || [])
-  const canCreateGroup = !!(/*formData.*/nameUa && /*formData.*/nameEn && formData.colorHex)
+  const canCreateGroup = !!(nameUa && nameEn && formData.colorHex)
 
   return {
     isExpanded,

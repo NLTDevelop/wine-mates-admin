@@ -433,7 +433,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
               )}
             </div>
             <CommandList>
-              {!loading && options.length === 0 && <CommandEmpty className="py-4 text-center text-muted-foreground">{t('nothingFound')}</CommandEmpty>}
+              {!loading && options.length === 0 && <CommandEmpty className="py-4 text-center text-muted-foreground">{t('no_results')}</CommandEmpty>}
 
               {showSelectAll && mode === 'multiple' && options.length > 0 && (
                 <div className="flex gap-2 p-2 border-b bg-muted/10">

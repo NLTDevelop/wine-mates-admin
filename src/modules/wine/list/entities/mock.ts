@@ -2,39 +2,42 @@ import { WineType } from '@/modules/wine/create/wine-types/entities/types/wine-t
 import { IWines, WineImage, WinesResponse, WineFilters } from './types/types'
 import { mockBaseWineColors } from '../../create/general/entities/mockBaseColor'
 
-// Моковые типы вин с полем colors
 const mockWineTypes: WineType[] = [
   {
     id: 'red',
     translations: [
-      { name: 'Червоне вино', language: 'ua' },
-      { name: 'Red Wine', language: 'en' }
+      { name: 'Червоне вино', language: 'uk' },
+      { name: 'Red Wine', language: 'en' },
     ],
-    colors: mockBaseWineColors
+    colors: mockBaseWineColors,
+    sortNumber: 0,
   },
   {
     id: 'white',
     translations: [
-      { name: 'Біле вино', language: 'ua' },
-      { name: 'White Wine', language: 'en' }
+      { name: 'Біле вино', language: 'uk' },
+      { name: 'White Wine', language: 'en' },
     ],
-    colors: mockBaseWineColors
+    colors: mockBaseWineColors,
+    sortNumber: 1,
   },
   {
     id: 'dessert',
     translations: [
-      { name: 'Десертне вино', language: 'ua' },
-      { name: 'Dessert Wine', language: 'en' }
+      { name: 'Десертне вино', language: 'uk' },
+      { name: 'Dessert Wine', language: 'en' },
     ],
-    colors: mockBaseWineColors
+    colors: mockBaseWineColors,
+    sortNumber: 2,
   },
   {
     id: 'sparkling',
     translations: [
-      { name: 'Ігристе вино', language: 'ua' },
-      { name: 'Sparkling Wine', language: 'en' }
+      { name: 'Ігристе вино', language: 'uk' },
+      { name: 'Sparkling Wine', language: 'en' },
     ],
-    colors: mockBaseWineColors
+    colors: mockBaseWineColors,
+    sortNumber: 3,
   },
 ]
 

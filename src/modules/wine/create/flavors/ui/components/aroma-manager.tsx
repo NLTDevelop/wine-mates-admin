@@ -1,16 +1,15 @@
 import React from 'react'
-import { Button } from '@/UIKit/shadcn/ui/button'
-import { Plus, X } from 'lucide-react'
-
-import { WineAromaItem } from '../../entities/types/flavor-types'
 import { useTranslation } from 'react-i18next'
+import { useTranslationsName } from '../../../general/presenters/useTranslationName'
+import { Button } from '@/UIKit/shadcn/ui/button'
+import { WineAromaItem } from '../../entities/types/flavor-types'
 import { SortableList } from '@/UIKit/app-components/sortable-list'
-import { SortableItem } from '@/UIKit/app-components/sortable-item' 
+import { SortableItem } from '@/UIKit/app-components/sortable-item'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { createTranslations } from '@/lib/utils'
+import { Plus, X } from 'lucide-react'
 import { NameDictionary } from '../../../general/entities/types'
 import { AdditionalTranslations } from '../../../general/ui/components/additional-translations'
-import { useTranslationsName } from '../../../general/presenters/useTranslationName'
 
 interface AromasManagerProps {
   aromas: WineAromaItem[]
@@ -100,8 +99,8 @@ const AromaItemWithTranslations: React.FC<AromaItemWithTranslationsProps> = ({ a
   }
 
   return (
-    <SortableItem id={getAromaId()} className=" flex border border-gray-200 rounded-lg p-2 bg-muted-foreground/5" handleClassName="">
-      <div className="pl-8 pt-1.5">
+    <SortableItem id={getAromaId()} className=" flex border border-gray-200 rounded-lg p-2 bg-muted-foreground/5" handleClassName="left-0">
+      <div className="pl-6 pt-1.5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
           <Input value={nameUa} onChange={e => handleNameUaChange(e.target.value)} placeholder={t('flavors.aroma_name_ua')} className="h-8 w-full" />
 
@@ -118,7 +117,6 @@ const AromaItemWithTranslations: React.FC<AromaItemWithTranslationsProps> = ({ a
           isLabel={false}
           customHeight="32px"
         />
-        
       </div>
       <div className="text-end">
         <Button type="button" variant="ghost" size="sm" onClick={() => onRemove(index)} className="h-8 w-8 p-0 hover:bg-destructive hover:text-destructive-foreground">

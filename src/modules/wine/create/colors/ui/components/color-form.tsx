@@ -1,14 +1,12 @@
+import { useTranslation } from 'react-i18next'
+import { useTranslationsName } from '../../../general/presenters/useTranslationName'
 import { ColorPicker } from '@/UIKit/shadcn/ui/color-picker'
 import { Input } from '@/UIKit/shadcn/ui/input'
-import { useTranslation } from 'react-i18next'
 import { NameDictionary } from '../../../general/entities/types'
 import { AdditionalTranslations } from '../../../general/ui/components/additional-translations'
-import { useTranslationsName } from '../../../general/presenters/useTranslationName'
 
 interface ColorFormData {
   translations: NameDictionary[]
-  // nameUa: string
-  // nameEn: string
   tonePale: string
   toneMedium: string
   toneDeep: string
@@ -25,8 +23,6 @@ interface ColorFormProps {
 export const ColorForm: React.FC<ColorFormProps> = ({ data, onDataChange, autoFocus = false, baseColor }) => {
   const { t } = useTranslation('wines')
 
-  // -----------------------
-
   const {
     nameUa,
     nameEn,
@@ -42,8 +38,6 @@ export const ColorForm: React.FC<ColorFormProps> = ({ data, onDataChange, autoFo
     initialTranslations: data.translations || [],
     onTranslationsChange: translations => onDataChange('translations', translations),
   })
-  // -----------------------
-
 
   return (
     <div className="border-1 border-input py-2 rounded-b-md bg-muted w-full">
@@ -51,13 +45,11 @@ export const ColorForm: React.FC<ColorFormProps> = ({ data, onDataChange, autoFo
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="text-sm font-medium mb-2 block">{t('colors.shade_name_ua')} *</label>
-            {/* <Input value={data.nameUa} onChange={e => onDataChange('nameUa', e.target.value)} placeholder={t('colors.shade_name_ua')} className="w-full" autoFocus={autoFocus} /> */}
             <Input value={nameUa} onChange={e => handleNameUaChange(e.target.value)} placeholder={t('colors.shade_name_ua')} className="w-full" autoFocus={autoFocus} />
           </div>
 
           <div>
             <label className="text-sm font-medium mb-2 block">{t('colors.shade_name_en')} *</label>
-            {/* <Input value={data.nameEn} onChange={e => onDataChange('nameEn', e.target.value)} placeholder={t('colors.shade_name_en')} className="w-full" /> */}
             <Input value={nameEn} onChange={e => handleNameEnChange(e.target.value)} placeholder={t('colors.shade_name_en')} className="w-full" />
           </div>
         </div>

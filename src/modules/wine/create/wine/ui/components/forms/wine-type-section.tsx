@@ -1,10 +1,10 @@
-import { UseFormReturn } from 'react-hook-form'
-import { WineFormData } from '../../../presenters/wine-form-schema'
-import { useTranslation } from 'react-i18next'
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/UIKit/shadcn/ui/form'
-import { WineType } from '@/modules/wine/create/wine-types/entities/types/wine-type'
 import { memo } from 'react'
+import { UseFormReturn } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { WineFormData } from '../../../presenters/wine-form-schema'
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/UIKit/shadcn/ui/form'
 import { Input } from '@/UIKit/shadcn/ui/input'
+import { WineType } from '@/modules/wine/create/wine-types/entities/types/wine-type'
 import { FormFieldCombobox } from '@/UIKit/app-components/form-field-combobox'
 
 interface WineTypeSectionProps {

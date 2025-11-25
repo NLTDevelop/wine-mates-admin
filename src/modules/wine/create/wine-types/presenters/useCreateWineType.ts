@@ -10,7 +10,7 @@ interface UseCreateWineTypeProps {
 interface UseCreateWineTypeReturn {
   isExpanded: boolean
   formData: CreateWineTypeParams
-  updateFormData: (field: /*'nameUa' | 'nameEn'*/'translations' | 'colors', value: any) => void
+  updateFormData: (field: 'translations' | 'colors', value: any) => void
   handleCreateWineType: () => void
   handleCancel: () => void
   expandForm: () => void
@@ -19,9 +19,7 @@ interface UseCreateWineTypeReturn {
 export const useCreateWineType = ({ onCreateWineType, isLoading = false }: UseCreateWineTypeProps): UseCreateWineTypeReturn => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [formData, setFormData] = useState<CreateWineTypeParams>({
-    // nameUa: '',
-    // nameEn: '',
-    translations: createTranslations('',''),
+    translations: createTranslations('', ''),
     colors: [],
   })
 
@@ -32,19 +30,17 @@ export const useCreateWineType = ({ onCreateWineType, isLoading = false }: UseCr
   const handleCreateWineType = useCallback(() => {
     if (!isLoading) {
       const wineTypeDataForApi: CreateWineTypeRequest = {
-        // nameUa: formData.nameUa,
-        // nameEn: formData.nameEn,
-         translations: formData.translations || [],
+        translations: formData.translations || [],
         colorIds: formData.colors.map(color => color.id),
       }
       onCreateWineType(wineTypeDataForApi)
-      setFormData({ /*nameUa: '', nameEn: ''*/translations: createTranslations('',''), colors: [] })
+      setFormData({ translations: createTranslations('', ''), colors: [] })
       setIsExpanded(false)
     }
   }, [isLoading, onCreateWineType, formData])
 
   const handleCancel = useCallback(() => {
-    setFormData({ /*nameUa: '', nameEn: ''*/translations: createTranslations('',''), colors: [] })
+    setFormData({ translations: createTranslations('', ''), colors: [] })
     setIsExpanded(false)
   }, [])
 

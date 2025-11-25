@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { wineOptionsQueries } from '../../wine-types/entities/wine-options-queries'
 import { getDisplayNames } from '@/lib/utils';
 import { BaseWineColor } from '../entities/types';
+
 import { mockWineColorGroups } from '../../colors/entities/types/mockColor';
 
 //для мок
@@ -14,7 +15,7 @@ export const useWineOptionsMock = () => {
     const searchTerm = search.toLowerCase();
     
     return mockWineColorGroups.filter((color:BaseWineColor) => {
-      const { nameUa, nameEn } = getDisplayNames(color.translations);
+      const { nameUa, nameEn } = getDisplayNames(color.translations || []);
       
       return nameUa.toLowerCase().includes(searchTerm) || 
              (nameEn && nameEn.toLowerCase().includes(searchTerm));

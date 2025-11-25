@@ -52,8 +52,6 @@ export const useColorGroups = ({ colorGroups, editingGroupData, setEditingGroup,
       })
 
       const groupFormData = {
-        // nameUa: group.nameUa || '',
-        // nameEn: group.nameEn || '',
         translations: group.translations || [],
         colorHex: group.colorHex || '',
         // sortNumber: group.sortNumber || 0,
@@ -157,7 +155,6 @@ export const useColorGroups = ({ colorGroups, editingGroupData, setEditingGroup,
   const canSaveGroup = useCallback(
     (groupId: string) => {
       const data = editingGroupData[groupId]
-      // return data?.nameUa && data?.nameEn && data?.colorHex
       if (!data?.translations) return false
 
       const { nameUa, nameEn } = getDisplayNames(data.translations)
@@ -172,9 +169,6 @@ export const useColorGroups = ({ colorGroups, editingGroupData, setEditingGroup,
       const currentData = editingGroupData[groupId]
 
       if (!group || !currentData) return false
-
-      // return group.nameUa !== currentData.nameUa || group.nameEn !== currentData.nameEn || group.colorHex !== currentData.colorHex
-      //  || group.sortNumber !== currentData.sortNumber
 
       const { nameUa: currentNameUa, nameEn: currentNameEn } = getDisplayNames(currentData.translations || [])
       const { nameUa: originalNameUa, nameEn: originalNameEn } = getDisplayNames(group.translations)

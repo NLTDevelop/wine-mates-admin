@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Button } from '@/UIKit/shadcn/ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '@/UIKit/shadcn/ui/dialog'
 import { DialogTitle } from '@radix-ui/react-dialog'
 

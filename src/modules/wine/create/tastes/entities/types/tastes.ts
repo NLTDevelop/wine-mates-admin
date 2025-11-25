@@ -2,25 +2,14 @@ import { BaseWineColor, NameDictionary } from '../../../general/entities/types'
 
 export interface WineTaste {
   id: string
-  // nameUa: string
-  // nameEn: string
-   translations: NameDictionary[]
+  translations: NameDictionary[]
   colorHex: string
   colors: BaseWineColor[]
 }
 
-// export interface CreateWineTasteParams {
-//   // nameUa: string
-//   // nameEn: string
-//    translations: NameDictionary[]
-//   colorHex: string
-//   colors: BaseWineColor[]
-// }
+export type CreateWineTasteParams = Omit<WineTaste, 'id'>
 
-export type CreateWineTasteParams =  Omit<WineTaste, 'id'>
 export interface CreateWineTasteRequest {
-  // nameUa: string
-  // nameEn: string
   translations: NameDictionary[]
   colorHex: string
   colorIds: string[]

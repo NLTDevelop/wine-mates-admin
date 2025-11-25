@@ -20,7 +20,7 @@ export const useTranslationsName = ({ initialTranslations, onTranslationsChange 
 
   useEffect(() => {
     const additional = (initialTranslations || [])
-      .filter(translation => translation.language !== 'ua' && translation.language !== 'en')
+      .filter(translation => translation.language !== 'uk' && translation.language !== 'en')
       .map(translation => ({
         id: `${translation.language}-${Date.now()}`,
         language: translation.language,
@@ -77,7 +77,7 @@ export const useTranslationsName = ({ initialTranslations, onTranslationsChange 
   const getAvailableLanguages = (currentTranslationId?: string) => {
     const usedLanguages = additionalTranslations.filter(translation => translation.id !== currentTranslationId && translation.language !== '').map(translation => translation.language as Language)
 
-    return AVAILABLE_LANGUAGES.filter(lang => !usedLanguages.includes(lang.code) && lang.code !== 'ua' && lang.code !== 'en')
+    return AVAILABLE_LANGUAGES.filter(lang => !usedLanguages.includes(lang.code) && lang.code !== 'uk' && lang.code !== 'en')
   }
 
   return {
