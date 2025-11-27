@@ -9,9 +9,10 @@ interface UseEditWineFormProps {
   onSuccess?: () => void
 }
 
+
 export const useEditWineForm = ({ wine, onSuccess }: UseEditWineFormProps) => {
   const { updateWine, isUpdating } = useUpdateWine()
-  const form = useWineForm({ mode: 'edit', initialData: wine })
+  const form = useWineForm({ initialData: wine })
 
   const onSubmit = async (data: WineFormData): Promise<void> => {
     try {
@@ -23,9 +24,7 @@ export const useEditWineForm = ({ wine, onSuccess }: UseEditWineFormProps) => {
     }
   }
 
-  const resetForm = () => {
-    form.reset()
-  }
 
-  return { form, isSubmitting: isUpdating, onSubmit, resetForm }
+
+  return { form, isSubmitting: isUpdating, onSubmit }
 }

@@ -18,6 +18,7 @@ interface WineFormProps {
 
 export const WineForm: React.FC<WineFormProps> = ({ form, wineTypes, mode, onSubmit, onCancel, isSubmitting = false }) => {
   const { t } = useTranslation('common')
+  const { t: tw } = useTranslation('wines')
 
   const handleSubmit = (data: WineFormData) => {
     onSubmit(data)
@@ -34,22 +35,24 @@ export const WineForm: React.FC<WineFormProps> = ({ form, wineTypes, mode, onSub
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <BasicInfoSection form={form} wineTypes={wineTypes} mode={mode} />
+        <BasicInfoSection form={form} wineTypes={wineTypes} />
 
-        <div className="flex gap-4 justify-end">
+        <div className="flex gap-4 justify-between">
           {mode === 'edit' && onCancel && (
             <Button type="button" variant="outline" onClick={handleCancel}>
-              {t('button.cancel')}
+              {tw('button.go_detail')}
             </Button>
           )}
 
-          <Button type="button" variant="outline" onClick={onReset}>
-            {t('button.clear')}
-          </Button>
+          <div className='flex gap-4'>
+            <Button type="button" variant="outline" onClick={onReset}>
+              {t('button.cancel')}
+            </Button>
 
-          <Button type="submit" className="min-w-32" disabled={isSubmitting}>
-            {isSubmitting ? (mode === 'create' ? t('button.creating') : t('button.saving')) : mode === 'create' ? t('button.create') : t('button.save')}
-          </Button>
+            <Button type="submit" className="min-w-32" disabled={isSubmitting}>
+              {isSubmitting ? (mode === 'create' ? t('button.creating') : t('button.saving')) : mode === 'create' ? t('button.create') : t('button.save')}
+            </Button>
+          </div>
         </div>
       </form>
     </Form>

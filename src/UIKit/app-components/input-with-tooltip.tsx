@@ -11,7 +11,7 @@ interface InputWithTooltipProps extends React.InputHTMLAttributes<HTMLInputEleme
 export const InputWithTooltip = React.forwardRef<HTMLInputElement, InputWithTooltipProps>(({ className, error, ...props }, ref) => {
   return (
     <div className="relative">
-      <Input className={cn(className)} ref={ref} {...props} />
+      <Input className={cn(className, error && "pr-8")} ref={ref} {...props} />
       {error && (
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
           <NLTTooltip delay={500} message={error} className="bg-red-500 max-w-[300px]" trigger={<AlertCircle className="h-4 w-4 text-red-400" />} />

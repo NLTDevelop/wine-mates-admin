@@ -6,7 +6,6 @@ import { Textarea } from '@/UIKit/shadcn/ui/textarea'
 
 interface DescriptionSectionProps {
   form: UseFormReturn<WineFormData>
-  mode: 'create' | 'edit'
 }
 export const DescriptionSection = ({ form }: DescriptionSectionProps) => {
   const { t } = useTranslation('wines')

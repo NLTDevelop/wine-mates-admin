@@ -12,22 +12,21 @@ import { WineFormData } from '../../../presenters/wine-form-schema'
 interface BasicInfoSectionProps {
   form: UseFormReturn<WineFormData>
   wineTypes: WineType[]
-  mode: 'create' | 'edit'
 }
 
-export const BasicInfoSection = ({ form, wineTypes, mode }: BasicInfoSectionProps) => {
+export const BasicInfoSection = ({ form, wineTypes }: BasicInfoSectionProps) => {
   const countryValue = form.watch('country')
   const regionValue = form.watch('region')
 
   return (
     <Card className="rounded-t-none bg-input/50">
       <CardContent className="space-y-6 sm:px-0">
-        <MediaSection form={form} mode={mode} />
-        <ProducerInfoSection form={form} mode={mode} />
-        <LocationSection form={form} countryValue={countryValue} regionValue={regionValue} mode={mode} />
-        <WineTypeSection form={form} wineTypes={wineTypes} mode={mode} />
-        <VintageSection form={form} mode={mode} />
-        <DescriptionSection form={form} mode={mode} />
+        <MediaSection form={form} />
+        <ProducerInfoSection form={form} />
+        <LocationSection form={form} countryValue={countryValue} regionValue={regionValue} />
+        <WineTypeSection form={form} wineTypes={wineTypes} />
+        <VintageSection form={form}  />
+        <DescriptionSection form={form}  />
       </CardContent>
     </Card>
   )

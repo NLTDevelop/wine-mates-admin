@@ -12,10 +12,7 @@ interface EditWineFormProps {
 }
 
 export const EditWineForm: React.FC<EditWineFormProps> = ({ wine, wineTypes, onSuccess, onCancel }) => {
-  const { form, isSubmitting, onSubmit } = useEditWineForm({
-    wine,
-    onSuccess,
-  })
+  const { form, isSubmitting, onSubmit } = useEditWineForm({ wine, onSuccess })
 
   return <WineForm form={form} wineTypes={wineTypes} mode="edit" onSubmit={onSubmit} onCancel={onCancel} isSubmitting={isSubmitting} />
 }

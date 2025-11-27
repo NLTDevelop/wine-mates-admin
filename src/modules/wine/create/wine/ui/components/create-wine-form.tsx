@@ -10,5 +10,9 @@ interface CreateWineFormProps {
 export const CreateWineForm: React.FC<CreateWineFormProps> = ({ wineTypes }) => {
   const { form, isSubmitting, onSubmit } = useCreateWineForm()
 
-  return <WineForm form={form} wineTypes={wineTypes} mode="create" onSubmit={onSubmit} isSubmitting={isSubmitting} />
+  return (
+    <div className="mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-4xl">
+      <WineForm form={form} wineTypes={wineTypes} mode="create" onSubmit={onSubmit} isSubmitting={isSubmitting} />
+    </div>
+  )
 }
