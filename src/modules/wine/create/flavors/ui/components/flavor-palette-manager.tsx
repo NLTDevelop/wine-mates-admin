@@ -203,7 +203,7 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
                           />
 
                           <AromasManager
-                            aromas={items.getAromasForGroup(subgroup.id, newItemData[group.id]?.aromas || [])}
+                            aromas={items.getAromasForGroup(subgroup?.id, newItemData[group.id]?.aromas || [])}
                             onAromasChange={newAromas => {
                               setNewItemData(prev => ({
                                 ...prev,

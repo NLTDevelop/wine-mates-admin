@@ -20,8 +20,8 @@ export const WineView = () => {
   const { t: tc } = useTranslation('common')
   const navigate = useNavigate()
 
-  const { wines, filters, onChangeSearch, handleClearSearch, onChangePagination, deleteModal, searchValue, deleteWine, saveWineChanges, wineToConfirm, confirmModal, importWines } = useWineList()
-  const columns = useWineColumns({ onEdit: (wine) => navigate(`/wines/${wine.id}?edit=true`), onDelete: deleteWine, onConfirm: confirmModal.open })
+  const { wines, filters, onChangeSearch, handleClearSearch, onChangePagination, deleteModal, searchValue, deleteWine, wineToConfirm, confirmModal, importWines } = useWineList()
+  const columns = useWineColumns({ onEdit: wine => navigate(`/wines/${wine.id}?edit=true`), onDelete: deleteWine, onConfirm: confirmModal.open })
   const { table } = useDataTable(wines ?? [], columns)
 
   const modalActionTitle = wineToConfirm.isConfirm ? t('list.cancel_action') : t('list.confirm_action')

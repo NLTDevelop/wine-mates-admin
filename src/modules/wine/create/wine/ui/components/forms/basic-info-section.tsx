@@ -25,8 +25,8 @@ export const BasicInfoSection = ({ form, wineTypes }: BasicInfoSectionProps) => 
         <ProducerInfoSection form={form} />
         <LocationSection form={form} countryValue={countryValue} regionValue={regionValue} />
         <WineTypeSection form={form} wineTypes={wineTypes} />
-        <VintageSection form={form}  />
-        <DescriptionSection form={form}  />
+        <VintageSection form={form} />
+        <DescriptionSection form={form} />
       </CardContent>
     </Card>
   )

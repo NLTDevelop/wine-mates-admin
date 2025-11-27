@@ -37,14 +37,14 @@ export const WineForm: React.FC<WineFormProps> = ({ form, wineTypes, mode, onSub
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <BasicInfoSection form={form} wineTypes={wineTypes} />
 
-        <div className="flex gap-4 justify-between">
+        <div className={`flex gap-4 ${mode !== 'create' ? 'justify-between' : 'justify-end'}`}>
           {mode === 'edit' && onCancel && (
             <Button type="button" variant="outline" onClick={handleCancel}>
               {tw('button.go_detail')}
             </Button>
           )}
 
-          <div className='flex gap-4'>
+          <div className="flex gap-4">
             <Button type="button" variant="outline" onClick={onReset}>
               {t('button.cancel')}
             </Button>

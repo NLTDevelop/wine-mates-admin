@@ -34,7 +34,6 @@ export const useWineForm = ({ initialData }: UseWineFormProps = {}) => {
             return img
           }
           const file = new File([], img.alt || 'wine-image')
-          console.log(file)
           return Object.assign(file, {
             id: (img as any).id,
             url: (img as any).url,

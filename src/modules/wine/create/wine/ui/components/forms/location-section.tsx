@@ -39,7 +39,7 @@ export const LocationSection = memo(({ form, countryValue, regionValue }: Locati
     }
 
     if (country && !region) {
-      return tm("region_require")
+      return tm('region_require')
     }
     return form.formState.errors.region?.message as string
   }, [form.watch('country'), form.watch('region'), form.formState.touchedFields.region])

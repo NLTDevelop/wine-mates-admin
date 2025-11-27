@@ -176,41 +176,74 @@ export const arraysEqual = <T>(a: T[], b: T[], comparator?: (itemA: T, itemB: T)
   if (a.length !== b.length) return false
 
   if (comparator) {
-    return a.every((item, index) => comparator(item, b[index]))
+    const sortedA = [...a].sort((x, y) => {
+      const xId = (x as any).id ?? ''
+      const yId = (y as any).id ?? ''
+      return String(xId).localeCompare(String(yId))
+    })
+    const sortedB = [...b].sort((x, y) => {
+      const xId = (x as any).id ?? ''
+      const yId = (y as any).id ?? ''
+      return String(xId).localeCompare(String(yId))
+    })
+    return sortedA.every((item, index) => comparator(item, sortedB[index]))
   }
 
-  if (a.length > 0 && typeof a[0] === 'object') {
-    const sortedA = a.map(item => JSON.stringify(item, Object.keys(item as any).sort()))
-    const sortedB = b.map(item => JSON.stringify(item, Object.keys(item as any).sort()))
-    return sortedA.every((item, index) => item === sortedB[index])
-  }
+  const sortedA = [...a].sort((x, y) => {
+    const xId = (x as any).id ?? ''
+    const yId = (y as any).id ?? ''
+    return String(xId).localeCompare(String(yId))
+  })
 
-  return a.every((item, index) => item === b[index])
+  const sortedB = [...b].sort((x, y) => {
+    const xId = (x as any).id ?? ''
+    const yId = (y as any).id ?? ''
+    return String(xId).localeCompare(String(yId))
+  })
+
+  return sortedA.every((item, index) => {
+    const other = sortedB[index]
+
+    if (typeof item === 'object' && item !== null && typeof other === 'object' && other !== null) {
+      if ('id' in item && 'id' in other) {
+        return String((item as any).id) === String((other as any).id)
+      }
+      const itemStr = JSON.stringify(item, Object.keys(item as any).sort())
+      const otherStr = JSON.stringify(other, Object.keys(other as any).sort())
+      return itemStr === otherStr
+    }
+
+    return item === other
+  })
 }
 
 export const areNestedArrEqual = (a: any[], b: any[]): boolean => {
-  if (a.length !== b.length) {
-    return false
-  }
+  if (a.length !== b.length) return false
 
-  const sortedA = [...a].sort((x, y) => (x.id || '').localeCompare(y.id || ''))
-  const sortedB = [...b].sort((x, y) => (x.id || '').localeCompare(y.id || ''))
+  const norm = (id: any) => (id != null ? String(id) : '')
 
-  const result = sortedA.every((itemA, index) => {
+  const sortedA = [...a].sort((x, y) => norm(x.id).localeCompare(norm(y.id)))
+  const sortedB = [...b].sort((x, y) => norm(x.id).localeCompare(norm(y.id)))
+
+  return sortedA.every((itemA, index) => {
     const itemB = sortedB[index]
 
-    if (itemA.id !== itemB.id) {
-      return false
-    }
+    if (norm(itemA.id) !== norm(itemB.id)) return false
 
-    const translationsEqual = arraysEqual(itemA.translations || [], itemB.translations || [])
+    const translationsEqual = areTranslationsEqual(itemA.translations || [], itemB.translations || [])
 
-    if (!translationsEqual) {
-      return false
-    }
-
-    return true
+    return translationsEqual
   })
+}
 
-  return result
+const areTranslationsEqual = (a: NameDictionary[], b: NameDictionary[]): boolean => {
+  if (a.length !== b.length) return false
+
+  const sortedA = [...a].sort((x, y) => x.language.localeCompare(y.language))
+  const sortedB = [...b].sort((x, y) => x.language.localeCompare(y.language))
+
+  return sortedA.every((transA, index) => {
+    const transB = sortedB[index]
+    return transA.language === transB.language && transA.name === transB.name
+  })
 }

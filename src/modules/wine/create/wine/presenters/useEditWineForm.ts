@@ -9,7 +9,6 @@ interface UseEditWineFormProps {
   onSuccess?: () => void
 }
 
-
 export const useEditWineForm = ({ wine, onSuccess }: UseEditWineFormProps) => {
   const { updateWine, isUpdating } = useUpdateWine()
   const form = useWineForm({ initialData: wine })
@@ -23,8 +22,6 @@ export const useEditWineForm = ({ wine, onSuccess }: UseEditWineFormProps) => {
       throw error
     }
   }
-
-
 
   return { form, isSubmitting: isUpdating, onSubmit }
 }

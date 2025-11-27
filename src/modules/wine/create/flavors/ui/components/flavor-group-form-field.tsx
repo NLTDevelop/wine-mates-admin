@@ -8,7 +8,7 @@ import { CreateWineAromaGroupParams } from '../../entities/types/flavor-types'
 import { BaseWineColor, NameDictionary } from '../../../general/entities/types'
 import { AdditionalTranslations } from '../../../general/ui/components/additional-translations'
 
-import { mockBaseWineColors } from '../../../general/entities/mockBaseColor'
+// import { mockBaseWineColors } from '../../../general/entities/mockBaseColor'
 
 interface FlavorGroupFormFieldsProps {
   formData: Partial<CreateWineAromaGroupParams>
@@ -18,11 +18,11 @@ interface FlavorGroupFormFieldsProps {
   cachedColors: BaseWineColor[]
 }
 
-export const FlavorGroupFormFields = ({ formData, onFormDataChange, isLoading = false, autoFocus = true /*, cachedColors*/ }: FlavorGroupFormFieldsProps) => {
+export const FlavorGroupFormFields = ({ formData, onFormDataChange, isLoading = false, autoFocus = true, cachedColors }: FlavorGroupFormFieldsProps) => {
   const { t } = useTranslation('wines')
 
   const { colorValues, handleColorChange, fetchOptions } = useColorForm({
-    cachedColors: mockBaseWineColors, //временно мок
+    cachedColors, //: mockBaseWineColors, //временно мок
     initialColors: formData.colors || [],
     onColorsChange: colors => onFormDataChange('colors', colors),
   })

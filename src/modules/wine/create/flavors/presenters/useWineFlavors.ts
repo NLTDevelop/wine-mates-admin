@@ -15,7 +15,7 @@ import {
 import { wineFlavorService } from '../entities/wine-flavor-service'
 import { wineFlavorQueries } from '../entities/wine-flavor-queries'
 
-import { mockAromaGroups } from '../entities/mock'
+// import { mockAromaGroups } from '../entities/mock'
 
 export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
   const queryClient = useQueryClient()
@@ -44,10 +44,10 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
     store.setAromaGroups(groupsQuery.data.rows)
   }, [groupsQuery.data, groupsQuery.isFetching])
 
-  // const aromaGroups = (): WineAromaGroup[] => {
-  //   const cached = queryClient.getQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters])
-  //   return cached?.rows ?? []
-  // }
+  const aromaGroups = (): WineAromaGroup[] => {
+    const cached = queryClient.getQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters])
+    return cached?.rows ?? []
+  }
 
   const createGroupMutation = useMutation({
     ...wineFlavorQueries.createGroup(),
@@ -378,8 +378,8 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
   const onChangePagination = (page: number) => store.setFilters({ page })
 
   return {
-    aromaGroups: mockAromaGroups,
-    // aromaGroups: aromaGroups(),
+    // aromaGroups: mockAromaGroups,
+    aromaGroups: aromaGroups(),
     totalCount: groupsQuery.data?.count || 0,
 
     filters: store.filters,
