@@ -29,22 +29,21 @@ export const SortableInputItem: React.FC<SortableInputItemProps> = ({ id, values
 
   return (
     <div>
-    <div ref={setNodeRef} style={style} className={`flex items-center gap-2 w-full ${className}`}>
-      <div {...attributes} {...listeners} className="flex-shrink-0 cursor-grab active:cursor-grabbing p-1 hover:bg-gray-100 rounded">
-        <GripVertical className="w-4 h-4 text-gray-400" />
+      <div ref={setNodeRef} style={style} className={`flex items-center gap-2 w-full ${className}`}>
+        <div {...attributes} {...listeners} className="flex-shrink-0 cursor-grab active:cursor-grabbing p-1 hover:bg-gray-100 rounded">
+          <GripVertical className="w-4 h-4 text-gray-400" />
+        </div>
+
+        <div className="flex gap-2 w-full">
+          {fields.map(field => (
+            <Input key={field.name} value={values[field.name] || ''} onChange={e => onUpdate(field.name, e.target.value)} placeholder={field.placeholder} className="flex-1 h-8" />
+          ))}
+        </div>
+
+        <Button type="button" variant="ghost" size="sm" onClick={onRemove} className="h-8 w-8 p-0 hover:bg-red-50 flex-shrink-0">
+          <X className="w-4 h-4 text-red-600" />
+        </Button>
       </div>
-
-      <div className="flex gap-2 w-full">
-        {fields.map(field => (
-          <Input key={field.name} value={values[field.name] || ''} onChange={e => onUpdate(field.name, e.target.value)} placeholder={field.placeholder} className="flex-1 h-8" />
-        ))}
-      </div>
-
-      <Button type="button" variant="ghost" size="sm" onClick={onRemove} className="h-8 w-8 p-0 hover:bg-red-50 flex-shrink-0">
-        <X className="w-4 h-4 text-red-600" />
-      </Button>
-    </div>
-
     </div>
   )
 }

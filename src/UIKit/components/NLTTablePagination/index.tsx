@@ -40,7 +40,7 @@ export const NLTTablePagination: FC<IProps> = ({ page, limit, totalRows, setLimi
   }
 
   return (
-    <div className="flex items-center justify-end space-x-2 pt-4">
+    <div className="flex items-center justify-end space-x-2 pb-4">
       {setLimit && (
         <div className="flex items-center space-x-2">
           <span className="text-sm">{t('rowsPerPage')}</span>
@@ -61,7 +61,7 @@ export const NLTTablePagination: FC<IProps> = ({ page, limit, totalRows, setLimi
       {totalPages > 0 && (
         <div className="space-x-2">
           <Button variant="outline" size="sm" disabled={currentPage <= 1} onClick={onPrevious}>
-            {`<<`} 
+            {`<<`}
           </Button>
           <span className="text-sm">{`${t('page')} ${currentPage} ${t('of')} ${totalPages}`}</span>
           <Button variant="outline" size="sm" disabled={isLastPage} onClick={onNext}>

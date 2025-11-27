@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction } from 'react'
 import { BaseWineColor, NameDictionary } from '../../general/entities/types'
 import { CreateWineTasteCharacteristicParams, LevelItem } from './taste-characteristics'
 
-
 export interface EditingCharacteristicState {
   characteristicId: string
   isEditingCharacteristic: boolean

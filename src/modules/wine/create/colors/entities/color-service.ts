@@ -47,5 +47,6 @@ export const colorService = {
     return api.delete(buildUrl(COLOR_CRUD_ENDPOINTS.COLOR_SHADES.DELETE, { id: shadeId })).then(response => response.data)
   },
 
-  reorderShades: (params: ReorderShadesParams): Promise<void> => api.patch(buildUrl(COLOR_CRUD_ENDPOINTS.COLOR_SHADES.REORDER, { id: params.colorId }), { shadeIds: params.shadeIds }).then(response => response.data),
+  reorderShades: (params: ReorderShadesParams): Promise<void> =>
+    api.patch(buildUrl(COLOR_CRUD_ENDPOINTS.COLOR_SHADES.REORDER, { id: params.colorId }), { shadeIds: params.shadeIds }).then(response => response.data),
 }

@@ -1,4 +1,4 @@
-import { UpdateWineListParams, WineFilters } from './types/types'
+import { UpdateWineListParams, WineFilters, CreateWineRequest } from './types/types'
 import { wineListService } from './wine-list-service'
 
 export const wineQueries = {
@@ -15,6 +15,11 @@ export const wineQueries = {
   confirmWine: () => ({
     mutationKey: ['users', 'confirmCategory'],
     mutationFn: ({ id, isConfirmed }: { id: string; isConfirmed: boolean }) => wineListService.confirm({ id, isConfirmed }),
+  }),
+
+  create: () => ({
+    mutationKey: ['wines', 'create'],
+    mutationFn: (wineData: CreateWineRequest) => wineListService.create(wineData),
   }),
 
   update: () => ({

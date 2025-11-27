@@ -1,6 +1,5 @@
-import {  CreateWineTasteCharacteristicRequest, ReorderLevelParams, UpdateWineTasteCharacteristicParams } from "./taste-characteristics";
-import { tasteCharacteristicsService } from "./taste-characteristics-service";
-
+import { CreateWineTasteCharacteristicRequest, ReorderLevelParams, UpdateWineTasteCharacteristicParams } from './taste-characteristics'
+import { tasteCharacteristicsService } from './taste-characteristics-service'
 
 export const tasteCharacteristicsQueries = {
   list: (include?: string[]) => ({
@@ -22,7 +21,7 @@ export const tasteCharacteristicsQueries = {
     mutationKey: ['taste-characteristics', 'delete'],
     mutationFn: (characteristicId: string) => tasteCharacteristicsService.delete(characteristicId),
   }),
-   reorderLevels: () => ({
+  reorderLevels: () => ({
     mutationKey: ['taste-characteristics', 'reorderLevels'],
     mutationFn: (params: ReorderLevelParams) => tasteCharacteristicsService.reorderLevers(params),
   }),

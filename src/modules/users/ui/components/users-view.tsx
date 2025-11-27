@@ -9,6 +9,7 @@ import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
 import { ContentLayout } from '@/layout/components/content-layout'
 import { useNavigate } from 'react-router-dom'
 import { PATHS } from '@/navigation/paths'
+import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 
 export const UsersView = () => {
   const { t } = useTranslation('users')
@@ -37,13 +38,15 @@ export const UsersView = () => {
 
   return (
     <ContentLayout title={t('users')}>
-      <NLTDataTable
-        table={table}
-        rowClassname="text-center cursor-pointer"
-        ToolBar={<UserFilters filterSearch={searchValue} onChangeFilterSearch={onChangeSearch} onClearSearch={handleClearSearch} />}
-        onRowClick={handleRowClick}
-      />
-      <NLTTablePagination limit={filters.limit} page={filters.page} totalRows={totalCount || 0} setPage={onChangePagination} />
+      <div className="pb-2">
+        <NLTDataTable
+          table={table}
+          rowClassname="text-center cursor-pointer"
+          ToolBar={<UserFilters filterSearch={searchValue} onChangeFilterSearch={onChangeSearch} onClearSearch={handleClearSearch} />}
+          onRowClick={handleRowClick}
+        />
+      </div>
+      {totalCount && totalCount > DEFAULT_PAGINATION_LIMIT && <NLTTablePagination limit={filters.limit} page={filters.page} totalRows={totalCount || 0} setPage={onChangePagination} />}
       <ConfirmModal
         title={t('modal.confirm_title')}
         actionTitle={modalActionTitle}

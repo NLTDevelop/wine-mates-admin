@@ -4,7 +4,7 @@ import { useWineTypeStore } from '../entities/wine-type-store'
 import { wineTypeQueries } from '../entities/wine-type-queries'
 import { CreateWineTypeRequest, UpdateWineTypeParams, WineType } from '../entities/types/wine-type'
 import { BaseWineColor } from '../../general/entities/types'
-import { mockWineTypes } from '../entities/mock'
+// import { mockWineTypes } from '../entities/mock'
 import { getDisplayNames } from '@/lib/utils'
 
 export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
@@ -64,7 +64,7 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
           ...context.optimisticWineType,
           id: finalId,
         }
-
+        queryClient.invalidateQueries({ queryKey: ['wine-types', 'list', 'assigned-colors'] })
         queryClient.setQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'], (old = []) => old.map(wt => (wt.id === context.optimisticWineType.id ? finalWineType : wt)))
       }
     },
@@ -179,8 +179,8 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
   }
 
   return {
-    wineTypes: mockWineTypes,
-    // wineTypes: wineTypeQuery.data || [],
+    // wineTypes: mockWineTypes,
+    wineTypes: wineTypeQuery.data || [],
     searchResults: store.searchResults,
     currentWineType: store.currentWineType,
 

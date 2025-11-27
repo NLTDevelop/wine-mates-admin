@@ -46,7 +46,7 @@ const DialogContent = React.forwardRef<
       >
         <div
           {...(slotProps?.container || {})}
-          className={cn('w-full max-h-full overflow-y-auto grid gap-4 border bg-background sm:p-6 max-sm:p-3 shadow-lg sm:rounded-lg', slotProps?.container?.className)}
+          className={cn('rounded-md w-full max-h-full overflow-y-auto grid gap-4 border bg-background sm:p-6 max-sm:p-3 shadow-lg sm:rounded-lg', slotProps?.container?.className)}
         >
           {children}
           {showCloseButton && (

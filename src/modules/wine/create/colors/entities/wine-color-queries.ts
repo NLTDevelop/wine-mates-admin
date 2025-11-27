@@ -38,7 +38,7 @@ export const wineColorQueries = {
     mutationFn: (shadeId: string) => colorService.deleteShade(shadeId),
   }),
 
-   reorderShades: () => ({
+  reorderShades: () => ({
     mutationKey: ['color-shades', 'reorder'],
     mutationFn: (params: ReorderShadesParams) => colorService.reorderShades(params),
   }),

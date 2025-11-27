@@ -4,7 +4,11 @@ import { WineFormData } from '../../../presenters/wine-form-schema'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/UIKit/shadcn/ui/form'
 import { Textarea } from '@/UIKit/shadcn/ui/textarea'
 
-export const DescriptionSection = ({ form }: { form: UseFormReturn<WineFormData> }) => {
+interface DescriptionSectionProps {
+  form: UseFormReturn<WineFormData>
+  mode: 'create' | 'edit'
+}
+export const DescriptionSection = ({ form }: DescriptionSectionProps) => {
   const { t } = useTranslation('wines')
 
   return (

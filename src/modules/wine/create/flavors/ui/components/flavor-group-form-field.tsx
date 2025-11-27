@@ -18,7 +18,7 @@ interface FlavorGroupFormFieldsProps {
   cachedColors: BaseWineColor[]
 }
 
-export const FlavorGroupFormFields = ({ formData, onFormDataChange, isLoading = false, autoFocus = true /*cachedColors*/ }: FlavorGroupFormFieldsProps) => {
+export const FlavorGroupFormFields = ({ formData, onFormDataChange, isLoading = false, autoFocus = true /*, cachedColors*/ }: FlavorGroupFormFieldsProps) => {
   const { t } = useTranslation('wines')
 
   const { colorValues, handleColorChange, fetchOptions } = useColorForm({

@@ -9,20 +9,26 @@ export const useWineTemplates = () => {
   const { t } = useTranslation('wines')
 
   // ============ пока нет бека ============
-   const wineTemplates = useWineTemplateStore((state) => state.wineTemplates)
-  const setWineTemplates = useWineTemplateStore((state) => state.setWineTemplates)
-  const reorderTemplates = useWineTemplateStore((state) => state.reorderTemplates)
+  const wineTemplates = useWineTemplateStore(state => state.wineTemplates)
+  const setWineTemplates = useWineTemplateStore(state => state.setWineTemplates)
+  const reorderTemplates = useWineTemplateStore(state => state.reorderTemplates)
 
   useEffect(() => {
     if (wineTemplates.length === 0) {
       const staticTemplates = getWineTemplates(t)
-      console.log('Setting initial templates:', staticTemplates.map(t => t.type))
+      console.log(
+        'Setting initial templates:',
+        staticTemplates.map(t => t.type)
+      )
       setWineTemplates(staticTemplates)
     }
   }, [t, wineTemplates.length, setWineTemplates])
 
   const handleReorderTemplates = (templates: WineTemplate[]) => {
-    console.log('Reordering templates to:', templates.map(t => t.type))
+    console.log(
+      'Reordering templates to:',
+      templates.map(t => t.type)
+    )
     reorderTemplates(templates)
   }
 

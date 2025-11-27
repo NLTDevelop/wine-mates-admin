@@ -9,7 +9,7 @@ import { CreateWineTypeParams } from '../../entities/types/wine-type'
 import { BaseWineColor } from '../../../general/entities/types'
 import { AdditionalTranslations } from '../../../general/ui/components/additional-translations'
 import { cn } from '@/lib/utils'
-import { mockBaseWineColors } from '../../../general/entities/mockBaseColor'
+// import { mockBaseWineColors } from '../../../general/entities/mockBaseColor'
 
 interface WineTypeFormProps {
   formData: CreateWineTypeParams
@@ -22,12 +22,12 @@ interface WineTypeFormProps {
   hasChanges?: boolean
 }
 
-export const WineTypeForm: React.FC<WineTypeFormProps> = ({ formData, onFormDataChange, onSave, onCancel, isLoading = false, /*cachedColors,*/ mode = 'edit', hasChanges = true }) => {
+export const WineTypeForm: React.FC<WineTypeFormProps> = ({ formData, onFormDataChange, onSave, onCancel, isLoading = false, cachedColors, mode = 'edit', hasChanges = true }) => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
   const { colorValues, handleColorChange, fetchOptions } = useColorForm({
-    cachedColors: mockBaseWineColors, //временно мок
+    cachedColors, //: mockBaseWineColors, //временно мок
     initialColors: formData.colors || [],
     onColorsChange: colors => onFormDataChange('colors', colors),
   })
@@ -48,16 +48,13 @@ export const WineTypeForm: React.FC<WineTypeFormProps> = ({ formData, onFormData
     onTranslationsChange: translations => onFormDataChange('translations', translations),
   })
 
- const canSave =
-  mode === 'create'
-    ? nameUa && nameEn && formData.colors.length && !isLoading
-    : nameUa && nameEn && formData.colors.length && hasChanges && !isLoading
+  const canSave = mode === 'create' ? nameUa && nameEn && formData.colors.length && !isLoading : nameUa && nameEn && formData.colors.length && hasChanges && !isLoading
 
   const SaveIcon = mode === 'create' ? Plus : Save
   const saveText = isLoading ? tc('button.saving') : mode === 'create' ? tc('button.save') : tc('button.save')
 
   return (
-    <div className={cn("space-y-4",mode !== 'create' && "pl-8" )}>
+    <div className={cn('space-y-4', mode !== 'create' && 'pl-8')}>
       {mode !== 'create' ? (
         <h3 className="text-lg font-medium flex items-center gap-2">
           <Tags className="w-5 h-5" />
@@ -99,10 +96,10 @@ export const WineTypeForm: React.FC<WineTypeFormProps> = ({ formData, onFormData
       </div>
 
       <div className="flex gap-3 justify-end mt-4">
-        <Button size="sm" variant="ghost" className="border-1 hover:bg-muted-foreground hover:text-input" onClick={onCancel} disabled={isLoading}>
+        <Button size="sm" variant="ghost" className="border-1 hover:bg-muted-foreground hover:text-input sm:w-auto w-full" onClick={onCancel} disabled={isLoading}>
           {tc('button.cancel')}
         </Button>
-        <Button size="sm" onClick={onSave} disabled={!canSave}>
+        <Button size="sm" onClick={onSave} disabled={!canSave} className="sm:w-auto w-full">
           <SaveIcon className="w-4 h-4" />
           {saveText}
         </Button>

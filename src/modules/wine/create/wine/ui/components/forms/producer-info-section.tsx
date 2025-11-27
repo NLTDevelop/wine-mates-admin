@@ -4,7 +4,12 @@ import { WineFormData } from '../../../presenters/wine-form-schema'
 import { FormControl, FormField, FormItem, FormLabel } from '@/UIKit/shadcn/ui/form'
 import { InputWithTooltip } from '@/UIKit/app-components/input-with-tooltip'
 
-export const ProducerInfoSection = ({ form }: { form: UseFormReturn<WineFormData> }) => {
+interface ProducerInfoSectionProps {
+  form: UseFormReturn<WineFormData>
+  mode: 'create' | 'edit'
+}
+
+export const ProducerInfoSection = ({ form /*, mode*/ }: ProducerInfoSectionProps) => {
   const { t } = useTranslation('wines')
 
   return (

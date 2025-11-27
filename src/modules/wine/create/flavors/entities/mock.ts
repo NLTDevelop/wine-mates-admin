@@ -7,7 +7,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
     translations: [
       { name: 'Фруктові аромати', language: 'uk' },
       { name: 'Fruit Aromas', language: 'en' },
-      { name: 'Arômes Fruités', language: 'fr' }
+      { name: 'Arômes Fruités', language: 'fr' },
     ],
     colorHex: '#FF6B6B',
     sortNumber: 1,
@@ -17,7 +17,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
         translations: [
           { name: 'Цитрусові', language: 'uk' },
           { name: 'Citrus', language: 'en' },
-          { name: 'Cítricos', language: 'es' }
+          { name: 'Cítricos', language: 'es' },
         ],
         colorHex: '#FFD93D',
         sortNumber: 1,
@@ -26,7 +26,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '1-1-1',
             translations: [
               { name: 'Лимон', language: 'uk' },
-              { name: 'Lemon', language: 'en' }
+              { name: 'Lemon', language: 'en' },
             ],
             colorHex: '#FFE785',
             sortNumber: 1,
@@ -35,7 +35,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '1-1-2',
             translations: [
               { name: 'Апельсин', language: 'uk' },
-              { name: 'Orange', language: 'en' }
+              { name: 'Orange', language: 'en' },
             ],
             colorHex: '#FFE785',
             sortNumber: 2,
@@ -44,7 +44,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '1-1-3',
             translations: [
               { name: 'Грейпфрут', language: 'uk' },
-              { name: 'Grapefruit', language: 'en' }
+              { name: 'Grapefruit', language: 'en' },
             ],
             colorHex: '#FFE785',
             sortNumber: 3,
@@ -55,7 +55,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
         id: '1-2',
         translations: [
           { name: 'Ягідні', language: 'uk' },
-          { name: 'Berry', language: 'en' }
+          { name: 'Berry', language: 'en' },
         ],
         colorHex: '#E84393',
         sortNumber: 2,
@@ -64,7 +64,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '1-2-1',
             translations: [
               { name: 'Полуниця', language: 'uk' },
-              { name: 'Strawberry', language: 'en' }
+              { name: 'Strawberry', language: 'en' },
             ],
             colorHex: '#F075B3',
             sortNumber: 1,
@@ -73,7 +73,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '1-2-2',
             translations: [
               { name: 'Малина', language: 'uk' },
-              { name: 'Raspberry', language: 'en' }
+              { name: 'Raspberry', language: 'en' },
             ],
             colorHex: '#F075B3',
             sortNumber: 2,
@@ -82,7 +82,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '1-2-3',
             translations: [
               { name: 'Чорниця', language: 'uk' },
-              { name: 'Blueberry', language: 'en' }
+              { name: 'Blueberry', language: 'en' },
             ],
             colorHex: '#F075B3',
             sortNumber: 3,
@@ -96,7 +96,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
     id: '2',
     translations: [
       { name: 'Ягідні аромати', language: 'uk' },
-      { name: 'Berry Aromas', language: 'en' }
+      { name: 'Berry Aromas', language: 'en' },
     ],
     colorHex: '#E84393',
     sortNumber: 2,
@@ -105,7 +105,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
         id: '2-1',
         translations: [
           { name: 'Лісові ягоди', language: 'uk' },
-          { name: 'Forest Berries', language: 'en' }
+          { name: 'Forest Berries', language: 'en' },
         ],
         colorHex: '#C2185B',
         sortNumber: 1,
@@ -114,7 +114,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '2-1-1',
             translations: [
               { name: 'Суниця', language: 'uk' },
-              { name: 'Wild Strawberry', language: 'en' }
+              { name: 'Wild Strawberry', language: 'en' },
             ],
             colorHex: '#F075B3',
             sortNumber: 1,
@@ -123,7 +123,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '2-1-2',
             translations: [
               { name: 'Чорна смородина', language: 'uk' },
-              { name: 'Blackcurrant', language: 'en' }
+              { name: 'Blackcurrant', language: 'en' },
             ],
             colorHex: '#F075B3',
             sortNumber: 2,
@@ -132,7 +132,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '2-1-3',
             translations: [
               { name: 'Журавлина', language: 'uk' },
-              { name: 'Cranberry', language: 'en' }
+              { name: 'Cranberry', language: 'en' },
             ],
             colorHex: '#F075B3',
             sortNumber: 3,
@@ -146,7 +146,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
     id: '3',
     translations: [
       { name: 'Цитрусові аромати', language: 'uk' },
-      { name: 'Citrus Aromas', language: 'en' }
+      { name: 'Citrus Aromas', language: 'en' },
     ],
     colorHex: '#FFD93D',
     sortNumber: 3,
@@ -155,7 +155,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
         id: '3-1',
         translations: [
           { name: 'Цитрусові', language: 'uk' },
-          { name: 'Citrus', language: 'en' }
+          { name: 'Citrus', language: 'en' },
         ],
         colorHex: '#FFC107',
         sortNumber: 1,
@@ -164,7 +164,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '3-1-1',
             translations: [
               { name: 'Лимон', language: 'uk' },
-              { name: 'Lemon', language: 'en' }
+              { name: 'Lemon', language: 'en' },
             ],
             colorHex: '#FFE785',
             sortNumber: 1,
@@ -173,7 +173,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '3-1-2',
             translations: [
               { name: 'Лайм', language: 'uk' },
-              { name: 'Lime', language: 'en' }
+              { name: 'Lime', language: 'en' },
             ],
             colorHex: '#FFE785',
             sortNumber: 2,
@@ -182,7 +182,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '3-1-3',
             translations: [
               { name: 'Грейпфрут', language: 'uk' },
-              { name: 'Grapefruit', language: 'en' }
+              { name: 'Grapefruit', language: 'en' },
             ],
             colorHex: '#FFE785',
             sortNumber: 3,
@@ -191,7 +191,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '3-1-4',
             translations: [
               { name: 'Помело', language: 'uk' },
-              { name: 'Pomelo', language: 'en' }
+              { name: 'Pomelo', language: 'en' },
             ],
             colorHex: '#FFE785',
             sortNumber: 4,
@@ -205,7 +205,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
     id: '4',
     translations: [
       { name: 'Квіткові аромати', language: 'uk' },
-      { name: 'Floral Aromas', language: 'en' }
+      { name: 'Floral Aromas', language: 'en' },
     ],
     colorHex: '#A29BFE',
     sortNumber: 4,
@@ -214,7 +214,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
         id: '4-1',
         translations: [
           { name: 'Квіти', language: 'uk' },
-          { name: 'Flowers', language: 'en' }
+          { name: 'Flowers', language: 'en' },
         ],
         colorHex: '#7E57C2',
         sortNumber: 1,
@@ -223,7 +223,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '4-1-1',
             translations: [
               { name: 'Троянда', language: 'uk' },
-              { name: 'Rose', language: 'en' }
+              { name: 'Rose', language: 'en' },
             ],
             colorHex: '#C7C3FF',
             sortNumber: 1,
@@ -232,7 +232,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '4-1-2',
             translations: [
               { name: 'Жасмин', language: 'uk' },
-              { name: 'Jasmine', language: 'en' }
+              { name: 'Jasmine', language: 'en' },
             ],
             colorHex: '#C7C3FF',
             sortNumber: 2,
@@ -241,7 +241,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '4-1-3',
             translations: [
               { name: 'Бузок', language: 'uk' },
-              { name: 'Lilac', language: 'en' }
+              { name: 'Lilac', language: 'en' },
             ],
             colorHex: '#C7C3FF',
             sortNumber: 3,
@@ -250,7 +250,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '4-1-4',
             translations: [
               { name: 'Фіалка', language: 'uk' },
-              { name: 'Violet', language: 'en' }
+              { name: 'Violet', language: 'en' },
             ],
             colorHex: '#C7C3FF',
             sortNumber: 4,
@@ -264,7 +264,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
     id: '5',
     translations: [
       { name: 'Пряні аромати', language: 'uk' },
-      { name: 'Spicy Aromas', language: 'en' }
+      { name: 'Spicy Aromas', language: 'en' },
     ],
     colorHex: '#6BCF7F',
     sortNumber: 5,
@@ -273,7 +273,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
         id: '5-1',
         translations: [
           { name: 'Прянощі', language: 'uk' },
-          { name: 'Spices', language: 'en' }
+          { name: 'Spices', language: 'en' },
         ],
         colorHex: '#388E3C',
         sortNumber: 1,
@@ -282,7 +282,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '5-1-1',
             translations: [
               { name: 'Ваніль', language: 'uk' },
-              { name: 'Vanilla', language: 'en' }
+              { name: 'Vanilla', language: 'en' },
             ],
             colorHex: '#9DDFAB',
             sortNumber: 1,
@@ -291,7 +291,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '5-1-2',
             translations: [
               { name: 'Кориця', language: 'uk' },
-              { name: 'Cinnamon', language: 'en' }
+              { name: 'Cinnamon', language: 'en' },
             ],
             colorHex: '#9DDFAB',
             sortNumber: 2,
@@ -300,7 +300,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '5-1-3',
             translations: [
               { name: 'Перець', language: 'uk' },
-              { name: 'Pepper', language: 'en' }
+              { name: 'Pepper', language: 'en' },
             ],
             colorHex: '#9DDFAB',
             sortNumber: 3,
@@ -309,7 +309,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '5-1-4',
             translations: [
               { name: 'Гвоздика', language: 'uk' },
-              { name: 'Clove', language: 'en' }
+              { name: 'Clove', language: 'en' },
             ],
             colorHex: '#9DDFAB',
             sortNumber: 4,
@@ -323,7 +323,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
     id: '6',
     translations: [
       { name: 'Горіхові аромати', language: 'uk' },
-      { name: 'Nutty Aromas', language: 'en' }
+      { name: 'Nutty Aromas', language: 'en' },
     ],
     colorHex: '#8B4513',
     sortNumber: 6,
@@ -332,7 +332,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
         id: '6-1',
         translations: [
           { name: 'Горіхи', language: 'uk' },
-          { name: 'Nuts', language: 'en' }
+          { name: 'Nuts', language: 'en' },
         ],
         colorHex: '#5D4037',
         sortNumber: 1,
@@ -341,7 +341,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '6-1-1',
             translations: [
               { name: 'Мигдаль', language: 'uk' },
-              { name: 'Almond', language: 'en' }
+              { name: 'Almond', language: 'en' },
             ],
             colorHex: '#B57945',
             sortNumber: 1,
@@ -350,7 +350,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '6-1-2',
             translations: [
               { name: 'Фундук', language: 'uk' },
-              { name: 'Hazelnut', language: 'en' }
+              { name: 'Hazelnut', language: 'en' },
             ],
             colorHex: '#B57945',
             sortNumber: 2,
@@ -359,7 +359,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '6-1-3',
             translations: [
               { name: 'Горіх', language: 'uk' },
-              { name: 'Walnut', language: 'en' }
+              { name: 'Walnut', language: 'en' },
             ],
             colorHex: '#B57945',
             sortNumber: 3,
@@ -368,7 +368,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '6-1-4',
             translations: [
               { name: 'Кешью', language: 'uk' },
-              { name: 'Cashew', language: 'en' }
+              { name: 'Cashew', language: 'en' },
             ],
             colorHex: '#B57945',
             sortNumber: 4,
@@ -382,7 +382,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
     id: '7',
     translations: [
       { name: 'Деревні аромати', language: 'uk' },
-      { name: 'Woody Aromas', language: 'en' }
+      { name: 'Woody Aromas', language: 'en' },
     ],
     colorHex: '#CD6133',
     sortNumber: 7,
@@ -391,7 +391,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
         id: '7-1',
         translations: [
           { name: 'Деревина', language: 'uk' },
-          { name: 'Wood', language: 'en' }
+          { name: 'Wood', language: 'en' },
         ],
         colorHex: '#8D6E63',
         sortNumber: 1,
@@ -400,7 +400,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '7-1-1',
             translations: [
               { name: 'Дуб', language: 'uk' },
-              { name: 'Oak', language: 'en' }
+              { name: 'Oak', language: 'en' },
             ],
             colorHex: '#DE8B65',
             sortNumber: 1,
@@ -409,7 +409,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '7-1-2',
             translations: [
               { name: 'Кедр', language: 'uk' },
-              { name: 'Cedar', language: 'en' }
+              { name: 'Cedar', language: 'en' },
             ],
             colorHex: '#DE8B65',
             sortNumber: 2,
@@ -418,7 +418,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '7-1-3',
             translations: [
               { name: 'Смола', language: 'uk' },
-              { name: 'Resin', language: 'en' }
+              { name: 'Resin', language: 'en' },
             ],
             colorHex: '#DE8B65',
             sortNumber: 3,
@@ -432,7 +432,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
     id: '8',
     translations: [
       { name: 'Земляні аромати', language: 'uk' },
-      { name: 'Earthy Aromas', language: 'en' }
+      { name: 'Earthy Aromas', language: 'en' },
     ],
     colorHex: '#795548',
     sortNumber: 8,
@@ -441,7 +441,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
         id: '8-1',
         translations: [
           { name: 'Гриби', language: 'uk' },
-          { name: 'Mushrooms', language: 'en' }
+          { name: 'Mushrooms', language: 'en' },
         ],
         colorHex: '#6D4C41',
         sortNumber: 1,
@@ -450,7 +450,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '8-1-1',
             translations: [
               { name: 'Трюфель', language: 'uk' },
-              { name: 'Truffle', language: 'en' }
+              { name: 'Truffle', language: 'en' },
             ],
             colorHex: '#9E7A6B',
             sortNumber: 1,
@@ -459,7 +459,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '8-1-2',
             translations: [
               { name: 'Печериці', language: 'uk' },
-              { name: 'Champignon', language: 'en' }
+              { name: 'Champignon', language: 'en' },
             ],
             colorHex: '#9E7A6B',
             sortNumber: 2,
@@ -468,7 +468,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
             id: '8-1-3',
             translations: [
               { name: 'Боровики', language: 'uk' },
-              { name: 'Porcini', language: 'en' }
+              { name: 'Porcini', language: 'en' },
             ],
             colorHex: '#9E7A6B',
             sortNumber: 3,
@@ -482,7 +482,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
     id: '9',
     translations: [
       { name: 'Фруктові', language: 'uk' },
-      { name: 'Fruity', language: 'en' }
+      { name: 'Fruity', language: 'en' },
     ],
     colorHex: '#FF6B6B',
     sortNumber: 9,
@@ -493,7 +493,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
     id: '10',
     translations: [
       { name: 'Квіткові', language: 'uk' },
-      { name: 'Floral', language: 'en' }
+      { name: 'Floral', language: 'en' },
     ],
     colorHex: '#A29BFE',
     sortNumber: 10,
@@ -504,7 +504,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
     id: '11',
     translations: [
       { name: 'Пряні', language: 'uk' },
-      { name: 'Spicy', language: 'en' }
+      { name: 'Spicy', language: 'en' },
     ],
     colorHex: '#6BCF7F',
     sortNumber: 11,
@@ -515,7 +515,7 @@ export const mockAromaGroups: WineAromaGroup[] = [
     id: '12',
     translations: [
       { name: 'Деревні', language: 'uk' },
-      { name: 'Woody', language: 'en' }
+      { name: 'Woody', language: 'en' },
     ],
     colorHex: '#CD6133',
     sortNumber: 12,
@@ -529,7 +529,7 @@ export const mockAromaItems = [
     id: '1-1-1',
     translations: [
       { name: 'Лимон', language: 'uk' },
-      { name: 'Lemon', language: 'en' }
+      { name: 'Lemon', language: 'en' },
     ],
     colorHex: '#FFE785',
     sortNumber: 1,
@@ -538,7 +538,7 @@ export const mockAromaItems = [
     id: '1-1-2',
     translations: [
       { name: 'Апельсин', language: 'uk' },
-      { name: 'Orange', language: 'en' }
+      { name: 'Orange', language: 'en' },
     ],
     colorHex: '#FFE785',
     sortNumber: 2,
@@ -547,7 +547,7 @@ export const mockAromaItems = [
     id: '4-1-1',
     translations: [
       { name: 'Троянда', language: 'uk' },
-      { name: 'Rose', language: 'en' }
+      { name: 'Rose', language: 'en' },
     ],
     colorHex: '#C7C3FF',
     sortNumber: 1,
@@ -556,7 +556,7 @@ export const mockAromaItems = [
     id: '5-1-1',
     translations: [
       { name: 'Ваніль', language: 'uk' },
-      { name: 'Vanilla', language: 'en' }
+      { name: 'Vanilla', language: 'en' },
     ],
     colorHex: '#9DDFAB',
     sortNumber: 1,
