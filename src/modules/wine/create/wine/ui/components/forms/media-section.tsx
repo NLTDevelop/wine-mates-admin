@@ -8,18 +8,14 @@ import { WineFormData } from '../../../presenters/wine-form-schema'
 
 interface MediaSectionProps {
   form: UseFormReturn<WineFormData>
-  mode: 'create' | 'edit'
 }
 
-export const MediaSection = memo(({ form, mode }: MediaSectionProps) => {
+export const MediaSection = memo(({ form }: MediaSectionProps) => {
   const { t } = useTranslation('wines')
 
   return (
     <>
-      <Label>
-        {t('media')}
-        {mode === 'create' && '*'}
-      </Label>
+      <Label>{t('media') + '*'}</Label>
       <Card className="p-4 bg-background">
         <div className="grid grid-cols-1 mt-2">
           <NLTFormFilesDropZone form={form} name="media" />

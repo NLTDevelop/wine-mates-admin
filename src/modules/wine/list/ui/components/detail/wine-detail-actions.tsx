@@ -17,7 +17,7 @@ export const WineDetailActions: React.FC<WineDetailActionsProps> = ({ onBack, on
 
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:my-6 my-2 w-full justify-between">
-      <Button variant="ghost" onClick={onBack} className="flex items-center gap-2 px-0 hover:bg-transparent">
+      <Button variant="outline" onClick={onBack} className="flex items-center gap-2 hover:bg-transparent">
         <ArrowLeft size={16} />
         {t('go_list')}
       </Button>

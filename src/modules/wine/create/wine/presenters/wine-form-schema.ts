@@ -1,48 +1,50 @@
 import i18n from 'i18next'
 import { z } from 'zod'
 
-const fileSchema = z.instanceof(File, { message: 'Must be a file' })
+const fileSchema = z.instanceof(File, { message: i18n.t('messages:img_require') })
 
 const optionalNumberSchema = z.preprocess(
   val => {
     if (val === undefined || val === null || val === '') return undefined
     if (typeof val === 'number') return val
     if (typeof val === 'string') {
-      if (val === '') return undefined
-      const num = parseInt(val)
+      const trimmed = val.trim()
+      if (trimmed === '') return undefined
+      const num = parseInt(trimmed, 10)
       return isNaN(num) ? undefined : num
     }
     return undefined
   },
   z
     .number()
-    .int(i18n.t('messages:integer_year'))
-    .min(1900, i18n.t('messages:old_year'))
-    .max(new Date().getFullYear() + 50, i18n.t('messages:big_year'))
     .optional()
+    .refine(val => val === undefined || Number.isInteger(val), {
+      message: i18n.t('messages:integer_year'),
+    })
+    .refine(val => val === undefined || val >= 1900, {
+      message: i18n.t('messages:old_year'),
+    })
+    .refine(val => val === undefined || val <= new Date().getFullYear() + 50, {
+      message: i18n.t('messages:big_year'),
+    })
 )
 
 const requiredNumberSchema = z.preprocess(
   val => {
     if (typeof val === 'string') {
-      if (val === '') return undefined
-      return parseInt(val)
+      const trimmed = val.trim()
+      if (trimmed === '') return undefined
+      const num = parseInt(trimmed, 10)
+      return isNaN(num) ? undefined : num
     }
     return val
   },
   z
-    .number({
-      message: i18n.t('messages:field_require'),
-    })
-    .refine(val => !isNaN(val), {
-      message: i18n.t('messages:incorrect_year'),
-    })
-    .refine(val => val >= 1900, {
-      message: i18n.t('messages:old_year'),
-    })
-    .refine(val => val <= new Date().getFullYear(), {
-      message: i18n.t('messages:feature_year'),
-    })
+    .number()
+    .refine(val => val !== undefined, { message: i18n.t('messages:field_require') })
+    .refine(val => !isNaN(val), { message: i18n.t('messages:incorrect_year') })
+    .min(1900, i18n.t('messages:old_year'))
+    .max(new Date().getFullYear(), i18n.t('messages:feature_year'))
 )
 
 export const wineFormSchema = z

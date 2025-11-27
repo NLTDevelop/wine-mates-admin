@@ -52,6 +52,7 @@ export const uk = {
       deselect_all: 'Очистити все',
       import: 'Імпортувати',
       importing: 'Імпорт..',
+      create: 'Створити',
     },
     modal: {
       wish_logout: 'Бажаєте вийти?',
@@ -226,6 +227,9 @@ export const uk = {
     translation: 'Переклад',
     language: 'Мова',
     select_language: 'Оберіть мову',
+    not_known_wine: 'невідоме вино',
+    edit_wine: 'Редагування вина',
+    wine_detail: 'Деталі вина',
     modal: {
       delete_title: 'Видалити {{slug}}?',
       delete_action: 'Видалити',
@@ -353,6 +357,7 @@ export const uk = {
       confirm: 'Підтвердити вино',
       cancel_confirm: 'Вино підтверждено. Скасувати?',
       add_translation: 'Додати переклад',
+      go_detail: 'Детальний екран',
     },
   },
   messages: {

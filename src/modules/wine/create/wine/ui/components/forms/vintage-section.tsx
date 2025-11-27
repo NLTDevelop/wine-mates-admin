@@ -6,7 +6,6 @@ import { YearPickerFormField } from '@/UIKit/app-components/year-picker-form-fie
 
 interface VintageSectionProps {
   form: UseFormReturn<WineFormData>
-  mode: 'create' | 'edit'
 }
 export const VintageSection = memo(({ form }: VintageSectionProps) => {
   const { t } = useTranslation('wines')

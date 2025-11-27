@@ -8,14 +8,12 @@ interface LocationSectionProps {
   form: UseFormReturn<WineFormData>
   countryValue: string
   regionValue?: string
-  // countryValue: string[]
-  // regionValue?: string[]
-  mode: 'create' | 'edit'
 }
 
 export const LocationSection = memo(({ form, countryValue, regionValue }: LocationSectionProps) => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
+  const { t: tm } = useTranslation('messages')
 
   useEffect(() => {
     if (!countryValue && regionValue) {
@@ -41,7 +39,7 @@ export const LocationSection = memo(({ form, countryValue, regionValue }: Locati
     }
 
     if (country && !region) {
-      return "Регіон обов'язковий при виборі країни"
+      return tm('region_require')
     }
     return form.formState.errors.region?.message as string
   }, [form.watch('country'), form.watch('region'), form.formState.touchedFields.region])

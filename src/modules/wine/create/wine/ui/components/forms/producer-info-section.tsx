@@ -6,10 +6,9 @@ import { InputWithTooltip } from '@/UIKit/app-components/input-with-tooltip'
 
 interface ProducerInfoSectionProps {
   form: UseFormReturn<WineFormData>
-  mode: 'create' | 'edit'
 }
 
-export const ProducerInfoSection = ({ form /*, mode*/ }: ProducerInfoSectionProps) => {
+export const ProducerInfoSection = ({ form }: ProducerInfoSectionProps) => {
   const { t } = useTranslation('wines')
 
   return (

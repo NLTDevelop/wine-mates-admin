@@ -54,7 +54,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
 
           const handleDeleteWine = (e: React.MouseEvent) => {
             stopEvent(e)
-            row.original.id && onDelete(row.original.id, row.original.displayName || 'невідоме вино')
+            row.original.id && onDelete(row.original.id, row.original.displayName || t('not_known_wine'))
           }
 
           const handleConfirmWine = (e: React.MouseEvent) => {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useWineDetail } from '../../presenters/useWineDetail'
 import { useToast } from '@/hooks/shadcn/use-toast'
 import { Card } from '@/UIKit/shadcn/ui/card'
@@ -10,13 +10,19 @@ import { WineDetailHeader, WineDetailContent, WineDetailActions } from '..'
 import { wineListService } from '../../entities/wine-list-service'
 import { mockWines } from '../../entities/mock'
 import { EditWineForm } from '@/modules/wine/create/wine/ui/components/edit-wine-form'
+import { ContentLayout } from '@/layout/components/content-layout'
 
 export const WineDetailView: React.FC = () => {
   const { t } = useTranslation('wines')
   const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
   const { toast } = useToast()
-  const [isEditing, setIsEditing] = useState(false)
+  const navigate = useNavigate()
+
+  const location = useLocation()
+
+  const params = new URLSearchParams(location.search)
+  const startEditing = params.get('edit') === 'true'
+  const [isEditing, setIsEditing] = useState(startEditing)
 
   const wine = mockWines[0]
   const { /*wine,*/ isLoading, refetch } = useWineDetail(id!)
@@ -40,10 +46,12 @@ export const WineDetailView: React.FC = () => {
   const handleEditSuccess = () => {
     setIsEditing(false)
     refetch()
+    navigate(`/wines/${id}`, { replace: true })
   }
 
   const handleEditCancel = () => {
     setIsEditing(false)
+    navigate(`/wines/${id}`, { replace: true })
   }
 
   if (isLoading) {
@@ -62,17 +70,21 @@ export const WineDetailView: React.FC = () => {
   }
 
   return (
-    <div className="mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-4xl">
-      <WineDetailActions onBack={() => navigate(-1)} onConfirmWine={handleConfirmWine} wine={wine} onEdit={() => setIsEditing(true)} isEditing={isEditing} />
-
-      {isEditing ? (
-        <EditWineForm wine={wine} wineTypes={[]} onSuccess={handleEditSuccess} onCancel={handleEditCancel} />
-      ) : (
-        <Card className="p-6">
-          <WineDetailHeader wine={wine} />
-          <WineDetailContent wine={wine} />
-        </Card>
-      )}
-    </div>
+    <ContentLayout
+      title={isEditing ? t('edit_wine') : t('wine_detail')}
+      btn={<WineDetailActions onBack={() => navigate(-1)} onConfirmWine={handleConfirmWine} wine={wine} onEdit={() => setIsEditing(true)} isEditing={isEditing} />}
+      isGoBack
+    >
+      <div className="mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-4xl">
+        {isEditing ? (
+          <EditWineForm wine={wine} wineTypes={[]} onSuccess={handleEditSuccess} onCancel={handleEditCancel} />
+        ) : (
+          <Card className="p-6">
+            <WineDetailHeader wine={wine} />
+            <WineDetailContent wine={wine} />
+          </Card>
+        )}
+      </div>
+    </ContentLayout>
   )
 }
