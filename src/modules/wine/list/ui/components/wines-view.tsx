@@ -13,6 +13,7 @@ import { Button } from '@/UIKit/shadcn/ui/button'
 import { File } from 'lucide-react'
 import { ConfirmModal } from '@/modals/confirmModal'
 import { ImportFileModal } from '@/modals/ImportFileModal'
+import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 
 export const WineView = () => {
   const { t } = useTranslation('wines')
@@ -40,14 +41,16 @@ export const WineView = () => {
           {t('button.import')}
         </Button>
       </div>
-      <NLTDataTable
-        table={table}
-        rowClassname="text-center cursor-pointer"
-        ToolBar={<WinesFilters filterSearch={searchValue} onChangeFilterSearch={onChangeSearch} onClearSearch={handleClearSearch} />}
-        onRowClick={handleRowClick}
-      />
+      <div className="pb-2">
+        <NLTDataTable
+          table={table}
+          rowClassname="text-center cursor-pointer"
+          ToolBar={<WinesFilters filterSearch={searchValue} onChangeFilterSearch={onChangeSearch} onClearSearch={handleClearSearch} />}
+          onRowClick={handleRowClick}
+        />
+      </div>
 
-      <NLTTablePagination limit={filters.limit} page={filters.page} totalRows={wines?.length || 0} setPage={onChangePagination} />
+      {wines?.length && wines.length > DEFAULT_PAGINATION_LIMIT && <NLTTablePagination limit={filters.limit} page={filters.page} totalRows={wines?.length || 0} setPage={onChangePagination} />}
       <WarningModal
         title={t('list.wine_delete')}
         actionTitle={t('button.delete')}

@@ -17,12 +17,12 @@ export interface FiltersParams {
   include?: string[]
 }
 
+export type Language = 'en' | 'uk' | 'fr' | 'pl' | 'de' | 'es' | 'it'
 
-export type Language = "en" | "uk" | "fr" | "pl"|"de"|"es"|"it"
-
-export interface NameDictionary{
-   name: string, 
-   language: Language
+export interface NameDictionary {
+  id?: string
+  name: string
+  language: Language | ''
 }
 
 export type ReorderEntityType = 'color' | 'flavors' | 'tastes' | 'taste-characteristics' | 'wine-types'

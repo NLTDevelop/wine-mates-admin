@@ -127,18 +127,17 @@ export const validateImageField = (value: unknown): value is File | string => {
   return isFile(value) || isImageUrl(value)
 }
 
-
 export const adaptFetchOptions = (fetchFn: (search?: string) => Promise<any[]>) => {
   return async (search?: string) => {
     const data = await fetchFn(search)
     return data.map(item => {
       let label = item.label
-      
+
       if (!label) {
         const { nameUa } = getDisplayNames(item.translations || [])
         label = nameUa || item.nameUa || item.name
       }
-      
+
       return {
         value: item.id || item.value,
         label: label,
@@ -146,7 +145,6 @@ export const adaptFetchOptions = (fetchFn: (search?: string) => Promise<any[]>) 
     })
   }
 }
-
 
 export interface DisplayNames {
   nameUa: string
@@ -164,26 +162,29 @@ export const getDisplayNames = (translations: NameDictionary[]): DisplayNames =>
   return { nameUa, nameEn }
 }
 
-export const createTranslations = (nameUa: string, nameEn: string): NameDictionary[] => [
-  { name: nameUa, language: 'uk' },
-  { name: nameEn, language: 'en' }
-]
+export const createTranslations = (nameUa: string, nameEn: string, prev?: NameDictionary[]): NameDictionary[] => {
+  const ukPrev = prev?.find(t => t.language === 'uk')
+  const enPrev = prev?.find(t => t.language === 'en')
 
-export const arraysEqual = <T>(
-  a: T[], 
-  b: T[], 
-  comparator?: (itemA: T, itemB: T) => boolean
-): boolean => {
+  return [
+    { id: ukPrev?.id, name: nameUa, language: 'uk' },
+    { id: enPrev?.id, name: nameEn, language: 'en' },
+  ]
+}
+
+export const arraysEqual = <T>(a: T[], b: T[], comparator?: (itemA: T, itemB: T) => boolean): boolean => {
   if (a.length !== b.length) return false
-  
+
   if (comparator) {
     return a.every((item, index) => comparator(item, b[index]))
   }
-  
+
   if (a.length > 0 && typeof a[0] === 'object') {
-    return JSON.stringify(a) === JSON.stringify(b)
+    const sortedA = a.map(item => JSON.stringify(item, Object.keys(item as any).sort()))
+    const sortedB = b.map(item => JSON.stringify(item, Object.keys(item as any).sort()))
+    return sortedA.every((item, index) => item === sortedB[index])
   }
-  
+
   return a.every((item, index) => item === b[index])
 }
 

@@ -38,6 +38,28 @@ export interface IWines {
   isConfirmed?: boolean
 }
 
+export interface CreateWineRequest {
+  displayName: string
+  producerTitle: string
+  producerName: string
+  wine: string
+  grapeVariety: string
+  country: string
+  region?: string
+  subRegion?: string
+  site?: string
+  typeId: string
+  subType?: string
+  designation?: string
+  classification?: string
+  vintageConfig?: number
+  firstVintage?: number
+  finalVintage?: number
+  reference?: string
+  description?: string
+  images: File[]
+}
+
 export interface ConfirmWineParams {
   id: string | number
   isConfirmed: boolean
@@ -45,7 +67,7 @@ export interface ConfirmWineParams {
 
 export interface UpdateWineListParams {
   id: string
-  data: IWines
+  data: Partial<IWines>
 }
 
 export interface WineImage {

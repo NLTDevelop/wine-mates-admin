@@ -38,11 +38,11 @@ export const AdditionalTranslations = ({
 
   return (
     <div>
-      {additionalTranslations.map(translation => (
-        <div key={translation.id} className="my-4 flex items-end w-full gap-2">
+      {additionalTranslations.map((translation, idx) => (
+        <div key={`${translation.id}-${idx}`} className="my-4 flex items-end w-full gap-2">
           <div className="flex gap-2 w-full ">
-            <div className="h-11 w-8" style={{ height: customHeight }}>
-              <Button type="button" variant="ghost" size="icon" onClick={() => onRemoveTranslation(translation.id)} className="h-10 w-10" style={{ height: customHeight }}>
+            <div className="w-6" style={{ height: customHeight }}>
+              <Button type="button" variant="ghost" size="icon" onClick={() => onRemoveTranslation(translation.id)} className="h-4 w-6" style={{ height: customHeight }}>
                 <X className="h-4 w-4" />
               </Button>
             </div>

@@ -55,7 +55,7 @@ export const TasteForm: React.FC<TasteFormProps> = ({ formData, onFormDataChange
   const saveText = isLoading ? (mode === 'create' ? tc('button.saving') : tc('button.updating')) : tc('button.save')
 
   return (
-    <div className="space-y-4 pl-1 pr-1 sm:pl-6 sm:pr-6 pb-2 pt-0 mt-2 transition-all flex-1 bg-muted rounded-t-none rounded-b-md">
+    <div className="space-y-4 pl-1 pr-1 sm:pl-6 sm:pr-6 pb-2 pt-0 transition-all flex-1 bg-muted rounded-t-none rounded-b-md">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
         <div>
           <label className="text-sm font-medium mb-2 block">{t('tastes.taste_name_ua')} *</label>
@@ -97,10 +97,10 @@ export const TasteForm: React.FC<TasteFormProps> = ({ formData, onFormDataChange
         />
       </div>
       <div className="flex gap-3 justify-end mt-4">
-        <Button size="sm" variant="ghost" className="border-1 hover:bg-muted-foreground hover:text-input" onClick={onCancel} disabled={isLoading}>
+        <Button size="sm" variant="ghost" className="border-1 hover:bg-muted-foreground hover:text-input sm:w-auto w-full" onClick={onCancel} disabled={isLoading}>
           {tc('button.cancel')}
         </Button>
-        <Button size="sm" onClick={onSave} disabled={!canSave}>
+        <Button size="sm" onClick={onSave} disabled={!canSave} className="sm:w-auto w-full">
           <SaveIcon className="w-4 h-4" />
           {saveText}
         </Button>

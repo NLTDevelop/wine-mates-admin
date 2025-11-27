@@ -12,7 +12,7 @@ interface SortableItemProps {
   gridColor?: string
 }
 
-export const SortableItem: React.FC<SortableItemProps> = ({ id, children, className = '', handleClassName = '',gridColor="text-gray-400" }) => {
+export const SortableItem: React.FC<SortableItemProps> = ({ id, children, className = '', handleClassName = '', gridColor = 'text-gray-400' }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id })
 
   const style = {
@@ -33,7 +33,7 @@ export const SortableItem: React.FC<SortableItemProps> = ({ id, children, classN
         `}
         onClick={e => e.stopPropagation()}
       >
-        <GripVertical className={cn("w-4 h-4", gridColor)} />
+        <GripVertical className={cn('w-4 h-4', gridColor)} />
       </div>
       {children}
     </div>

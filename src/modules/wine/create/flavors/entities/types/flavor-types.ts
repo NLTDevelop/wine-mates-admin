@@ -60,11 +60,11 @@ export interface UpdateWineAromaSubgroupParams {
 }
 
 export interface ReorderSubgroupParams {
-  groupId: string;
-  subgroupIds: string[];
+  groupId: string
+  subgroupIds: string[]
 }
 
 export interface ReorderAromasParams {
-  subgrId: string;
-  aromasIds: string[];
+  subgrId: string
+  aromasIds: string[]
 }

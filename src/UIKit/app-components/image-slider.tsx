@@ -32,8 +32,25 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({ images, autoPlayInterv
     return () => clearInterval(interval)
   }, [images.length, isAutoPlaying, autoPlayInterval, hasMultipleImages])
 
-  const nextImage = () => setCurrentImageIndex(prev => (prev + 1) % images.length)
-  const prevImage = () => setCurrentImageIndex(prev => (prev - 1 + images.length) % images.length)
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setCurrentImageIndex(prev => (prev + 1) % images.length)
+  }
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setCurrentImageIndex(prev => (prev - 1 + images.length) % images.length)
+  }
+
+  const toggleAutoPlay = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setIsAutoPlaying(!isAutoPlaying)
+  }
+
+  const goToImage = (index: number) => (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setCurrentImageIndex(index)
+  }
 
   if (images.length === 0) {
     return <div className={`w-full h-full bg-gradient-to-br from-muted to-primary flex items-center justify-center rounded-lg ${className}`}></div>
@@ -49,7 +66,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({ images, autoPlayInterv
 
       {hasMultipleImages && showControls && (
         <>
-          <Button variant="ghost" size="sm" onClick={() => setIsAutoPlaying(!isAutoPlaying)} className="absolute top-2 right-2 h-7 w-7 p-0 bg-white bg-opacity-80 hover:bg-opacity-100">
+          <Button variant="ghost" size="sm" onClick={toggleAutoPlay} className="absolute top-2 right-2 h-7 w-7 p-0 bg-white bg-opacity-80 hover:bg-opacity-100">
             {isAutoPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
           </Button>
 
@@ -74,11 +91,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({ images, autoPlayInterv
           <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
             {showIndicators &&
               images.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentImageIndex(index)}
-                  className={`w-2 h-2 rounded-full transition-colors ${index === currentImageIndex ? 'bg-white' : 'bg-white bg-opacity-50'}`}
-                />
+                <button key={index} onClick={goToImage(index)} className={`w-2 h-2 rounded-full transition-colors ${index === currentImageIndex ? 'bg-white' : 'bg-white bg-opacity-50'}`} />
               ))}
           </div>
         </>

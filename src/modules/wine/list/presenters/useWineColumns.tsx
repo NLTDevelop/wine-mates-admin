@@ -143,8 +143,8 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         header: t('table.type'),
         cell: info => {
           const type = info.getValue()
-          const {nameUa, nameEn} = getDisplayNames(type?.translations || [])
-          return /*type?.*/nameUa || /*type?.*/nameEn || '-'
+          const { nameUa, nameEn } = getDisplayNames(type?.translations || [])
+          return nameUa || nameEn || '-'
         },
         size: 120,
         meta: { cellClassName: 'text-start' },

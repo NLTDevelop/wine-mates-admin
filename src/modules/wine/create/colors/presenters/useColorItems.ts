@@ -15,7 +15,7 @@ interface UseColorItemsProps {
 }
 
 export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEditingGroup, setNewItemData, setOpenAccordions }: UseColorItemsProps) => {
-  const { createShade, updateShade, deleteShade, /*reorderShade*/ } = useWineColor()
+  const { createShade, updateShade, deleteShade /*reorderShade*/ } = useWineColor()
 
   //---------------для реодер пока нет бека -----------
   const [localShadesOrder, setLocalShadesOrder] = useState<Record<string, WineShades[]>>({})
@@ -233,7 +233,7 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
   )
 
   const getItemName = useCallback((item: WineShades) => {
-    const { nameUa } = getDisplayNames( item.translations || [])
+    const { nameUa } = getDisplayNames(item.translations || [])
     return nameUa || ''
   }, [])
 

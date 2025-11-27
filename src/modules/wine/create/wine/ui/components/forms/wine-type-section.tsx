@@ -10,6 +10,7 @@ import { FormFieldCombobox } from '@/UIKit/app-components/form-field-combobox'
 interface WineTypeSectionProps {
   form: UseFormReturn<WineFormData>
   wineTypes: WineType[]
+  mode: 'create' | 'edit'
 }
 
 export const WineTypeSection = memo(

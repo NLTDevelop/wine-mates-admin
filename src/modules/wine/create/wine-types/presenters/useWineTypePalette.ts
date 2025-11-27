@@ -43,12 +43,14 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
 
   const handleToggleForm = useCallback(
     (wineTypeId: string) => {
+      console.log('Toggle form for wineTypeId:', wineTypeId)
       setIsFormOpen(prev => ({
         ...prev,
         [wineTypeId]: !prev[wineTypeId],
       }))
       if (!formData[wineTypeId]) {
         const wineType = wineTypes.find((wt: WineType) => wt?.id === wineTypeId)
+        console.log('Found wineType:', wineType)
         if (wineType) {
           setFormData(prev => ({
             ...prev,

@@ -71,7 +71,7 @@ export const ImageList: React.FC<IProps> = ({ files, onRemove, disabled, handleD
 }
 
 const RenderMediaPreview = ({ file }: { file: any }) => {
-  const path = file.extension ? file.extension : file.path.match(/\.([a-zA-Z0-9]+)$/)?.[1]
+  const path = file?.extension ? file?.extension : file?.path?.match(/\.([a-zA-Z0-9]+)$/)?.[1]
   let imagePath = ''
 
   switch (path) {

@@ -4,9 +4,9 @@ export interface WineType {
   id: string
   translations: NameDictionary[]
   colors: BaseWineColor[]
-  sortNumber: number,
-  nameUa?:string
-  nameEn?:string
+  sortNumber?: number
+  nameUa?: string
+  nameEn?: string
 }
 
 export interface CreateWineTypeParams {
@@ -22,7 +22,6 @@ export interface UpdateWineTypeParams {
   wineTypeId: string
   newWineType: CreateWineTypeRequest
 }
-
 
 export interface WineOption {
   id: string

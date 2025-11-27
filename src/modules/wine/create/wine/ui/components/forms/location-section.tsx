@@ -6,8 +6,11 @@ import { FormFieldCombobox } from '@/UIKit/app-components/form-field-combobox'
 
 interface LocationSectionProps {
   form: UseFormReturn<WineFormData>
-  countryValue: string[]
-  regionValue?: string[]
+  countryValue: string
+  regionValue?: string
+  // countryValue: string[]
+  // regionValue?: string[]
+  mode: 'create' | 'edit'
 }
 
 export const LocationSection = memo(({ form, countryValue, regionValue }: LocationSectionProps) => {

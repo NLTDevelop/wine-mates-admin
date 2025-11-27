@@ -1,4 +1,4 @@
-import { NameDictionary } from "../../../general/entities/types"
+import { NameDictionary } from '../../../general/entities/types'
 
 export interface WineColorGroup {
   id: string
@@ -44,6 +44,6 @@ export interface UpdateShadesParams {
 }
 
 export interface ReorderShadesParams {
-  colorId: string;
-  shadeIds: string[];
+  colorId: string
+  shadeIds: string[]
 }

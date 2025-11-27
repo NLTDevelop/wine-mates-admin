@@ -222,7 +222,6 @@ export const useCharacteristics = ({
   }
 }
 
-
 const areLevelsEqual = (levels1: LevelItem[], levels2: LevelItem[]): boolean => {
   if (levels1.length !== levels2.length) {
     return false

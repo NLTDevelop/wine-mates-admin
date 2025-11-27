@@ -16,7 +16,7 @@ interface UseFlavorItemsProps {
   cachedColors: BaseWineColor[]
 }
 
-export const useFlavorItems = ({aromaGroups, editingGroup, newItemData, openAccordions, setEditingGroup, setNewItemData, setOpenAccordions, cachedColors }: UseFlavorItemsProps) => {
+export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAccordions, setEditingGroup, setNewItemData, setOpenAccordions, cachedColors }: UseFlavorItemsProps) => {
   const { createSubgroup, updateSubgroup, deleteSubgroup /*reorderSubgroup, reorderAromas*/ } = useWineFlavor(cachedColors)
 
   //---------------для реодер пока нет бека -----------
@@ -119,8 +119,7 @@ export const useFlavorItems = ({aromaGroups, editingGroup, newItemData, openAcco
       const aromasChanged = !areNestedArrEqual(editingItem.aromas || [], currentData.aromas || [])
       const translationsChanged = !arraysEqual(editingItem.translations || [], currentData.translations || [])
 
-      return namesChanged || colorHexChanged || aromasChanged || translationsChanged || 
-           hasSubgroupReorderChanges || hasAromaReorderChanges
+      return namesChanged || colorHexChanged || aromasChanged || translationsChanged || hasSubgroupReorderChanges || hasAromaReorderChanges
     },
     [editingGroup, newItemData, localSubgroupOrder, localAromaOrder, aromaGroups]
   )

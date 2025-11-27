@@ -16,4 +16,9 @@ export const mockBaseWineColors: BaseWineColor[] = [
     name: 'Рожеве',
     colorHex: '#7c060d',
   },
+  {
+    id: '4',
+    name: 'Помаранчеве',
+    colorHex: '#f1bf85',
+  },
 ]

@@ -7,7 +7,7 @@ import { DataResponse } from '../../general/entities/types'
 import { colorService } from '../entities/color-service'
 import { getDisplayNames } from '@/lib/utils'
 
-import { mockWineColorGroups } from '../entities/types/mockColor'
+// import { mockWineColorGroups } from '../entities/types/mockColor'
 
 export const useWineColor = () => {
   const queryClient = useQueryClient()
@@ -36,10 +36,10 @@ export const useWineColor = () => {
     store.setColorGroups(groupsQuery.data.rows)
   }, [groupsQuery.data, groupsQuery.isFetching])
 
-  // const colorGroups = (): WineColorGroup[] => {
-  //   const cached = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters])
-  //   return cached?.rows ?? []
-  // }
+  const colorGroups = (): WineColorGroup[] => {
+    const cached = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters])
+    return cached?.rows ?? []
+  }
 
   const createGroupMutation = useMutation<WineColorGroup, Error, CreateWineColorParams, { prev?: DataResponse<WineColorGroup>; tempId: string }>({
     mutationKey: ['color-groups', 'create'],
@@ -103,7 +103,6 @@ export const useWineColor = () => {
       await queryClient.cancelQueries({ queryKey: ['color-groups', 'list'] })
 
       const prev = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters])
-
       const optimistic: WineColorGroup = {
         id: params.colorId,
         translations: params.newColor.translations,
@@ -339,8 +338,8 @@ export const useWineColor = () => {
   })
 
   return {
-    colorGroups: mockWineColorGroups,
-    // colorGroups: colorGroups(),
+    // colorGroups: mockWineColorGroups,
+    colorGroups: colorGroups(),
     totalCount: groupsQuery.data?.count || 0,
 
     searchResults: store.searchResults,

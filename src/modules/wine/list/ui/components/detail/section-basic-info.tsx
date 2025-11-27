@@ -8,12 +8,12 @@ import { getDisplayNames } from '@/lib/utils'
 export const BasicInfoSection: React.FC<{ wine: IWines }> = ({ wine }) => {
   const { t } = useTranslation('wines')
 
-  const {nameUa} = getDisplayNames(wine.type?.translations || [])
+  const { nameUa } = getDisplayNames(wine.type?.translations || [])
 
   const fields = [
     { label: t('table.producertitle'), value: wine.producerTitle },
     { label: t('table.wine'), value: wine.wine },
-    { label: t('table.type'), value: /*wine.type?.*/nameUa },
+    { label: t('table.type'), value: /*wine.type?.*/ nameUa },
     { label: t('table.subtype'), value: wine.subType },
   ].filter(field => field.value)
 

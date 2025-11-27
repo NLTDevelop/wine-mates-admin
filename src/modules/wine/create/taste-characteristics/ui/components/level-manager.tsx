@@ -108,7 +108,7 @@ const LevelItemWithTranslations: React.FC<LevelItemWithTranslationsProps> = ({ l
       <div className="flex-1">
         <div className="flex items-start justify-between pl-5">
           <div>
-            <div className="flex items-center space-x-2 mb-3">
+            <div className="p-1 flex items-center space-x-2 mb-3 border-1 rounded-md border-muted">
               <Checkbox id={`show-level-${index}`} checked={level.isShowed ?? true} onCheckedChange={handleShowChange} />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 ">
@@ -120,18 +120,17 @@ const LevelItemWithTranslations: React.FC<LevelItemWithTranslationsProps> = ({ l
                 <X className="h-4 w-4" />
               </Button>
             </div>
-            <div className="pl-5 pr-8">
-              <AdditionalTranslations
-                additionalTranslations={additionalTranslations}
-                onAddTranslation={handleAddTranslation}
-                onRemoveTranslation={handleRemoveTranslation}
-                onLanguageChange={handleLanguageChange}
-                onTranslationValueChange={handleTranslationValueChange}
-                getAvailableLanguages={getAvailableLanguages}
-                isLabel={false}
-                customHeight="36px"
-              />
-            </div>
+
+            <AdditionalTranslations
+              additionalTranslations={additionalTranslations}
+              onAddTranslation={handleAddTranslation}
+              onRemoveTranslation={handleRemoveTranslation}
+              onLanguageChange={handleLanguageChange}
+              onTranslationValueChange={handleTranslationValueChange}
+              getAvailableLanguages={getAvailableLanguages}
+              isLabel={false}
+              customHeight="36px"
+            />
           </div>
         </div>
       </div>

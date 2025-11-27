@@ -25,8 +25,8 @@ export const ImageModal: React.FC<ImageModalProps> = ({ images, trigger, initial
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
-      <DialogContent className="max-w-4xl px-2" aria-describedby={undefined}>
-        <DialogTitle/>
+      <DialogContent className="max-w-4xl px-0" aria-describedby={undefined}>
+        <DialogTitle />
         <div className="relative">
           <img src={images[currentImageIndex].url} alt={images[currentImageIndex].alt || 'Image'} className="w-full h-auto max-h-[70vh] object-contain" />
 

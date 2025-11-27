@@ -22,7 +22,7 @@ export const useTranslationsName = ({ initialTranslations, onTranslationsChange 
     const additional = (initialTranslations || [])
       .filter(translation => translation.language !== 'uk' && translation.language !== 'en')
       .map(translation => ({
-        id: `${translation.language}-${Date.now()}`,
+        id: translation.id ?? `${translation.language}-${Date.now()}`,
         language: translation.language,
         value: translation.name,
       }))
@@ -30,12 +30,13 @@ export const useTranslationsName = ({ initialTranslations, onTranslationsChange 
   }, [])
 
   useEffect(() => {
-    const mainTranslations = createTranslations(nameUa, nameEn)
+    const mainTranslations = createTranslations(nameUa, nameEn, initialTranslations)
     const validAdditionalTranslations = additionalTranslations
-      .filter((translation): translation is AdditionalTranslation & { language: Language } => translation.language !== '' && translation.value !== '')
-      .map(translation => ({
-        name: translation.value,
-        language: translation.language,
+      .filter(t => t.language && t.value)
+      .map(t => ({
+        ...(typeof t.id === 'number' ? { id: t.id } : {}),
+        name: t.value,
+        language: t.language,
       }))
 
     const allTranslations: NameDictionary[] = [...mainTranslations, ...validAdditionalTranslations]
@@ -44,12 +45,12 @@ export const useTranslationsName = ({ initialTranslations, onTranslationsChange 
   }, [nameUa, nameEn, additionalTranslations])
 
   const handleNameUaChange = (value: string) => {
-    const updatedTranslations = createTranslations(value, nameEn)
+    const updatedTranslations = createTranslations(value, nameEn, initialTranslations)
     onTranslationsChange(updatedTranslations)
   }
 
   const handleNameEnChange = (value: string) => {
-    const updatedTranslations = createTranslations(nameUa, value)
+    const updatedTranslations = createTranslations(nameUa, value, initialTranslations)
     onTranslationsChange(updatedTranslations)
   }
 

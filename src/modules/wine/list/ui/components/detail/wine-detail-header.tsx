@@ -29,9 +29,9 @@ export const WineDetailHeader: React.FC<WineDetailHeaderProps> = ({ wine }) => {
           <ImageModal
             images={images}
             trigger={
-              <button className="w-full h-full relative cursor-zoom-in">
+              <div className="w-full h-full relative cursor-zoom-in">
                 <ImageSlider images={images} className="w-full h-full" showControls={images.length > 1} showIndicators={false} />
-              </button>
+              </div>
             }
           />
         ) : (
@@ -59,7 +59,6 @@ export const WineDetailHeader: React.FC<WineDetailHeaderProps> = ({ wine }) => {
         <div className="flex flex-wrap gap-2">
           {wine.type && (
             <Badge className={textColorClass} style={{ backgroundColor: /*wine.type.colors[0].*/ nameUa }}>
-            
               {wineName}
             </Badge>
           )}
