@@ -1,11 +1,23 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useWineTasteCharacteristicsStore } from '../entities/taste-characteristics-store'
-import { BaseWineColor } from '../../general/entities/types'
+import { BaseWineColor, NameDescriptionDictionary } from '../../general/entities/types'
 import { tasteCharacteristicsQueries } from '../entities/taste-characteristics-queries'
-import { CreateWineTasteCharacteristicRequest, UpdateWineTasteCharacteristicParams, WineTasteCharacteristics } from '../entities/taste-characteristics'
+import { CreateTranslation, CreateWineTasteCharacteristicRequest, UpdateTranslation, UpdateWineTasteCharacteristicParams, WineTasteCharacteristics } from '../entities/taste-characteristics'
 
-import { mockWineTasteCharacteristics } from '../entities/mock'
+// import { mockWineTasteCharacteristics } from '../entities/mock'
+
+const convertCreateTranslations = (translations?: CreateTranslation[]): NameDescriptionDictionary[][] => {
+  if (!translations) return []
+
+  return [translations.map(trans => ({ ...trans, id: undefined }))]
+}
+
+const convertUpdateTranslations = (translations?: UpdateTranslation[]): NameDescriptionDictionary[][] => {
+  if (!translations) return []
+
+  return [translations.map(trans => ({ ...trans, id: trans.id }))]
+}
 
 export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
   const queryClient = useQueryClient()
@@ -37,13 +49,17 @@ export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
       await queryClient.cancelQueries({ queryKey: ['taste-characteristics', 'list', 'assigned-colors'] })
 
       const assignedColors = cachedColors?.filter(color => newTasteCharacteristics.colorIds.includes(color.id)) || []
+
+      const optimisticTranslations = convertCreateTranslations(newTasteCharacteristics.translations)
+
       const optimisticTasteCharacteristics: WineTasteCharacteristics = {
         id: `temp-${Date.now()}`,
-        translations: newTasteCharacteristics.translations ?? [],
+        translations: optimisticTranslations,
         colors: assignedColors ?? [],
         colorHex: newTasteCharacteristics.colorHex,
         levels: [],
         sortNumber: 0,
+        isPremium: false,
       }
 
       queryClient.setQueryData<WineTasteCharacteristics[]>(['taste-characteristics', 'list', 'assigned-colors'], (old = []) => {
@@ -61,7 +77,7 @@ export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
           colors: newTasteCharacteristics.colors && newTasteCharacteristics.colors.length > 0 ? newTasteCharacteristics.colors : context.optimisticTasteCharacteristics.colors,
           translations: newTasteCharacteristics.translations || [],
         }
-
+        queryClient.invalidateQueries({ queryKey: ['taste-characteristics', 'list', 'assigned-colors'] })
         queryClient.setQueryData<WineTasteCharacteristics[]>(['taste-characteristics', 'list', 'assigned-colors'], (old = []) =>
           old.map(tc => (tc.id === context.optimisticTasteCharacteristics.id ? tasteCharacteristicsForApi : tc))
         )
@@ -83,12 +99,15 @@ export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
 
       const assignedColors = cachedColors?.filter(color => params.newCharacteristic.colorIds.includes(color.id)) || []
 
+      const optimisticTranslations = convertUpdateTranslations(params.newCharacteristic.translations)
+
       const optimisticTasteCharacteristics: WineTasteCharacteristics = {
         id: params.characteristicId,
-        translations: params.newCharacteristic.translations,
+        translations: optimisticTranslations,
         colors: assignedColors,
         colorHex: params.newCharacteristic.colorHex,
         levels: params.newCharacteristic.levels,
+        isPremium: false,
       }
 
       queryClient.setQueryData<WineTasteCharacteristics[]>(
@@ -177,8 +196,8 @@ export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
   }
 
   return {
-    tasteCharacteristics: mockWineTasteCharacteristics,
-    // tasteCharacteristics: tasteCharacteristicsQuery.data || [],
+    // tasteCharacteristics: mockWineTasteCharacteristics,
+    tasteCharacteristics: tasteCharacteristicsQuery.data || [],
     searchResults: store.searchResults,
     currentTasteCharacteristics: store.currentTasteCharacteristic,
 

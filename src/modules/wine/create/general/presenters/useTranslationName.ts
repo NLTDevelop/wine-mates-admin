@@ -36,7 +36,7 @@ export const useTranslationsName = ({ initialTranslations, onTranslationsChange 
       .map(t => ({
         ...(typeof t.id === 'number' ? { id: t.id } : {}),
         name: t.value,
-        language: t.language,
+        language: t.language as Language,
       }))
 
     const allTranslations: NameDictionary[] = [...mainTranslations, ...validAdditionalTranslations]

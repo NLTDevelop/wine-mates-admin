@@ -1,30 +1,31 @@
 import { useTranslation } from 'react-i18next'
-import { useTranslationsName } from '../../../general/presenters/useTranslationName'
 import { useColorForm } from '../../../general/presenters/useColorForm'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
 import { ColorPicker } from '@/UIKit/shadcn/ui/color-picker'
-import { BaseWineColor, NameDictionary } from '../../../general/entities/types'
+import { BaseWineColor, Language, NameDescriptionDictionary, NameDictionary } from '../../../general/entities/types'
 import { AdditionalTranslations } from '../../../general/ui/components/additional-translations'
+import { AdditionalDescriptionTranslations } from '../../../general/ui/components/additional-description-translations'
 import { CreateWineTasteCharacteristicParams, LevelItem } from '../../entities/taste-characteristics'
 import { Textarea } from '@/UIKit/shadcn/ui/textarea'
 import { LevelsManager } from '..'
-
-import { mockBaseWineColors } from '../../../general/entities/mockBaseColor'
+import { useTranslationsDescription } from '../../../general/presenters/useTranslationsDescription'
+import { extractDescriptionsFromTranslations, extractNamesFromTranslations, mergeTranslations } from '../../../general/presenters/helper'
+import { useTranslationsName } from '../../../general/presenters/useTranslationName'
 
 interface CharacteristicFormFieldsProps {
   formData: Partial<CreateWineTasteCharacteristicParams>
-  onFormDataChange: (field: 'translations' | 'colors' | 'colorHex' | 'levels' | 'description', value: string | BaseWineColor[] | NameDictionary[] | LevelItem[]) => void
+  onFormDataChange: (field: 'translations' | 'colors' | 'colorHex' | 'levels', value: NameDescriptionDictionary[][] | BaseWineColor[] | string | LevelItem[]) => void
   isLoading?: boolean
   autoFocus?: boolean
   cachedColors: BaseWineColor[]
 }
 
-export const CharacteristicFormFields = ({ formData, onFormDataChange, isLoading = false, autoFocus = true /*cachedColors*/ }: CharacteristicFormFieldsProps) => {
+export const CharacteristicFormFields = ({ formData, onFormDataChange, isLoading = false, autoFocus = true, cachedColors }: CharacteristicFormFieldsProps) => {
   const { t } = useTranslation('wines')
 
   const { colorValues, handleColorChange, fetchOptions } = useColorForm({
-    cachedColors: mockBaseWineColors, //временно мок
+    cachedColors,
     initialColors: formData?.colors || [],
     onColorsChange: colors => onFormDataChange('colors', colors),
   })
@@ -41,64 +42,124 @@ export const CharacteristicFormFields = ({ formData, onFormDataChange, isLoading
     handleTranslationValueChange,
     getAvailableLanguages,
   } = useTranslationsName({
+    initialTranslations: extractNamesFromTranslations(formData?.translations || []),
+    onTranslationsChange: (translations: NameDictionary[]) => {
+      const updatedTranslations = mergeTranslations(translations, extractDescriptionsFromTranslations(formData?.translations || []))
+      onFormDataChange('translations', updatedTranslations)
+    },
+  })
+
+  const usedNameLanguages: Language[] = [
+    ...(nameUa ? ['uk' as Language] : []),
+    ...(nameEn ? ['en' as Language] : []),
+    ...additionalTranslations.filter(t => t.language).map(t => t.language as Language),
+  ]
+
+  const {
+    descriptionUa,
+    descriptionEn,
+    additionalDescriptions,
+    handleDescriptionUaChange,
+    handleDescriptionEnChange,
+    handleAddDescription,
+    handleRemoveDescription,
+    handleDescriptionLanguageChange,
+    handleDescriptionValueChange,
+    getAvailableDescriptionLanguages,
+  } = useTranslationsDescription({
     initialTranslations: formData?.translations || [],
-    onTranslationsChange: translations => onFormDataChange('translations', translations),
+    additionalNameLanguages: usedNameLanguages,
+    onTranslationsChange: (descriptions: NameDescriptionDictionary[][]) => {
+      const updatedTranslations = mergeTranslations(extractNamesFromTranslations(formData?.translations || []), descriptions)
+      onFormDataChange('translations', updatedTranslations)
+    },
   })
 
   return (
-    <div className="w-full">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-        <div>
-          <label className="text-sm font-medium mb-2 block">{t('taste_characteristics.characteristic_name_ua')} *</label>
-          <Input value={nameUa} onChange={e => handleNameUaChange(e.target.value)} placeholder={t('taste_characteristics.characteristic_name_ua')} className="w-full" autoFocus={autoFocus} />
+    <div className="w-full space-y-6 pt-4">
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm font-medium mb-2 block">{t('taste_characteristics.characteristic_name_ua')} *</label>
+            <Input value={nameUa} onChange={e => handleNameUaChange(e.target.value)} placeholder={t('taste_characteristics.characteristic_name_ua')} className="w-full" autoFocus={autoFocus} />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-2 block">{t('taste_characteristics.characteristic_name_en')} *</label>
+            <Input value={nameEn} onChange={e => handleNameEnChange(e.target.value)} placeholder={t('taste_characteristics.characteristic_name_en')} className="w-full" />
+          </div>
         </div>
 
-        <div>
-          <label className="text-sm font-medium mb-2 block">{t('taste_characteristics.characteristic_name_en')} *</label>
-          <Input value={nameEn} onChange={e => handleNameEnChange(e.target.value)} placeholder={t('taste_characteristics.characteristic_name_en')} className="w-full" />
-        </div>
-      </div>
-
-      <AdditionalTranslations
-        additionalTranslations={additionalTranslations}
-        onAddTranslation={handleAddTranslation}
-        onRemoveTranslation={handleRemoveTranslation}
-        onLanguageChange={handleLanguageChange}
-        onTranslationValueChange={handleTranslationValueChange}
-        getAvailableLanguages={getAvailableLanguages}
-      />
-
-      <div className="my-3">
-        <label className="text-sm font-medium mb-2 block">{t('tastes.base_color')} *</label>
-        <div className="flex items-center gap-4">
-          <ColorPicker value={formData?.colorHex || ''} onChange={color => onFormDataChange('colorHex', color)} />
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <label className="text-sm font-medium mb-2 block">{t('color_wine')} *</label>
-        <MultiSelect
-          value={colorValues}
-          onChange={handleColorChange}
-          placeholder={t('flavors.choose_color')}
-          searchLabel={t('flavors.search_color')}
-          fetchOptions={fetchOptions}
-          mode="multiple"
-          disabled={isLoading}
+        <AdditionalTranslations
+          additionalTranslations={additionalTranslations}
+          onAddTranslation={handleAddTranslation}
+          onRemoveTranslation={handleRemoveTranslation}
+          onLanguageChange={handleLanguageChange}
+          onTranslationValueChange={handleTranslationValueChange}
+          getAvailableLanguages={getAvailableLanguages}
+          isLabel={false}
         />
       </div>
-      <div>
-        <label className="text-sm font-medium my-3 block">{t('taste_characteristics.levels')} *</label>
-        <LevelsManager levels={formData?.levels || []} onLevelsChange={levels => onFormDataChange('levels', levels)} />
-      </div>
-      <div>
-        <label className="text-sm font-medium my-3 block">{t('taste_characteristics.description')}</label>
-        <Textarea
-          value={formData?.description || ''}
-          onChange={e => onFormDataChange('description', e.target.value)}
-          placeholder={t('taste_characteristics.description')}
-          className="min-h-[80px] bg-background"
+
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm font-medium mb-2 block">{t('taste_characteristics.characteristic_desc_ua')}</label>
+            <Textarea
+              value={descriptionUa}
+              onChange={e => handleDescriptionUaChange(e.target.value)}
+              placeholder={t('taste_characteristics.characteristic_desc_ua')}
+              className="min-h-[80px] bg-background"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-2 block">{t('taste_characteristics.characteristic_desc_en')}</label>
+            <Textarea
+              value={descriptionEn}
+              onChange={e => handleDescriptionEnChange(e.target.value)}
+              placeholder={t('taste_characteristics.characteristic_desc_en')}
+              className="min-h-[80px] bg-background"
+            />
+          </div>
+        </div>
+
+        <AdditionalDescriptionTranslations
+          additionalDescriptions={additionalDescriptions}
+          onAddDescription={handleAddDescription}
+          onRemoveDescription={handleRemoveDescription}
+          onLanguageChange={handleDescriptionLanguageChange}
+          onDescriptionValueChange={handleDescriptionValueChange}
+          getAvailableLanguages={getAvailableDescriptionLanguages}
+          isLabel={false}
         />
+      </div>
+
+      <div className="space-y-6">
+        <div>
+          <label className="text-sm font-medium mb-2 block">{t('tastes.base_color')} *</label>
+          <div className="flex items-center gap-4">
+            <ColorPicker value={formData?.colorHex || ''} onChange={color => onFormDataChange('colorHex', color)} />
+          </div>
+        </div>
+
+        <div>
+          <label className="text-sm font-medium mb-2 block">{t('color_wine')} *</label>
+          <MultiSelect
+            value={colorValues}
+            onChange={handleColorChange}
+            placeholder={t('flavors.choose_color')}
+            searchLabel={t('flavors.search_color')}
+            fetchOptions={fetchOptions}
+            mode="multiple"
+            disabled={isLoading}
+          />
+        </div>
+
+        <div>
+          <label className="text-sm font-medium mb-2 block">{t('taste_characteristics.levels')} *</label>
+          <LevelsManager levels={formData?.levels || []} onLevelsChange={levels => onFormDataChange('levels', levels)} />
+        </div>
       </div>
     </div>
   )

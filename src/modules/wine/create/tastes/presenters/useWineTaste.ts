@@ -6,7 +6,7 @@ import { CreateWineTasteRequest, UpdateWineTasteParams, WineTaste } from '../ent
 import { tasteService } from '../entities/wine-taste-service'
 import { BaseWineColor, DataResponse } from '../../general/entities/types'
 
-import { mockWineTastes } from '../entities/mock'
+// import { mockWineTastes } from '../entities/mock'
 
 export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
   const queryClient = useQueryClient()
@@ -45,8 +45,8 @@ export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
       const optimisticWineTaste: WineTaste = {
         id: `temp-${Date.now()}`,
         translations: newWineTaste.translations ?? [],
-        colorHex: newWineTaste.colorHex,
-        colors: assignedColors,
+        colorHex: newWineTaste.colorHex ?? '',
+        colors: assignedColors ?? [],
       }
 
       queryClient.setQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters], old => {
@@ -55,7 +55,7 @@ export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
         }
 
         return {
-          rows: [optimisticWineTaste, ...old.rows],
+          rows: [...old.rows, optimisticWineTaste],
           count: old.count + 1,
         }
       })
@@ -218,7 +218,8 @@ export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
 
   return {
     // tastes: store.tastes,
-    tastes: mockWineTastes,
+    tastes: tastesQuery.data?.rows || [],
+    // tastes: mockWineTastes,
     searchResults: store.searchResults,
     currentTaste: store.currentTaste,
     totalCount: tastesQuery.data?.count || 0,

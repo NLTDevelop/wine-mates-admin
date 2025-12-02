@@ -103,11 +103,14 @@ export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: Tas
                           {nameUa} ({nameEn})
                         </span>
                         <div className="flex sm:gap-2 gap-1 sm:flex-row flex-col sm:w-auto w-full">
-                          {taste.colors?.map((color, i) => (
-                            <div key={`${color?.id} - ${i}`} className="bg-muted px-2 py-1 rounded text-xs">
-                              {color?.name}
-                            </div>
-                          ))}
+                          {taste.colors?.map((color, i) => {
+                            const colorName = color?.name || getDisplayNames(color?.translations || []).nameUa
+                            return (
+                              <div key={`${color?.id} - ${i}`} className="bg-muted px-2 py-1 rounded text-xs">
+                                {colorName}
+                              </div>
+                            )
+                          })}
                         </div>
                       </div>
                       <PaletteItemActions

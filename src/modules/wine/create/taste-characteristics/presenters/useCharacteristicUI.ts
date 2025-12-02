@@ -37,7 +37,7 @@ export const UseCharacteristicUI = ({ openAccordions, editingCharacteristic, new
   const isFormGroupOpen = useCallback((groupId: string) => editingCharacteristic?.characteristicId === groupId && editingCharacteristic?.isEditingCharacteristic, [editingCharacteristic])
 
   const isFormItemOpen = useCallback(
-    (groupId: string) => !!newItemData[groupId] || (editingCharacteristic?.characteristicId === groupId && !!editingCharacteristic.editingItem),
+    (groupId: string) => !!newItemData[groupId] || (editingCharacteristic?.characteristicId === groupId && !!editingCharacteristic?.editingItem),
     [newItemData, editingCharacteristic]
   )
 

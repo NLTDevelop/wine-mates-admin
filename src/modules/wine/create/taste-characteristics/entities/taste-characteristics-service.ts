@@ -15,7 +15,7 @@ export const tasteCharacteristicsService = {
   create: (characteristic: CreateWineTasteCharacteristicRequest): Promise<WineTasteCharacteristics> => api.post(TASTE_CHARACTERISTICS_ENDPOINTS.CREATE, characteristic).then(response => response.data),
 
   update: (params: UpdateWineTasteCharacteristicParams): Promise<WineTasteCharacteristics> =>
-    api.put(buildUrl(TASTE_CHARACTERISTICS_ENDPOINTS.UPDATE, { characteristicId: params.characteristicId }), params.newCharacteristic).then(response => response.data),
+    api.patch(buildUrl(TASTE_CHARACTERISTICS_ENDPOINTS.UPDATE, { characteristicId: params.characteristicId }), params.newCharacteristic).then(response => response.data),
 
   delete: (characteristicId: string): Promise<void> => api.delete(buildUrl(TASTE_CHARACTERISTICS_ENDPOINTS.DELETE, { characteristicId })).then(response => response.data),
 

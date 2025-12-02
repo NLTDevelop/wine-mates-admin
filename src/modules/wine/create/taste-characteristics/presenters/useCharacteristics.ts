@@ -1,9 +1,10 @@
 import { useCallback } from 'react'
 import { useTasteCharacteristics } from './useTasteCharacteristics'
 import { BaseWineColor } from '../../general/entities/types'
-import { arraysEqual, getDisplayNames } from '@/lib/utils'
-import { CreateWineTasteCharacteristicParams, CreateWineTasteCharacteristicRequest, LevelItem, WineTasteCharacteristics } from '../entities/taste-characteristics'
+import { arraysEqual, getDisplayNameDescription } from '@/lib/utils'
+import { CreateWineTasteCharacteristicParams, CreateWineTasteCharacteristicRequest, LevelItem, UpdateWineTasteCharacteristicRequest, WineTasteCharacteristics } from '../entities/taste-characteristics'
 import { NewCharacteristicData } from '../entities/characteristics-palette-types'
+import { convertToUpdateTranslations } from '../../general/presenters/helper'
 
 interface UseCharacteristicsProps {
   tasteCharacteristics: WineTasteCharacteristics[] | undefined
@@ -31,15 +32,7 @@ export const useCharacteristics = ({
   const handleAddCharacteristic = useCallback(
     async (characteristicData: CreateWineTasteCharacteristicRequest) => {
       try {
-        const params: CreateWineTasteCharacteristicRequest = {
-          translations: characteristicData.translations || [],
-          colorHex: characteristicData.colorHex || '',
-          colorIds: characteristicData.colorIds || [],
-          levels: characteristicData.levels || [],
-          description: characteristicData.description || '',
-        }
-
-        await createTasteCharacteristics(params)
+        await createTasteCharacteristics(characteristicData)
       } catch (error) {
         console.error('Failed to create taste characteristic:', error)
       }
@@ -69,7 +62,6 @@ export const useCharacteristics = ({
       const characteristicFormData = {
         translations: group.translations || [],
         colorHex: group.colorHex || '',
-        description: group.description || '',
         sortNumber: group.sortNumber || 0,
         levels: group.levels || [],
         colors: group.colors || [],
@@ -113,18 +105,18 @@ export const useCharacteristics = ({
 
       try {
         const currentGroupIndex = tasteCharacteristics?.findIndex((tc: WineTasteCharacteristics) => tc.id === characteristicId) ?? -1
-        const newGroupData = {
-          ...data,
+        const updateData: UpdateWineTasteCharacteristicRequest = {
+          colorHex: data.colorHex || '',
+          levels: data.levels || [],
           colorIds: data.colors?.map((color: BaseWineColor) => color.id) || [],
           sortNumber: currentGroupIndex >= 0 ? currentGroupIndex : tasteCharacteristics?.length || 0,
-          translations: data.translations || [],
-          description: data.description || '',
-          levels: data.levels || [],
-          colorHex: data.colorHex,
+          translations: convertToUpdateTranslations(data.translations),
+          isPremium: false,
         }
+
         await updateTasteCharacteristics({
           characteristicId,
-          newCharacteristic: newGroupData as CreateWineTasteCharacteristicRequest,
+          newCharacteristic: updateData,
         })
         setOpenAccordions((prev: Set<string>) => {
           const newSet = new Set(prev)
@@ -172,7 +164,7 @@ export const useCharacteristics = ({
       const data = editingCharacteristicData[characteristicId]
       if (!data?.translations) return false
 
-      const { nameUa, nameEn } = getDisplayNames(data.translations)
+      const { nameUa, nameEn } = getDisplayNameDescription(data.translations)
       return nameUa && nameEn && data?.colorHex && data?.levels && data?.levels.length > 2 && data.colors && data.colors.length
     },
     [editingCharacteristicData]
@@ -185,8 +177,8 @@ export const useCharacteristics = ({
 
       if (!originalCharacteristic || !currentFormData) return false
 
-      const { nameUa: currentNameUa, nameEn: currentNameEn } = getDisplayNames(currentFormData.translations || [])
-      const { nameUa: originalNameUa, nameEn: originalNameEn } = getDisplayNames(originalCharacteristic.translations || [])
+      const { nameUa: currentNameUa, nameEn: currentNameEn } = getDisplayNameDescription(currentFormData.translations || [])
+      const { nameUa: originalNameUa, nameEn: originalNameEn } = getDisplayNameDescription(originalCharacteristic.translations || [])
 
       const nameChanged = originalNameUa !== currentNameUa || originalNameEn !== currentNameEn
 
@@ -195,10 +187,9 @@ export const useCharacteristics = ({
       const colorsChanged = JSON.stringify(originalColorIds.sort()) !== JSON.stringify(currentColorIds.sort())
       const translationsChanged = !arraysEqual(originalCharacteristic.translations || [], currentFormData.translations || [])
       const colorHexChanged = currentFormData.colorHex !== originalCharacteristic.colorHex
-      const descriptionChanged = currentFormData.description !== originalCharacteristic.description
       const levelsChanged = !areLevelsEqual(originalCharacteristic.levels || [], currentFormData.levels || [])
 
-      return nameChanged || colorsChanged || translationsChanged || colorHexChanged || descriptionChanged || levelsChanged
+      return nameChanged || colorsChanged || translationsChanged || colorHexChanged || levelsChanged
     },
     [tasteCharacteristics, editingCharacteristicData]
   )
@@ -227,8 +218,9 @@ const areLevelsEqual = (levels1: LevelItem[], levels2: LevelItem[]): boolean => 
     return false
   }
 
-  const sorted1 = [...levels1].sort((x, y) => (x.id || '').localeCompare(y.id || ''))
-  const sorted2 = [...levels2].sort((x, y) => (x.id || '').localeCompare(y.id || ''))
+  const sorted1 = [...levels1].sort((x, y) => String(x.id ?? '').localeCompare(String(y.id ?? '')))
+
+  const sorted2 = [...levels2].sort((x, y) => String(x.id ?? '').localeCompare(String(y.id ?? '')))
 
   return sorted1.every((level1, index) => {
     const level2 = sorted2[index]
@@ -242,8 +234,8 @@ const areLevelsEqual = (levels1: LevelItem[], levels2: LevelItem[]): boolean => 
       return false
     }
 
-    const isShowed1 = level1.isShowed ?? true
-    const isShowed2 = level2.isShowed ?? true
+    const isShowed1 = level1.isEnabled ?? true
+    const isShowed2 = level2.isEnabled ?? true
     if (isShowed1 !== isShowed2) {
       return false
     }

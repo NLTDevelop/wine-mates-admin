@@ -1,5 +1,5 @@
 import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
-import { getDisplayNames } from '@/lib/utils'
+import { getDisplayNameDescription } from '@/lib/utils'
 import { WineTasteCharacteristics } from './taste-characteristics'
 
 interface WineTasteCharacteristicsStoreState {
@@ -67,7 +67,7 @@ export const useWineTasteCharacteristicsStore = createStoreDevToolsWrapper<WineT
       const searchTermLower = searchTerm.toLowerCase()
 
       const filtered = tasteCharacteristics.filter((tc: WineTasteCharacteristics) => {
-        const { nameUa: groupNameUa, nameEn: groupNameEn } = getDisplayNames(tc.translations || [])
+        const { nameUa: groupNameUa, nameEn: groupNameEn } = getDisplayNameDescription(tc.translations || [])
 
         return groupNameUa.toLowerCase().includes(searchTermLower) || (groupNameEn && groupNameEn.toLowerCase().includes(searchTermLower))
       })

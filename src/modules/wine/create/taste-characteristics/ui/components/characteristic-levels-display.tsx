@@ -1,17 +1,19 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { getDisplayNames } from '@/lib/utils'
+import { getDisplayNameDescription, getDisplayNames } from '@/lib/utils'
 import { Badge } from '@/UIKit/shadcn/ui/badge'
-import { LevelItem } from '../../entities/taste-characteristics'
+import { LevelItem, WineTasteCharacteristics } from '../../entities/taste-characteristics'
 
 interface CharacteristicLevelsDisplayProps {
   levels: LevelItem[]
-  description?: string
+  group: WineTasteCharacteristics
   colorBadge?: Record<string, string>
 }
 
-export const CharacteristicLevelsDisplay: React.FC<CharacteristicLevelsDisplayProps> = ({ levels, description, colorBadge }) => {
+export const CharacteristicLevelsDisplay: React.FC<CharacteristicLevelsDisplayProps> = ({ levels, group, colorBadge }) => {
   const { t } = useTranslation('wines')
+
+  const { descriptionUa } = getDisplayNameDescription(group.translations || [])
 
   return (
     <div className="space-y-4">
@@ -22,18 +24,16 @@ export const CharacteristicLevelsDisplay: React.FC<CharacteristicLevelsDisplayPr
             const { nameUa } = getDisplayNames(level.translations || [])
             return (
               <Badge key={level.id || `level-${index}`} variant="outline" className="border-0" style={{ backgroundColor: colorBadge?.backgroundColor }}>
-                <p className={colorBadge?.color}>
-                  {index + 1}. {nameUa}
-                </p>
+                <p className={colorBadge?.color}>{nameUa}</p>
               </Badge>
             )
           })}
         </div>
       </div>
-      {description && (
+      {descriptionUa && (
         <div>
           <h4 className="text-description !mb-0">{t('taste_characteristics.description')}:</h4>
-          <p className="text-md">{description}</p>
+          <p className="text-md">{descriptionUa}</p>
         </div>
       )}
     </div>
