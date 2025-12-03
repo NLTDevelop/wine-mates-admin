@@ -65,7 +65,7 @@ export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTyp
 
   return (
     <Card>
-      <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
+      <CardContent className={cn('space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0', !isLoading ? 'fade-in' : '')}>
         <div>
           <CreateWineTypeSection onCreateWineType={handleAddWineType} isLoading={isLoading} cachedColors={cachedColors} />
         </div>
@@ -99,7 +99,7 @@ export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTyp
                               {wineType?.colors?.map((color: BaseWineColor, idx: number) => {
                                 const colorName = color?.name || getDisplayNames(color?.translations || []).nameUa
                                 return (
-                                  <div key={color?.id + idx} className="bg-muted px-2 py-1 rounded text-xs">
+                                  <div key={`${color?.id}-${idx}`} className="bg-muted px-2 py-1 rounded text-xs">
                                     {colorName}
                                   </div>
                                 )

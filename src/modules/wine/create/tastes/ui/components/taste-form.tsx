@@ -10,8 +10,6 @@ import { BaseWineColor } from '../../../general/entities/types'
 import { CreateWineTasteParams } from '../../entities/types/tastes'
 import { Plus, Save } from 'lucide-react'
 
-import { mockBaseWineColors } from '../../../general/entities/mockBaseColor'
-
 interface TasteFormProps {
   formData: CreateWineTasteParams
   onFormDataChange: (field: keyof CreateWineTasteParams, value: any) => void
@@ -23,12 +21,12 @@ interface TasteFormProps {
   hasChanges?: boolean
 }
 
-export const TasteForm: React.FC<TasteFormProps> = ({ formData, onFormDataChange, onSave, onCancel, isLoading = false, /*cachedColors,*/ mode = 'edit', hasChanges }) => {
+export const TasteForm: React.FC<TasteFormProps> = ({ formData, onFormDataChange, onSave, onCancel, isLoading = false, cachedColors, mode = 'edit', hasChanges }) => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
   const { colorValues, handleColorChange, fetchOptions } = useColorForm({
-    cachedColors: mockBaseWineColors, //временно мок
+    cachedColors, //: mockBaseWineColors, //временно мок
     initialColors: formData.colors || [],
     onColorsChange: colors => onFormDataChange('colors', colors),
   })

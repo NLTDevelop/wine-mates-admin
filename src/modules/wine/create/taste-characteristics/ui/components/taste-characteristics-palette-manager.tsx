@@ -4,7 +4,7 @@ import { useCharacteristicPalette } from '../../presenters/useCharacteristicsPal
 import { useContrastText } from '@/hooks/ui/useContrastText'
 import { useReorderListTasteCharacteristics } from '../../../general/presenters/usePaletteReorder'
 import { useDeleteModal } from '../../../general/presenters/useDeleteModal'
-import { cn, getDisplayNames } from '@/lib/utils'
+import { cn, getDisplayNameDescription } from '@/lib/utils'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
 import { Button } from '@/UIKit/shadcn/ui/button'
@@ -88,18 +88,18 @@ export const TasteCharacteristicsPaletteManager = ({ cachedColors, colorsLoading
         {!isLoading && tasteCharacteristics?.length === 0 && <EmptyState type="taste-characteristics" />}
         <SortableList items={tasteCharacteristics} onReorder={handleReorder}>
           <div className="mx-auto flex flex-col justify-center gap-2 w-full">
-            {tasteCharacteristics?.map((group: WineTasteCharacteristics) => {
+            {tasteCharacteristics?.map((group: WineTasteCharacteristics, idx: number) => {
               const { textColorClass: cardTextColorClass } = useContrastText(group.colorHex)
 
-              const isGroupOpen = ui.isAccordionOpen(group.id)
-              const isGroupEditing = ui.isEditing(group.id)
-              const isItemFormOpen = ui.isFormItemOpen(group.id)
-              const isGroupFormOpen = ui.isFormGroupOpen(group.id)
+              const isGroupOpen = ui?.isAccordionOpen(group.id)
+              const isGroupEditing = ui?.isEditing(group.id)
+              const isItemFormOpen = ui?.isFormItemOpen(group.id)
+              const isGroupFormOpen = ui?.isFormGroupOpen(group.id)
 
               const currentEditingGroupData = editingCharacteristicData[group.id]
               const forceOpenKey = forceOpenKeys[group.id] || 0
-              const accordionKey = isGroupOpen && forceOpenKey > 0 ? `forced-${group.id}-${forceOpenKey}` : group.id
-              const { nameUa, nameEn } = getDisplayNames(group?.translations || [])
+              const accordionKey = isGroupOpen && forceOpenKey > 0 ? `forced-${group.id}-${forceOpenKey}` : `${group.id}-${idx}`
+              const { nameUa, nameEn } = getDisplayNameDescription(group?.translations || [])
 
               return (
                 <SortableItem key={accordionKey} id={group.id} className="flex flex-col" handleClassName="top-1.5 hover:bg-transparent" gridColor={cardTextColorClass}>
@@ -143,7 +143,7 @@ export const TasteCharacteristicsPaletteManager = ({ cachedColors, colorsLoading
                     >
                       {isGroupOpen && !isGroupFormOpen && (
                         <div className="mt-4">
-                          <CharacteristicLevelsDisplay levels={group.levels || []} description={group.description} colorBadge={{ backgroundColor: group.colorHex, color: cardTextColorClass }} />
+                          <CharacteristicLevelsDisplay levels={group.levels || []} group={group} colorBadge={{ backgroundColor: group.colorHex, color: cardTextColorClass }} />
                         </div>
                       )}
 

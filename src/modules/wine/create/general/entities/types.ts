@@ -22,7 +22,7 @@ export type Language = 'en' | 'uk' | 'fr' | 'pl' | 'de' | 'es' | 'it'
 export interface NameDictionary {
   id?: string
   name: string
-  language: Language | ''
+  language: Language
 }
 
 export type ReorderEntityType = 'color' | 'flavors' | 'tastes' | 'taste-characteristics' | 'wine-types'
@@ -34,3 +34,15 @@ export interface ReorderParams {
     order: number
   }>
 }
+
+export type NameDescriptionDictionary =
+  | {
+      id?: string
+      name: string
+      language: Language
+    }
+  | {
+      id?: string
+      description: string
+      language: Language
+    }

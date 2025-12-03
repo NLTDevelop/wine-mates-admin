@@ -1,36 +1,67 @@
-import { BaseWineColor, NameDictionary } from '../../general/entities/types'
+import { BaseWineColor, Language, NameDescriptionDictionary, NameDictionary } from '../../general/entities/types'
+
+export type CreateTranslation =
+  | {
+      name: string
+      language: Language
+    }
+  | {
+      description: string
+      language: Language
+    }
+
+export type UpdateTranslation =
+  | {
+      id?: string
+      name: string
+      language: Language
+    }
+  | {
+      id?: string
+      description: string
+      language: Language
+    }
 
 export interface LevelItem {
   id?: string
   translations?: NameDictionary[]
   sortNumber?: number
-  isShowed?: boolean
+  isEnabled: boolean
 }
 
 export interface WineTasteCharacteristics {
   id: string
-  translations?: NameDictionary[]
-  description?: string
+  translations?: NameDescriptionDictionary[][]
   colorHex: string
   levels: LevelItem[]
   colors: BaseWineColor[]
   sortNumber?: number
+  isPremium: boolean
 }
 
 export type CreateWineTasteCharacteristicParams = Omit<WineTasteCharacteristics, 'id'>
 
 export interface CreateWineTasteCharacteristicRequest {
-  translations?: NameDictionary[]
-  description?: string
+  translations?: CreateTranslation[]
   levels: LevelItem[]
   colorIds: string[]
   colorHex: string
   sortNumber?: number
+  isPremium: boolean
+}
+
+export interface UpdateWineTasteCharacteristicRequest {
+  translations?: UpdateTranslation[]
+  levels: LevelItem[]
+  colorIds: string[]
+  colorHex: string
+  sortNumber?: number
+  isPremium: boolean
 }
 
 export interface UpdateWineTasteCharacteristicParams {
   characteristicId: string
-  newCharacteristic: CreateWineTasteCharacteristicRequest
+  newCharacteristic: UpdateWineTasteCharacteristicRequest
 }
 
 export interface ReorderLevelParams {

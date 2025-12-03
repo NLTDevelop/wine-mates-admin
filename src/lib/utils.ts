@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import i18n from 'i18next'
-import { NameDictionary } from '@/modules/wine/create/general/entities/types'
+import { NameDescriptionDictionary, NameDictionary } from '@/modules/wine/create/general/entities/types'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -160,6 +160,36 @@ export const getDisplayNames = (translations: NameDictionary[]): DisplayNames =>
   const nameEn = translations.find(t => t.language === 'en')?.name || ''
 
   return { nameUa, nameEn }
+}
+
+export interface DisplayNameDescription extends DisplayNames {
+  descriptionUa?: string
+  descriptionEn?: string
+}
+
+export const getDisplayNameDescription = (translationsGroups?: NameDescriptionDictionary[][]): DisplayNameDescription => {
+  if (!translationsGroups || !Array.isArray(translationsGroups)) {
+    return { nameUa: '', nameEn: '', descriptionUa: '', descriptionEn: '' }
+  }
+
+  const allTranslations = translationsGroups.flat()
+
+  let nameUa = ''
+  let nameEn = ''
+  let descriptionUa = ''
+  let descriptionEn = ''
+
+  for (const item of allTranslations) {
+    if ('name' in item) {
+      if (item.language === 'uk') nameUa = item.name
+      if (item.language === 'en') nameEn = item.name
+    } else if ('description' in item) {
+      if (item.language === 'uk') descriptionUa = item.description
+      if (item.language === 'en') descriptionEn = item.description
+    }
+  }
+
+  return { nameUa, nameEn, descriptionUa, descriptionEn }
 }
 
 export const createTranslations = (nameUa: string, nameEn: string, prev?: NameDictionary[]): NameDictionary[] => {

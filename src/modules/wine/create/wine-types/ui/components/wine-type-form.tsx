@@ -9,6 +9,7 @@ import { CreateWineTypeParams } from '../../entities/types/wine-type'
 import { BaseWineColor } from '../../../general/entities/types'
 import { AdditionalTranslations } from '../../../general/ui/components/additional-translations'
 import { cn } from '@/lib/utils'
+import { Checkbox } from '@/UIKit/shadcn/ui/checkbox'
 // import { mockBaseWineColors } from '../../../general/entities/mockBaseColor'
 
 interface WineTypeFormProps {
@@ -93,6 +94,14 @@ export const WineTypeForm: React.FC<WineTypeFormProps> = ({ formData, onFormData
           mode="multiple"
           disabled={isLoading}
         />
+      </div>
+
+      <div>
+        <label className="text-sm font-medium mb-2 block">{t('types.scales_for_sparkling')} </label>
+        <div className="flex items-center gap-2">
+          <Checkbox checked={formData.isSparkling ?? false} onCheckedChange={checked => onFormDataChange('isSparkling', checked)} />
+          <span className="text-sm">{formData.isSparkling ? t('types.displayed') : t('types.hide')}</span>
+        </div>
       </div>
 
       <div className="flex gap-3 justify-end mt-4">

@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
-import { getDisplayNames } from '@/lib/utils'
+import { getDisplayNameDescription } from '@/lib/utils'
 import { CreateWineTasteCharacteristicParams, CreateWineTasteCharacteristicRequest, LevelItem } from '../entities/taste-characteristics'
+import { convertToCreateTranslations } from '../../general/presenters/helper'
 
 interface UseCreateTasteCharacteristicProps {
   onCreateTasteCharacteristic: (wineTypeData: CreateWineTasteCharacteristicRequest) => void
@@ -10,7 +11,7 @@ interface UseCreateTasteCharacteristicProps {
 interface UseCreateTasteCharacteristicReturn {
   isExpanded: boolean
   formData: CreateWineTasteCharacteristicParams
-  updateFormData: (field: 'translations' | 'colors' | 'colorHex' | 'description' | 'levels', value: any) => void
+  updateFormData: (field: keyof CreateWineTasteCharacteristicParams, value: any) => void
   handleCreateTasteCharacteristic: () => void
   handleCancel: () => void
   expandForm: () => void
@@ -24,14 +25,16 @@ export const useCreateTasteCharacteristic = ({ onCreateTasteCharacteristic, isLo
     return Array.from({ length: qty }, (_, index) => ({
       id: `temp-level-${Date.now()}-${index}`,
       sortNumber: index,
+      isEnabled: true,
     }))
   }
 
-  const initialData = {
+  const initialData: CreateWineTasteCharacteristicParams = {
     colors: [],
     colorHex: '',
     levels: createEmptyLevels(3),
-    description: '',
+    translations: [],
+    isPremium: false,
   }
   const [formData, setFormData] = useState<CreateWineTasteCharacteristicParams>(initialData)
 
@@ -42,11 +45,11 @@ export const useCreateTasteCharacteristic = ({ onCreateTasteCharacteristic, isLo
   const handleCreateTasteCharacteristic = useCallback(() => {
     if (!isLoading) {
       const characteristicDataForApi: CreateWineTasteCharacteristicRequest = {
-        translations: formData.translations || [],
+        translations: convertToCreateTranslations(formData.translations),
         colorIds: formData.colors.map(color => color.id),
         colorHex: formData.colorHex,
         levels: formData.levels,
-        description: formData.description,
+        isPremium: false,
       }
       onCreateTasteCharacteristic(characteristicDataForApi)
       setFormData(initialData)
@@ -63,7 +66,7 @@ export const useCreateTasteCharacteristic = ({ onCreateTasteCharacteristic, isLo
     setIsExpanded(true)
   }, [])
 
-  const { nameUa, nameEn } = getDisplayNames(formData.translations || [])
+  const { nameUa, nameEn } = getDisplayNameDescription(formData.translations || [])
   const canCreate = !!(nameUa && nameEn && formData.colors && formData.colors.length > 0 && formData.levels && formData.levels.length > 2)
 
   return {

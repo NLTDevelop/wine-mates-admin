@@ -7,20 +7,24 @@ export interface WineType {
   sortNumber?: number
   nameUa?: string
   nameEn?: string
+  isSparkling?: boolean
 }
 
 export interface CreateWineTypeParams {
   translations: NameDictionary[]
   colors: BaseWineColor[]
+  isSparkling?: boolean
 }
 export interface CreateWineTypeRequest {
   translations: NameDictionary[]
   colorIds: string[]
+  isSparkling?: boolean
 }
 
 export interface UpdateWineTypeParams {
   wineTypeId: string
   newWineType: CreateWineTypeRequest
+  isSparkling?: boolean
 }
 
 export interface WineOption {

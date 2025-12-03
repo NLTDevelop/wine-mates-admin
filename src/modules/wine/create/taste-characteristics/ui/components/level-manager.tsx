@@ -23,7 +23,7 @@ export const LevelsManager: React.FC<LevelsManagerProps> = ({ levels, onLevelsCh
   const addNewInput = () => {
     const newLevel: LevelItem = {
       translations: createTranslations('', ''),
-      isShowed: true,
+      isEnabled: true,
     }
     onLevelsChange([...levels, newLevel])
   }
@@ -95,8 +95,8 @@ const LevelItemWithTranslations: React.FC<LevelItemWithTranslationsProps> = ({ l
     onTranslationsChange: translations => onUpdate(index, { ...level, translations }),
   })
 
-  const handleShowChange = (isShowed: boolean) => {
-    onUpdate(index, { ...level, isShowed })
+  const handleShowChange = (isEnabled: boolean) => {
+    onUpdate(index, { ...level, isEnabled })
   }
 
   const getLevelId = () => {
@@ -109,7 +109,7 @@ const LevelItemWithTranslations: React.FC<LevelItemWithTranslationsProps> = ({ l
         <div className="flex items-start justify-between pl-5">
           <div>
             <div className="p-1 flex items-center space-x-2 mb-3 border-1 rounded-md border-muted">
-              <Checkbox id={`show-level-${index}`} checked={level.isShowed ?? true} onCheckedChange={handleShowChange} />
+              <Checkbox id={`show-level-${index}`} checked={level.isEnabled ?? true} onCheckedChange={handleShowChange} />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 ">
                 <Input value={nameUa} onChange={e => handleNameUaChange(e.target.value)} placeholder={t('taste_characteristics.level_name_ua')} className="h-9 w-full" />

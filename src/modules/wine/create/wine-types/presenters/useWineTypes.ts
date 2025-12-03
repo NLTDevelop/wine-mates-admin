@@ -46,6 +46,7 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
         sortNumber: 0,
         nameUa,
         nameEn,
+        isSparkling: newWineType.isSparkling ?? false,
       }
 
       queryClient.setQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'], (old = []) => {
@@ -89,6 +90,7 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
         translations: params.newWineType.translations,
         colors: assignedColors,
         sortNumber: 0,
+        isSparkling: params.isSparkling,
       }
 
       queryClient.setQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'], (old = []) => old?.map(wt => (wt.id === params.wineTypeId ? optimisticWineType : wt)) || [])

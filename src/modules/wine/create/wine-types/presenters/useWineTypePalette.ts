@@ -26,8 +26,9 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
       const currentColorIds = currentFormData.colors?.map(c => c?.id) || []
       const colorsChanged = JSON.stringify(originalColorIds.sort()) !== JSON.stringify(currentColorIds.sort())
       const translationsChanged = !arraysEqual(originalWineType.translations, currentFormData.translations)
+      const checkboxChanged = currentFormData.isSparkling !== originalWineType.isSparkling
 
-      return nameChanged || colorsChanged || translationsChanged
+      return nameChanged || colorsChanged || translationsChanged || checkboxChanged
     },
     [wineTypes, formData]
   )
@@ -43,20 +44,19 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
 
   const handleToggleForm = useCallback(
     (wineTypeId: string) => {
-      console.log('Toggle form for wineTypeId:', wineTypeId)
       setIsFormOpen(prev => ({
         ...prev,
         [wineTypeId]: !prev[wineTypeId],
       }))
       if (!formData[wineTypeId]) {
         const wineType = wineTypes.find((wt: WineType) => wt?.id === wineTypeId)
-        console.log('Found wineType:', wineType)
         if (wineType) {
           setFormData(prev => ({
             ...prev,
             [wineTypeId]: {
               translations: wineType.translations || [],
               colors: wineType.colors || [],
+              isSparkling: wineType.isSparkling || false,
             },
           }))
         }
@@ -92,6 +92,7 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
         const updateData: CreateWineTypeRequest = {
           translations: data.translations || [],
           colorIds: data.colors.map(color => color?.id),
+          isSparkling: data.isSparkling || false,
         }
         const updateParams: UpdateWineTypeParams = {
           wineTypeId,
