@@ -66,7 +66,7 @@ export const useUserColumns = ({ onConfirmCategory }: UseUserColumnsProps) => {
         header: t('table.category'),
         cell: info => {
           const category = info.getValue()
-          getCategoryLabel(category)
+          return getCategoryLabel(category)
         },
       }),
       columnHelper.display({

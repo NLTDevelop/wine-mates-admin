@@ -2,9 +2,11 @@ import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query'
 import { useCallback, useState } from 'react'
 import { useDebounce } from '@/hooks/ui/useDebounce'
 
-import { IWines, UpdateWineListParams, WinesResponse } from '../entities/types/types'
+import { Image, IWines, UpdateWineListParams, WineImage, WinesResponse } from '../entities/types/types'
 import { useWineStore } from '../entities/wine-list-store'
 import { wineQueries } from '../entities/wine-list-queries'
+import { WineFormData } from '../../create/wine/presenters/wine-form-schema'
+
 
 export const useWineList = () => {
   const { filters, setFilters, resetFilters } = useWineStore()
@@ -24,7 +26,7 @@ export const useWineList = () => {
   const importWinesMutation = useMutation(wineQueries.import())
 
   const { debouncedWrapper } = useDebounce((searchValue: string) => {
-    setFilters({ search: searchValue, page: 0 })
+    setFilters({ search: searchValue, page: 1 })
   }, 500)
 
   const findWineById = useCallback(
@@ -70,13 +72,42 @@ export const useWineList = () => {
     },
     [updateWineMutation, winesQuery]
   )
+  const transformWineImageToImage = (wineImage: WineImage): Image => {
+    return {
+      id: '',
+      url: wineImage.originalUrl,
+      thumbnailUrl: wineImage.smallUrl,
+      alt: wineImage.originalName,
+      order: 0,
+      fileSize: wineImage.size,
+      mimeType: wineImage.mimetype,
+    }
+  }
+  const transformWineForUpdate = (wineData: Partial<IWines>): WineFormData => {
+    const { country, region, type, color, image, ...rest } = wineData
+
+    return {
+      id: rest.id || '',
+      name: rest.name || '',
+      vintage: rest.vintage ?? null,
+      producer: rest.producer || '',
+      grapeVariety: rest.grapeVariety || '',
+      countryId: country?.id ? Number(country.id) : null,
+      regionId: region?.id ? Number(region.id) : null,
+      typeId: type?.id ? Number(type.id) : null,
+      colorId: color?.id ? Number(color.id) : null,
+      image: image ? transformWineImageToImage(image) : null,
+    }
+  }
 
   const saveWineChanges = useCallback(
     async (updatedData: Partial<IWines>) => {
       if (editingWine?.id) {
+        const updateData = transformWineForUpdate(updatedData)
+
         await updateWine({
           id: editingWine.id,
-          data: { ...editingWine, ...updatedData },
+          data: updateData,
         })
       }
     },
@@ -116,7 +147,7 @@ export const useWineList = () => {
       const wineFound = findWineById(wineId)
       if (wineFound) {
         setWine({
-          wineName: wineFound.displayName || '',
+          wineName: wineFound.name || '',
           isConfirm: wineFound.isConfirmed ?? false,
         })
       }
@@ -179,7 +210,7 @@ export const useWineList = () => {
 
   return {
     wines: winesQuery.data?.rows,
-    totalCount: winesQuery.data?.totalCount,
+    totalCount: winesQuery.data?.count,
     isLoading: winesQuery.isLoading,
     filters,
     searchValue,

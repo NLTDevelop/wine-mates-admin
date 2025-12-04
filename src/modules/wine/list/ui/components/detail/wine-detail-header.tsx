@@ -3,10 +3,7 @@ import { Wine } from 'lucide-react'
 import { Badge } from '@/UIKit/shadcn/ui/badge'
 import { IWines } from '../../../entities/types/types'
 import { useTranslation } from 'react-i18next'
-import { ImageModal } from '@/modals/imagesModal'
-import { ImageSlider } from '@/UIKit/app-components/image-slider'
 import { useContrastText } from '@/hooks/ui/useContrastText'
-import { getDisplayNames } from '@/lib/utils'
 
 interface WineDetailHeaderProps {
   wine: IWines
@@ -14,26 +11,15 @@ interface WineDetailHeaderProps {
 
 export const WineDetailHeader: React.FC<WineDetailHeaderProps> = ({ wine }) => {
   const { t } = useTranslation('wines')
-  const images = wine.images || []
-  const hasImages = images.length > 0
 
-  const color = wine.type ? wine.type?.colors[0].colorHex : '#ffffff'
+  const color = wine?.color?.colorHex ?? '#ffffff'
   const { textColorClass } = useContrastText(color)
-  const { nameUa } = getDisplayNames(wine?.type?.colors[0]?.translations || [])
-  const { nameUa: wineName } = getDisplayNames(wine?.type?.translations || [])
 
   return (
     <div className="flex flex-col sm:flex-row items-start gap-6 mb-8 pb-6 border-b border-dashed border-muted-foreground">
       <div className="relative sm:w-32 sm:h-32 w-full h-full overflow-hidden">
-        {hasImages ? (
-          <ImageModal
-            images={images}
-            trigger={
-              <div className="w-full h-full relative cursor-zoom-in">
-                <ImageSlider images={images} className="w-full h-full" showControls={images.length > 1} showIndicators={false} />
-              </div>
-            }
-          />
+        {wine.image ? (
+          <img src={wine.image.smallUrl || wine.image.mediumUrl} alt={wine.image.name || 'Image'} className="w-full h-full object-cover rounded-lg" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-muted to-primary flex items-center justify-center rounded-lg"></div>
         )}
@@ -41,7 +27,7 @@ export const WineDetailHeader: React.FC<WineDetailHeaderProps> = ({ wine }) => {
 
       <div className="flex-1">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
-          <h1 className="text-2xl font-bold text-foreground">{wine.displayName || t('unnamed_wine')}</h1>
+          <h1 className="text-2xl font-bold text-foreground">{wine.name || t('unnamed_wine')}</h1>
           {wine.isConfirmed && (
             <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
               {t('confirmed')}
@@ -49,25 +35,20 @@ export const WineDetailHeader: React.FC<WineDetailHeaderProps> = ({ wine }) => {
           )}
         </div>
 
-        {wine.producerName && (
+        {wine.producer && (
           <p className="text-gray-600 mb-3 flex items-center gap-1">
             <Wine size={16} />
-            {wine.producerName}
+            {wine.producer}
           </p>
         )}
 
         <div className="flex flex-wrap gap-2">
-          {wine.type && (
-            <Badge className={textColorClass} style={{ backgroundColor: /*wine.type.colors[0].*/ nameUa }}>
-              {wineName}
+          {wine.color && (
+            <Badge variant="secondary" className={textColorClass} style={{ backgroundColor: wine.color?.colorHex }}>
+              {wine.color.name}
             </Badge>
           )}
-          {wine.classification && <Badge className="bg-amber-100 text-amber-900 hover:bg-amber-100 cursor-default">{wine.classification}</Badge>}
-          {wine.grapeVariety && (
-            <Badge variant="secondary" className="bg-blue-50 text-foreground hover:bg-blue-50 cursor-default">
-              {wine.grapeVariety}
-            </Badge>
-          )}
+          {wine.type?.name && <Badge className="bg-blue-50 text-foreground hover:bg-blue-50 cursor-default">{wine.type.name}</Badge>}
         </div>
       </div>
     </div>

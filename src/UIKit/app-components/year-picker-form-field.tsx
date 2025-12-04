@@ -20,14 +20,14 @@ export const YearPickerFormField: FC<YearPickerFormFieldProps> = ({ form, name, 
       control={form.control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-col">
+        <FormItem>
           <FormLabel>
             {label}
             {required && <span className="text-destructive ml-1">*</span>}
           </FormLabel>
           <FormControl>
             <YearPicker
-              // value={field.value}
+              value={field.value}
               onChange={field.onChange}
               onBlur={field.onBlur}
               disabled={disabled}

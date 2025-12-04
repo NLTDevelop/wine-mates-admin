@@ -9,7 +9,7 @@ interface DetailSectionProps {
 
 export const DetailSection: React.FC<DetailSectionProps> = ({ title, icon, fields }) => {
   return (
-    <section>
+    <section className='space-y-6'>
       <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
         {icon}
         {title}
@@ -18,7 +18,7 @@ export const DetailSection: React.FC<DetailSectionProps> = ({ title, icon, field
         {fields.map((field, index) => (
           <div key={index} className={cn('flex justify-between items-center py-2', field && 'border-b border-input')}>
             <span className="text-sm font-medium text-gray-500">{field?.label}</span>
-            <span className="text-sm text-foreground">{field?.value}</span>
+            <span className="text-sm text-foreground font-black">{field?.value}</span>
           </div>
         ))}
       </div>

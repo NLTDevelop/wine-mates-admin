@@ -1,4 +1,4 @@
-import { MouseEventHandler, useMemo, useState } from 'react'
+import { MouseEventHandler, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HexColorPicker } from 'react-colorful'
 import { Button } from '@/UIKit/shadcn/ui/button'
@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { Palette } from 'lucide-react'
 import { useContrastText } from '@/hooks/ui/useContrastText'
 import chroma from 'chroma-js'
+import z from 'zod'
 
 interface ColorPickerProps {
   value: string
@@ -17,9 +18,56 @@ interface ColorPickerProps {
   onClick?: MouseEventHandler<HTMLInputElement>
 }
 
+export const strictHexColorSchema = z
+  .string()
+  .optional()
+  .refine(val => {
+    if (!val || val === '') return true
+    return /^#?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(val)
+  }, 'Invalid HEX color format')
+  .transform(val => {
+    if (!val || val === '') return ''
+    if (!val.startsWith('#')) val = '#' + val
+
+    if (val.length === 4) {
+      return `#${val[1]}${val[1]}${val[2]}${val[2]}${val[3]}${val[3]}`
+    }
+    return val
+  })
+
+export const colorFormSchema = z.object({
+  color: z
+    .string()
+    .refine(val => {
+      if (!val) return true
+      try {
+        chroma(val)
+        return true
+      } catch {
+        return false
+      }
+    }, 'Invalid color')
+    .transform(val => {
+      if (!val) return ''
+      try {
+        return chroma(val).hex()
+      } catch {
+        return val
+      }
+    }),
+})
+
 export const ColorPicker = ({ value, onChange, className, baseHexNoHash, onClick }: ColorPickerProps) => {
   const { t } = useTranslation('common')
   const [open, setOpen] = useState(false)
+  const [inputValue, setInputValue] = useState(value) 
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    setInputValue(value)
+  }, [value])
+
+  console.log(value)
 
   const { textColorClass } = useContrastText(value)
 
@@ -79,12 +127,36 @@ export const ColorPicker = ({ value, onChange, className, baseHexNoHash, onClick
     return '0%'
   }
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value
+    setInputValue(newValue)
+    if (newValue === '') {
+      onChange?.('')
+      setError(null)
+      return
+    }
+
+    let valueToValidate = newValue
+    if (newValue && !newValue.startsWith('#') && /^[A-Fa-f0-9]{1,6}$/.test(newValue)) {
+      valueToValidate = '#' + newValue
+    }
+
+    const result = strictHexColorSchema.safeParse(valueToValidate)
+
+    if (result.success) {
+      onChange?.(result.data)
+      setError(null)
+    } else {
+      setError(t('invalid_color_format') || 'Invalid color format')
+    }
+  }
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
-          style={{ backgroundColor: value || t('choose_color') }}
+          style={{ backgroundColor: value || '#fcfaf3' }}
           className={cn('w-full h-11 justify-start gap-2 bg-background', `hover:${textColorClass}`, textColorClass, className)}
         >
           <span className={cn('flex-1 text-sm text-left', value ? textColorClass : 'text-muted-foreground')}>{value || t('choose_color')}</span>
@@ -113,7 +185,13 @@ export const ColorPicker = ({ value, onChange, className, baseHexNoHash, onClick
               />
             </div>
           )}
-          <Input value={value || ''} onClick={onClick} onChange={e => onChange?.(e.target.value)} placeholder={baseHexNoHash ? baseHexNoHash : '#000000'} className="font-mono w-full" />
+          <Input
+            value={inputValue || ''}
+            onClick={onClick}
+            onChange={handleInputChange}
+            placeholder={baseHexNoHash ? baseHexNoHash : '#000000'}
+            className={cn('font-mono w-full', error && '!border-red-500 focus-visible:ring-red-500')}
+          />
         </div>
       </PopoverContent>
     </Popover>

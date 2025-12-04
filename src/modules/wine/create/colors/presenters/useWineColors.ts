@@ -7,7 +7,6 @@ import { DataResponse } from '../../general/entities/types'
 import { colorService } from '../entities/color-service'
 import { getDisplayNames } from '@/lib/utils'
 
-// import { mockWineColorGroups } from '../entities/types/mockColor'
 
 export const useWineColor = () => {
   const queryClient = useQueryClient()

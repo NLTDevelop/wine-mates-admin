@@ -1,112 +1,53 @@
 import i18n from 'i18next'
 import { z } from 'zod'
 
-const fileSchema = z.instanceof(File, { message: i18n.t('messages:img_require') })
+const existingImageSchema = z.object({
+  id: z.string(),
+  url: z.string(),
+  thumbnailUrl: z.string().optional(),
+  alt: z.string().optional(),
+  order: z.number().optional(),
+  fileSize: z.number().optional(),
+  mimeType: z.string().optional(),
+})
 
-const optionalNumberSchema = z.preprocess(
-  val => {
-    if (val === undefined || val === null || val === '') return undefined
-    if (typeof val === 'number') return val
-    if (typeof val === 'string') {
-      const trimmed = val.trim()
-      if (trimmed === '') return undefined
-      const num = parseInt(trimmed, 10)
-      return isNaN(num) ? undefined : num
-    }
-    return undefined
-  },
-  z
-    .number()
+export const wineFormSchema = z.object({
+id: z.union([z.string(), z.number()]).optional().transform(v => v?.toString()),
+
+  name: z.string().min(1, i18n.t('messages:name_require')).max(200),
+
+  vintage: z
+    .union([z.string(), z.number()])
+    .nullable()
     .optional()
-    .refine(val => val === undefined || Number.isInteger(val), {
-      message: i18n.t('messages:integer_year'),
-    })
-    .refine(val => val === undefined || val >= 1900, {
-      message: i18n.t('messages:old_year'),
-    })
-    .refine(val => val === undefined || val <= new Date().getFullYear() + 50, {
-      message: i18n.t('messages:big_year'),
-    })
-)
+    .transform(v => (v ? Number(v) : null)),
 
-const requiredNumberSchema = z.preprocess(
-  val => {
-    if (typeof val === 'string') {
-      const trimmed = val.trim()
-      if (trimmed === '') return undefined
-      const num = parseInt(trimmed, 10)
-      return isNaN(num) ? undefined : num
-    }
-    return val
-  },
-  z
-    .number()
-    .refine(val => val !== undefined, { message: i18n.t('messages:field_require') })
-    .refine(val => !isNaN(val), { message: i18n.t('messages:incorrect_year') })
-    .min(1900, i18n.t('messages:old_year'))
-    .max(new Date().getFullYear(), i18n.t('messages:feature_year'))
-)
+  countryId: z
+    .union([z.string(), z.number()])
+    .nullable()
+    .transform(v => (v ? Number(v) : null)),
 
-export const wineFormSchema = z
-  .object({
-    displayName: z.string().min(1, i18n.t('messages:name_require')).max(200, i18n.t('messages:long_name')),
-    producerTitle: z.string().min(1, i18n.t('messages:producer_require')).max(200),
-    producerName: z.string().min(1, i18n.t('messages:producer_name_require')).max(200),
-    wine: z.string().min(1, i18n.t('messages:wine_name_require')).max(200),
-    grapeVariety: z.string().min(1, i18n.t('messages:grape_require')).max(200),
+  regionId: z
+    .union([z.string(), z.number()])
+    .nullable()
+    .transform(v => (v ? Number(v) : null)),
 
-    country: z.string().min(1, i18n.t('messages:country_require')),
-    region: z.string().optional(),
-    subRegion: z.string().optional(),
+  typeId: z
+    .union([z.string(), z.number(), z.null()])
+    .transform(v => (v ? Number(v) : null))
+    .refine(v => v !== null && v > 0, { message: i18n.t('messages:wine_type_require') }),
 
-    site: z.string().max(300).optional(),
-    subType: z.string().max(100).optional(),
-    designation: z.string().max(100).optional(),
-    classification: z.string().max(100).optional(),
-    reference: z.string().max(200).optional(),
-    description: z.string().max(2000).optional(),
+  colorId: z
+    .union([z.string(), z.number(), z.null()])
+    .transform(v => (v ? Number(v) : null))
+    .refine(v => v !== null && v > 0, { message: i18n.t('messages:wine_color_require') }),
 
-    type: z.string().min(1, i18n.t('messages:wine_type_require')),
+  producer: z.string().optional(),
+  grapeVariety: z.string().optional(),
 
-    vintageConfig: requiredNumberSchema
-      .refine(val => val !== undefined && val >= 1900, i18n.t('messages:old_vintage'))
-      .refine(val => val !== undefined && val <= new Date().getFullYear(), i18n.t('messages:feature_vintage')),
+  image: z.union([z.instanceof(File), existingImageSchema, z.null()]).optional(),
+})
 
-    firstVintage: optionalNumberSchema
-      .refine(val => val === undefined || val >= 1900, i18n.t('messages:old_start_year'))
-      .refine(val => val === undefined || val <= new Date().getFullYear(), i18n.t('messages:feature_start_year')),
 
-    finalVintage: optionalNumberSchema
-      .refine(val => val === undefined || val >= 1900, i18n.t('messages:old_end_year'))
-      .refine(val => val === undefined || val <= new Date().getFullYear() + 50, i18n.t('messages:feature_end_year')),
 
-    media: z.array(fileSchema).min(1, i18n.t('messages:img_require')).max(10, i18n.t('messages:max_imgs')),
-  })
-  .refine(
-    data => {
-      if (data.firstVintage && data.finalVintage) {
-        return data.finalVintage >= data.firstVintage
-      }
-      return true
-    },
-    {
-      message: i18n.t('messages:end_vintage'),
-      path: ['finalVintage'],
-    }
-  )
-  .refine(
-    data => {
-      if (data.country && data.country.trim() !== '' && (!data.region || data.region.trim() === '')) {
-        return false
-      }
-      return true
-    },
-    {
-      message: i18n.t('messages:region_require'),
-      path: ['region'],
-    }
-  )
-
-export type WineFormData = Omit<z.infer<typeof wineFormSchema>, 'vintageConfig'> & {
-  vintageConfig: number
-}
+export type WineFormData = z.infer<typeof wineFormSchema>

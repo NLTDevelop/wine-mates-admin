@@ -14,6 +14,19 @@ api.interceptors.request.use(config => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+  if (config.data instanceof FormData) {
+    let hasFiles = false
+    for (const value of config.data.values()) {
+      if (value instanceof File) {
+        hasFiles = true
+        break
+      }
+    }
+
+    if (hasFiles) {
+      delete config.headers['Content-Type']
+    }
+  }
   return config
 })
 

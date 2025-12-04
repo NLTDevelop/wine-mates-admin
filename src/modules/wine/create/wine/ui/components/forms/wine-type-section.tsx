@@ -1,68 +1,94 @@
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { WineFormData } from '../../../presenters/wine-form-schema'
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/UIKit/shadcn/ui/form'
-import { Input } from '@/UIKit/shadcn/ui/input'
+import { FormFieldCombobox, IOption } from '@/UIKit/app-components/form-field-combobox'
+import { YearPickerFormField } from '@/UIKit/app-components/year-picker-form-field'
+import { useWineTypeOptions } from '../../../presenters/useWineTypeOptions'
 import { WineType } from '@/modules/wine/create/wine-types/entities/types/wine-type'
-import { FormFieldCombobox } from '@/UIKit/app-components/form-field-combobox'
 
 interface WineTypeSectionProps {
   form: UseFormReturn<WineFormData>
   wineTypes: WineType[]
+  wineTypesLoading?: boolean
 }
 
 export const WineTypeSection = memo(
-  ({ form /*wineTypes*/ }: WineTypeSectionProps) => {
-    const { t } = useTranslation('wines')
+  ({ form, wineTypes, wineTypesLoading = false }: WineTypeSectionProps) => {
+    const { t, i18n } = useTranslation('wines')
     const { t: tc } = useTranslation('common')
 
-    return (
-      <>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormFieldCombobox
-            form={form}
-            formLabel={t('wine_type') + '*'}
-            name="type"
-            placeholder={t('wine_type_placeholder')}
-            searchLabel={tc('search')}
-            fetchOptions={async () => {
-              return [
-                { value: '1', label: 'Червоне' },
-                { value: '2', label: 'Біле' },
-                { value: '3', label: 'Рожеве' },
-                { value: '4', label: 'Ігристе' },
-                { value: '5', label: 'Помаранчере' },
-              ]
-            }}
-            options={[
-              { value: '1', label: 'Червоне' },
-              { value: '2', label: 'Біле' },
-              { value: '3', label: 'Рожеве' },
-              { value: '4', label: 'Ігристе' },
-              { value: '5', label: 'Помаранчере' },
-            ]}
-          />
+    const currentYear = new Date().getFullYear()
+    const typeId = form.watch('typeId')
 
-          <FormField
-            control={form.control}
-            name="subType"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('sub_type')}</FormLabel>
-                <FormControl>
-                  <Input {...field} placeholder={t('sub_type_placeholder')} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-      </>
+    const { fetchOptions } = useWineTypeOptions({
+      cachedWineTypes: wineTypes,
+      initialWineTypeId: typeId,
+      onWineTypeChange: (value: string | null) => {
+        const typeId = value ? parseInt(value, 10) : null
+        form.setValue('typeId', typeId)
+      },
+    })
+
+    const selectedType = useMemo(() => wineTypes.find(t => Number(t.id) === typeId), [wineTypes, typeId])
+
+    const typeOptions = useMemo(
+      () =>
+        wineTypes.map(wt => {
+          const currentLang = i18n.language.split('-')[0]
+          const translation = wt.translations?.find(t => t.language === currentLang)
+
+          let label = ''
+          if (translation) {
+            label = translation.name
+          } else {
+            const enTranslation = wt.translations?.find(t => t.language === 'en')
+            label = enTranslation?.name || wt.translations?.[0]?.name || ''
+          }
+
+          return {
+            value: wt.id?.toString() || '',
+            label: label,
+          } as IOption
+        }),
+      [wineTypes, i18n.language]
+    )
+
+    const getPlaceholder = useMemo(() => {
+      if (wineTypesLoading) return tc('loading')
+
+      if (selectedType) {
+        const currentLang = i18n.language.split('-')[0]
+        const translation = selectedType.translations?.find(t => t.language === currentLang)
+        return translation?.name || selectedType.translations?.[0]?.name || t('wine_type_placeholder')
+      }
+
+      return t('wine_type_placeholder')
+    }, [wineTypesLoading, tc, selectedType, i18n.language, t])
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormFieldCombobox
+          form={form}
+          formLabel={t('wine_type') + '*'}
+          name="typeId"
+          placeholder={getPlaceholder}
+          searchLabel={tc('search')}
+          fetchOptions={fetchOptions}
+          disabled={wineTypesLoading}
+          options={typeOptions}
+        />
+        <YearPickerFormField form={form} name="vintage" label={t('vintage_config')} placeholder={t('vintage_config')} fromYear={1900} toYear={currentYear} />
+      </div>
     )
   },
   (prevProps, nextProps) => {
-    return prevProps.form.watch('type') === nextProps.form.watch('type') && prevProps.wineTypes === nextProps.wineTypes
+    return (
+      prevProps.form.watch('typeId') === nextProps.form.watch('typeId') &&
+      prevProps.form.watch('vintage') === nextProps.form.watch('vintage') &&
+      prevProps.wineTypes === nextProps.wineTypes &&
+      prevProps.wineTypesLoading === nextProps.wineTypesLoading
+    )
   }
 )
 

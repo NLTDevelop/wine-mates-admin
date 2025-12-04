@@ -1,8 +1,10 @@
-import { WineType } from '@/modules/wine/create/wine-types/entities/types/wine-type'
+import { BaseWineColor } from '@/modules/wine/create/general/entities/types'
+import { WineFormData } from '@/modules/wine/create/wine/presenters/wine-form-schema'
 
 export interface WinesResponse {
   rows: IWines[]
-  totalCount: number
+  totalPages: number
+  count: number
 }
 
 export interface WineFilters {
@@ -11,53 +13,38 @@ export interface WineFilters {
   search?: string
 }
 
+export interface TypeWine {
+  id: number
+  name: string
+  isSparkling: boolean
+}
+export type LocationWine = Omit<TypeWine, 'isSparkling'>
+
 export interface IWines {
   id?: string
-  displayName?: string
-  producerTitle?: string
-  producerName?: string
-  wine?: string
+  name?: string
+  vintage?: number
+  country?: LocationWine
+  region?: LocationWine
+  producer?: string
   grapeVariety?: string
-  country?: string
-  region?: string
-  subRegion?: string
-  site?: string
-
-  type?: WineType
-  subType?: string
-  designation?: string
-  classification?: string
-
-  vintageConfig?: number
-  firstVintage?: number
-  finalVintage?: number
-
-  reference?: string
-  description?: string
-  images?: WineImage[]
+  type?: TypeWine
+  color?: BaseWineColor
+  image?: WineImage
   isConfirmed?: boolean
 }
 
 export interface CreateWineRequest {
-  displayName: string
-  producerTitle: string
-  producerName: string
-  wine: string
-  grapeVariety: string
-  country: string
-  region?: string
-  subRegion?: string
-  site?: string
-  typeId: string
-  subType?: string
-  designation?: string
-  classification?: string
-  vintageConfig?: number
-  firstVintage?: number
-  finalVintage?: number
-  reference?: string
-  description?: string
-  images: File[]
+  id?: string
+  name: string
+  vintage?: number | null
+  countryId?: number | null
+  regionId?: number | null
+  producer?: string
+  grapeVariety?: string
+  image?: Image | null
+  typeId: number | null
+  colorId: number | null
 }
 
 export interface ConfirmWineParams {
@@ -67,10 +54,10 @@ export interface ConfirmWineParams {
 
 export interface UpdateWineListParams {
   id: string
-  data: Partial<IWines>
+  data: WineFormData
 }
 
-export interface WineImage {
+export interface Image {
   id: string
   url: string
   thumbnailUrl?: string
@@ -78,6 +65,18 @@ export interface WineImage {
   order: number
   fileSize?: number
   mimeType?: string
+  preview?: string
+  _isExistingImage?: boolean
+}
+
+export interface WineImage {
+  name: string
+  originalName: string
+  mimetype: string
+  size: number
+  smallUrl: string
+  mediumUrl: string
+  originalUrl: string
 }
 
 export interface ImportWineParams {
