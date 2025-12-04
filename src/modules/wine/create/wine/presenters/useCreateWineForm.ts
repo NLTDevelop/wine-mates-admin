@@ -1,4 +1,3 @@
-import { mapFormDataToCreateRequest } from './mappers'
 import { useCreateWine } from './useCreateWine'
 import { useWineForm } from './useWineForm'
 import { WineFormData } from './wine-form-schema'
@@ -8,8 +7,7 @@ export const useCreateWineForm = () => {
   const form = useWineForm()
 
   const onSubmit = async (formData: WineFormData): Promise<void> => {
-    const createRequest = mapFormDataToCreateRequest(formData)
-    await createWine(createRequest)
+    await createWine(formData as any)
   }
 
   return {

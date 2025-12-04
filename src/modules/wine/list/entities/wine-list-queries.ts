@@ -13,7 +13,7 @@ export const wineQueries = {
   }),
 
   confirmWine: () => ({
-    mutationKey: ['users', 'confirmCategory'],
+    mutationKey: ['wines', 'confirmWine'],
     mutationFn: ({ id, isConfirmed }: { id: string; isConfirmed: boolean }) => wineListService.confirm({ id, isConfirmed }),
   }),
 

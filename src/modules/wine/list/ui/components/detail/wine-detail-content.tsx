@@ -1,6 +1,6 @@
 import React from 'react'
 import { IWines } from '../../../entities/types/types'
-import { BasicInfoSection, GeographicInfoSection, VintageInfoSection, ClassificationSection, DescriptionSection } from '../..'
+import { BasicInfoSection, GeographicInfoSection, VintageInfoSection} from '../..'
 
 interface WineDetailContentProps {
   wine: IWines
@@ -12,8 +12,6 @@ export const WineDetailContent: React.FC<WineDetailContentProps> = ({ wine }) =>
       <BasicInfoSection wine={wine} />
       <GeographicInfoSection wine={wine} />
       <VintageInfoSection wine={wine} />
-      <ClassificationSection wine={wine} />
-      <DescriptionSection wine={wine} />
     </div>
   )
 }

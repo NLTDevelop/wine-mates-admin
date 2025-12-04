@@ -4,7 +4,6 @@ import { useWineTypeStore } from '../entities/wine-type-store'
 import { wineTypeQueries } from '../entities/wine-type-queries'
 import { CreateWineTypeRequest, UpdateWineTypeParams, WineType } from '../entities/types/wine-type'
 import { BaseWineColor } from '../../general/entities/types'
-// import { mockWineTypes } from '../entities/mock'
 import { getDisplayNames } from '@/lib/utils'
 
 export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
@@ -181,7 +180,6 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
   }
 
   return {
-    // wineTypes: mockWineTypes,
     wineTypes: wineTypeQuery.data || [],
     searchResults: store.searchResults,
     currentWineType: store.currentWineType,

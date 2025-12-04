@@ -85,7 +85,7 @@ export const UsersDetailView: React.FC = () => {
       <Card className="p-6">
         <div className="flex flex-col sm:flex-row items-start gap-6 mb-8 pb-6 border-b border-dashed border-muted-foreground">
           <Avatar className="w-20 h-20">
-            {user.avatarUrl ? <AvatarImage src={user.avatarUrl.mediumUrl} alt={`${user.firstName} ${user.lastName}`} /> : null}
+            {user?.avatar && user.avatar.smallUrl ? <AvatarImage src={user.avatar.smallUrl} alt={`${user.firstName} ${user.lastName}`} /> : null}
             <AvatarFallback className="text-lg font-semibold bg-gradient-to-br from-muted to-primary">
               {user?.firstName?.[0]}
               {user?.lastName?.[0]}

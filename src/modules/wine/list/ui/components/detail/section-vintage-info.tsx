@@ -8,10 +8,8 @@ export const VintageInfoSection: React.FC<{ wine: IWines }> = ({ wine }) => {
   const { t } = useTranslation('wines')
 
   const fields = [
-    { label: t('table.vintageconfig'), value: wine.vintageConfig?.toString() },
+    { label: t('table.vintageconfig'), value: wine.vintage?.toString() },
     null,
-    { label: t('table.firstvintage'), value: wine.firstVintage?.toString() },
-    { label: t('table.finalvintage'), value: wine.finalVintage?.toString() },
   ]
 
   if (fields.length === 0) return null

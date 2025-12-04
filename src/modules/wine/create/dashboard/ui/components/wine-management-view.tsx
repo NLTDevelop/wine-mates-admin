@@ -3,18 +3,21 @@ import { useTranslation } from 'react-i18next'
 import { ContentLayout } from '@/layout/components/content-layout'
 import { WineTemplateSelector } from '..'
 import { TastePaletteManager } from '../../../tastes/ui'
-import { CreateWineForm } from '../../../wine/ui'
 import { FlavorPaletteManager } from '../../../flavors/ui'
 import { ColorPaletteManager } from '../../../colors/ui'
 import { WineTypeManager } from '../../../wine-types/ui/components/wine-type-manager'
 import { useCachedColors } from '../../../general/presenters/useCachedColors'
 import { TasteCharacteristicsPaletteManager } from '../../../taste-characteristics/ui'
+import { CreateWineForm } from '../../../wine/ui'
+import { useCachedWineTypes } from '../../../general/presenters/useCachedWineTypes'
 
 export const WineManagementView = () => {
   const { t } = useTranslation('wines')
   const [selectedTemplate, setSelectedTemplate] = useState<string>('')
 
   const { cachedColors, isLoading: colorsLoading, refreshColors } = useCachedColors()
+   const { cachedWineTypes, isLoading: wineTypesLoading } = useCachedWineTypes()
+
 
   const handleTemplateSelect = async (template: string) => {
     if (template === 'wine_type') {
@@ -36,7 +39,7 @@ export const WineManagementView = () => {
       case 'taste_characteristics_palette':
         return <TasteCharacteristicsPaletteManager cachedColors={cachedColors} colorsLoading={colorsLoading} />
       case 'wine_creation':
-        return <CreateWineForm wineTypes={[]} />
+        return <CreateWineForm wineTypes={cachedWineTypes} cachedColors={cachedColors} colorsLoading={colorsLoading} wineTypesLoading={wineTypesLoading}/>
       default:
         return <WineTemplateSelector selectedTemplate={selectedTemplate} onTemplateSelect={handleTemplateSelect} />
     }

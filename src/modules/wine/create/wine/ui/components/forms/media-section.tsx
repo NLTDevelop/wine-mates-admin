@@ -2,9 +2,10 @@ import { memo } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Card } from '@/UIKit/shadcn/ui/card'
-import { NLTFormFilesDropZone } from '@/UIKit/components/NLTFormFilesDropZone'
+
 import { Label } from '@/UIKit/shadcn/ui/label'
 import { WineFormData } from '../../../presenters/wine-form-schema'
+import { NLTFormSingleFileDropZone } from '@/UIKit/components/NLTFormSingleFileDropZone'
 
 interface MediaSectionProps {
   form: UseFormReturn<WineFormData>
@@ -15,10 +16,16 @@ export const MediaSection = memo(({ form }: MediaSectionProps) => {
 
   return (
     <>
-      <Label>{t('media') + '*'}</Label>
-      <Card className="p-4 bg-background">
-        <div className="grid grid-cols-1 mt-2">
-          <NLTFormFilesDropZone form={form} name="media" />
+      <Label>{t('media')}</Label>
+      <Card className="p-2 bg-background">
+        <div className="grid grid-cols-1">
+          <NLTFormSingleFileDropZone 
+            form={form} 
+            name="image"
+            formLabel=""
+            maxSizeInMB={10}
+            acceptedTypes={['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp']}
+          />
         </div>
       </Card>
     </>

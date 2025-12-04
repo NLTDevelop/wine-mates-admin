@@ -8,9 +8,9 @@ import { useTranslation } from 'react-i18next'
 import { SkeletonWineDetail } from '..'
 import { WineDetailHeader, WineDetailContent, WineDetailActions } from '..'
 import { wineListService } from '../../entities/wine-list-service'
-import { mockWines } from '../../entities/mock'
 import { EditWineForm } from '@/modules/wine/create/wine/ui/components/edit-wine-form'
 import { ContentLayout } from '@/layout/components/content-layout'
+import { cn } from '@/lib/utils'
 
 export const WineDetailView: React.FC = () => {
   const { t } = useTranslation('wines')
@@ -24,8 +24,7 @@ export const WineDetailView: React.FC = () => {
   const startEditing = params.get('edit') === 'true'
   const [isEditing, setIsEditing] = useState(startEditing)
 
-  const wine = mockWines[0]
-  const { /*wine,*/ isLoading, refetch } = useWineDetail(id!)
+  const { wine, isLoading, refetch } = useWineDetail(id!)
 
   const handleConfirmWine = async (isConfirmed: boolean) => {
     try {
@@ -75,9 +74,9 @@ export const WineDetailView: React.FC = () => {
       btn={<WineDetailActions onBack={() => navigate(-1)} onConfirmWine={handleConfirmWine} wine={wine} onEdit={() => setIsEditing(true)} isEditing={isEditing} />}
       isGoBack
     >
-      <div className="mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-4xl">
+      <div className={cn("mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-4xl", !isLoading ? "fade-in" : "")}>
         {isEditing ? (
-          <EditWineForm wine={wine} wineTypes={[]} onSuccess={handleEditSuccess} onCancel={handleEditCancel} />
+          <EditWineForm wine={wine}  onSuccess={handleEditSuccess} onCancel={handleEditCancel} />
         ) : (
           <Card className="p-6">
             <WineDetailHeader wine={wine} />

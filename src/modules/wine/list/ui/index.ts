@@ -10,5 +10,4 @@ export * from './components/detail/wine-detail-actions'
 export * from './components/detail/wine-detail-content'
 export * from './components/detail/wine-detail-header'
 export * from './components/detail/section-vintage-info'
-export * from './components/detail/section-classification'
-export * from './components/detail/section-description'
+

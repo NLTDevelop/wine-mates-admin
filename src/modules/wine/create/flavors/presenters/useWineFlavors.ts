@@ -15,7 +15,6 @@ import {
 import { wineFlavorService } from '../entities/wine-flavor-service'
 import { wineFlavorQueries } from '../entities/wine-flavor-queries'
 
-// import { mockAromaGroups } from '../entities/mock'
 
 export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
   const queryClient = useQueryClient()
@@ -378,7 +377,6 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
   const onChangePagination = (page: number) => store.setFilters({ page })
 
   return {
-    // aromaGroups: mockAromaGroups,
     aromaGroups: aromaGroups(),
     totalCount: groupsQuery.data?.count || 0,
 

@@ -14,13 +14,15 @@ import { File } from 'lucide-react'
 import { ConfirmModal } from '@/modals/confirmModal'
 import { ImportFileModal } from '@/modals/ImportFileModal'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
+import { cn } from '@/lib/utils'
+import { SkeletonWineList } from './skeleton-wine-list'
 
 export const WineView = () => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
   const navigate = useNavigate()
 
-  const { wines, filters, onChangeSearch, handleClearSearch, onChangePagination, deleteModal, searchValue, deleteWine, wineToConfirm, confirmModal, importWines } = useWineList()
+  const { wines, filters, onChangeSearch, handleClearSearch, onChangePagination, deleteModal, searchValue, deleteWine, wineToConfirm, confirmModal, importWines, isLoading,totalCount } = useWineList()
   const columns = useWineColumns({ onEdit: wine => navigate(`/wines/${wine.id}?edit=true`), onDelete: deleteWine, onConfirm: confirmModal.open })
   const { table } = useDataTable(wines ?? [], columns)
 
@@ -33,6 +35,9 @@ export const WineView = () => {
     navigate(PATHS.WINE_DETAIL.replace(':id', wineId))
   }
 
+   if (isLoading) {
+      return <SkeletonWineList />
+    }
   return (
     <ContentLayout title={t('list.wines_list')}>
       <div className="text-end">
@@ -41,7 +46,7 @@ export const WineView = () => {
           {t('button.import')}
         </Button>
       </div>
-      <div className="pb-2">
+      <div className={cn("pb-2", !isLoading ? "fade-in" : "")}>
         <NLTDataTable
           table={table}
           rowClassname="text-center cursor-pointer"
@@ -50,7 +55,7 @@ export const WineView = () => {
         />
       </div>
 
-      {wines?.length && wines.length > DEFAULT_PAGINATION_LIMIT && <NLTTablePagination limit={filters.limit} page={filters.page} totalRows={wines?.length || 0} setPage={onChangePagination} />}
+      {totalCount && totalCount  > DEFAULT_PAGINATION_LIMIT ? <NLTTablePagination limit={filters.limit} page={filters.page} totalRows={totalCount || 1} setPage={onChangePagination} />:null}
       <WarningModal
         title={t('list.wine_delete')}
         actionTitle={t('button.delete')}

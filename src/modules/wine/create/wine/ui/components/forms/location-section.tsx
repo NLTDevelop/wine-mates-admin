@@ -2,123 +2,105 @@ import { UseFormReturn } from 'react-hook-form'
 import { WineFormData } from '../../../presenters/wine-form-schema'
 import { useTranslation } from 'react-i18next'
 import { memo, useMemo, useEffect } from 'react'
-import { FormFieldCombobox } from '@/UIKit/app-components/form-field-combobox'
+import { FormFieldCombobox, IOption } from '@/UIKit/app-components/form-field-combobox'
+import { useCountryOptions } from '../../../presenters/useCountryOptions'
+import { useRegionOptions } from '../../../presenters/useRegionOptions'
 
 interface LocationSectionProps {
   form: UseFormReturn<WineFormData>
-  countryValue: string
-  regionValue?: string
+  countryValue: number | null
+  regionValue?: number | null
 }
 
 export const LocationSection = memo(({ form, countryValue, regionValue }: LocationSectionProps) => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
-  const { t: tm } = useTranslation('messages')
+
+  const countryId = form.watch('countryId')
+  const regionId = form.watch('regionId')
 
   useEffect(() => {
     if (!countryValue && regionValue) {
-      form.setValue('region', '')
+      form.setValue('regionId', null)
     }
   }, [countryValue, regionValue, form])
 
-  useEffect(() => {
-    if (!regionValue && form.watch('subRegion')) {
-      form.setValue('subRegion', '')
-    }
-  }, [regionValue, form])
+  const { fetchOptions: fetchCountryOptions, isLoading: countriesLoading, countries = [] } = useCountryOptions({})
+
+  const {
+    fetchOptions: fetchRegionOptions,
+    isLoading: regionsLoading,
+    regions = [],
+  } = useRegionOptions({
+    countryId: countryValue,
+  })
+
+  const selectedCountry = useMemo(() => countries.find(c => c.id === countryId || Number(c.id) === countryId), [countries, countryId])
+
+  const selectedRegion = useMemo(() => regions.find(r => r.id === regionId || Number(r.id) === regionId), [regions, regionId])
 
   const isRegionDisabled = useMemo(() => !countryValue, [countryValue])
-  const isSubRegionDisabled = useMemo(() => !regionValue, [regionValue])
 
-  const regionError = useMemo(() => {
-    const country = form.watch('country')
-    const region = form.watch('region')
-    const isRegionTouched = form.formState.touchedFields.region
-    if (!isRegionTouched) {
-      return
-    }
+  const countryOptions = useMemo(
+    () =>
+      countries.map(
+        country =>
+          ({
+            value: country.id?.toString() || '',
+            label: country.name || '',
+          }) as IOption
+      ),
+    [countries]
+  )
 
-    if (country && !region) {
-      return tm('region_require')
+  const regionOptions = useMemo(
+    () =>
+      regions.map(
+        region =>
+          ({
+            value: region.id?.toString() || '',
+            label: region.name || '',
+          }) as IOption
+      ),
+    [regions]
+  )
+
+  useEffect(() => {
+    if (countryOptions.length > 0 && countryId) {
+      form.setValue('countryId', countryId, { shouldValidate: true })
     }
-    return form.formState.errors.region?.message as string
-  }, [form.watch('country'), form.watch('region'), form.formState.touchedFields.region])
+  }, [countryOptions, countryId, form])
+
+  useEffect(() => {
+    if (regionOptions.length > 0 && regionId) {
+      form.setValue('regionId', regionId, { shouldValidate: true })
+    }
+  }, [regionOptions, regionId, form])
+
+
+  const countryPlaceholder = selectedCountry ? selectedCountry.name : countriesLoading ? tc('loading') : t('country_placeholder')
+
+  const regionPlaceholder = selectedRegion ? selectedRegion.name : regionsLoading ? tc('loading') : t('region_placeholder')
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <FormFieldCombobox
         form={form}
-        formLabel={t('country') + '*'}
-        name="country"
-        placeholder={t('country_placeholder')}
+        formLabel={t('country')}
+        name="countryId"
+        placeholder={countryPlaceholder}
         searchLabel={tc('search')}
-        fetchOptions={async (search?: string) => {
-          await new Promise(resolve => setTimeout(resolve, 300))
-
-          const allCountries = [
-            { value: 'uk', label: 'Україна' },
-            { value: 'fr', label: 'Франція' },
-            { value: 'it', label: 'Італія' },
-            { value: 'es', label: 'Іспанія' },
-            { value: 'de', label: 'Німеччина' },
-            { value: 'us', label: 'США' },
-          ]
-
-          if (search) {
-            return allCountries.filter(country => country.label.toLowerCase().includes(search.toLowerCase()))
-          }
-
-          return allCountries
-        }}
+        fetchOptions={fetchCountryOptions}
+        disabled={countriesLoading}
       />
       <FormFieldCombobox
         form={form}
-        formLabel={t('region') + '*'}
-        name="region"
-        disabled={isRegionDisabled}
-        error={regionError}
-        placeholder={t('region_placeholder')}
+        formLabel={t('region')}
+        name="regionId"
+        placeholder={regionPlaceholder}
+        disabled={isRegionDisabled || regionsLoading}
         searchLabel={tc('search')}
-        fetchOptions={async () => {
-          return [
-            { value: '1', label: 'Регіон ' },
-            { value: '2', label: 'Регіон ' },
-            { value: '3', label: 'Регіон ' },
-            { value: '4', label: 'Регіон ' },
-            { value: '5', label: 'Регіон ' },
-          ]
-        }}
-        options={[
-          { value: '1', label: 'Регіон' },
-          { value: '2', label: 'Регіон' },
-          { value: '3', label: 'Регіон' },
-          { value: '4', label: 'Регіон' },
-          { value: '5', label: 'Регіон' },
-        ]}
-      />
-      <FormFieldCombobox
-        form={form}
-        formLabel={t('sub_region')}
-        name="subRegion"
-        placeholder={t('sub_region_placeholder')}
-        disabled={isSubRegionDisabled}
-        searchLabel={tc('search')}
-        fetchOptions={async () => {
-          return [
-            { value: '1', label: 'СубРегіон ' },
-            { value: '2', label: 'СубРегіон ' },
-            { value: '3', label: 'СубРегіон ' },
-            { value: '4', label: 'СубРегіон ' },
-            { value: '5', label: 'СубРегіон ' },
-          ]
-        }}
-        options={[
-          { value: '1', label: 'СубРегіон ' },
-          { value: '2', label: 'СубРегіон ' },
-          { value: '3', label: 'СубРегіон ' },
-          { value: '4', label: 'СубРегіон ' },
-          { value: '5', label: 'СубРегіон ' },
-        ]}
+        fetchOptions={fetchRegionOptions}
       />
     </div>
   )

@@ -1,50 +1,46 @@
 import { api } from '@/services'
 import { buildUrl } from '@/lib/utils'
 import { WINE_LIST_ENDPOINTS } from './wine-list-endpoints'
-import { ConfirmWineParams, IWines, UpdateWineListParams, WineFilters, CreateWineRequest } from './types/types'
-import { mockWinesResponse } from './mock'
-
-const USE_MOCK_DATA = true
+import { ConfirmWineParams, CreateWineRequest, IWines, UpdateWineListParams, WineFilters, WinesResponse } from './types/types'
+import { WineFormData } from '../../create/wine/presenters/wine-form-schema'
+import { mapFormDataToUpdateRequestSimple } from '../../create/wine/presenters/useWineForm'
 
 export const wineListService = {
   detail: (id: string | number): Promise<{ data: IWines }> => api.get(buildUrl(WINE_LIST_ENDPOINTS.DETAIL, { id })),
 
-  list: (filters: WineFilters) => {
-    if (USE_MOCK_DATA) {
-      return Promise.resolve(mockWinesResponse)
-    }
-
-    api.get(WINE_LIST_ENDPOINTS.LIST, { params: filters }).then(response => response.data)
-  },
+  list: (filters: WineFilters): Promise<WinesResponse> => api.get(WINE_LIST_ENDPOINTS.LIST, { params: filters }).then(response => response.data),
 
   create: (wineData: CreateWineRequest): Promise<IWines> => {
     const formData = new FormData()
 
     Object.keys(wineData).forEach(key => {
-      if (key !== 'images') {
-        const value = wineData[key as keyof CreateWineRequest]
-        if (value !== undefined && value !== null) {
+      if (key !== 'image') {
+        const value = wineData[key as keyof WineFormData]
+        if (value !== undefined && value !== null && value !== '') {
           formData.append(key, value.toString())
         }
       }
     })
 
-    wineData.images.forEach(image => {
-      formData.append('images', image)
-    })
+    if (wineData.image) {
+      if (wineData.image instanceof File) {
+        formData.append('image', wineData.image)
+      } else if ('url' in wineData.image) {
+        formData.append('imageId', wineData.image.id)
+      }
+    }
 
-    return api
-      .post(WINE_LIST_ENDPOINTS.CREATE, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
-      .then(response => response.data)
+    return api.post(WINE_LIST_ENDPOINTS.CREATE, formData).then(response => response.data)
   },
-
   confirm: ({ id, isConfirmed }: ConfirmWineParams) => api.patch(buildUrl(WINE_LIST_ENDPOINTS.CONFIRM, { id }), { isConfirmed }),
 
-  update: ({ id, data }: UpdateWineListParams) => api.patch(buildUrl(WINE_LIST_ENDPOINTS.UPDATE, { id }), { data }),
+  update: ({ id, data }: UpdateWineListParams) => {
+    const formData = mapFormDataToUpdateRequestSimple(data)
 
-  delete: (colorId: string): Promise<void> => api.delete(buildUrl(WINE_LIST_ENDPOINTS.DELETE, { colorId })).then(response => response.data),
+    return api.patch(buildUrl(WINE_LIST_ENDPOINTS.UPDATE, { id }), formData).then(response => response.data)
+  },
+
+  delete: (id: string): Promise<void> => api.delete(buildUrl(WINE_LIST_ENDPOINTS.DELETE, { id })).then(response => response.data),
 
   import: (file: File): Promise<void> => {
     const formData = new FormData()

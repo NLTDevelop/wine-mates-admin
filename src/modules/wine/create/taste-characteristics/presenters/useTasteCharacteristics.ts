@@ -5,7 +5,6 @@ import { BaseWineColor, NameDescriptionDictionary } from '../../general/entities
 import { tasteCharacteristicsQueries } from '../entities/taste-characteristics-queries'
 import { CreateTranslation, CreateWineTasteCharacteristicRequest, UpdateTranslation, UpdateWineTasteCharacteristicParams, WineTasteCharacteristics } from '../entities/taste-characteristics'
 
-// import { mockWineTasteCharacteristics } from '../entities/mock'
 
 const convertCreateTranslations = (translations?: CreateTranslation[]): NameDescriptionDictionary[][] => {
   if (!translations) return []
@@ -196,7 +195,6 @@ export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
   }
 
   return {
-    // tasteCharacteristics: mockWineTasteCharacteristics,
     tasteCharacteristics: tasteCharacteristicsQuery.data || [],
     searchResults: store.searchResults,
     currentTasteCharacteristics: store.currentTasteCharacteristic,

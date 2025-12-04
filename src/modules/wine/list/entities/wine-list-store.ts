@@ -28,7 +28,7 @@ export const useWineStore = createStoreDevToolsWrapper<WineState>(
     filters: {
       search: '',
       limit: DEFAULT_PAGINATION_LIMIT,
-      page: 0,
+      page: 1,
     },
 
     setWines: (wines: IWines[]) => set({ wines }, false, 'wine/setWines'),
@@ -52,7 +52,7 @@ export const useWineStore = createStoreDevToolsWrapper<WineState>(
           filters: {
             search: '',
             limit: DEFAULT_PAGINATION_LIMIT,
-            page: 0,
+            page: 1,
           },
         },
         false,

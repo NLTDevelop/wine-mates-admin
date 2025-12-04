@@ -1,32 +1,8 @@
 import { useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { wineOptionsQueries } from '../../wine-types/entities/wine-options-queries'
-import { getDisplayNames } from '@/lib/utils'
-import { BaseWineColor } from '../entities/types'
+import { wineTypeQueries } from '../../wine-types/entities/wine-type-queries'
 
-import { mockWineColorGroups } from '../../colors/entities/types/mockColor'
-
-//для мок
-
-export const useWineOptionsMock = () => {
-  const fetchColors = useCallback(async (search?: string) => {
-    if (!search) return mockWineColorGroups
-
-    const searchTerm = search.toLowerCase()
-
-    return mockWineColorGroups.filter((color: BaseWineColor) => {
-      const { nameUa, nameEn } = getDisplayNames(color.translations || [])
-
-      return nameUa.toLowerCase().includes(searchTerm) || (nameEn && nameEn.toLowerCase().includes(searchTerm))
-    })
-  }, [])
-
-  return {
-    fetchColors,
-  }
-}
-
-// -----------------------------------------------------------------------------
 
 export const useWineOptions = () => {
   const fetchWithErrorHandling = useCallback(async (queryFn: () => Promise<any>) => {
@@ -52,8 +28,23 @@ export const useWineOptions = () => {
     [fetchWithErrorHandling]
   )
 
+    const useWineTypes = (include?: string[]) =>
+    useQuery({
+      ...wineTypeQueries.list(include),
+      retry: 2,
+      staleTime: 5 * 60 * 1000,
+    })
+
+  const fetchWineTypes = useCallback(
+    async (include?: string[]) => {
+      return fetchWithErrorHandling(() => wineTypeQueries.list(include).queryFn())
+    },
+    [fetchWithErrorHandling]
+  )
+
   return {
-    useColors,
-    fetchColors,
+    useColors,useWineTypes,
+    
+    fetchColors,fetchWineTypes
   }
 }

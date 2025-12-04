@@ -6,6 +6,7 @@ import { Button } from '@/UIKit/shadcn/ui/button'
 import { WineType } from '../../../wine-types/entities/types/wine-type'
 import { WineFormData } from '../../presenters/wine-form-schema'
 import { BasicInfoSection } from './forms/basic-info-section'
+import { BaseWineColor } from '../../../general/entities/types'
 
 interface WineFormProps {
   form: UseFormReturn<WineFormData>
@@ -14,9 +15,12 @@ interface WineFormProps {
   onSubmit: (data: WineFormData) => Promise<void>
   onCancel?: () => void
   isSubmitting?: boolean
+  cachedColors: BaseWineColor[]
+  colorsLoading: boolean
+  wineTypesLoading: boolean
 }
 
-export const WineForm: React.FC<WineFormProps> = ({ form, wineTypes, mode, onSubmit, onCancel, isSubmitting = false }) => {
+export const WineForm: React.FC<WineFormProps> = ({ form, wineTypes, mode, onSubmit, onCancel, isSubmitting = false, cachedColors, colorsLoading, wineTypesLoading }) => {
   const { t } = useTranslation('common')
   const { t: tw } = useTranslation('wines')
 
@@ -35,7 +39,7 @@ export const WineForm: React.FC<WineFormProps> = ({ form, wineTypes, mode, onSub
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <BasicInfoSection form={form} wineTypes={wineTypes} />
+        <BasicInfoSection form={form} wineTypes={wineTypes} cachedColors={cachedColors} colorsLoading={colorsLoading} wineTypesLoading={wineTypesLoading} />
 
         <div className={`flex gap-4 ${mode !== 'create' ? 'justify-between' : 'justify-end'}`}>
           {mode === 'edit' && onCancel && (

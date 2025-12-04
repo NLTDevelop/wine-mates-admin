@@ -10,7 +10,6 @@ import { BaseWineColor } from '../../../general/entities/types'
 import { AdditionalTranslations } from '../../../general/ui/components/additional-translations'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/UIKit/shadcn/ui/checkbox'
-// import { mockBaseWineColors } from '../../../general/entities/mockBaseColor'
 
 interface WineTypeFormProps {
   formData: CreateWineTypeParams
@@ -28,7 +27,7 @@ export const WineTypeForm: React.FC<WineTypeFormProps> = ({ formData, onFormData
   const { t: tc } = useTranslation('common')
 
   const { colorValues, handleColorChange, fetchOptions } = useColorForm({
-    cachedColors, //: mockBaseWineColors, //временно мок
+    cachedColors, 
     initialColors: formData.colors || [],
     onColorsChange: colors => onFormDataChange('colors', colors),
   })
