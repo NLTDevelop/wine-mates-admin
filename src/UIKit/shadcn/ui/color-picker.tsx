@@ -60,14 +60,12 @@ export const colorFormSchema = z.object({
 export const ColorPicker = ({ value, onChange, className, baseHexNoHash, onClick }: ColorPickerProps) => {
   const { t } = useTranslation('common')
   const [open, setOpen] = useState(false)
-  const [inputValue, setInputValue] = useState(value) 
+  const [inputValue, setInputValue] = useState(value)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     setInputValue(value)
   }, [value])
-
-  console.log(value)
 
   const { textColorClass } = useContrastText(value)
 
@@ -154,11 +152,7 @@ export const ColorPicker = ({ value, onChange, className, baseHexNoHash, onClick
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="ghost"
-          style={{ backgroundColor: value || '#fcfaf3' }}
-          className={cn('w-full h-11 justify-start gap-2 bg-background', `hover:${textColorClass}`, textColorClass, className)}
-        >
+        <Button variant="ghost" style={{ backgroundColor: value || '#fcfaf3' }} className={cn('w-full h-11 justify-start gap-2 bg-background', `hover:${textColorClass}`, textColorClass, className)}>
           <span className={cn('flex-1 text-sm text-left', value ? textColorClass : 'text-muted-foreground')}>{value || t('choose_color')}</span>
           <Palette className={cn('w-6 h-6', textColorClass)} />
         </Button>

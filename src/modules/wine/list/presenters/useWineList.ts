@@ -7,7 +7,6 @@ import { useWineStore } from '../entities/wine-list-store'
 import { wineQueries } from '../entities/wine-list-queries'
 import { WineFormData } from '../../create/wine/presenters/wine-form-schema'
 
-
 export const useWineList = () => {
   const { filters, setFilters, resetFilters } = useWineStore()
 

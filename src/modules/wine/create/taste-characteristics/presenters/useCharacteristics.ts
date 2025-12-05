@@ -1,10 +1,11 @@
 import { useCallback } from 'react'
 import { useTasteCharacteristics } from './useTasteCharacteristics'
 import { BaseWineColor } from '../../general/entities/types'
-import { arraysEqual, getDisplayNameDescription } from '@/lib/utils'
-import { CreateWineTasteCharacteristicParams, CreateWineTasteCharacteristicRequest, LevelItem, UpdateWineTasteCharacteristicRequest, WineTasteCharacteristics } from '../entities/taste-characteristics'
+import { getDisplayNameDescription } from '@/lib/utils'
+import { CreateWineTasteCharacteristicParams, CreateWineTasteCharacteristicRequest, UpdateWineTasteCharacteristicRequest, WineTasteCharacteristics } from '../entities/taste-characteristics'
 import { NewCharacteristicData } from '../entities/characteristics-palette-types'
 import { convertToUpdateTranslations } from '../../general/presenters/helper'
+import { areLevelsEqual, compareCharacteristicTranslations } from './compare-helper'
 
 interface UseCharacteristicsProps {
   tasteCharacteristics: WineTasteCharacteristics[] | undefined
@@ -176,20 +177,17 @@ export const useCharacteristics = ({
       const currentFormData = editingCharacteristicData[characteristicId]
 
       if (!originalCharacteristic || !currentFormData) return false
+      const translationsChanged = !compareCharacteristicTranslations(originalCharacteristic.translations, currentFormData.translations)
 
-      const { nameUa: currentNameUa, nameEn: currentNameEn } = getDisplayNameDescription(currentFormData.translations || [])
-      const { nameUa: originalNameUa, nameEn: originalNameEn } = getDisplayNameDescription(originalCharacteristic.translations || [])
-
-      const nameChanged = originalNameUa !== currentNameUa || originalNameEn !== currentNameEn
-
-      const originalColorIds = originalCharacteristic.colors?.map((c: BaseWineColor) => c?.id) || []
-      const currentColorIds = currentFormData.colors?.map(c => c?.id) || []
-      const colorsChanged = JSON.stringify(originalColorIds.sort()) !== JSON.stringify(currentColorIds.sort())
-      const translationsChanged = !arraysEqual(originalCharacteristic.translations || [], currentFormData.translations || [])
-      const colorHexChanged = currentFormData.colorHex !== originalCharacteristic.colorHex
+      const originalColorIds = originalCharacteristic.colors?.map((c: BaseWineColor) => c?.id).sort() || []
+      const currentColorIds = currentFormData.colors?.map(c => c?.id).sort() || []
+      const colorsChanged = JSON.stringify(originalColorIds) !== JSON.stringify(currentColorIds)
+      const colorHexChanged = (currentFormData.colorHex || '') !== (originalCharacteristic.colorHex || '')
       const levelsChanged = !areLevelsEqual(originalCharacteristic.levels || [], currentFormData.levels || [])
 
-      return nameChanged || colorsChanged || translationsChanged || colorHexChanged || levelsChanged
+      const hasChangesResult = translationsChanged || colorsChanged || colorHexChanged || levelsChanged
+
+      return hasChangesResult
     },
     [tasteCharacteristics, editingCharacteristicData]
   )
@@ -211,35 +209,4 @@ export const useCharacteristics = ({
     canSave,
     hasChanges,
   }
-}
-
-const areLevelsEqual = (levels1: LevelItem[], levels2: LevelItem[]): boolean => {
-  if (levels1.length !== levels2.length) {
-    return false
-  }
-
-  const sorted1 = [...levels1].sort((x, y) => String(x.id ?? '').localeCompare(String(y.id ?? '')))
-
-  const sorted2 = [...levels2].sort((x, y) => String(x.id ?? '').localeCompare(String(y.id ?? '')))
-
-  return sorted1.every((level1, index) => {
-    const level2 = sorted2[index]
-
-    if (level1.id !== level2.id) {
-      return false
-    }
-
-    const translationsEqual = arraysEqual(level1.translations || [], level2.translations || [])
-    if (!translationsEqual) {
-      return false
-    }
-
-    const isShowed1 = level1.isEnabled ?? true
-    const isShowed2 = level2.isEnabled ?? true
-    if (isShowed1 !== isShowed2) {
-      return false
-    }
-
-    return true
-  })
 }

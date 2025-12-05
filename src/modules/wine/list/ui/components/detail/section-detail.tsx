@@ -9,7 +9,7 @@ interface DetailSectionProps {
 
 export const DetailSection: React.FC<DetailSectionProps> = ({ title, icon, fields }) => {
   return (
-    <section className='space-y-6'>
+    <section className="space-y-6">
       <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
         {icon}
         {title}

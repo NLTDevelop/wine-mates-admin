@@ -1,4 +1,3 @@
-
 export const USER_CATEGORIES = {
   WINE_LOVER: 'lover',
   WINE_EXPERT: 'expert',
@@ -14,13 +13,13 @@ export interface IUserResponse {
 }
 
 export interface IAvatar {
-    name: string,
-    originalName: string,
-    mimetype: string,
-    size: number,
-    smallUrl: string,
-    mediumUrl: string,
-    originalUrl: string
+  name: string
+  originalName: string
+  mimetype: string
+  size: number
+  smallUrl: string
+  mediumUrl: string
+  originalUrl: string
 }
 
 export interface IUserTable {

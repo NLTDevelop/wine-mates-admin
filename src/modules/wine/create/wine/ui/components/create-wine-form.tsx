@@ -16,7 +16,16 @@ export const CreateWineForm: React.FC<CreateWineFormProps> = ({ wineTypes, cache
 
   return (
     <div className="mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-4xl">
-      <WineForm form={form as any} wineTypes={wineTypes} mode="create" onSubmit={onSubmit} isSubmitting={isSubmitting} cachedColors={cachedColors} colorsLoading={colorsLoading} wineTypesLoading={wineTypesLoading}/>
+      <WineForm
+        form={form as any}
+        wineTypes={wineTypes}
+        mode="create"
+        onSubmit={onSubmit}
+        isSubmitting={isSubmitting}
+        cachedColors={cachedColors}
+        colorsLoading={colorsLoading}
+        wineTypesLoading={wineTypesLoading}
+      />
     </div>
   )
 }

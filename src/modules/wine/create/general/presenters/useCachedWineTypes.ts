@@ -9,7 +9,7 @@ export const useCachedWineTypes = () => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['wine-types', 'list', 'assigned-colors'],
     queryFn: () => fetchWineTypes(),
-    staleTime: 2 * 60 * 1000, 
+    staleTime: 2 * 60 * 1000,
   })
 
   const refreshWineTypes = useCallback(async () => {
@@ -17,7 +17,7 @@ export const useCachedWineTypes = () => {
   }, [queryClient])
 
   return {
-    cachedWineTypes:  data || [], 
+    cachedWineTypes: data || [],
     isLoading,
     isError,
     error,

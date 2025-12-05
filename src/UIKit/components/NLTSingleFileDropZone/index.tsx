@@ -89,14 +89,14 @@ export const NLTSingleFileDropZone: FC<NLTSingleFileDropZoneProps> = ({ onFileSe
   }
 
   const getFilePreview = (file: File | any): string => {
-  if (file.preview) {
-    return file.preview
+    if (file.preview) {
+      return file.preview
+    }
+    if (file instanceof File) {
+      return URL.createObjectURL(file)
+    }
+    return ''
   }
-  if (file instanceof File) {
-    return URL.createObjectURL(file)
-  }
-  return ''
-}
 
   return (
     <div>
@@ -128,18 +128,18 @@ export const NLTSingleFileDropZone: FC<NLTSingleFileDropZoneProps> = ({ onFileSe
         ) : (
           <div className="w-full">
             <div className="flex items-center justify-between bg-white p-2 rounded-lg shadow-sm">
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-3 flex-1 min-w-0">
                 {file.type.startsWith('image/') ? (
                   <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                    <img src={getFilePreview(file)}  className="w-full h-full object-cover" />
+                    <img src={getFilePreview(file)} className="w-full h-full object-cover" />
                   </div>
                 ) : (
                   <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
                     <span className="text-sm font-medium text-gray-600">{file.name.split('.').pop()?.toUpperCase()}</span>
                   </div>
                 )}
-                <div>
-                  <p className="font-medium text-gray-900 truncate max-w-xs">{file.name}</p>
+                <div className="flex flex-col md:items-start min-w-0 flex-1">
+                  <p className="font-medium text-gray-900 truncate">{file.name}</p>
                   <p className="text-sm text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                 </div>
               </div>

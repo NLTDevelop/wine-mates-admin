@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query'
 import { wineOptionsQueries } from '../../wine-types/entities/wine-options-queries'
 import { wineTypeQueries } from '../../wine-types/entities/wine-type-queries'
 
-
 export const useWineOptions = () => {
   const fetchWithErrorHandling = useCallback(async (queryFn: () => Promise<any>) => {
     try {
@@ -28,7 +27,7 @@ export const useWineOptions = () => {
     [fetchWithErrorHandling]
   )
 
-    const useWineTypes = (include?: string[]) =>
+  const useWineTypes = (include?: string[]) =>
     useQuery({
       ...wineTypeQueries.list(include),
       retry: 2,
@@ -43,8 +42,10 @@ export const useWineOptions = () => {
   )
 
   return {
-    useColors,useWineTypes,
-    
-    fetchColors,fetchWineTypes
+    useColors,
+    useWineTypes,
+
+    fetchColors,
+    fetchWineTypes,
   }
 }

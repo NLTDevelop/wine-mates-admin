@@ -27,7 +27,7 @@ export const WineTypeForm: React.FC<WineTypeFormProps> = ({ formData, onFormData
   const { t: tc } = useTranslation('common')
 
   const { colorValues, handleColorChange, fetchOptions } = useColorForm({
-    cachedColors, 
+    cachedColors,
     initialColors: formData.colors || [],
     onColorsChange: colors => onFormDataChange('colors', colors),
   })

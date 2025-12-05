@@ -5,7 +5,6 @@ import { BaseWineColor, NameDescriptionDictionary } from '../../general/entities
 import { tasteCharacteristicsQueries } from '../entities/taste-characteristics-queries'
 import { CreateTranslation, CreateWineTasteCharacteristicRequest, UpdateTranslation, UpdateWineTasteCharacteristicParams, WineTasteCharacteristics } from '../entities/taste-characteristics'
 
-
 const convertCreateTranslations = (translations?: CreateTranslation[]): NameDescriptionDictionary[][] => {
   if (!translations) return []
 

@@ -16,17 +16,15 @@ interface BasicInfoSectionProps {
   wineTypesLoading: boolean
 }
 
-export const BasicInfoSection = ({ form, wineTypes, wineTypesLoading,cachedColors, colorsLoading }: BasicInfoSectionProps) => {
+export const BasicInfoSection = ({ form, wineTypes, wineTypesLoading, cachedColors, colorsLoading }: BasicInfoSectionProps) => {
   const countryValue = form.watch('countryId')
-  const regionValue = form.watch('regionId')
-
 
   return (
     <Card className="rounded-t-none bg-input/50">
       <CardContent className="space-y-6 sm:px-0">
         <MediaSection form={form} />
-        <ProducerInfoSection form={form} colors={cachedColors} colorsLoading={colorsLoading}/>
-        <LocationSection form={form} countryValue={countryValue} regionValue={regionValue} />
+        <ProducerInfoSection form={form} colors={cachedColors} colorsLoading={colorsLoading} />
+        <LocationSection form={form} countryValue={countryValue} />
         <WineTypeSection form={form} wineTypes={wineTypes} wineTypesLoading={wineTypesLoading} />
       </CardContent>
     </Card>

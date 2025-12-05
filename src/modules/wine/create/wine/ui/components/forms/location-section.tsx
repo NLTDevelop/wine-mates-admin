@@ -9,10 +9,9 @@ import { useRegionOptions } from '../../../presenters/useRegionOptions'
 interface LocationSectionProps {
   form: UseFormReturn<WineFormData>
   countryValue: number | null
-  regionValue?: number | null
 }
 
-export const LocationSection = memo(({ form, countryValue, regionValue }: LocationSectionProps) => {
+export const LocationSection = memo(({ form, countryValue }: LocationSectionProps) => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
@@ -20,10 +19,19 @@ export const LocationSection = memo(({ form, countryValue, regionValue }: Locati
   const regionId = form.watch('regionId')
 
   useEffect(() => {
-    if (!countryValue && regionValue) {
-      form.setValue('regionId', null)
-    }
-  }, [countryValue, regionValue, form])
+    const subscription = form.watch((value, { name }) => {
+      if (name === 'countryId') {
+        const newCountryId = value.countryId
+        const currentCountryId = countryValue
+
+        if (newCountryId !== currentCountryId && regionId) {
+          form.setValue('regionId', null)
+        }
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [form, countryValue, regionId])
 
   const { fetchOptions: fetchCountryOptions, isLoading: countriesLoading, countries = [] } = useCountryOptions({})
 
@@ -76,7 +84,6 @@ export const LocationSection = memo(({ form, countryValue, regionValue }: Locati
       form.setValue('regionId', regionId, { shouldValidate: true })
     }
   }, [regionOptions, regionId, form])
-
 
   const countryPlaceholder = selectedCountry ? selectedCountry.name : countriesLoading ? tc('loading') : t('country_placeholder')
 
