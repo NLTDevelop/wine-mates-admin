@@ -8,7 +8,6 @@ import { CreateWineAromaGroupParams } from '../../entities/types/flavor-types'
 import { BaseWineColor, NameDictionary } from '../../../general/entities/types'
 import { AdditionalTranslations } from '../../../general/ui/components/additional-translations'
 
-
 interface FlavorGroupFormFieldsProps {
   formData: Partial<CreateWineAromaGroupParams>
   onFormDataChange: (field: 'translations' | 'colors' | 'colorHex', value: string | BaseWineColor[] | NameDictionary[]) => void
@@ -21,7 +20,7 @@ export const FlavorGroupFormFields = ({ formData, onFormDataChange, isLoading = 
   const { t } = useTranslation('wines')
 
   const { colorValues, handleColorChange, fetchOptions } = useColorForm({
-    cachedColors, 
+    cachedColors,
     initialColors: formData.colors || [],
     onColorsChange: colors => onFormDataChange('colors', colors),
   })

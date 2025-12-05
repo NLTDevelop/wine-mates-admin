@@ -7,10 +7,7 @@ import { DetailSection } from '../..'
 export const VintageInfoSection: React.FC<{ wine: IWines }> = ({ wine }) => {
   const { t } = useTranslation('wines')
 
-  const fields = [
-    { label: t('table.vintageconfig'), value: wine.vintage?.toString() },
-    null,
-  ]
+  const fields = [{ label: t('table.vintageconfig'), value: wine.vintage?.toString() }, null]
 
   if (fields.length === 0) return null
 

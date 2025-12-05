@@ -7,44 +7,41 @@ interface UseWineTypeOptionsProps {
   onWineTypeChange: (wineTypeId: string | null) => void
 }
 
-export const useWineTypeOptions = ({ 
-  cachedWineTypes, 
-  initialWineTypeId = null, 
-  onWineTypeChange 
-}: UseWineTypeOptionsProps) => {
+export const useWineTypeOptions = ({ cachedWineTypes, initialWineTypeId = null, onWineTypeChange }: UseWineTypeOptionsProps) => {
   const wineTypeValue = initialWineTypeId?.toString() || ''
 
-  const fetchOptions = useCallback(async (search?: string) => {
-    const options = cachedWineTypes.map(wt => {
-      const ukTranslation = wt.translations?.find(t => t.language === 'uk')
-      const enTranslation = wt.translations?.find(t => t.language === 'en')
-      
-      let label = ''
-      if (ukTranslation && enTranslation) {
-        label = `${ukTranslation.name} (${enTranslation.name})`
-      } else if (ukTranslation) {
-        label = ukTranslation.name
-      } else if (enTranslation) {
-        label = enTranslation.name
-      } else {
-        label = wt.translations?.[0]?.name || `ID: ${wt.id}`
-      }
-      
-      return {
-        value: wt.id.toString(),
-        label: label
-      }
-    })
+  const fetchOptions = useCallback(
+    async (search?: string) => {
+      const options = cachedWineTypes.map(wt => {
+        const ukTranslation = wt.translations?.find(t => t.language === 'uk')
+        const enTranslation = wt.translations?.find(t => t.language === 'en')
 
-    if (search && search.trim()) {
-      const term = search.toLowerCase()
-      return options.filter(opt => 
-        opt.label.toLowerCase().includes(term)
-      )
-    }
+        let label = ''
+        if (ukTranslation && enTranslation) {
+          label = `${ukTranslation.name} (${enTranslation.name})`
+        } else if (ukTranslation) {
+          label = ukTranslation.name
+        } else if (enTranslation) {
+          label = enTranslation.name
+        } else {
+          label = wt.translations?.[0]?.name || `ID: ${wt.id}`
+        }
 
-    return options
-  }, [cachedWineTypes])
+        return {
+          value: wt.id.toString(),
+          label: label,
+        }
+      })
+
+      if (search && search.trim()) {
+        const term = search.toLowerCase()
+        return options.filter(opt => opt.label.toLowerCase().includes(term))
+      }
+
+      return options
+    },
+    [cachedWineTypes]
+  )
 
   const prevValueRef = useRef(wineTypeValue)
 

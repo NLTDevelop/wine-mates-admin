@@ -14,7 +14,7 @@ interface EditWineFormProps {
 }
 
 export const EditWineForm: React.FC<EditWineFormProps> = ({ wine, onSuccess, onCancel }) => {
-  const { form, isSubmitting, onSubmit } = useEditWineForm({ wine, onSuccess })
+  const { form, isSubmitting, onSubmit, hasChanges, resetForm } = useEditWineForm({ wine, onSuccess })
   const { cachedColors, isLoading: colorsLoading } = useCachedColors()
   const { cachedWineTypes, isLoading: wineTypesLoading } = useCachedWineTypes()
 
@@ -29,6 +29,8 @@ export const EditWineForm: React.FC<EditWineFormProps> = ({ wine, onSuccess, onC
       cachedColors={cachedColors}
       colorsLoading={colorsLoading}
       wineTypesLoading={wineTypesLoading}
+      hasChanges={hasChanges}
+      onReset={resetForm}
     />
   )
 }

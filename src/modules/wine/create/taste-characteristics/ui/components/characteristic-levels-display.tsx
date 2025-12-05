@@ -32,7 +32,7 @@ export const CharacteristicLevelsDisplay: React.FC<CharacteristicLevelsDisplayPr
       </div>
       {descriptionUa && (
         <div>
-          <h4 className="text-description !mb-0">{t('taste_characteristics.description')}:</h4>
+          <h4 className="text-description !mb-0">{t('description')}:</h4>
           <p className="text-md">{descriptionUa}</p>
         </div>
       )}

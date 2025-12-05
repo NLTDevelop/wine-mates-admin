@@ -18,9 +18,11 @@ interface WineFormProps {
   cachedColors: BaseWineColor[]
   colorsLoading: boolean
   wineTypesLoading: boolean
+  hasChanges?: boolean
+  onReset?: () => void
 }
 
-export const WineForm: React.FC<WineFormProps> = ({ form, wineTypes, mode, onSubmit, onCancel, isSubmitting = false, cachedColors, colorsLoading, wineTypesLoading }) => {
+export const WineForm: React.FC<WineFormProps> = ({ form, wineTypes, mode, onSubmit, onCancel, isSubmitting = false, cachedColors, colorsLoading, wineTypesLoading, hasChanges = true, onReset }) => {
   const { t } = useTranslation('common')
   const { t: tw } = useTranslation('wines')
 
@@ -28,7 +30,13 @@ export const WineForm: React.FC<WineFormProps> = ({ form, wineTypes, mode, onSub
     onSubmit(data)
   }
 
-  const onReset = () => form.reset()
+  const handleReset = () => {
+    if (onReset) {
+      onReset()
+    } else {
+      form.reset()
+    }
+  }
 
   const handleCancel = () => {
     if (onCancel) {
@@ -36,24 +44,27 @@ export const WineForm: React.FC<WineFormProps> = ({ form, wineTypes, mode, onSub
     }
   }
 
+  const isEditMode = mode === 'edit'
+  const canSubmit = !isEditMode || (isEditMode && hasChanges)
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <BasicInfoSection form={form} wineTypes={wineTypes} cachedColors={cachedColors} colorsLoading={colorsLoading} wineTypesLoading={wineTypesLoading} />
 
-        <div className={`flex gap-4 ${mode !== 'create' ? 'justify-between' : 'justify-end'}`}>
+        <div className={`flex gap-4 md:flex-row flex-col ${mode !== 'create' ? 'justify-between' : 'justify-end'}`}>
           {mode === 'edit' && onCancel && (
             <Button type="button" variant="outline" onClick={handleCancel}>
               {tw('button.go_detail')}
             </Button>
           )}
 
-          <div className="flex gap-4">
-            <Button type="button" variant="outline" onClick={onReset}>
+          <div className="flex gap-4 ">
+            <Button type="button" variant="outline" onClick={handleReset} disabled={!hasChanges || isSubmitting} className="flex-1">
               {t('button.cancel')}
             </Button>
 
-            <Button type="submit" className="min-w-32" disabled={isSubmitting}>
+            <Button type="submit" className="min-w-32 flex-1" disabled={isSubmitting || !canSubmit}>
               {isSubmitting ? (mode === 'create' ? t('button.creating') : t('button.saving')) : mode === 'create' ? t('button.create') : t('button.save')}
             </Button>
           </div>

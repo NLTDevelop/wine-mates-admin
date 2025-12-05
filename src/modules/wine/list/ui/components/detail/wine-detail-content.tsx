@@ -1,6 +1,6 @@
 import React from 'react'
 import { IWines } from '../../../entities/types/types'
-import { BasicInfoSection, GeographicInfoSection, VintageInfoSection} from '../..'
+import { BasicInfoSection, GeographicInfoSection, VintageInfoSection } from '../..'
 
 interface WineDetailContentProps {
   wine: IWines

@@ -16,8 +16,7 @@ export const WineManagementView = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<string>('')
 
   const { cachedColors, isLoading: colorsLoading, refreshColors } = useCachedColors()
-   const { cachedWineTypes, isLoading: wineTypesLoading } = useCachedWineTypes()
-
+  const { cachedWineTypes, isLoading: wineTypesLoading } = useCachedWineTypes()
 
   const handleTemplateSelect = async (template: string) => {
     if (template === 'wine_type') {
@@ -39,7 +38,7 @@ export const WineManagementView = () => {
       case 'taste_characteristics_palette':
         return <TasteCharacteristicsPaletteManager cachedColors={cachedColors} colorsLoading={colorsLoading} />
       case 'wine_creation':
-        return <CreateWineForm wineTypes={cachedWineTypes} cachedColors={cachedColors} colorsLoading={colorsLoading} wineTypesLoading={wineTypesLoading}/>
+        return <CreateWineForm wineTypes={cachedWineTypes} cachedColors={cachedColors} colorsLoading={colorsLoading} wineTypesLoading={wineTypesLoading} />
       default:
         return <WineTemplateSelector selectedTemplate={selectedTemplate} onTemplateSelect={handleTemplateSelect} />
     }

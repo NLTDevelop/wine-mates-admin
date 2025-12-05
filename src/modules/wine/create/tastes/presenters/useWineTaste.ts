@@ -6,7 +6,6 @@ import { CreateWineTasteRequest, UpdateWineTasteParams, WineTaste } from '../ent
 import { tasteService } from '../entities/wine-taste-service'
 import { BaseWineColor, DataResponse } from '../../general/entities/types'
 
-
 export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
   const queryClient = useQueryClient()
   const store = useTasteStore()

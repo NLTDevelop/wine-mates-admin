@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form'
-import { WineFormData, wineFormSchema } from './wine-form-schema'
+import { createWineFormSchema, WineFormData } from './wine-form-schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CreateWineRequest, IWines } from '@/modules/wine/list/entities/types/types'
 
@@ -11,7 +11,7 @@ export const useWineForm = ({ initialData }: UseWineFormProps = {}) => {
   const formData = initialData ? mapDataToFormData(initialData) : undefined
 
   const form = useForm({
-    resolver: zodResolver(wineFormSchema),
+    resolver: zodResolver(createWineFormSchema()),
     defaultValues: {
       id: formData?.id || '',
       name: formData?.name || '',
@@ -24,6 +24,7 @@ export const useWineForm = ({ initialData }: UseWineFormProps = {}) => {
       grapeVariety: formData?.grapeVariety || '',
       image: formData?.image ?? null,
     },
+    mode: 'onChange',
   })
 
   return form
@@ -88,13 +89,15 @@ const mapImageToFormData = (image: any): any => {
   const mimeType = image.mimetype || image.type || 'image/jpeg'
   const size = image.fileSize || image.size || 0
 
+  const lastModified = image.lastModified || Date.now()
+
   if (!url) return null
 
   const fileLikeObject = {
     name: name,
     type: mimeType,
     size: size,
-    lastModified: Date.now(),
+    lastModified: lastModified,
 
     slice: () => new Blob(),
     stream: () => new ReadableStream(),

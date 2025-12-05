@@ -74,9 +74,9 @@ export const WineDetailView: React.FC = () => {
       btn={<WineDetailActions onBack={() => navigate(-1)} onConfirmWine={handleConfirmWine} wine={wine} onEdit={() => setIsEditing(true)} isEditing={isEditing} />}
       isGoBack
     >
-      <div className={cn("mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-4xl", !isLoading ? "fade-in" : "")}>
+      <div className={cn('mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-4xl', !isLoading ? 'fade-in' : '')}>
         {isEditing ? (
-          <EditWineForm wine={wine}  onSuccess={handleEditSuccess} onCancel={handleEditCancel} />
+          <EditWineForm wine={wine} onSuccess={handleEditSuccess} onCancel={handleEditCancel} />
         ) : (
           <Card className="p-6">
             <WineDetailHeader wine={wine} />

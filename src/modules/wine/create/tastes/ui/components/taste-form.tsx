@@ -26,7 +26,7 @@ export const TasteForm: React.FC<TasteFormProps> = ({ formData, onFormDataChange
   const { t: tc } = useTranslation('common')
 
   const { colorValues, handleColorChange, fetchOptions } = useColorForm({
-    cachedColors, 
+    cachedColors,
     initialColors: formData.colors || [],
     onColorsChange: colors => onFormDataChange('colors', colors),
   })

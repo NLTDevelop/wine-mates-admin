@@ -28,8 +28,9 @@ export const useTastePalette = (cachedColors?: BaseWineColor[]) => {
       const currentColorIds = currentFormData.colors?.map(c => c?.id) || []
       const colorsChanged = JSON.stringify(originalColorIds.sort()) !== JSON.stringify(currentColorIds.sort())
       const translationsChanged = !arraysEqual(originalWineTaste.translations, currentFormData.translations)
+      const colorHexChanged = currentFormData.colorHex !== originalWineTaste.colorHex
 
-      return nameChanged || colorsChanged || translationsChanged
+      return nameChanged || colorsChanged || translationsChanged || colorHexChanged
     },
     [tastes, formData]
   )

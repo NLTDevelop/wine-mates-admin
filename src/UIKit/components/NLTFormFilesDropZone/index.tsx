@@ -13,10 +13,10 @@ interface NLTFormDropZoneProps {
   disabled?: boolean
   maxSizeInMB?: number
   error?: string
-  multiple?:boolean
+  multiple?: boolean
 }
 
-export const NLTFormFilesDropZone: FC<NLTFormDropZoneProps> = ({ form, name, formLabel, disabled, maxSizeInMB, error, multiple=true, ...other }) => {
+export const NLTFormFilesDropZone: FC<NLTFormDropZoneProps> = ({ form, name, formLabel, disabled, maxSizeInMB, error, multiple = true, ...other }) => {
   const maxFiles = 10
   const maxSizeMB = maxSizeInMB || 5
   const { t } = useTranslation('common')
@@ -81,4 +81,3 @@ export const NLTFormFilesDropZone: FC<NLTFormDropZoneProps> = ({ form, name, for
     />
   )
 }
-

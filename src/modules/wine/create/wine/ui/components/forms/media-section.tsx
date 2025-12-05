@@ -19,13 +19,7 @@ export const MediaSection = memo(({ form }: MediaSectionProps) => {
       <Label>{t('media')}</Label>
       <Card className="p-2 bg-background">
         <div className="grid grid-cols-1">
-          <NLTFormSingleFileDropZone 
-            form={form} 
-            name="image"
-            formLabel=""
-            maxSizeInMB={10}
-            acceptedTypes={['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp']}
-          />
+          <NLTFormSingleFileDropZone form={form} name="image" formLabel="" maxSizeInMB={10} acceptedTypes={['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp']} />
         </div>
       </Card>
     </>

@@ -15,7 +15,6 @@ import {
 import { wineFlavorService } from '../entities/wine-flavor-service'
 import { wineFlavorQueries } from '../entities/wine-flavor-queries'
 
-
 export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
   const queryClient = useQueryClient()
   const store = useWineFlavorStore()
