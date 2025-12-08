@@ -35,6 +35,7 @@ export const useCreateTasteCharacteristic = ({ onCreateTasteCharacteristic, isLo
     levels: createEmptyLevels(3),
     translations: [],
     isPremium: false,
+    sortNumber: 1,
   }
   const [formData, setFormData] = useState<CreateWineTasteCharacteristicParams>(initialData)
 

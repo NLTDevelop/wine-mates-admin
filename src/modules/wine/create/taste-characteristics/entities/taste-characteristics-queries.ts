@@ -1,4 +1,5 @@
-import { CreateWineTasteCharacteristicRequest, ReorderLevelParams, UpdateWineTasteCharacteristicParams } from './taste-characteristics'
+import { ReorderItem } from '../../general/entities/types'
+import { CreateWineTasteCharacteristicRequest, UpdateWineTasteCharacteristicParams } from './taste-characteristics'
 import { tasteCharacteristicsService } from './taste-characteristics-service'
 
 export const tasteCharacteristicsQueries = {
@@ -21,8 +22,14 @@ export const tasteCharacteristicsQueries = {
     mutationKey: ['taste-characteristics', 'delete'],
     mutationFn: (characteristicId: string) => tasteCharacteristicsService.delete(characteristicId),
   }),
-  reorderLevels: () => ({
-    mutationKey: ['taste-characteristics', 'reorderLevels'],
-    mutationFn: (params: ReorderLevelParams) => tasteCharacteristicsService.reorderLevers(params),
+
+  reorder: () => ({
+    mutationKey: ['taste-characteristics', 'reorder'],
+    mutationFn: (params: ReorderItem[]) => tasteCharacteristicsService.reorder(params),
+  }),
+
+  reorderLevel: () => ({
+    mutationKey: ['taste-characteristics-level', 'reorderLevels'],
+    mutationFn: (params: ReorderItem[]) => tasteCharacteristicsService.reorderLevers(params),
   }),
 }

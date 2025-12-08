@@ -33,8 +33,10 @@ export const AccordionWrapper: FC<IProps> = ({ label, children, isOpen, onToggle
         <AccordionItem value={label}>
           <AccordionTrigger className={cn('w-full cursor-pointer')} onClick={handleToggle}>
             <CardContent className="sm:p-0 max-sm:p-0 flex items-center justify-between h-full">
-              {header ? header : <h3 className="text-lg  mb-4 font-medium text-left hover:underline">{label}</h3>}
-              <ChevronDown className={cn('text-muted-foreground', isOpen && 'rotate-180', chevronStyle)} />
+              <div className="flex items-center justify-between w-full">
+                {header ? header : <h3 className="text-lg  mb-4 font-medium text-left hover:underline">{label}</h3>}
+                <ChevronDown className={cn('text-muted-foreground', isOpen && 'rotate-180', chevronStyle)} />
+              </div>
             </CardContent>
           </AccordionTrigger>
           <AccordionContent>{children}</AccordionContent>

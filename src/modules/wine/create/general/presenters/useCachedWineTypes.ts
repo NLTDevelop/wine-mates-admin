@@ -7,13 +7,13 @@ export const useCachedWineTypes = () => {
   const queryClient = useQueryClient()
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['wine-types', 'list', 'assigned-colors'],
+    queryKey: ['types'],
     queryFn: () => fetchWineTypes(),
     staleTime: 2 * 60 * 1000,
   })
 
   const refreshWineTypes = useCallback(async () => {
-    await queryClient.invalidateQueries({ queryKey: ['wine-types', 'list', 'assigned-colors'] })
+    await queryClient.invalidateQueries({ queryKey: ['types'] })
   }, [queryClient])
 
   return {

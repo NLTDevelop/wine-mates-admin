@@ -5,5 +5,5 @@ export const WINE_LIST_ENDPOINTS = {
   UPDATE: '/v1/admin/wines/{id}',
   DELETE: '/v1/admin/wines/{id}',
   CONFIRM: '/v1/admin/wines/{id}/confirmation',
-  IMPORT: '/v1/admin/wines/import',
+  IMPORT: '/v1/admin/import-wines',
 } as const

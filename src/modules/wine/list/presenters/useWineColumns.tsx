@@ -1,9 +1,9 @@
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { Check, Edit, Trash2, X } from 'lucide-react'
+import { Edit, Trash2 /*Check, X*/ } from 'lucide-react'
 import { IWines } from '../entities/types/types'
 import { useMemo } from 'react'
-import { NLTTooltip } from '@/UIKit/components/NLTTooltip'
+// import { NLTTooltip } from '@/UIKit/components/NLTTooltip'
 import { useTranslation } from 'react-i18next'
 
 const columnHelper = createColumnHelper<IWines>()
@@ -37,10 +37,10 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
             row.original.id && onDelete(row.original.id, row.original.name || t('not_known_wine'))
           }
 
-          const handleConfirmWine = (e: React.MouseEvent) => {
-            stopEvent(e)
-            onConfirm(row.original.id)
-          }
+          // const handleConfirmWine = (e: React.MouseEvent) => {
+          //   stopEvent(e)
+          //   onConfirm(row.original.id)
+          // }
           return (
             <div className="flex">
               <Button variant="ghost" size="sm" onClick={handleEditWine} className="h-8 w-8 p-0">
@@ -49,7 +49,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
               <Button variant="ghost" size="sm" onClick={handleDeleteWine} className="h-8 w-8 p-0 text-destructive hover:text-destructive">
                 <Trash2 className="h-4 w-4 text-red-700" />
               </Button>
-              <NLTTooltip
+              {/* <NLTTooltip
                 delay={500}
                 message={!row.original.isConfirmed ? t('button.cancel_confirm') : t('button.confirm')}
                 className="bg-blue-100 text-popover-foreground max-w-[400px] break-words"
@@ -58,7 +58,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
                     {!row.original.isConfirmed ? <Check className="text-green-600" /> : <X className="text-red-500" />}
                   </Button>
                 }
-              />
+              /> */}
             </div>
           )
         },

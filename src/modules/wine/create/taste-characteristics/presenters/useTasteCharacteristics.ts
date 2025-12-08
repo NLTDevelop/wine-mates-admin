@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useWineTasteCharacteristicsStore } from '../entities/taste-characteristics-store'
-import { BaseWineColor, NameDescriptionDictionary } from '../../general/entities/types'
+import { BaseWineColor, NameDescriptionDictionary, ReorderItem } from '../../general/entities/types'
 import { tasteCharacteristicsQueries } from '../entities/taste-characteristics-queries'
 import { CreateTranslation, CreateWineTasteCharacteristicRequest, UpdateTranslation, UpdateWineTasteCharacteristicParams, WineTasteCharacteristics } from '../entities/taste-characteristics'
 
@@ -106,6 +106,7 @@ export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
         colorHex: params.newCharacteristic.colorHex,
         levels: params.newCharacteristic.levels,
         isPremium: false,
+        sortNumber: params.newCharacteristic.sortNumber ?? 0,
       }
 
       queryClient.setQueryData<WineTasteCharacteristics[]>(
@@ -153,6 +154,8 @@ export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
 
       const previousTasteCharacteristics = queryClient.getQueryData<WineTasteCharacteristics[]>(['taste-characteristics', 'list', 'assigned-colors'])
       const deletedTasteCharacteristic = previousTasteCharacteristics?.find(tc => tc.id === tasteCharacteristicId)
+
+      store.deleteTasteCharacteristic(tasteCharacteristicId)
       queryClient.setQueryData<WineTasteCharacteristics[]>(['taste-characteristics', 'list', 'assigned-colors'], (old = []) => old?.filter(tc => tc.id !== tasteCharacteristicId) || [])
 
       return { previousTasteCharacteristics, deletedTasteCharacteristic }
@@ -161,6 +164,86 @@ export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
     onError: (_, __, context) => {
       if (context?.previousTasteCharacteristics) {
         queryClient.setQueryData<WineTasteCharacteristics[]>(['taste-characteristics', 'list', 'assigned-colors'], context.previousTasteCharacteristics)
+      }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['taste-characteristics', 'list', 'assigned-colors'] })
+    },
+  })
+
+  const reorderGroupMutation = useMutation({
+    ...tasteCharacteristicsQueries.reorder(),
+
+    onMutate: async (reorderParams: ReorderItem[]) => {
+      await queryClient.cancelQueries({ queryKey: ['taste-characteristics', 'list', 'assigned-colors'] })
+
+      const previousGroups = queryClient.getQueryData<WineTasteCharacteristics[]>(['taste-characteristics', 'list', 'assigned-colors'])
+
+      store.reorderTasteCharacteristics(reorderParams)
+
+      const sortMap = new Map(reorderParams.map(item => [item.id, item.sortNumber]))
+
+      queryClient.setQueryData<WineTasteCharacteristics[]>(['taste-characteristics', 'list', 'assigned-colors'], old => {
+        if (!old) return old
+
+        const updatedRows = old
+          .map(group => {
+            const newSortNumber = sortMap.get(Number(group.id))
+            return newSortNumber !== undefined ? { ...group, sortNumber: newSortNumber } : group
+          })
+          .sort((a, b) => a.sortNumber - b.sortNumber)
+
+        return updatedRows
+      })
+
+      return { previousGroups }
+    },
+
+    onError: (_, __, context) => {
+      if (context?.previousGroups) {
+        queryClient.setQueryData(['taste-characteristics', 'list', 'assigned-colors'], context.previousGroups)
+      }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['taste-characteristics', 'list', 'assigned-colors'] })
+    },
+  })
+
+  const reorderLevelMutation = useMutation({
+    ...tasteCharacteristicsQueries.reorderLevel(),
+    onMutate: async (items: ReorderItem[]) => {
+      const key = ['taste-characteristics', 'list', 'assigned-colors']
+
+      await queryClient.cancelQueries({ queryKey: key })
+
+      const previousLevels = queryClient.getQueryData<WineTasteCharacteristics[]>(key)
+
+      const sortMap = new Map(items.map(i => [i.id, i.sortNumber]))
+
+      const updated = previousLevels?.map(group => {
+        const newLevels = group.levels
+          ?.map(level => ({
+            ...level,
+            sortNumber: sortMap.get(Number(level.id)) ?? level.sortNumber,
+          }))
+          .sort((a, b) => a.sortNumber - b.sortNumber)
+
+        return {
+          ...group,
+          levels: newLevels,
+        }
+      })
+
+      queryClient.setQueryData(key, updated)
+
+      return { previousLevels }
+    },
+
+    onError: (_, __, context) => {
+      if (context?.previousLevels) {
+        queryClient.setQueryData(['taste-characteristics', 'list', 'assigned-colors'], context.previousLevels)
       }
     },
 
@@ -204,6 +287,7 @@ export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,
+    isReorderingGroup: reorderGroupMutation.isPending,
 
     createTasteCharacteristics,
     updateTasteCharacteristics,
@@ -214,5 +298,7 @@ export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
 
     refetchTastes: tasteCharacteristicsQuery.refetch,
     refetchTastesWithParams: customRefetchGroups,
+    reorderGroup: reorderGroupMutation.mutateAsync,
+    reorderLevels: reorderLevelMutation.mutateAsync,
   }
 }

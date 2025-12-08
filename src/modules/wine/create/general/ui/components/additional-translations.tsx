@@ -79,7 +79,7 @@ export const AdditionalTranslations = ({
         </div>
       ))}
 
-      <Button size="sm" variant="archive" onClick={onAddTranslation} disabled={getAvailableLanguages().length === 0} className="sm:w-auto w-full">
+      <Button size="sm" variant="archive" onClick={onAddTranslation} disabled={getAvailableLanguages().length === 0} className="sm:w-auto w-full text-black">
         <Plus />
         {t('button.add_translation')}
       </Button>

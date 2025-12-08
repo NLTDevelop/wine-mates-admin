@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { useTasteCharacteristics } from './useTasteCharacteristics'
 import { BaseWineColor } from '../../general/entities/types'
 import { getDisplayNameDescription } from '@/lib/utils'
-import { CreateWineTasteCharacteristicParams, CreateWineTasteCharacteristicRequest, UpdateWineTasteCharacteristicRequest, WineTasteCharacteristics } from '../entities/taste-characteristics'
+import { CreateWineTasteCharacteristicParams, CreateWineTasteCharacteristicRequest, LevelItem, UpdateWineTasteCharacteristicRequest, WineTasteCharacteristics } from '../entities/taste-characteristics'
 import { NewCharacteristicData } from '../entities/characteristics-palette-types'
 import { convertToUpdateTranslations } from '../../general/presenters/helper'
 import { areLevelsEqual, compareCharacteristicTranslations } from './compare-helper'
@@ -28,7 +28,7 @@ export const useCharacteristics = ({
   setNewCharacteristicData,
   cachedColors,
 }: UseCharacteristicsProps) => {
-  const { isLoading, isCreating, isUpdating, isDeleting, createTasteCharacteristics, updateTasteCharacteristics, deleteTasteCharacteristics } = useTasteCharacteristics(cachedColors)
+  const { isLoading, isCreating, isUpdating, isDeleting, createTasteCharacteristics, updateTasteCharacteristics, deleteTasteCharacteristics, reorderLevels } = useTasteCharacteristics(cachedColors)
 
   const handleAddCharacteristic = useCallback(
     async (characteristicData: CreateWineTasteCharacteristicRequest) => {
@@ -192,6 +192,18 @@ export const useCharacteristics = ({
     [tasteCharacteristics, editingCharacteristicData]
   )
 
+  const handleReorderLevels = useCallback(
+    async (reorderedLevels: LevelItem[]) => {
+      const reorderParams = reorderedLevels.map((level, index) => ({
+        id: Number(level.id),
+        sortNumber: index,
+      }))
+
+      await reorderLevels(reorderParams)
+    },
+    [reorderLevels]
+  )
+
   return {
     tasteCharacteristics,
     isLoading,
@@ -205,6 +217,7 @@ export const useCharacteristics = ({
     handleDeleteCharacteristic,
     startEditingCharacteristic,
     handleCancelCharacteristicEdit,
+    handleReorderLevels,
 
     canSave,
     hasChanges,

@@ -12,7 +12,7 @@ import { Plus, Save } from 'lucide-react'
 
 interface TasteFormProps {
   formData: CreateWineTasteParams
-  onFormDataChange: (field: keyof CreateWineTasteParams, value: any) => void
+  onFormDataChange: (field: 'translations' | 'colors' | 'colorHex', value: any) => void
   onSave: () => void
   onCancel: () => void
   isLoading?: boolean

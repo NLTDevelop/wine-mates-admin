@@ -46,6 +46,6 @@ export const wineListService = {
     const formData = new FormData()
     formData.append('file', file)
 
-    return api.post(WINE_LIST_ENDPOINTS.IMPORT, formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then(response => response.data)
+    return api.post(WINE_LIST_ENDPOINTS.IMPORT, formData).then(response => response.data)
   },
 }

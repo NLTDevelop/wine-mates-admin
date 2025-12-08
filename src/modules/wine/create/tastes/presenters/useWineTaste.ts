@@ -4,7 +4,7 @@ import { useTasteStore } from '../entities/wine-taste-store'
 import { tasteQueries } from '../entities/wine-taste-queries'
 import { CreateWineTasteRequest, UpdateWineTasteParams, WineTaste } from '../entities/types/tastes'
 import { tasteService } from '../entities/wine-taste-service'
-import { BaseWineColor, DataResponse } from '../../general/entities/types'
+import { BaseWineColor, DataResponse, ReorderItem } from '../../general/entities/types'
 
 export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
   const queryClient = useQueryClient()
@@ -45,6 +45,7 @@ export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
         translations: newWineTaste.translations ?? [],
         colorHex: newWineTaste.colorHex ?? '',
         colors: assignedColors ?? [],
+        sortNumber: newWineTaste.sortNumber ?? 0,
       }
 
       queryClient.setQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters], old => {
@@ -96,6 +97,7 @@ export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
         translations: params.newTaste.translations,
         colorHex: params.newTaste.colorHex,
         colors: assignedColors,
+        sortNumber: params.newTaste.sortNumber || 0,
       }
 
       queryClient.setQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters], old => {
@@ -174,6 +176,45 @@ export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
     },
   })
 
+  const reorderGroupMutation = useMutation({
+    ...tasteQueries.reorder(),
+
+    onMutate: async (reorderParams: ReorderItem[]) => {
+      await queryClient.cancelQueries({ queryKey: ['tastes', 'list', stableFilters] })
+
+      const previousGroups = queryClient.getQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters])
+
+      store.reorderTaste(reorderParams)
+
+      const sortMap = new Map(reorderParams.map(item => [item.id, item.sortNumber]))
+
+      queryClient.setQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters], old => {
+        if (!old) return old
+
+        const updatedRows = old.rows
+          .map(group => {
+            const newSortNumber = sortMap.get(Number(group.id))
+            return newSortNumber !== undefined ? { ...group, sortNumber: newSortNumber } : group
+          })
+          .sort((a, b) => a.sortNumber - b.sortNumber)
+
+        return { ...old, rows: updatedRows }
+      })
+
+      return { previousGroups }
+    },
+
+    onError: (_, __, context) => {
+      if (context?.previousGroups) {
+        queryClient.setQueryData(['tastes', 'list', stableFilters], context.previousGroups)
+      }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['tastes', 'list', stableFilters] })
+    },
+  })
+
   const createTaste = (taste: CreateWineTasteRequest) => {
     return createTasteMutation.mutateAsync(taste)
   }
@@ -229,6 +270,7 @@ export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
     isCreating: createTasteMutation.isPending,
     isUpdating: updateTasteMutation.isPending,
     isDeleting: deleteTasteMutation.isPending,
+    isReorderingGroup: reorderGroupMutation.isPending,
 
     createTaste,
     updateTaste,
@@ -243,5 +285,6 @@ export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
 
     refetchTastes: tastesQuery.refetch,
     tastesQuery,
+    reorderGroup: reorderGroupMutation.mutateAsync,
   }
 }

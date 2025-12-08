@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useCharacteristicPalette } from '../../presenters/useCharacteristicsPalette'
 import { useContrastText } from '@/hooks/ui/useContrastText'
-import { useReorderListTasteCharacteristics } from '../../../general/presenters/usePaletteReorder'
 import { useDeleteModal } from '../../../general/presenters/useDeleteModal'
 import { cn, getDisplayNameDescription } from '@/lib/utils'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
@@ -18,6 +17,7 @@ import { WarningModal } from '@/modals/warningModal'
 import { PaletteItemActions } from '@/modules/wine/create/general/ui'
 import { CharacteristicLevelsDisplay, CharacteristicFormFields, CreateTasteCharacteristicSection } from '..'
 import { WineTasteCharacteristics } from '../../entities/taste-characteristics'
+import { useWineTasteCharacteristicsStore } from '../../entities/taste-characteristics-store'
 
 interface TasteCharacteristicsPaletteManagerProps {
   cachedColors: BaseWineColor[]
@@ -28,11 +28,12 @@ export const TasteCharacteristicsPaletteManager = ({ cachedColors, colorsLoading
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
-  const { reorder } = useReorderListTasteCharacteristics()
   const { deleteModal } = useDeleteModal()
 
+  const store = useWineTasteCharacteristicsStore()
+  const tasteCharacteristics = store.tasteCharacteristics
+
   const {
-    tasteCharacteristics,
     isLoading,
     editingCharacteristicData,
     forceOpenKeys,
@@ -41,6 +42,8 @@ export const TasteCharacteristicsPaletteManager = ({ cachedColors, colorsLoading
     setNewCharacteristicData,
     setEditingCharacteristicData,
     characteristics,
+    isReorderingGroup,
+    reorderGroup,
     ui,
   } = useCharacteristicPalette(cachedColors)
 
@@ -52,7 +55,6 @@ export const TasteCharacteristicsPaletteManager = ({ cachedColors, colorsLoading
     },
     [deleteModal]
   )
-
   const handleConfirmDelete = useCallback(() => {
     if (deleteModal.id) {
       characteristics.handleDeleteCharacteristic(deleteModal.id)
@@ -60,14 +62,25 @@ export const TasteCharacteristicsPaletteManager = ({ cachedColors, colorsLoading
     }
   }, [deleteModal, characteristics])
 
-  const handleReorder = (reordered: WineTasteCharacteristics[]) => {
-    const items = reordered.map((tc, index) => ({
-      id: tc.id,
-      order: index,
-    }))
+  const onReorder = useCallback(
+    (reorderedGroups: WineTasteCharacteristics[]) => {
+      store.reorderTasteCharacteristics(
+        reorderedGroups.map((group, index) => ({
+          id: Number(group.id),
+          sortNumber: index,
+        }))
+      )
+      const reorderParams = reorderedGroups.map((group, index) => ({
+        id: Number(group.id),
+        sortNumber: index,
+      }))
 
-    reorder({ entityType: 'taste-characteristics', items })
-  }
+      reorderGroup(reorderParams)
+    },
+    [reorderGroup, store]
+  )
+
+  const isReordering = isReorderingGroup
 
   if (isLoading && tasteCharacteristics?.length === 0) {
     return (
@@ -83,10 +96,10 @@ export const TasteCharacteristicsPaletteManager = ({ cachedColors, colorsLoading
     <Card>
       <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
         <div>
-          <CreateTasteCharacteristicSection onCreateCharacteristic={characteristics.handleAddCharacteristic} isLoading={isLoading} cachedColors={cachedColors} />
+          <CreateTasteCharacteristicSection onCreateCharacteristic={characteristics.handleAddCharacteristic} isLoading={isLoading || isReordering} cachedColors={cachedColors} />
         </div>
         {!isLoading && tasteCharacteristics?.length === 0 && <EmptyState type="taste-characteristics" />}
-        <SortableList items={tasteCharacteristics} onReorder={handleReorder}>
+        <SortableList items={tasteCharacteristics} onReorder={onReorder}>
           <div className="mx-auto flex flex-col justify-center gap-2 w-full">
             {tasteCharacteristics?.map((group: WineTasteCharacteristics, idx: number) => {
               const { textColorClass: cardTextColorClass } = useContrastText(group.colorHex)
@@ -102,7 +115,7 @@ export const TasteCharacteristicsPaletteManager = ({ cachedColors, colorsLoading
               const { nameUa, nameEn } = getDisplayNameDescription(group?.translations || [])
 
               return (
-                <SortableItem key={accordionKey} id={group.id} className="flex flex-col" handleClassName="top-1.5 hover:bg-transparent" gridColor={cardTextColorClass}>
+                <SortableItem key={accordionKey} id={group.id} className="flex flex-col" handleClassName="top-1.5 hover:bg-transparent" gridColor={cardTextColorClass} disabled={isReordering}>
                   <AccordionWrapper
                     label={`${nameUa} (${nameEn})`}
                     isOpen={isGroupOpen}
@@ -110,19 +123,28 @@ export const TasteCharacteristicsPaletteManager = ({ cachedColors, colorsLoading
                     style={{ backgroundColor: group.colorHex, padding: '8px' }}
                     chevronStyle={cardTextColorClass}
                     header={
-                      <div className="flex justify-between items-center w-full pl-8">
-                        <div className="flex md:items-center items-start gap-2 md:flex-row flex-col flex-1">
-                          <span className={cn('font-medium', cardTextColorClass)}>
+                      <div className="flex justify-between items-center w-full pl-8 min-w-0 flex-1">
+                        <div className="flex md:items-center items-start gap-2 md:flex-row flex-col flex-1 min-w-0">
+                          <span className={cn('font-medium truncate', cardTextColorClass)}>
                             {nameUa} ({nameEn})
                           </span>
-                          {group?.colors.map((c: BaseWineColor, idx: number) => (
-                            <div key={`${c?.id}-${idx}`} className="flex items-center bg-amber-50 px-2 rounded-md md:w-auto w-full">
-                              <span className=" text-sm text-foreground">{c?.name}</span>
-                            </div>
-                          ))}
+
+                          <div className="flex flex-wrap gap-2 min-w-0 w-full">
+                            {group?.colors.map((c: BaseWineColor, idx: number) => (
+                              <div
+                                key={`${c?.id}-${idx}`}
+                                className="inline-flex items-center bg-amber-50 px-2 py-1 rounded-md flex-shrink-0"
+                                style={{
+                                  maxWidth: 'calc(50% - 4px)',
+                                }}
+                              >
+                                <span className="text-sm text-foreground truncate whitespace-nowrap w-full">{c?.name}</span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                         <PaletteItemActions
-                          isLoading={isLoading}
+                          isLoading={isLoading || isReordering}
                           onRemove={handleConfirmDelete}
                           dataId={group.id}
                           cardTextColorClass={cardTextColorClass}
@@ -154,6 +176,7 @@ export const TasteCharacteristicsPaletteManager = ({ cachedColors, colorsLoading
                           cachedColors={cachedColors}
                           isLoading={isLoading || colorsLoading}
                           autoFocus={true}
+                          onReorder={reorderedLevels => characteristics.handleReorderLevels(reorderedLevels)}
                         />
                       )}
 

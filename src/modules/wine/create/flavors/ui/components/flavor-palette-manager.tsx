@@ -141,9 +141,9 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
                     style={{ backgroundColor: group.colorHex, padding: '8px' }}
                     chevronStyle={cardTextColorClass}
                     header={
-                      <div className="flex justify-between items-center w-full pl-8">
-                        <div className="flex md:items-center items-start gap-2 md:flex-row flex-col flex-1">
-                          <span className={cn('font-medium', cardTextColorClass)}>
+                      <div className="flex justify-between items-center w-full pl-8 flex-1 min-w-0">
+                        <div className="flex md:items-center items-start gap-2 md:flex-row flex-col flex-1 min-w-0">
+                          <span className={cn('font-medium truncate', cardTextColorClass)}>
                             {nameUa} ({nameEn})
                           </span>
                           {group?.colors?.map((c: BaseWineColor) => (

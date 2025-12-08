@@ -27,6 +27,7 @@ interface WineColorStoreState {
   addShade: (groupId: string, shade: WineShades) => void
   updateShade: (groupId: string, shadeId: string, newShade: WineShades) => void
   deleteShade: (groupId: string, shadeId: string) => void
+  reorderShades: (groupId: string, shades: WineShades[]) => void
 
   getColorGroupById: (id: string) => WineColorGroup | undefined
   getShadeById: (groupId: string, shadeId: string) => WineShades | undefined
@@ -174,6 +175,22 @@ export const useWineColorStore = createStoreDevToolsWrapper<WineColorStoreState>
         }),
         false,
         'colorGroups/deleteShade'
+      ),
+
+    reorderShades: (groupId, item) =>
+      set(
+        (state: WineColorStoreState) => ({
+          colorGroups: state.colorGroups.map(g =>
+            g.id === groupId
+              ? {
+                  ...g,
+                  shades: item,
+                }
+              : g
+          ),
+        }),
+        false,
+        'colorGroups/reorderShades'
       ),
 
     getColorGroupById: id => {
