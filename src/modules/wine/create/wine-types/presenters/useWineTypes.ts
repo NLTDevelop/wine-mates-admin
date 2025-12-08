@@ -84,12 +84,16 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
 
       const assignedColors = cachedColors?.filter(color => params.newWineType.colorIds.includes(color.id)) || []
 
+      const { nameUa, nameEn } = getDisplayNames(params.newWineType.translations || [])
+
       const optimisticWineType: WineType = {
         id: params.wineTypeId,
         translations: params.newWineType.translations,
         colors: assignedColors,
         sortNumber: 0,
-        isSparkling: params.isSparkling,
+        nameUa,
+        nameEn,
+        isSparkling: params.newWineType.isSparkling ?? false,
       }
 
       queryClient.setQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'], (old = []) => old?.map(wt => (wt.id === params.wineTypeId ? optimisticWineType : wt)) || [])
@@ -102,11 +106,15 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
         return
       }
 
+      const assignedColors = cachedColors?.filter(color => context?.params?.newWineType.colorIds.includes(color.id)) || []
+      const { nameUa, nameEn } = getDisplayNames(updatedWineType.translations || [])
       if (updatedWineType) {
         const wineTypeWithColors = {
           ...updatedWineType,
-          colors: updatedWineType.colors && updatedWineType.colors.length > 0 ? updatedWineType.colors : context?.optimisticWineType?.colors || [],
+          colors: assignedColors.length > 0 ? assignedColors : updatedWineType.colors || [],
           translations: updatedWineType.translations || [],
+          nameUa: nameUa || updatedWineType.nameUa || '',
+          nameEn: nameEn || updatedWineType.nameEn || '',
         }
 
         queryClient.setQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'], (old = []) => old?.map(wt => (wt.id === updatedWineType.id ? wineTypeWithColors : wt)) || [])

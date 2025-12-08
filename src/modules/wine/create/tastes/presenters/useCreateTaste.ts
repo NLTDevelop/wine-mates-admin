@@ -19,7 +19,7 @@ interface UseCreateTasteReturn {
 export const useCreateTaste = ({ onCreateTaste, isLoading = false }: UseCreateTasteProps): UseCreateTasteReturn => {
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const initialData = { translations: createTranslations('', ''), colorHex: '', colors: [] }
+  const initialData = { translations: createTranslations('', ''), colorHex: '', colors: [], sortNumber: 0 }
   const [formData, setFormData] = useState<CreateWineTasteParams>(initialData)
 
   const updateFormData = useCallback((field: keyof CreateWineTasteParams, value: any) => {

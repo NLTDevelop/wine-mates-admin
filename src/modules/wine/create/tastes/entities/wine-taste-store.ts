@@ -2,6 +2,7 @@ import { WineTaste } from './types/tastes'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { getDisplayNames } from '@/lib/utils'
 import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
+import { ReorderItem } from '../../general/entities/types'
 
 interface TasteStoreState {
   tastes: WineTaste[]
@@ -23,6 +24,7 @@ interface TasteStoreState {
   clearSearch: () => void
   setFilters: (filters: Partial<TasteStoreState['filters']>) => void
   resetFilters: () => void
+  reorderTaste: (items: ReorderItem[]) => void
 
   getTasteById: (id: string) => WineTaste | undefined
   getTasteByValue: (value: string) => WineTaste | undefined
@@ -75,6 +77,23 @@ export const useTasteStore = createStoreDevToolsWrapper<TasteStoreState>(
         }),
         false,
         'tastes/deleteTaste'
+      ),
+    reorderTaste: (items: ReorderItem[]) =>
+      set(
+        (state: TasteStoreState) => {
+          const sortMap = new Map(items.map(item => [item.id, item.sortNumber]))
+
+          return {
+            aromaGroups: state.tastes
+              .map(group => {
+                const newSortNumber = sortMap.get(Number(group.id))
+                return newSortNumber !== undefined ? { ...group, sortNumber: newSortNumber } : group
+              })
+              .sort((a, b) => a.sortNumber - b.sortNumber),
+          }
+        },
+        false,
+        'tastes/reorderGroups'
       ),
 
     setFilters: newFilters =>

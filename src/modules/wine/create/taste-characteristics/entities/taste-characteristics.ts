@@ -25,7 +25,7 @@ export type UpdateTranslation =
 export interface LevelItem {
   id?: string
   translations?: NameDictionary[]
-  sortNumber?: number
+  sortNumber: number
   isEnabled: boolean
 }
 
@@ -35,7 +35,7 @@ export interface WineTasteCharacteristics {
   colorHex: string
   levels: LevelItem[]
   colors: BaseWineColor[]
-  sortNumber?: number
+  sortNumber: number
   isPremium: boolean
 }
 

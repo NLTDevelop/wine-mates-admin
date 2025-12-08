@@ -35,6 +35,13 @@ export interface ReorderParams {
   }>
 }
 
+export interface ReorderItem {
+  id: number
+  sortNumber: number
+}
+
+export type ReorderGroupsRequest = ReorderItem[]
+
 export type NameDescriptionDictionary =
   | {
       id?: string

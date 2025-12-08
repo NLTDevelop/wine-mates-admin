@@ -1,4 +1,4 @@
-import { FiltersParams } from '../../general/entities/types'
+import { FiltersParams, ReorderItem } from '../../general/entities/types'
 import { CreateWineTasteRequest, UpdateWineTasteParams } from './types/tastes'
 import { tasteService } from './wine-taste-service'
 
@@ -21,5 +21,10 @@ export const tasteQueries = {
   delete: () => ({
     mutationKey: ['tastes', 'delete'],
     mutationFn: (tasteId: string) => tasteService.delete(tasteId),
+  }),
+
+  reorder: () => ({
+    mutationKey: ['tastes', 'reorder'],
+    mutationFn: (params: ReorderItem[]) => tasteService.reorder(params),
   }),
 }

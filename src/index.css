@@ -252,3 +252,15 @@ body[data-scroll-locked][data-scroll-locked] {
     scrollbar-width: none;
   }
 }
+
+.sortable-item {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  will-change: transform;
+}
+
+.sortable-item.dragging {
+  z-index: 1000 !important;
+  opacity: 0.9 !important;
+  transform: scale(1.02) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+}

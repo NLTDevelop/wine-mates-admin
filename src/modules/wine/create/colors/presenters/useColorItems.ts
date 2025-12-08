@@ -1,11 +1,13 @@
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { useWineColor } from './useWineColors'
 import { EditingGroupState, NewShadeData } from '../entities/types/color-palette-types'
-import { CreateShadesParams, WineShades } from '../entities/types/color-types'
+import { CreateShadesParams, WineColorGroup, WineShades } from '../entities/types/color-types'
 import { arraysEqual, createTranslations, getDisplayNames } from '@/lib/utils'
 import { NameDictionary } from '../../general/entities/types'
+import { useWineColorStore } from '../entities/wine-color-store'
 
 interface UseColorItemsProps {
+  colorGroups: WineColorGroup[] | undefined
   editingGroup: any
   newItemData: Record<string, any>
   openAccordions: Set<string>
@@ -14,12 +16,10 @@ interface UseColorItemsProps {
   setOpenAccordions: (accordions: any) => void
 }
 
-export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEditingGroup, setNewItemData, setOpenAccordions }: UseColorItemsProps) => {
-  const { createShade, updateShade, deleteShade /*reorderShade*/ } = useWineColor()
+export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEditingGroup, setNewItemData, setOpenAccordions, colorGroups }: UseColorItemsProps) => {
+  const { createShade, updateShade, deleteShade, reorderShades } = useWineColor()
 
-  //---------------для реодер пока нет бека -----------
-  const [localShadesOrder, setLocalShadesOrder] = useState<Record<string, WineShades[]>>({})
-  //------------------------------------------------------
+  const store = useWineColorStore()
 
   const handleAddShadeClick = useCallback(
     (groupId: string) => {
@@ -237,56 +237,26 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
     return nameUa || ''
   }, [])
 
-  //--------------------------reorder локальній пока нет бека-----------------------------------------------
-  const handleReorderShadesLocale = useCallback((groupId: string, reorderedShades: WineShades[]) => {
-    console.log(
-      'Before reorder:',
-      reorderedShades.map(s => ({
-        name: getDisplayNames(s.translations || []).nameUa,
-        originalSort: s.sortNumber,
+  const handleReorderShades = useCallback(
+    async (groupId: string, reorderedShades: WineShades[]) => {
+      store.reorderShades(groupId, reorderedShades)
+      const reorderParams = reorderedShades.map((shade, index) => ({
+        id: Number(shade.id),
+        sortNumber: index,
       }))
-    )
 
-    const updatedShades = reorderedShades.map((shade, newIndex) => ({
-      ...shade,
-      sortNumber: newIndex,
-    }))
-
-    console.log(
-      'After reorder:',
-      updatedShades.map(s => ({
-        name: getDisplayNames(s.translations || []).nameUa,
-        newSort: s.sortNumber,
-      }))
-    )
-
-    setLocalShadesOrder(prev => ({
-      ...prev,
-      [groupId]: updatedShades,
-    }))
-  }, [])
-  // -------------------------------------------------------
-
-  // ------------когда будет бек---------------
-  // const handleReorderShades = useCallback(
-  //   async (groupId: string, reorderedShades: WineShades[]) => {
-  //     const shadeIds = reorderedShades.map(s => s.id)
-  //     await reorderShade({ colorId: groupId, shadeIds })
-  //   },
-  //   [reorderShade]
-  // )
-  // -----------------------------------
+      await reorderShades(reorderParams)
+    },
+    [reorderShades]
+  )
 
   const getShadesForGroup = useCallback(
-    (groupId: string, originalShades: WineShades[]) => {
-      //----------локальній реодер---------
-      if (localShadesOrder[groupId]) {
-        return localShadesOrder[groupId]
-      }
-      // ------------когда будет бек---------------
-      return originalShades
+    (groupId: number) => {
+      const group = colorGroups?.find((g: WineColorGroup) => Number(g.id) === groupId)
+
+      return group?.shades || []
     },
-    [localShadesOrder]
+    [colorGroups]
   )
 
   return {
@@ -298,8 +268,7 @@ export const useColorItems = ({ editingGroup, newItemData, openAccordions, setEd
     updateItemFormData,
     canAddItem,
     getItemName,
-    handleReorderShades: handleReorderShadesLocale,
-    // handleReorderShades, // для бека
+    handleReorderShades,
     getShadesForGroup,
   }
 }

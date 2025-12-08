@@ -2,7 +2,8 @@ import { api } from '@/services'
 import { buildUrl } from '@/lib/utils'
 
 import { TASTE_CHARACTERISTICS_ENDPOINTS } from './taste-characteristics-endpoints'
-import { CreateWineTasteCharacteristicRequest, ReorderLevelParams, UpdateWineTasteCharacteristicParams, WineTasteCharacteristics } from './taste-characteristics'
+import { CreateWineTasteCharacteristicRequest, UpdateWineTasteCharacteristicParams, WineTasteCharacteristics } from './taste-characteristics'
+import { ReorderItem } from '../../general/entities/types'
 
 export const tasteCharacteristicsService = {
   list: (include?: string[]): Promise<WineTasteCharacteristics[]> =>
@@ -19,6 +20,7 @@ export const tasteCharacteristicsService = {
 
   delete: (characteristicId: string): Promise<void> => api.delete(buildUrl(TASTE_CHARACTERISTICS_ENDPOINTS.DELETE, { characteristicId })).then(response => response.data),
 
-  reorderLevers: (params: ReorderLevelParams): Promise<void> =>
-    api.patch(buildUrl(TASTE_CHARACTERISTICS_ENDPOINTS.REORDER_LEVEL, { id: params.characteristicId }), { levelIds: params.levelIds }).then(response => response.data),
+  reorder: (params: ReorderItem[]): Promise<void> => api.patch(buildUrl(TASTE_CHARACTERISTICS_ENDPOINTS.REORDER), params).then(response => response.data),
+
+  reorderLevers: (params: ReorderItem[]): Promise<void> => api.patch(buildUrl(TASTE_CHARACTERISTICS_ENDPOINTS.REORDER_LEVEL), params).then(response => response.data),
 }

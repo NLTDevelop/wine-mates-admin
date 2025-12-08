@@ -19,9 +19,10 @@ interface CharacteristicFormFieldsProps {
   isLoading?: boolean
   autoFocus?: boolean
   cachedColors: BaseWineColor[]
+  onReorder?: (reorderedLevels: LevelItem[]) => void
 }
 
-export const CharacteristicFormFields = ({ formData, onFormDataChange, isLoading = false, autoFocus = true, cachedColors }: CharacteristicFormFieldsProps) => {
+export const CharacteristicFormFields = ({ formData, onFormDataChange, isLoading = false, autoFocus = true, cachedColors, onReorder }: CharacteristicFormFieldsProps) => {
   const { t } = useTranslation('wines')
 
   const { colorValues, handleColorChange, fetchOptions } = useColorForm({
@@ -158,7 +159,7 @@ export const CharacteristicFormFields = ({ formData, onFormDataChange, isLoading
 
         <div>
           <label className="text-sm font-medium mb-2 block">{t('taste_characteristics.levels')} *</label>
-          <LevelsManager levels={formData?.levels || []} onLevelsChange={levels => onFormDataChange('levels', levels)} />
+          <LevelsManager levels={formData?.levels || []} onLevelsChange={levels => onFormDataChange('levels', levels)} onReorder={onReorder} />
         </div>
       </div>
     </div>

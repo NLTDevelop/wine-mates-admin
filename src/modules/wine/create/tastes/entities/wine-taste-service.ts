@@ -2,7 +2,7 @@ import { api } from '@/services'
 import { buildUrl } from '@/lib/utils'
 import { TASTE_ENDPOINTS } from './wine-tastes-endpoints'
 import { CreateWineTasteRequest, UpdateWineTasteParams, WineTaste } from './types/tastes'
-import { DataResponse, FiltersParams } from '../../general/entities/types'
+import { DataResponse, FiltersParams, ReorderItem } from '../../general/entities/types'
 
 export const tasteService = {
   list: (filters: FiltersParams = {}): Promise<DataResponse<WineTaste>> => {
@@ -20,4 +20,6 @@ export const tasteService = {
   update: (params: UpdateWineTasteParams): Promise<WineTaste> => api.patch(buildUrl(TASTE_ENDPOINTS.UPDATE, { tasteId: params.tasteId }), params.newTaste).then(response => response.data),
 
   delete: (tasteId: string): Promise<void> => api.delete(buildUrl(TASTE_ENDPOINTS.DELETE, { tasteId })).then(response => response.data),
+
+  reorder: (params: ReorderItem[]): Promise<void> => api.patch(buildUrl(TASTE_ENDPOINTS.REORDER), params).then(response => response.data),
 }

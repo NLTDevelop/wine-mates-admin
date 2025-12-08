@@ -27,16 +27,16 @@ export const useWineOptions = () => {
     [fetchWithErrorHandling]
   )
 
-  const useWineTypes = (include?: string[]) =>
+  const useWineTypes = (search?: string[]) =>
     useQuery({
-      ...wineTypeQueries.list(include),
+      ...wineTypeQueries.list(search),
       retry: 2,
       staleTime: 5 * 60 * 1000,
     })
 
   const fetchWineTypes = useCallback(
-    async (include?: string[]) => {
-      return fetchWithErrorHandling(() => wineTypeQueries.list(include).queryFn())
+    async (search?: string) => {
+      return fetchWithErrorHandling(() => wineOptionsQueries.types(search).queryFn())
     },
     [fetchWithErrorHandling]
   )

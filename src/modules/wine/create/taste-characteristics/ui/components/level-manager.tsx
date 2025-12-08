@@ -24,6 +24,7 @@ export const LevelsManager: React.FC<LevelsManagerProps> = ({ levels, onLevelsCh
     const newLevel: LevelItem = {
       translations: createTranslations('', ''),
       isEnabled: true,
+      sortNumber: 0,
     }
     onLevelsChange([...levels, newLevel])
   }

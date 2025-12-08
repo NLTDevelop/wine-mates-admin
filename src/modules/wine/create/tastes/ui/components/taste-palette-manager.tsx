@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTastePalette } from '../../presenters/useTastePalette'
 import { useContrastText } from '@/hooks/ui/useContrastText'
-import { useReorderListTastes } from '../../../general/presenters/usePaletteReorder'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { cn, getDisplayNames } from '@/lib/utils'
 import { PaletteItemActions } from '@/modules/wine/create/general/ui'
@@ -17,6 +16,7 @@ import { BaseWineColor } from '../../../general/entities/types'
 import { WineTaste } from '../../entities/types/tastes'
 import { WarningModal } from '@/modals/warningModal'
 import { CreateTasteSection, TasteForm } from '..'
+import { useTasteStore } from '../../entities/wine-taste-store'
 
 interface TastePaletteManagerProps {
   cachedColors: BaseWineColor[]
@@ -26,10 +26,11 @@ interface TastePaletteManagerProps {
 export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: TastePaletteManagerProps) => {
   const { t } = useTranslation('wines')
 
-  const { reorder } = useReorderListTastes()
+  const store = useTasteStore()
+
+  const tastes = store.tastes
 
   const {
-    tastes,
     loadings,
     isFormOpen,
     handleAddTaste,
@@ -43,6 +44,7 @@ export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: Tas
     filters,
     onChangePagination,
     hasChanges,
+    reorderGroup,
   } = useTastePalette(cachedColors)
 
   const { deleteModal } = useDeleteModal()
@@ -61,14 +63,25 @@ export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: Tas
     }
   }, [deleteModal, handleDeleteTaste])
 
-  const handleReorderWineTastes = (reorderedWineTastes: WineTaste[]) => {
-    const items = reorderedWineTastes.map((wt, index) => ({
-      id: wt.id,
-      order: index,
-    }))
+  const onReorder = useCallback(
+    (reorderedGroups: WineTaste[]) => {
+      store.reorderTaste(
+        reorderedGroups.map((group, index) => ({
+          id: Number(group.id),
+          sortNumber: index,
+        }))
+      )
+      const reorderParams = reorderedGroups.map((group, index) => ({
+        id: Number(group.id),
+        sortNumber: index,
+      }))
 
-    reorder({ entityType: 'tastes', items })
-  }
+      reorderGroup(reorderParams)
+    },
+    [reorderGroup, store]
+  )
+
+  const isReordering = loadings.isReorderingGroup
 
   if (loadings.isLoadingData && tastes?.length === 0) {
     return (
@@ -84,10 +97,10 @@ export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: Tas
     <Card>
       <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
         <div>
-          <CreateTasteSection onCreateTaste={handleAddTaste} isLoading={loadings.isCreating} cachedColors={cachedColors} />
+          <CreateTasteSection onCreateTaste={handleAddTaste} isLoading={loadings.isCreating || isReordering} cachedColors={cachedColors} />
         </div>
         {!loadings.isLoadingData && tastes?.length === 0 && totalCount === 0 && <EmptyState type="taste" />}
-        <SortableList items={tastes} onReorder={handleReorderWineTastes}>
+        <SortableList items={tastes} onReorder={onReorder}>
           <div className="mx-auto flex flex-col justify-center gap-2 w-full">
             {tastes?.map((taste, idx) => {
               const isEditing = isFormOpen[taste.id] || false
@@ -95,26 +108,29 @@ export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: Tas
               const { textColorClass } = useContrastText(taste.colorHex)
               const { nameUa, nameEn } = getDisplayNames(taste.translations)
               return (
-                <SortableItem key={`${taste?.id} - ${idx}`} id={taste.id} gridColor={textColorClass} handleClassName="top-2 hover:bg-transparent">
+                <SortableItem key={`${taste?.id} - ${idx}`} id={taste.id} gridColor={textColorClass} handleClassName="top-2 hover:bg-transparent" disabled={isReordering}>
                   <div className={cn('border-1 border-input rounded-md transition-all cursor-default', isEditing && 'rounded-b-none')} style={{ backgroundColor: taste.colorHex }}>
-                    <div className="flex justify-between items-center w-full pr-2 py-2 pl-8">
-                      <div className="flex gap-2 sm:flex-row flex-col sm:w-auto w-full">
-                        <span className={cn('font-medium', textColorClass)}>
+                    <div className="flex justify-between items-center w-full pr-2 py-2 pl-8 min-w-0 flex-1">
+                      <div className="flex gap-2 sm:flex-row flex-col sm:w-auto w-full min-w-0 flex-1">
+                        <span className={cn('font-medium truncate', textColorClass)}>
                           {nameUa} ({nameEn})
                         </span>
-                        <div className="flex sm:gap-2 gap-1 sm:flex-row flex-col sm:w-auto w-full">
-                          {taste.colors?.map((color, i) => {
-                            const colorName = color?.name || getDisplayNames(color?.translations || []).nameUa
-                            return (
-                              <div key={`${color?.id} - ${i}`} className="bg-muted px-2 py-1 rounded text-xs">
-                                {colorName}
-                              </div>
-                            )
-                          })}
+                        <div className="flex flex-wrap gap-2 min-w-0 w-full">
+                          {taste?.colors?.map((c: BaseWineColor, idx: number) => (
+                            <div
+                              key={`${c?.id}-${idx}`}
+                              className="inline-flex items-center bg-amber-50 px-2 py-1 rounded-md flex-shrink-0"
+                              style={{
+                                maxWidth: 'calc(50% - 4px)',
+                              }}
+                            >
+                              <span className="text-sm text-foreground truncate whitespace-nowrap w-full">{c?.name}</span>
+                            </div>
+                          ))}
                         </div>
                       </div>
                       <PaletteItemActions
-                        isLoading={loadings.isLoading}
+                        isLoading={loadings.isLoading || isReordering}
                         onRemove={handleConfirmDelete}
                         dataId={taste.id}
                         onEdit={() => handleToggleForm(taste.id)}

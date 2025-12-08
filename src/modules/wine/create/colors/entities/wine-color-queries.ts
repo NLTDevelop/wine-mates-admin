@@ -1,6 +1,6 @@
-import { CreateShadesParams, CreateWineColorParams, ReorderShadesParams, UpdateWineColorParams } from './types/color-types'
+import { CreateShadesParams, CreateWineColorParams, UpdateWineColorParams } from './types/color-types'
 import { colorService } from './color-service'
-import { FiltersParams } from '../../general/entities/types'
+import { FiltersParams, ReorderItem } from '../../general/entities/types'
 
 export const wineColorQueries = {
   listGroups: (filters: FiltersParams = {}) => ({
@@ -40,6 +40,6 @@ export const wineColorQueries = {
 
   reorderShades: () => ({
     mutationKey: ['color-shades', 'reorder'],
-    mutationFn: (params: ReorderShadesParams) => colorService.reorderShades(params),
+    mutationFn: (params: ReorderItem[]) => colorService.reorderShades(params),
   }),
 }

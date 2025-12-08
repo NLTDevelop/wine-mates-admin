@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { cn, getDisplayNames } from '@/lib/utils'
 import { WineAromaItem, WineAromaSubgroup } from '../../entities/types/flavor-types'
 import { PaletteItemActions } from '../../../general/ui'
@@ -35,6 +35,12 @@ export const FlavorList: React.FC<FlavorListProps> = ({
 }) => {
   const { t } = useTranslation('wines')
 
+  const [localItems, setLocalItems] = useState<WineAromaSubgroup[]>(items)
+
+  useEffect(() => {
+    setLocalItems(items)
+  }, [items])
+
   const handleEditClick = (aromaItem: WineAromaSubgroup | undefined) => {
     if (onEdit && isEditable) {
       onEdit(aromaItem)
@@ -64,11 +70,16 @@ export const FlavorList: React.FC<FlavorListProps> = ({
   }
 
   const handleReorder = (reorderedSubgr: WineAromaSubgroup[]) => {
+    setLocalItems(reorderedSubgr)
     onReorder?.(reorderedSubgr)
   }
 
+  const getItemId = useCallback((item: WineAromaSubgroup, index: number): string => {
+    return item.id || `subgroup-${index}`
+  }, [])
+
   return (
-    <SortableList items={items} onReorder={handleReorder}>
+    <SortableList items={localItems} onReorder={handleReorder} strategy="vertical" getId={getItemId}>
       <div className="space-y-3 mt-3 hover:brightness-100 w-full">
         {items?.map((item, index) => {
           const itemColor = item.colorHex || hexColor
@@ -110,8 +121,9 @@ export const FlavorList: React.FC<FlavorListProps> = ({
             </SortableItem>
           )
         })}
+
         <WarningModal
-          title={t('modal.delete_title', { slug: t('flavors.flavor_shade').toLowerCase })}
+          title={t('modal.delete_title', { slug: t('flavors.flavor_shade').toLowerCase() })}
           actionTitle={t('modal.delete_action')}
           description={t('modal.delete_description', { name: deleteModal.nameUa, slug: t('flavors.flavor_shade') })}
           isOpen={deleteModal.isOpen}

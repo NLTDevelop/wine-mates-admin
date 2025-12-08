@@ -6,7 +6,7 @@ import { useWineFlavor } from './useWineFlavors'
 import { BaseWineColor } from '../../general/entities/types'
 
 export const useFlavorPalette = (cachedColors: BaseWineColor[]) => {
-  const { aromaGroups, isLoading: wineFlavorLoading, isCreatingGroup, totalCount, filters, onChangePagination } = useWineFlavor(cachedColors)
+  const { aromaGroups, isLoading: wineFlavorLoading, isCreatingGroup, totalCount, filters, onChangePagination, reorderGroup, isReorderingGroup } = useWineFlavor(cachedColors)
 
   const {
     state: { openAccordions, editingGroup, newItemData, editingGroupData, forceOpenKeys },
@@ -45,12 +45,14 @@ export const useFlavorPalette = (cachedColors: BaseWineColor[]) => {
     newItemData,
   })
 
-  const isLoading = wineFlavorLoading || isCreatingGroup
+  const isLoading = wineFlavorLoading || isCreatingGroup || isReorderingGroup
 
   return {
     aromaGroups,
     isLoading,
     isCreatingGroup,
+    isReorderingGroup,
+    reorderGroup,
 
     openAccordions,
     editingGroup,

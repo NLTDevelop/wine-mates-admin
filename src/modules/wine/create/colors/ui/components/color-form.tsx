@@ -20,7 +20,7 @@ interface ColorFormProps {
   baseColor: string
 }
 
-export const ColorForm: React.FC<ColorFormProps> = ({ data, onDataChange, autoFocus = false, baseColor }) => {
+export const ColorForm: React.FC<ColorFormProps> = ({ data, onDataChange, autoFocus = false }) => {
   const { t } = useTranslation('wines')
 
   const {
@@ -38,6 +38,19 @@ export const ColorForm: React.FC<ColorFormProps> = ({ data, onDataChange, autoFo
     initialTranslations: data.translations || [],
     onTranslationsChange: translations => onDataChange('translations', translations),
   })
+
+  const handleMainColorChange = (color: string) => {
+    const shouldResetTones = data.colorHex !== color && (data.tonePale || data.toneMedium || data.toneDeep)
+
+    if (shouldResetTones) {
+      onDataChange('tonePale', '')
+      onDataChange('toneMedium', '')
+      onDataChange('toneDeep', '')
+      onDataChange('colorHex', color)
+    } else {
+      onDataChange('colorHex', color)
+    }
+  }
 
   return (
     <div className="border-1 border-input py-2 rounded-b-md bg-muted w-full">
@@ -61,11 +74,11 @@ export const ColorForm: React.FC<ColorFormProps> = ({ data, onDataChange, autoFo
           onTranslationValueChange={handleTranslationValueChange}
           getAvailableLanguages={getAvailableLanguages}
         />
-        <TonePicker label={t('colors.main_tone') + ' *'} value={data.colorHex} onChange={color => onDataChange('colorHex', color)} baseHexNoHash={baseColor} />
+        <TonePicker label={t('colors.main_tone') + ' *'} value={data.colorHex} onChange={handleMainColorChange} isInline />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <TonePicker label={t('pale_tone') + ' *'} value={data.tonePale} onChange={color => onDataChange('tonePale', color)} baseHexNoHash={baseColor} />
-          <TonePicker label={t('medium_tone') + ' *'} value={data.toneMedium} onChange={color => onDataChange('toneMedium', color)} baseHexNoHash={baseColor} />
-          <TonePicker label={t('deep_tone') + ' *'} value={data.toneDeep} onChange={color => onDataChange('toneDeep', color)} baseHexNoHash={baseColor} />
+          <TonePicker label={t('pale_tone') + ' *'} value={data.tonePale} onChange={color => onDataChange('tonePale', color)} baseHexNoHash={data.colorHex} />
+          <TonePicker label={t('medium_tone') + ' *'} value={data.toneMedium} onChange={color => onDataChange('toneMedium', color)} baseHexNoHash={data.colorHex} />
+          <TonePicker label={t('deep_tone') + ' *'} value={data.toneDeep} onChange={color => onDataChange('toneDeep', color)} baseHexNoHash={data.colorHex} />
         </div>
       </div>
     </div>
@@ -77,11 +90,12 @@ interface TonePickerProps {
   value?: string
   onChange: (color: string) => void
   baseHexNoHash?: string
+  isInline?: boolean
 }
 
-const TonePicker = ({ label, value, onChange, baseHexNoHash }: TonePickerProps) => (
+const TonePicker = ({ label, value, onChange, baseHexNoHash, isInline = false }: TonePickerProps) => (
   <div className="space-y-3">
     <label className="text-sm font-medium mb-2 block">{label}</label>
-    <ColorPicker value={value || ''} onChange={onChange} baseHexNoHash={baseHexNoHash} />
+    <ColorPicker value={value || ''} onChange={onChange} baseHexNoHash={baseHexNoHash} isInline={isInline} />
   </div>
 )

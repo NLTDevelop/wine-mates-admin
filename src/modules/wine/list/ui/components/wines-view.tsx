@@ -16,6 +16,7 @@ import { ImportFileModal } from '@/modals/ImportFileModal'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { cn } from '@/lib/utils'
 import { SkeletonWineList } from './skeleton-wine-list'
+import { useEffect } from 'react'
 
 export const WineView = () => {
   const { t } = useTranslation('wines')
@@ -34,6 +35,10 @@ export const WineView = () => {
     const wineId = row.original.id
     navigate(PATHS.WINE_DETAIL.replace(':id', wineId))
   }
+
+  useEffect(() => {
+    handleClearSearch()
+  }, [])
 
   if (isLoading) {
     return <SkeletonWineList />

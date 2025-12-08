@@ -33,6 +33,7 @@ export const useColorPalette = () => {
     setEditingGroup,
     setNewItemData,
     setOpenAccordions,
+    colorGroups,
   })
 
   const ui = useColorUI({

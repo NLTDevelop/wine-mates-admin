@@ -2,8 +2,8 @@ import { useEffect, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack/react-query'
 import { useWineColorStore } from '../entities/wine-color-store'
 import { wineColorQueries } from '../entities/wine-color-queries'
-import { CreateShadesParams, CreateWineColorParams, ReorderShadesParams, UpdateWineColorParams, WineColorGroup, WineShades } from '../entities/types/color-types'
-import { DataResponse } from '../../general/entities/types'
+import { CreateShadesParams, CreateWineColorParams, UpdateWineColorParams, WineColorGroup, WineShades } from '../entities/types/color-types'
+import { DataResponse, ReorderItem } from '../../general/entities/types'
 import { colorService } from '../entities/color-service'
 import { getDisplayNames } from '@/lib/utils'
 
@@ -292,33 +292,32 @@ export const useWineColor = () => {
 
   const reorderShadeMutation = useMutation({
     ...wineColorQueries.reorderShades(),
-    onMutate: async (params: ReorderShadesParams) => {
+    onMutate: async (items: ReorderItem[]) => {
       await queryClient.cancelQueries({ queryKey: ['color-groups', 'list'] })
 
       const previousGroups = queryClient.getQueryData(['color-groups', 'list'])
 
+      const sortMap = new Map(items.map(item => [item.id, item.sortNumber]))
+
       queryClient.setQueryData(['color-groups', 'list'], (old: any) => {
-        if (!old) return old
+        if (!old?.rows) return old
 
-        const reorderShadesInGroup = (shades: any[], newOrderIds: string[]) => {
-          const shadeMap = new Map(shades.map(shade => [shade.id, shade]))
-          return newOrderIds
-            .map((id, index) => ({
-              ...shadeMap.get(id),
-              sortNumber: index,
-            }))
-            .filter(Boolean)
-        }
+        const updatedRows = old.rows.map((group: any) => {
+          const updatedShades =
+            group.subgroups
+              ?.map((subgroup: any) => {
+                const newSortNumber = sortMap.get(subgroup.id)
+                return newSortNumber !== undefined ? { ...subgroup, sortNumber: newSortNumber } : subgroup
+              })
+              .sort((a: any, b: any) => a.sortNumber - b.sortNumber) || []
 
-        return old.map((group: any) => {
-          if (group.id === params.colorId) {
-            return {
-              ...group,
-              shades: reorderShadesInGroup(group.shades, params.shadeIds),
-            }
+          return {
+            ...group,
+            shades: updatedShades,
           }
-          return group
         })
+
+        return { ...old, rows: updatedRows }
       })
 
       return { previousGroups }
@@ -336,7 +335,6 @@ export const useWineColor = () => {
   })
 
   return {
-    // colorGroups: mockWineColorGroups,
     colorGroups: colorGroups(),
     totalCount: groupsQuery.data?.count || 0,
 
@@ -363,7 +361,7 @@ export const useWineColor = () => {
     createShade: createShadeMutation.mutateAsync,
     updateShade: updateShadeMutation.mutateAsync,
     deleteShade: deleteShadeMutation.mutateAsync,
-    reorderShade: reorderShadeMutation.mutateAsync,
+    reorderShades: reorderShadeMutation.mutateAsync,
 
     searchColorGroups: store.searchColorGroups,
     clearSearch: store.clearSearch,

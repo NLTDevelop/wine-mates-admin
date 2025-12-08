@@ -5,7 +5,7 @@ import { UseCharacteristicUI } from './useCharacteristicUI'
 import { useTasteCharacteristics } from './useTasteCharacteristics'
 
 export const useCharacteristicPalette = (cachedColors: BaseWineColor[]) => {
-  const { tasteCharacteristics, isLoading: isCharacteristicsLoading, isCreating } = useTasteCharacteristics(cachedColors)
+  const { tasteCharacteristics, isLoading: isCharacteristicsLoading, isCreating, reorderGroup, isReorderingGroup } = useTasteCharacteristics(cachedColors)
 
   const {
     state: { openAccordions, editingCharacteristic, newCharacteristicData, editingCharacteristicData, forceOpenKeys },
@@ -39,6 +39,8 @@ export const useCharacteristicPalette = (cachedColors: BaseWineColor[]) => {
     tasteCharacteristics,
     isLoading,
     isCreating,
+    isReorderingGroup,
+    reorderGroup,
 
     openAccordions,
     editingCharacteristicData,

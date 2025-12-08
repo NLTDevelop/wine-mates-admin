@@ -1,5 +1,5 @@
 import React from 'react'
-import { ArrowLeft, CheckCircle, Edit, XCircle } from 'lucide-react'
+import { ArrowLeft, Edit /*CheckCircle, XCircle*/ } from 'lucide-react'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { useTranslation } from 'react-i18next'
 import { IWines } from '../../../entities/types/types'
@@ -12,7 +12,7 @@ interface WineDetailActionsProps {
   isEditing?: boolean
 }
 
-export const WineDetailActions: React.FC<WineDetailActionsProps> = ({ onBack, onConfirmWine, wine, onEdit, isEditing }) => {
+export const WineDetailActions: React.FC<WineDetailActionsProps> = ({ onBack, /*onConfirmWine, wine,*/ onEdit, isEditing }) => {
   const { t } = useTranslation('wines')
 
   return (
@@ -29,7 +29,7 @@ export const WineDetailActions: React.FC<WineDetailActionsProps> = ({ onBack, on
             {t('button.edit')}
           </Button>
         )}
-        {!wine.isConfirmed ? (
+        {/* {!wine.isConfirmed ? (
           <Button onClick={() => onConfirmWine(true)} className="flex items-center gap-2 w-full sm:w-auto">
             <CheckCircle size={16} />
             {t('button.confirm')}
@@ -39,7 +39,7 @@ export const WineDetailActions: React.FC<WineDetailActionsProps> = ({ onBack, on
             <XCircle size={16} />
             {t('unconfirm_wine')}
           </Button>
-        )}
+        )} */}
       </div>
     </div>
   )

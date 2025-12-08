@@ -5,7 +5,8 @@ import { CreateWineTasteParams, CreateWineTasteRequest, UpdateWineTasteParams, W
 import { BaseWineColor } from '../../general/entities/types'
 
 export const useTastePalette = (cachedColors?: BaseWineColor[]) => {
-  const { tastes, isLoading, isCreating, isUpdating, isDeleting, createTaste, updateTaste, deleteTaste, totalCount, filters, onChangePagination } = useWineTaste(cachedColors)
+  const { tastes, isLoading, isCreating, isUpdating, isDeleting, createTaste, updateTaste, deleteTaste, totalCount, filters, onChangePagination, reorderGroup, isReorderingGroup } =
+    useWineTaste(cachedColors)
 
   const [isFormOpen, setIsFormOpen] = useState<Record<string, boolean>>({})
   const [formData, setFormData] = useState<Record<string, CreateWineTasteParams>>({})
@@ -57,6 +58,7 @@ export const useTastePalette = (cachedColors?: BaseWineColor[]) => {
               translations: taste.translations || [],
               colorHex: taste.colorHex || '',
               colors: taste.colors || [],
+              sortNumber: taste.sortNumber || 0,
             },
           }))
         }
@@ -135,6 +137,7 @@ export const useTastePalette = (cachedColors?: BaseWineColor[]) => {
       isCreating,
       isUpdating,
       isDeleting,
+      isReorderingGroup,
     },
 
     isFormOpen,
@@ -149,5 +152,6 @@ export const useTastePalette = (cachedColors?: BaseWineColor[]) => {
     handleDeleteTaste,
     onChangePagination,
     hasChanges,
+    reorderGroup,
   }
 }

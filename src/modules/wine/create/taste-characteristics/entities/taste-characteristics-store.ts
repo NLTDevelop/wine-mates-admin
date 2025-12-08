@@ -1,6 +1,7 @@
 import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 import { getDisplayNameDescription } from '@/lib/utils'
 import { WineTasteCharacteristics } from './taste-characteristics'
+import { ReorderItem } from '../../general/entities/types'
 
 interface WineTasteCharacteristicsStoreState {
   tasteCharacteristics: WineTasteCharacteristics[]
@@ -14,6 +15,7 @@ interface WineTasteCharacteristicsStoreState {
   deleteTasteCharacteristic: (characteristicId: string) => void
   searchTasteCharacteristics: (searchTerm: string) => void
   clearSearch: () => void
+  reorderTasteCharacteristics: (items: ReorderItem[]) => void
 }
 
 export const useWineTasteCharacteristicsStore = createStoreDevToolsWrapper<WineTasteCharacteristicsStoreState>(
@@ -76,6 +78,24 @@ export const useWineTasteCharacteristicsStore = createStoreDevToolsWrapper<WineT
     },
 
     clearSearch: () => set({ searchResults: [] }, false, 'tasteCharacteristics/clearSearch'),
+
+    reorderTasteCharacteristics: (items: ReorderItem[]) =>
+      set(
+        (state: WineTasteCharacteristicsStoreState) => {
+          const sortMap = new Map(items.map(item => [item.id, item.sortNumber]))
+
+          return {
+            aromaGroups: state.tasteCharacteristics
+              .map(group => {
+                const newSortNumber = sortMap.get(Number(group.id))
+                return newSortNumber !== undefined ? { ...group, sortNumber: newSortNumber } : group
+              })
+              .sort((a, b) => a.sortNumber - b.sortNumber),
+          }
+        },
+        false,
+        'tasteCharacteristics/reorderGroups'
+      ),
   }),
   'WineTasteCharacteristicsStore'
 )

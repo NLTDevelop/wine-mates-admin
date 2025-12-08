@@ -16,6 +16,7 @@ interface ColorPickerProps {
   className?: string
   baseHexNoHash?: string
   onClick?: MouseEventHandler<HTMLInputElement>
+  isInline?: boolean
 }
 
 export const strictHexColorSchema = z
@@ -57,7 +58,7 @@ export const colorFormSchema = z.object({
     }),
 })
 
-export const ColorPicker = ({ value, onChange, className, baseHexNoHash, onClick }: ColorPickerProps) => {
+export const ColorPicker = ({ value, onChange, className, baseHexNoHash, onClick, isInline = false }: ColorPickerProps) => {
   const { t } = useTranslation('common')
   const [open, setOpen] = useState(false)
   const [inputValue, setInputValue] = useState(value)
@@ -149,6 +150,33 @@ export const ColorPicker = ({ value, onChange, className, baseHexNoHash, onClick
     }
   }
 
+  const renderContent = () => {
+    return (
+      <div className="space-y-3 relative">
+        {!lightnessGradientStyle && <HexColorPicker color={value} onChange={onChange} style={{ width: '100%' }} />}
+        {lightnessGradientStyle && (
+          <div className="h-6 rounded-full cursor-pointer relative mt-3" style={lightnessGradientStyle} onClick={handleGradientClick}>
+            <div
+              className="absolute top-1/2 -translate-y-1/2 w-7.5 h-7.5 rounded-full border-2 border-white shadow-md"
+              style={{
+                backgroundColor: value,
+                left: getIndicatorPosition(value),
+                transform: `translateX(0%) translateY(0%)`,
+              }}
+            />
+          </div>
+        )}
+        <Input
+          value={inputValue || ''}
+          onClick={onClick}
+          onChange={handleInputChange}
+          placeholder={baseHexNoHash ? baseHexNoHash : '#000000'}
+          className={cn('font-mono w-full', error && '!border-red-500 focus-visible:ring-red-500')}
+        />
+      </div>
+    )
+  }
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -157,37 +185,29 @@ export const ColorPicker = ({ value, onChange, className, baseHexNoHash, onClick
           <Palette className={cn('w-6 h-6', textColorClass)} />
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        className="w-full p-4 border-0"
-        align="start"
-        style={{
-          width: 'var(--radix-popover-trigger-width)',
-          maxWidth: 'var(--radix-popover-trigger-width)',
-        }}
-      >
-        <div className="space-y-3">
-          {!lightnessGradientStyle && <HexColorPicker color={value} onChange={onChange} style={{ width: '100%' }} />}
-          {lightnessGradientStyle && (
-            <div className="h-6 rounded-full cursor-pointer relative mt-3" style={lightnessGradientStyle} onClick={handleGradientClick}>
-              <div
-                className="absolute top-1/2 -translate-y-1/2 w-7.5 h-7.5 rounded-full border-2 border-white shadow-md"
-                style={{
-                  backgroundColor: value,
-                  left: getIndicatorPosition(value),
-                  transform: `translateX(0%) translateY(0%)`,
-                }}
-              />
-            </div>
-          )}
-          <Input
-            value={inputValue || ''}
-            onClick={onClick}
-            onChange={handleInputChange}
-            placeholder={baseHexNoHash ? baseHexNoHash : '#000000'}
-            className={cn('font-mono w-full', error && '!border-red-500 focus-visible:ring-red-500')}
-          />
-        </div>
-      </PopoverContent>
+      {isInline ? (
+        open && (
+          <div
+            className="w-full border-0"
+            style={{
+              width: 'var(--radix-popover-trigger-width)',
+              maxWidth: 'var(--radix-popover-trigger-width)',
+            }}
+          >
+            {renderContent()}
+          </div>
+        )
+      ) : (
+        <PopoverContent
+          className="w-full border-0"
+          style={{
+            width: 'var(--radix-popover-trigger-width)',
+            maxWidth: 'var(--radix-popover-trigger-width)',
+          }}
+        >
+          {renderContent()}
+        </PopoverContent>
+      )}
     </Popover>
   )
 }
