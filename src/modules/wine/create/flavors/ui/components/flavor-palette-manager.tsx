@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { useReorderListFlavors } from '../../../general/presenters/usePaletteReorder'
+
 import { useTranslation } from 'react-i18next'
 import { useDeleteModal } from '../../../general/presenters/useDeleteModal'
 import { useFlavorPalette } from '../../presenters/useFlavorPalette'
@@ -21,6 +21,7 @@ import { WineAromaGroup } from '../../entities/types/flavor-types'
 import { Save } from 'lucide-react'
 import { WarningModal } from '@/modals/warningModal'
 import { CreateFlavorGroupSection, FlavorList, AromasManager, FlavorForm, FlavorGroupFormFields } from '..'
+import { useWineFlavorStore } from '../../entities/wine-flavor-store'
 
 interface FlavorPaletteManagerProps {
   cachedColors: BaseWineColor[]
@@ -31,11 +32,14 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
-  const { reorder } = useReorderListFlavors()
+  const store = useWineFlavorStore()
+
+  const aromaGroups = store.aromaGroups
+
   const { deleteModal } = useDeleteModal()
 
   const {
-    aromaGroups,
+    // aromaGroups,
     isLoading,
     editingGroup,
     newItemData,
@@ -51,6 +55,8 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
     totalCount,
     filters,
     onChangePagination,
+    isReorderingGroup,
+    reorderGroup,
   } = useFlavorPalette(cachedColors)
 
   const isEditable = true
@@ -71,14 +77,25 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
     }
   }, [deleteModal, groups])
 
-  const handleReorderAromaGroups = (reorderedAromaGroups: WineAromaGroup[]) => {
-    const items = reorderedAromaGroups.map((ag, index) => ({
-      id: ag.id,
-      order: index,
-    }))
+  const onReorder = useCallback(
+    (reorderedGroups: WineAromaGroup[]) => {
+      store.reorderAromaGroups(
+        reorderedGroups.map((group, index) => ({
+          id: Number(group.id),
+          sortNumber: index,
+        }))
+      )
+      const reorderParams = reorderedGroups.map((group, index) => ({
+        id: Number(group.id),
+        sortNumber: index,
+      }))
 
-    reorder({ entityType: 'flavors', items })
-  }
+      reorderGroup(reorderParams)
+    },
+    [reorderGroup, store]
+  )
+
+  const isReordering = isReorderingGroup
 
   if (isLoading && aromaGroups?.length === 0) {
     return (
@@ -94,10 +111,10 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
     <Card>
       <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
         <div>
-          <CreateFlavorGroupSection onCreateGroup={groups.handleAddGroup} isLoading={isLoading} cachedColors={cachedColors} />
+          <CreateFlavorGroupSection onCreateGroup={groups.handleAddGroup} isLoading={isLoading || isReordering} cachedColors={cachedColors} />
         </div>
         {!isLoading && aromaGroups?.length === 0 && totalCount === 0 && <EmptyState type="aromas" />}
-        <SortableList items={aromaGroups} onReorder={handleReorderAromaGroups}>
+        <SortableList items={aromaGroups} onReorder={onReorder}>
           <div className="mx-auto flex flex-col justify-center gap-2 w-full">
             {aromaGroups?.map((group: WineAromaGroup) => {
               const { textColorClass: cardTextColorClass } = useContrastText(group.colorHex)
@@ -116,7 +133,7 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
               const { nameUa, nameEn } = getDisplayNames(group.translations)
 
               return (
-                <SortableItem key={accordionKey} id={group.id} className="flex flex-col" handleClassName="top-1.5 hover:bg-transparent" gridColor={cardTextColorClass}>
+                <SortableItem key={accordionKey} id={group.id} className="flex flex-col" handleClassName="top-1.5 hover:bg-transparent" gridColor={cardTextColorClass} disabled={isReordering}>
                   <AccordionWrapper
                     label={`${nameUa} (${nameEn})`}
                     isOpen={isGroupOpen}
@@ -136,12 +153,12 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
                           ))}
                         </div>
                         <PaletteItemActions
-                          isLoading={isLoading}
+                          isLoading={isLoading || isReordering}
                           onRemove={handleConfirmDelete}
                           dataId={group.id}
                           cardTextColorClass={cardTextColorClass}
                           onEdit={() => groups.startEditingGroup(group.id)}
-                          showEditButton={!isGroupEditing}
+                          showEditButton={!isGroupEditing && !isReordering}
                           isHeader
                           deleteModal={() => handleOpenDeleteModal(group.id, nameUa)}
                         />
@@ -169,7 +186,7 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
                       {isGroupOpen && !isGroupFormOpen && (
                         <>
                           <FlavorList
-                            items={items.getSubgroupForGroup(group.id, group.subgroups)}
+                            items={items.getSubgroupForGroup(group.id)}
                             isLoading={isLoading}
                             onRemove={id => items.onRemoveItem(group.id, id)}
                             onEdit={item => items.handleEditItem(group.id, item)}
@@ -203,7 +220,7 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
                           />
 
                           <AromasManager
-                            aromas={items.getAromasForGroup(subgroup?.id, newItemData[group.id]?.aromas || [])}
+                            aromas={items.getAromasForGroup(newItemData[group.id]?.aromas || [])}
                             onAromasChange={newAromas => {
                               setNewItemData(prev => ({
                                 ...prev,
@@ -213,7 +230,7 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
                                 },
                               }))
                             }}
-                            onReorder={reorderedAromas => items.handleReorderAromas(subgroup.id, reorderedAromas)}
+                            onReorder={reorderedAromas => items.handleReorderAromas(reorderedAromas)}
                           />
                         </>
                       )}

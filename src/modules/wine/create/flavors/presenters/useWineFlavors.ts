@@ -1,17 +1,8 @@
 import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack/react-query'
-import { BaseWineColor, DataResponse } from '../../general/entities/types'
+import { BaseWineColor, DataResponse, ReorderItem } from '../../general/entities/types'
 import { useEffect, useMemo } from 'react'
 import { useWineFlavorStore } from '../entities/wine-flavor-store'
-import {
-  CreateWineAromaGroupRequest,
-  CreateWineAromaSubgroupParams,
-  ReorderAromasParams,
-  ReorderSubgroupParams,
-  UpdateWineAromaGroupParams,
-  WineAromaGroup,
-  WineAromaItem,
-  WineAromaSubgroup,
-} from '../entities/types/flavor-types'
+import { CreateWineAromaGroupRequest, CreateWineAromaSubgroupParams, UpdateWineAromaGroupParams, WineAromaGroup, WineAromaSubgroup } from '../entities/types/flavor-types'
 import { wineFlavorService } from '../entities/wine-flavor-service'
 import { wineFlavorQueries } from '../entities/wine-flavor-queries'
 
@@ -138,6 +129,8 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
 
       const prev = queryClient.getQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters])
 
+      store.deleteAromaGroup(groupId)
+
       queryClient.setQueryData<{ rows: WineAromaGroup[]; count: number }>(['aroma-groups', 'list', stableFilters], old => {
         if (!old) {
           return { rows: [], count: 0 }
@@ -158,6 +151,48 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
 
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list', stableFilters], exact: false })
+    },
+  })
+
+  const reorderGroupMutation = useMutation({
+    ...wineFlavorQueries.reorderGroup(),
+
+    onMutate: async (reorderParams: ReorderItem[]) => {
+      await queryClient.cancelQueries({ queryKey: ['aroma-groups', 'list', stableFilters] })
+
+      const previousGroups = queryClient.getQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters])
+
+      store.reorderAromaGroups(reorderParams)
+
+      const sortMap = new Map(reorderParams.map(item => [item.id, item.sortNumber]))
+
+      queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters], old => {
+        if (!old) return old
+
+        const updatedRows = old.rows
+          .map(group => {
+            const newSortNumber = sortMap.get(Number(group.id))
+            return newSortNumber !== undefined ? { ...group, sortNumber: newSortNumber } : group
+          })
+          .sort((a, b) => a.sortNumber - b.sortNumber)
+
+        return {
+          ...old,
+          rows: updatedRows,
+        }
+      })
+
+      return { previousGroups }
+    },
+
+    onError: (_, __, context) => {
+      if (context?.previousGroups) {
+        queryClient.setQueryData(['aroma-groups', 'list', stableFilters], context.previousGroups)
+      }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['aroma-groups', 'list', stableFilters] })
     },
   })
 
@@ -233,7 +268,17 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
             g.id === groupId
               ? {
                   ...g,
-                  subgroups: g.subgroups.map(s => (s.id === subgroupId ? { ...s, ...newSubgroup } : s)),
+                  subgroups: g.subgroups.map(s => {
+                    if (s.id === subgroupId) {
+                      const updatedAromas = newSubgroup.aromas?.map(({ sortNumber, ...aroma }: any) => aroma) || []
+                      return {
+                        ...s,
+                        ...newSubgroup,
+                        aromas: updatedAromas,
+                      }
+                    }
+                    return s
+                  }),
                 }
               : g
           ),
@@ -285,33 +330,32 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
 
   const reorderSubgroupMutation = useMutation({
     ...wineFlavorQueries.reorderSubgroup(),
-    onMutate: async (params: ReorderSubgroupParams) => {
+    onMutate: async (items: ReorderItem[]) => {
       await queryClient.cancelQueries({ queryKey: ['aroma-groups', 'list'] })
 
       const previousGroups = queryClient.getQueryData(['aroma-groups', 'list'])
 
+      const sortMap = new Map(items.map(item => [item.id, item.sortNumber]))
+
       queryClient.setQueryData(['aroma-groups', 'list'], (old: any) => {
-        if (!old) return old
+        if (!old?.rows) return old
 
-        const reorderSubgroupInGroup = (subgrs: any[], newOrderIds: string[]) => {
-          const subgrMap = new Map(subgrs.map(subgr => [subgr.id, subgr]))
-          return newOrderIds
-            .map((id, index) => ({
-              ...subgrMap.get(id),
-              sortNumber: index,
-            }))
-            .filter(Boolean)
-        }
+        const updatedRows = old.rows.map((group: any) => {
+          const updatedSubgroups =
+            group.subgroups
+              ?.map((subgroup: any) => {
+                const newSortNumber = sortMap.get(subgroup.id)
+                return newSortNumber !== undefined ? { ...subgroup, sortNumber: newSortNumber } : subgroup
+              })
+              .sort((a: any, b: any) => a.sortNumber - b.sortNumber) || []
 
-        return old.map((group: any) => {
-          if (group.id === params.subgroupIds) {
-            return {
-              ...group,
-              shades: reorderSubgroupInGroup(group.shades, params.subgroupIds),
-            }
+          return {
+            ...group,
+            subgroups: updatedSubgroups,
           }
-          return group
         })
+
+        return { ...old, rows: updatedRows }
       })
 
       return { previousGroups }
@@ -330,41 +374,34 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
 
   const reorderAromasMutation = useMutation({
     ...wineFlavorQueries.reorderAromas(),
-    onMutate: async (params: ReorderAromasParams) => {
-      await queryClient.cancelQueries({ queryKey: ['aroma-subgroups', 'list', ['assigned-colors', 'aromas']] })
+    onMutate: async (items: ReorderItem[]) => {
+      const queryKey = ['aroma-subgroups', 'list', ['assigned-colors', 'aromas']]
 
-      const previousSubgroups = queryClient.getQueryData(['aroma-subgroups', 'list', ['assigned-colors', 'aromas']])
+      await queryClient.cancelQueries({ queryKey })
 
-      queryClient.setQueryData(['aroma-subgroups', 'list', ['assigned-colors', 'aromas']], (old: any) => {
-        if (!old) return old
+      const previousAromas = queryClient.getQueryData(queryKey)
 
-        const reorderAromasInSubgroup = (aromas: WineAromaItem[], newOrderIds: string[]) => {
-          const aromaMap = new Map(aromas.map(aroma => [aroma.id, aroma]))
-          return newOrderIds
-            .map((id, index) => ({
-              ...aromaMap.get(id),
-              sortNumber: index,
-            }))
-            .filter(Boolean)
-        }
+      const sortMap = new Map(items.map(item => [item.id, item.sortNumber]))
 
-        return old.map((subgroup: WineAromaSubgroup) => {
-          if (subgroup.id === params.subgrId) {
-            return {
-              ...subgroup,
-              aromas: reorderAromasInSubgroup(subgroup.aromas, params.aromasIds),
-            }
-          }
-          return subgroup
-        })
+      queryClient.setQueryData(queryKey, (old: any) => {
+        if (!old?.rows) return old
+
+        const updatedRows = old.rows
+          .map((aroma: any) => {
+            const newSortNumber = sortMap.get(aroma.id)
+            return newSortNumber !== undefined ? { ...aroma, sortNumber: newSortNumber } : aroma
+          })
+          .sort((a: any, b: any) => a.sortNumber - b.sortNumber)
+
+        return { ...old, rows: updatedRows }
       })
 
-      return { previousSubgroups }
+      return { previousAromas }
     },
 
     onError: (_, __, context) => {
-      if (context?.previousSubgroups) {
-        queryClient.setQueryData(['aroma-subgroups', 'list', ['assigned-colors', 'aromas']], context.previousSubgroups)
+      if (context?.previousAromas) {
+        queryClient.setQueryData(['aroma-subgroups', 'list', ['assigned-colors', 'aromas']], context.previousAromas)
       }
     },
 
@@ -387,6 +424,7 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
     isCreatingGroup: createGroupMutation.isPending,
     isUpdatingGroup: updateGroupMutation.isPending,
     isDeletingGroup: deleteGroupMutation.isPending,
+    isReorderingGroup: reorderGroupMutation.isPending,
     isCreatingSubAroma: createSubgroup.isPending,
     isUpdatingSubgroup: updateSubgroup.isPending,
     isDeletingSubgroup: deleteSubgroup.isPending,
@@ -394,6 +432,7 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
     createGroup: createGroupMutation.mutateAsync,
     updateGroup: updateGroupMutation.mutateAsync,
     deleteGroup: deleteGroupMutation.mutateAsync,
+    reorderGroup: reorderGroupMutation.mutateAsync,
     createSubgroup: createSubgroup.mutateAsync,
     updateSubgroup: updateSubgroup.mutateAsync,
     deleteSubgroup: deleteSubgroup.mutateAsync,

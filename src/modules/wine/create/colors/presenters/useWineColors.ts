@@ -336,7 +336,6 @@ export const useWineColor = () => {
   })
 
   return {
-    // colorGroups: mockWineColorGroups,
     colorGroups: colorGroups(),
     totalCount: groupsQuery.data?.count || 0,
 

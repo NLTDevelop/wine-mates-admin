@@ -10,6 +10,7 @@ interface SortableItemProps {
   className?: string
   handleClassName?: string
   gridColor?: string
+  disabled?: boolean
 }
 
 export const SortableItem: React.FC<SortableItemProps> = ({ id, children, className = '', handleClassName = '', gridColor = 'text-gray-400' }) => {

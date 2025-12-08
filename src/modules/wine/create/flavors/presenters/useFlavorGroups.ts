@@ -17,7 +17,7 @@ interface UseFlavorGroupsProps {
 }
 
 export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup, setEditingGroupData, setForceOpenKeys, setOpenAccordions, setNewItemData, cachedColors }: UseFlavorGroupsProps) => {
-  const { createGroup, updateGroup, deleteGroup, isLoading } = useWineFlavor(cachedColors)
+  const { createGroup, updateGroup, deleteGroup, isLoading, reorderGroup, isReorderingGroup } = useWineFlavor(cachedColors)
 
   const handleAddGroup = useCallback(
     async (groupData: CreateWineAromaGroupRequest) => {
@@ -58,7 +58,7 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
       const groupFormData = {
         translations: group.translations || [],
         colorHex: group.colorHex || '',
-        sortNumber: group.sortNumber || 0,
+        // sortNumber: group.sortNumber || 0,
         subgroups: group.subgroups || [],
         colors: group.colors || [],
       }
@@ -98,11 +98,11 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
       if (!groupData) return
 
       try {
-        const currentGroupIndex = aromaGroups?.findIndex(g => g.id === groupId) ?? -1
+        // const currentGroupIndex = aromaGroups?.findIndex(g => g.id === groupId) ?? -1
         const newGroupData = {
           ...groupData,
           colorIds: groupData.colors?.map(color => color.id) || [],
-          sortNumber: currentGroupIndex >= 0 ? currentGroupIndex : aromaGroups?.length || 0,
+          // sortNumber: currentGroupIndex >= 0 ? currentGroupIndex : aromaGroups?.length || 0,
           translations: groupData.translations || [],
         }
         await updateGroup({
@@ -175,11 +175,11 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
 
       const namesChanged = originalNameUa !== currentNameUa || originalNameEn !== currentNameEn
       const colorHexChanged = group.colorHex !== currentData.colorHex
-      const sortNumberChanged = group.sortNumber !== currentData.sortNumber && group.sortNumber !== null
+      // const sortNumberChanged = group.sortNumber !== currentData.sortNumber && group.sortNumber !== null
       const colorsChanged = JSON.stringify(group.colors?.map(c => c.id)) !== JSON.stringify(currentData.colors?.map(c => c.id))
       const translationsChanged = !arraysEqual(group.translations || [], currentData.translations || [], (a, b) => a.language === b.language && a.name === b.name)
 
-      return namesChanged || colorHexChanged || sortNumberChanged || colorsChanged || translationsChanged
+      return namesChanged || colorHexChanged || /*sortNumberChanged ||*/ colorsChanged || translationsChanged
     },
     [aromaGroups, editingGroupData]
   )
@@ -194,5 +194,7 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
     canSaveGroup,
     isLoading,
     hasChanges,
+    reorderGroup,
+    isReorderingGroup,
   }
 }

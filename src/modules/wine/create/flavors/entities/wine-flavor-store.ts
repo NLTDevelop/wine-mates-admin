@@ -2,6 +2,7 @@ import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapp
 import { WineAromaGroup, WineAromaItem, WineAromaSubgroup } from './types/flavor-types'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { getDisplayNames } from '@/lib/utils'
+import { ReorderItem } from '../../general/entities/types'
 
 interface WineFlavorStoreState {
   aromaGroups: WineAromaGroup[]
@@ -19,6 +20,7 @@ interface WineFlavorStoreState {
   addAromaGroup: (group: WineAromaGroup) => void
   updateAromaGroup: (groupId: string, newGroup: WineAromaGroup) => void
   deleteAromaGroup: (groupId: string) => void
+  reorderAromaGroups: (item: ReorderItem[]) => void
   searchAromaGroups: (searchTerm: string) => void
   clearSearch: () => void
   setFilters: (filters: Partial<WineFlavorStoreState['filters']>) => void
@@ -80,6 +82,24 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
         }),
         false,
         'aromaGroups/deleteAromaGroup'
+      ),
+
+    reorderAromaGroups: (items: ReorderItem[]) =>
+      set(
+        (state: WineFlavorStoreState) => {
+          const sortMap = new Map(items.map(item => [item.id, item.sortNumber]))
+
+          return {
+            aromaGroups: state.aromaGroups
+              .map(group => {
+                const newSortNumber = sortMap.get(Number(group.id))
+                return newSortNumber !== undefined ? { ...group, sortNumber: newSortNumber } : group
+              })
+              .sort((a, b) => a.sortNumber - b.sortNumber),
+          }
+        },
+        false,
+        'aromaGroups/reorderGroups'
       ),
 
     searchAromaGroups: searchTerm =>

@@ -1,17 +1,8 @@
 import { api } from '@/services'
 import { buildUrl } from '@/lib/utils'
 import { AROMA_CRUD_ENDPOINTS } from './wine-flavor-endpoints'
-import {
-  CreateWineAromaGroupRequest,
-  CreateWineAromaSubgroupParams,
-  ReorderAromasParams,
-  ReorderSubgroupParams,
-  UpdateWineAromaGroupParams,
-  UpdateWineAromaSubgroupParams,
-  WineAromaGroup,
-  WineAromaSubgroup,
-} from './types/flavor-types'
-import { DataResponse, FiltersParams } from '../../general/entities/types'
+import { CreateWineAromaGroupRequest, CreateWineAromaSubgroupParams, UpdateWineAromaGroupParams, UpdateWineAromaSubgroupParams, WineAromaGroup, WineAromaSubgroup } from './types/flavor-types'
+import { DataResponse, FiltersParams, ReorderItem } from '../../general/entities/types'
 
 export const wineFlavorService = {
   listGroups: (filters: FiltersParams = {}): Promise<DataResponse<WineAromaGroup>> => {
@@ -46,9 +37,9 @@ export const wineFlavorService = {
 
   deleteSubgroup: (subgroupId: string): Promise<void> => api.delete(buildUrl(AROMA_CRUD_ENDPOINTS.SUBGROUP.DELETE, { id: subgroupId })).then(response => response.data),
 
-  reorderSubgroup: (params: ReorderSubgroupParams): Promise<void> =>
-    api.patch(buildUrl(AROMA_CRUD_ENDPOINTS.SUBGROUP.REORDER, { id: params.groupId }), { subgroupIds: params.subgroupIds }).then(response => response.data),
+  reorderGroup: (params: ReorderItem[]): Promise<void> => api.patch(buildUrl(AROMA_CRUD_ENDPOINTS.GROUP.REORDER), params).then(response => response.data),
 
-  reorderAromas: (params: ReorderAromasParams): Promise<void> =>
-    api.patch(buildUrl(AROMA_CRUD_ENDPOINTS.AROMAS.REORDER, { id: params.subgrId }), { aromasIds: params.aromasIds }).then(response => response.data),
+  reorderSubgroup: (params: ReorderItem[]): Promise<void> => api.patch(buildUrl(AROMA_CRUD_ENDPOINTS.SUBGROUP.REORDER), params).then(response => response.data),
+
+  reorderAromas: (params: ReorderItem[]): Promise<void> => api.patch(buildUrl(AROMA_CRUD_ENDPOINTS.AROMAS.REORDER), params).then(response => response.data),
 }
