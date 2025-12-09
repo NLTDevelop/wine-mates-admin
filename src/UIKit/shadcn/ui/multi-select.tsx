@@ -485,7 +485,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 
                         {IconComponent && <IconComponent className="mr-2 h-4 w-4 transition-colors duration-200" />}
 
-                        <span className="transition-colors duration-200">{option.label}</span>
+                        <span className="transition-colors duration-200 min-w-0 truncate flex-1">{option.label}</span>
 
                         {isDisabled && mode === 'multiple' && maxSelections && selectedValues.length >= maxSelections && !isSelected && (
                           <span className="ml-auto text-xs text-muted-foreground transition-opacity duration-200">Max {maxSelections}</span>

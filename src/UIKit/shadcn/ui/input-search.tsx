@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Input } from './input'
+import { forwardRef } from 'react'
 
 export type SearchInputProps = {
   value: string
@@ -10,7 +11,8 @@ export type SearchInputProps = {
   isLoading?: boolean
 }
 
-export const SearchInput = ({ value, onChange, className, isLoading, handleClear, placeholder }: SearchInputProps) => {
+export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({ value, onChange, handleClear, placeholder, className, isLoading }, ref) => {
   const { t } = useTranslation('common')
-  return <Input variant="search" value={value} onChange={e => onChange(e)} placeholder={placeholder ?? t('search')} onClear={handleClear} isLoading={isLoading} className={className} />
-}
+
+  return <Input ref={ref} variant="search" value={value} onChange={e => onChange(e)} placeholder={placeholder ?? t('search')} onClear={handleClear} isLoading={isLoading} className={className} />
+})

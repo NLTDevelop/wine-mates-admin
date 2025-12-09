@@ -46,7 +46,7 @@ export const UsersView = () => {
           onRowClick={handleRowClick}
         />
       </div>
-      {totalCount && totalCount > DEFAULT_PAGINATION_LIMIT && <NLTTablePagination limit={filters.limit} page={filters.page} totalRows={totalCount || 0} setPage={onChangePagination} />}
+      {totalCount && totalCount > DEFAULT_PAGINATION_LIMIT ? <NLTTablePagination limit={filters.limit} page={filters.page} totalRows={totalCount || 0} setPage={onChangePagination} /> : null}
       <ConfirmModal
         title={t('modal.confirm_title')}
         actionTitle={modalActionTitle}

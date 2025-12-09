@@ -1,7 +1,5 @@
-
 import { Card } from '@/UIKit/shadcn/ui/card'
 import { WineTemplate } from '../../entities/types'
-
 
 interface SortableTemplateCardProps {
   template: WineTemplate
@@ -10,8 +8,6 @@ interface SortableTemplateCardProps {
 }
 
 export const SortableTemplateCard = ({ template, isSelected, onSelect }: SortableTemplateCardProps) => {
-
-
   return (
     <div className="dnd-kit-drag transform-gpu will-change-transform">
       <Card

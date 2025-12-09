@@ -54,7 +54,7 @@ export function NLTDataTable<T>({ table, rowClassname, ToolBar, showColumnsSelec
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
-                  <TableHead className={cn((header.column.columnDef.meta as ColumnMeta)?.cellClassName, '[&:not(:first-child)]:text-center bg-secondary text-border')} key={header.id}>
+                  <TableHead className={cn((header.column.columnDef.meta as ColumnMeta)?.cellClassName, '[&:not(:first-child)]:text-start bg-secondary text-border')} key={header.id}>
                     {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}

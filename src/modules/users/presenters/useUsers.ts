@@ -52,7 +52,7 @@ export const useUsers = () => {
   })
 
   const { debouncedWrapper } = useDebounce((searchValue: string) => {
-    setFilters({ search: searchValue, page: 0 })
+    setFilters({ search: searchValue, page: 1 })
   }, 500)
 
   const findUserById = useCallback(
