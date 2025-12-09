@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useTasteCharacteristics } from './useTasteCharacteristics'
-import { BaseWineColor, NameDictionary } from '../../general/entities/types'
+import { BaseWineColor } from '../../general/entities/types'
 import { getDisplayNameDescription } from '@/lib/utils'
 import { CreateWineTasteCharacteristicParams, CreateWineTasteCharacteristicRequest, LevelItem, UpdateWineTasteCharacteristicRequest, WineTasteCharacteristics } from '../entities/taste-characteristics'
 import { NewCharacteristicData } from '../entities/characteristics-palette-types'
