@@ -14,7 +14,7 @@ const handleGlobalError = (error: any) => {
 
   if (status === 409) {
     if (globalToast) {
-      const message = `Помилка здереження:${error.response?.data?.message}` || 'Конфлікт даних. Обʼєкт вже існує або був змінений.'
+      const message = `Помилка збереження:${error.response?.data?.message}` || 'Конфлікт даних. Обʼєкт вже існує або був змінений.'
       globalToast.notifyToast(message, 'destructive')
     }
     return

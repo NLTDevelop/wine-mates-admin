@@ -15,7 +15,6 @@ import { ConfirmModal } from '@/modals/confirmModal'
 import { ImportFileModal } from '@/modals/ImportFileModal'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { cn } from '@/lib/utils'
-import { SkeletonWineList } from './skeleton-wine-list'
 import { useEffect } from 'react'
 
 export const WineView = () => {
@@ -40,9 +39,6 @@ export const WineView = () => {
     handleClearSearch()
   }, [])
 
-  if (isLoading) {
-    return <SkeletonWineList />
-  }
   return (
     <ContentLayout title={t('list.wines_list')}>
       <div className="text-end">

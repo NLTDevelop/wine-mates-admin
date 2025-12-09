@@ -43,10 +43,10 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
           // }
           return (
             <div className="flex">
-              <Button variant="ghost" size="sm" onClick={handleEditWine} className="h-8 w-8 p-0">
+              <Button variant="ghost" size="sm" onClick={handleEditWine} className="h-8 w-8 p-0 flex-1">
                 <Edit className="h-4 w-4 text-muted-foreground" />
               </Button>
-              <Button variant="ghost" size="sm" onClick={handleDeleteWine} className="h-8 w-8 p-0 text-destructive hover:text-destructive">
+              <Button variant="ghost" size="sm" onClick={handleDeleteWine} className="h-8 w-8 p-0 text-destructive hover:text-destructive flex-1">
                 <Trash2 className="h-4 w-4 text-red-700" />
               </Button>
               {/* <NLTTooltip
@@ -112,6 +112,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         header: t('table.images'),
         cell: ({ row }) => <div>{row.original.image ? '+' : '-'}</div>,
         size: 120,
+        meta: { cellClassName: 'text-start' },
       }),
     ],
     [onEdit, onDelete, onConfirm, t]
