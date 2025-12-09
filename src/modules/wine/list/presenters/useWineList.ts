@@ -6,9 +6,13 @@ import { Image, IWines, UpdateWineListParams, WineImage, WinesResponse } from '.
 import { useWineStore } from '../entities/wine-list-store'
 import { wineQueries } from '../entities/wine-list-queries'
 import { WineFormData } from '../../create/wine/presenters/wine-form-schema'
+import { useToast } from '@/hooks/shadcn/use-toast'
+import { useTranslation } from 'react-i18next'
 
 export const useWineList = () => {
   const { filters, setFilters, resetFilters } = useWineStore()
+  const { toast } = useToast()
+  const { t } = useTranslation('wines')
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
   const [selectedWineId, setSelectedWineId] = useState<string | null>(null)
@@ -200,11 +204,23 @@ export const useWineList = () => {
 
   const importWines = useCallback(
     async (file: File) => {
-      await importWinesMutation.mutateAsync(file)
-      winesQuery.refetch()
-      closeImportModal()
+      try {
+        await importWinesMutation.mutateAsync(file)
+
+        toast({
+          title: t('import_success'),
+          variant: 'default',
+        })
+        winesQuery.refetch()
+        closeImportModal()
+      } catch (error) {
+        toast({
+          title: t('import_error'),
+          variant: 'destructive',
+        })
+      }
     },
-    [importWinesMutation, winesQuery, closeImportModal]
+    [importWinesMutation, winesQuery, closeImportModal, t]
   )
 
   return {

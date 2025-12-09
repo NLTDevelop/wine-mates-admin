@@ -233,6 +233,8 @@ export const uk = {
     not_known_wine: 'невідоме вино',
     edit_wine: 'Редагування вина',
     wine_detail: 'Деталі вина',
+    import_success: 'Успішний імпорт списку вин',
+    import_error: 'Помилка імпорту списку вин',
     modal: {
       delete_title: 'Видалити {{slug}}?',
       delete_action: 'Видалити',
