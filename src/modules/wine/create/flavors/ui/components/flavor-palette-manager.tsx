@@ -143,14 +143,16 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
                     header={
                       <div className="flex justify-between items-center w-full pl-8 flex-1 min-w-0">
                         <div className="flex md:items-center items-start gap-2 md:flex-row flex-col flex-1 min-w-0">
-                          <span className={cn('font-medium truncate', cardTextColorClass)}>
+                          <span className={cn('font-medium truncate min-w-0 flex-1 text-start', cardTextColorClass)}>
                             {nameUa} ({nameEn})
                           </span>
-                          {group?.colors?.map((c: BaseWineColor) => (
-                            <div key={c.id} className="flex items-center bg-amber-50 px-2 rounded-md md:w-auto w-full">
-                              <span className=" text-sm text-foreground">{c?.name}</span>
-                            </div>
-                          ))}
+                          <div className="flex flex-wrap gap-2 min-w-0 w-full flex-1">
+                            {group?.colors?.map((c: BaseWineColor) => (
+                              <div key={c.id} className="flex items-center bg-amber-50 px-2 rounded-md md:w-auto w-full">
+                                <span className=" text-sm text-foreground">{c?.name}</span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                         <PaletteItemActions
                           isLoading={isLoading || isReordering}

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="excelGrad1" x1="14" x2="34" y1="8" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#33c481"/>
+      <stop offset="1" stop-color="#21a366"/>
+    </linearGradient>
+    <linearGradient id="excelGrad2" x1="20" x2="36" y1="12" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#107c41"/>
+      <stop offset="1" stop-color="#185c37"/>
+    </linearGradient>
+  </defs>
+
+  <path fill="url(#excelGrad1)" d="M8 6h22l10 10v26a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V10a4 4 0 0 1 4-4z"/>
+
+  <path fill="#33c481" d="M30 6v10h10z"/>
+
+  <rect x="14" y="16" width="20" height="20" rx="2" fill="url(#excelGrad2)" />
+
+  <path fill="#fff" d="M18.5 19h3l3 4 3-4h3l-4.5 6 4.5 6h-3l-3-4-3 4h-3l4.5-6z"/>
+</svg>

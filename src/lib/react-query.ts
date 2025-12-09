@@ -12,6 +12,14 @@ export const setGlobalToast = (toast: { notifyToast: (message: string, variant?:
 const handleGlobalError = (error: any) => {
   const status = error.response?.status
 
+  if (status === 409) {
+    if (globalToast) {
+      const message = `Помилка здереження:${error.response?.data?.message}` || 'Конфлікт даних. Обʼєкт вже існує або був змінений.'
+      globalToast.notifyToast(message, 'destructive')
+    }
+    return
+  }
+
   if (status === undefined) {
     if (globalToast) {
       let message = 'Проблеми з інтернет-зʼєднанням. Перевірте підключення до мережі.'
@@ -29,7 +37,7 @@ const handleGlobalError = (error: any) => {
     return
   }
 
-  const skipToastErrors = [422, 409, 429]
+  const skipToastErrors = [422, 429]
   const skipToastFlags = [error.userFriendlyMessage, error.validationData, error.isHandledInComponent, error.retryAfter, error.showCustomModal]
 
   if (skipToastErrors.includes(status) || skipToastFlags.some(flag => !!flag)) {
@@ -54,7 +62,7 @@ const getErrorMessage = (status: number, serverMessage?: string): string => {
 }
 
 const getToastVariant = (status: number): 'default' | 'destructive' | 'success' => {
-  if ([401, 403, 500, 501, 502, 503, 504].includes(status)) return 'destructive'
+  if ([401, 403, 500, 501, 502, 503, 504, 409].includes(status)) return 'destructive'
   if ([404].includes(status)) return 'default'
   return 'destructive'
 }

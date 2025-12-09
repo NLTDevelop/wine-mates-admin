@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import { getDisplayNameDescription } from '@/lib/utils'
 import { CreateWineTasteCharacteristicParams, CreateWineTasteCharacteristicRequest, LevelItem } from '../entities/taste-characteristics'
 import { convertToCreateTranslations } from '../../general/presenters/helper'
+import { NameDictionary } from '../../general/entities/types'
 
 interface UseCreateTasteCharacteristicProps {
   onCreateTasteCharacteristic: (wineTypeData: CreateWineTasteCharacteristicRequest) => void
@@ -68,7 +69,22 @@ export const useCreateTasteCharacteristic = ({ onCreateTasteCharacteristic, isLo
   }, [])
 
   const { nameUa, nameEn } = getDisplayNameDescription(formData.translations || [])
-  const canCreate = !!(nameUa && nameEn && formData.colors && formData.colors.length > 0 && formData.levels && formData.levels.length > 2)
+
+  const hasValidLevelTranslations = (levels: LevelItem[] | undefined): boolean => {
+    if (!levels || levels.length === 0) return false
+
+    return levels.every((level: LevelItem) => {
+      if (!level.translations || level.translations.length === 0) return false
+
+      const hasUa = level.translations.some((t: NameDictionary) => t.language === 'uk' && t.name && t.name.trim() !== '')
+
+      const hasEn = level.translations.some((t: NameDictionary) => t.language === 'en' && t.name && t.name.trim() !== '')
+
+      return hasUa && hasEn
+    })
+  }
+
+  const canCreate = !!(nameUa && nameEn && formData.colors && formData.colors.length > 0 && formData.levels && formData.levels.length > 2 && hasValidLevelTranslations(formData.levels))
 
   return {
     isExpanded,

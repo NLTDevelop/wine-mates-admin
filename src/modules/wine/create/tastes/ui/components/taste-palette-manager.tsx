@@ -112,10 +112,10 @@ export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: Tas
                   <div className={cn('border-1 border-input rounded-md transition-all cursor-default', isEditing && 'rounded-b-none')} style={{ backgroundColor: taste.colorHex }}>
                     <div className="flex justify-between items-center w-full pr-2 py-2 pl-8 min-w-0 flex-1">
                       <div className="flex gap-2 sm:flex-row flex-col sm:w-auto w-full min-w-0 flex-1">
-                        <span className={cn('font-medium truncate', textColorClass)}>
+                        <span className={cn('font-medium truncate flex-1', textColorClass)}>
                           {nameUa} ({nameEn})
                         </span>
-                        <div className="flex flex-wrap gap-2 min-w-0 w-full">
+                        <div className="flex flex-wrap gap-2 min-w-0 w-full flex-1">
                           {taste?.colors?.map((c: BaseWineColor, idx: number) => (
                             <div
                               key={`${c?.id}-${idx}`}

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="jsonGrad" x1="12" x2="36" y1="8" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f27c3b"/>
+      <stop offset="1" stop-color="#d45a1f"/>
+    </linearGradient>
+  </defs>
+
+  <path fill="url(#jsonGrad)" d="M8 6h22l10 10v26a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V10a4 4 0 0 1 4-4z"/>
+
+  <path fill="#f27c3b" d="M30 6v10h10z"/>
+
+  <text x="50%" y="62%" text-anchor="middle" fill="white" font-size="16" font-family="Consolas, monospace" font-weight="bold">
+    { }
+  </text>
+</svg>

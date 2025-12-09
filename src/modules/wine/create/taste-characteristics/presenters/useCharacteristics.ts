@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useTasteCharacteristics } from './useTasteCharacteristics'
-import { BaseWineColor } from '../../general/entities/types'
+import { BaseWineColor, NameDictionary } from '../../general/entities/types'
 import { getDisplayNameDescription } from '@/lib/utils'
 import { CreateWineTasteCharacteristicParams, CreateWineTasteCharacteristicRequest, LevelItem, UpdateWineTasteCharacteristicRequest, WineTasteCharacteristics } from '../entities/taste-characteristics'
 import { NewCharacteristicData } from '../entities/characteristics-palette-types'
@@ -166,7 +166,21 @@ export const useCharacteristics = ({
       if (!data?.translations) return false
 
       const { nameUa, nameEn } = getDisplayNameDescription(data.translations)
-      return nameUa && nameEn && data?.colorHex && data?.levels && data?.levels.length > 2 && data.colors && data.colors.length
+
+      if (!nameUa || !nameEn || !data?.colorHex || !data?.levels || data?.levels.length < 2 || !data.colors || data.colors.length === 0) {
+        return false
+      }
+
+      const allLevelsHaveTranslations = data.levels.every((level: LevelItem) => {
+        if (!level.translations || level.translations.length < 2) return false
+
+        const uaTranslation = level.translations.find(t => t.language === 'uk')
+        const enTranslation = level.translations.find(t => t.language === 'en')
+
+        return uaTranslation?.name?.trim() && enTranslation?.name?.trim()
+      })
+
+      return allLevelsHaveTranslations
     },
     [editingCharacteristicData]
   )

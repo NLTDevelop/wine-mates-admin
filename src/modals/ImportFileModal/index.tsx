@@ -22,7 +22,7 @@ export const ImportFileModal: FC<ImportFileModalProps> = ({
   onClose,
   onImport,
   title = 'Import Files',
-  acceptedFileTypes = ['text/csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/json'],
+  acceptedFileTypes = ['text/csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel', 'application/json'],
   maxSizeMB = 10,
   importButtonText = 'Import',
   multiple = false,

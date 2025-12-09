@@ -292,12 +292,9 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
     canAddItem,
     getItemName,
 
-    // handleReorderSubgr: handleReorderLocale,
-    handleReorderSubgr, //когда будет бек
+    handleReorderSubgr,
     getSubgroupForGroup,
-
-    // handleReorderAromas: handleReorderAromasLocale,
-    handleReorderAromas, //когда будет бек
+    handleReorderAromas,
     getAromasForGroup,
 
     hasChanges,

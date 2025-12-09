@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="csvGrad" x1="12" x2="36" y1="8" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#33c481"/>
+      <stop offset="1" stop-color="#21a366"/>
+    </linearGradient>
+  </defs>
+
+  <path fill="url(#csvGrad)" d="M8 6h22l10 10v26a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V10a4 4 0 0 1 4-4z"/>
+
+  <path fill="#33c481" d="M30 6v10h10z"/>
+
+  <text x="50%" y="65%" text-anchor="middle" fill="white" font-size="14" font-family="Segoe UI, sans-serif" font-weight="bold">
+    CSV
+  </text>
+</svg>

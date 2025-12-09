@@ -125,20 +125,20 @@ export const TasteCharacteristicsPaletteManager = ({ cachedColors, colorsLoading
                     header={
                       <div className="flex justify-between items-center w-full pl-8 min-w-0 flex-1">
                         <div className="flex md:items-center items-start gap-2 md:flex-row flex-col flex-1 min-w-0">
-                          <span className={cn('font-medium truncate', cardTextColorClass)}>
+                          <span className={cn('font-medium truncate min-w-0 flex-1 text-start', cardTextColorClass)}>
                             {nameUa} ({nameEn})
                           </span>
 
-                          <div className="flex flex-wrap gap-2 min-w-0 w-full">
+                          <div className="flex flex-wrap gap-2 min-w-0 w-full flex-1">
                             {group?.colors.map((c: BaseWineColor, idx: number) => (
                               <div
                                 key={`${c?.id}-${idx}`}
-                                className="inline-flex items-center bg-amber-50 px-2 py-1 rounded-md flex-shrink-0"
+                                className="inline-flex items-center bg-amber-50 px-2 py-1 rounded-md flex-shrink-0 "
                                 style={{
                                   maxWidth: 'calc(50% - 4px)',
                                 }}
                               >
-                                <span className="text-sm text-foreground truncate whitespace-nowrap w-full">{c?.name}</span>
+                                <span className="text-sm text-start text-foreground truncate whitespace-nowrap ">{c?.name}</span>
                               </div>
                             ))}
                           </div>

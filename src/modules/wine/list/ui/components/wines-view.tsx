@@ -87,7 +87,7 @@ export const WineView = () => {
         onImport={importWines.import}
         title={t('list.import_wines_list')}
         importButtonText={tc('button.import')}
-        acceptedFileTypes={['text/csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/json']}
+        acceptedFileTypes={['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']}
         maxSizeMB={10}
       />
     </ContentLayout>

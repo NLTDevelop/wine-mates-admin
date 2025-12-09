@@ -85,11 +85,11 @@ export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTyp
                   {!isEditing ? (
                     <div className="flex justify-between items-center w-full **pl-8** min-w-0 flex-1">
                       <div className="flex gap-2 sm:flex-row flex-col sm:w-auto w-full min-w-0 flex-1">
-                        <span className="font-medium truncate">
+                        <span className="font-medium truncate flex-1">
                           {nameUa} ({nameEn})
                         </span>
 
-                        <div className="flex flex-wrap gap-2 min-w-0 w-full">
+                        <div className="flex flex-wrap gap-2 min-w-0 w-full flex-1">
                           {wineType?.colors?.map((c: BaseWineColor, idx: number) => (
                             <div
                               key={`${c?.id}-${idx}`}
