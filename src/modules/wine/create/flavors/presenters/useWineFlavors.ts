@@ -5,10 +5,14 @@ import { useWineFlavorStore } from '../entities/wine-flavor-store'
 import { CreateWineAromaGroupRequest, CreateWineAromaSubgroupParams, UpdateWineAromaGroupParams, WineAromaGroup, WineAromaSubgroup } from '../entities/types/flavor-types'
 import { wineFlavorService } from '../entities/wine-flavor-service'
 import { wineFlavorQueries } from '../entities/wine-flavor-queries'
+import { useTranslation } from 'react-i18next'
+import { useToast } from '@/hooks/shadcn/use-toast'
 
 export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
   const queryClient = useQueryClient()
   const store = useWineFlavorStore()
+  const { t } = useTranslation('wines')
+  const { toast } = useToast()
 
   const stableFilters = useMemo(() => {
     const filtersWithSubAromas = {
@@ -68,6 +72,10 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
     },
 
     onSuccess: (newGroup: WineAromaGroup, _, ctx) => {
+      toast({
+        title: t('flavors.flavor_created'),
+        variant: 'default',
+      })
       queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters], old => ({
         rows: [newGroup, ...(old?.rows?.filter(g => g.id !== ctx.tempId) || [])],
         count: old?.count ?? 0,
@@ -111,7 +119,12 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
 
       return { prev }
     },
-
+    onSuccess: () => {
+      toast({
+        title: t('flavors.flavor_updated'),
+        variant: 'default',
+      })
+    },
     onError: (_, __, ctx) => {
       if (ctx?.prev) queryClient.setQueryData(['aroma-groups', 'list', stableFilters], ctx.prev)
     },
@@ -144,7 +157,12 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
 
       return { prev }
     },
-
+    onSuccess: () => {
+      toast({
+        title: t('flavors.flavor_deleted'),
+        variant: 'default',
+      })
+    },
     onError: (_, __, ctx) => {
       if (ctx?.prev) queryClient.setQueryData(['aroma-groups', 'list', stableFilters], ctx.prev)
     },
@@ -231,6 +249,10 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
     },
 
     onSuccess: (newSubgroup, _, ctx) => {
+      toast({
+        title: t('flavors.flavor_shade_created'),
+        variant: 'default',
+      })
       queryClient.setQueryData<DataResponse<WineAromaGroup>>(['aroma-groups', 'list', stableFilters], old => ({
         ...old,
         rows:
@@ -288,7 +310,12 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
 
       return { prev }
     },
-
+    onSuccess: () => {
+      toast({
+        title: t('flavors.flavor_shade_updated'),
+        variant: 'default',
+      })
+    },
     onError: (_, __, ctx) => {
       if (ctx?.prev) queryClient.setQueryData(['aroma-groups', 'list', stableFilters], ctx.prev)
     },
@@ -318,7 +345,12 @@ export const useWineFlavor = (cachedColors: BaseWineColor[]) => {
 
       return { prev }
     },
-
+    onSuccess: () => {
+      toast({
+        title: t('flavors.flavor_shade_deleted'),
+        variant: 'default',
+      })
+    },
     onError: (_, __, ctx) => {
       if (ctx?.prev) queryClient.setQueryData(['aroma-groups', 'list', stableFilters], ctx.prev)
     },

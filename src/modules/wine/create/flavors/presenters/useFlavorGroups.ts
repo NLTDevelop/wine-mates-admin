@@ -58,7 +58,6 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
       const groupFormData = {
         translations: group.translations || [],
         colorHex: group.colorHex || '',
-        // sortNumber: group.sortNumber || 0,
         subgroups: group.subgroups || [],
         colors: group.colors || [],
       }
@@ -98,11 +97,9 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
       if (!groupData) return
 
       try {
-        // const currentGroupIndex = aromaGroups?.findIndex(g => g.id === groupId) ?? -1
         const newGroupData = {
           ...groupData,
           colorIds: groupData.colors?.map(color => color.id) || [],
-          // sortNumber: currentGroupIndex >= 0 ? currentGroupIndex : aromaGroups?.length || 0,
           translations: groupData.translations || [],
         }
         await updateGroup({
@@ -175,11 +172,10 @@ export const useFlavorGroups = ({ aromaGroups, editingGroupData, setEditingGroup
 
       const namesChanged = originalNameUa !== currentNameUa || originalNameEn !== currentNameEn
       const colorHexChanged = group.colorHex !== currentData.colorHex
-      // const sortNumberChanged = group.sortNumber !== currentData.sortNumber && group.sortNumber !== null
       const colorsChanged = JSON.stringify(group.colors?.map(c => c.id)) !== JSON.stringify(currentData.colors?.map(c => c.id))
       const translationsChanged = !arraysEqual(group.translations || [], currentData.translations || [], (a, b) => a.language === b.language && a.name === b.name)
 
-      return namesChanged || colorHexChanged || /*sortNumberChanged ||*/ colorsChanged || translationsChanged
+      return namesChanged || colorHexChanged || colorsChanged || translationsChanged
     },
     [aromaGroups, editingGroupData]
   )

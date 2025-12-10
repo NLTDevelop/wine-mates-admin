@@ -2,6 +2,7 @@ import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapp
 import { WineColorGroup, WineShades } from './types/color-types'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { getDisplayNames } from '@/lib/utils'
+import { ReorderItem } from '../../general/entities/types'
 
 interface WineColorStoreState {
   colorGroups: WineColorGroup[]
@@ -23,6 +24,7 @@ interface WineColorStoreState {
   clearSearch: () => void
   setFilters: (filters: Partial<WineColorStoreState['filters']>) => void
   resetFilters: () => void
+  reorderColorGroups: (item: ReorderItem[]) => void
 
   addShade: (groupId: string, shade: WineShades) => void
   updateShade: (groupId: string, shadeId: string, newShade: WineShades) => void
@@ -79,6 +81,24 @@ export const useWineColorStore = createStoreDevToolsWrapper<WineColorStoreState>
         }),
         false,
         'colorGroups/deleteColorGroup'
+      ),
+
+    reorderColorGroups: (items: ReorderItem[]) =>
+      set(
+        (state: WineColorStoreState) => {
+          const sortMap = new Map(items.map(item => [item.id, item.sortNumber]))
+
+          return {
+            colorGroups: state.colorGroups
+              .map(group => {
+                const newSortNumber = sortMap.get(Number(group.id))
+                return newSortNumber !== undefined ? { ...group, sortNumber: newSortNumber } : group
+              })
+              .sort((a, b) => a.sortNumber - b.sortNumber),
+          }
+        },
+        false,
+        'colorGroups/reorderGroups'
       ),
 
     setFilters: newFilters =>

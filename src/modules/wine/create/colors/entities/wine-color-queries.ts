@@ -23,6 +23,11 @@ export const wineColorQueries = {
     mutationFn: (groupId: string) => colorService.delete(groupId),
   }),
 
+  reorderGroup: () => ({
+    mutationKey: ['color-groups', 'reorder'],
+    mutationFn: (params: ReorderItem[]) => colorService.reorderGroup(params),
+  }),
+
   createShade: () => ({
     mutationKey: ['color-shades', 'create'],
     mutationFn: (params: { groupId: string; shadeData: CreateShadesParams }) => colorService.createShade(params.groupId, params.shadeData),

@@ -22,7 +22,6 @@ export const useColorGroups = ({ colorGroups, editingGroupData, setEditingGroup,
       try {
         await createGroup({
           ...(groupData as CreateWineColorParams),
-          //   sortNumber: colorGroups?.length || 0
         })
       } catch (error) {
         console.error('Failed to create color group:', error)
@@ -54,7 +53,6 @@ export const useColorGroups = ({ colorGroups, editingGroupData, setEditingGroup,
       const groupFormData = {
         translations: group.translations || [],
         colorHex: group.colorHex || '',
-        // sortNumber: group.sortNumber || 0,
         shades: group.shades || [],
       }
 
@@ -178,7 +176,6 @@ export const useColorGroups = ({ colorGroups, editingGroupData, setEditingGroup,
       const translationsChanged = !arraysEqual(group.translations || [], currentData.translations || [])
 
       return namesChanged || colorHexChanged || translationsChanged
-      // || group.sortNumber !== currentData.sortNumber
     },
     [colorGroups, editingGroupData]
   )

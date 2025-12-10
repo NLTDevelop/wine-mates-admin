@@ -35,7 +35,6 @@ export const PaletteItemActions = ({ cardTextColorClass, onEdit, showEditButton 
           e.stopPropagation()
           e.preventDefault()
           deleteModal()
-          // onRemove(dataId)
         }}
         className={cn(isHeader && cardTextColorClass, 'p-1.5 opacity-70 hover:opacity-100 flex-shrink-0 cursor-pointer')}
         title="Delete"

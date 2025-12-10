@@ -24,7 +24,15 @@ export const useWineList = () => {
 
   const winesQuery: UseQueryResult<WinesResponse | undefined, Error> = useQuery(wineQueries.list(filters))
   const updateWineMutation = useMutation(wineQueries.update())
-  const deleteWineMutation = useMutation(wineQueries.delete())
+  const deleteWineMutation = useMutation({
+    ...wineQueries.delete(),
+    onSuccess: () => {
+      toast({
+        title: t('wine_deleted'),
+        variant: 'default',
+      })
+    },
+  })
   const confirmWineMutation = useMutation(wineQueries.confirmWine())
   const importWinesMutation = useMutation(wineQueries.import())
 
@@ -116,7 +124,6 @@ export const useWineList = () => {
     },
     [editingWine, updateWine]
   )
-
   const deleteWine = useCallback(
     async (wineId: string) => {
       await deleteWineMutation.mutateAsync(wineId)

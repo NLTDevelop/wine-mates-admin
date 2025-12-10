@@ -5,7 +5,7 @@ import { useColorUI } from './useColorUI'
 import { useWineColor } from './useWineColors'
 
 export const useColorPalette = () => {
-  const { colorGroups, isLoading: wineColorLoading, isCreatingGroup, totalCount, filters, onChangePagination } = useWineColor()
+  const { colorGroups, isLoading: wineColorLoading, isCreatingGroup, totalCount, filters, onChangePagination, isReorderingGroup, reorderGroup } = useWineColor()
 
   const {
     state: { openAccordions, editingGroup, newItemData, editingGroupData, forceOpenKeys },
@@ -67,5 +67,7 @@ export const useColorPalette = () => {
     totalCount,
     filters,
     onChangePagination,
+    isReorderingGroup,
+    reorderGroup,
   }
 }

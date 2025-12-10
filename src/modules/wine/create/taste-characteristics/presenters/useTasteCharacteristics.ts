@@ -4,6 +4,8 @@ import { useWineTasteCharacteristicsStore } from '../entities/taste-characterist
 import { BaseWineColor, NameDescriptionDictionary, ReorderItem } from '../../general/entities/types'
 import { tasteCharacteristicsQueries } from '../entities/taste-characteristics-queries'
 import { CreateTranslation, CreateWineTasteCharacteristicRequest, UpdateTranslation, UpdateWineTasteCharacteristicParams, WineTasteCharacteristics } from '../entities/taste-characteristics'
+import { useTranslation } from 'react-i18next'
+import { useToast } from '@/hooks/shadcn/use-toast'
 
 const convertCreateTranslations = (translations?: CreateTranslation[]): NameDescriptionDictionary[][] => {
   if (!translations) return []
@@ -20,6 +22,8 @@ const convertUpdateTranslations = (translations?: UpdateTranslation[]): NameDesc
 export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
   const queryClient = useQueryClient()
   const store = useWineTasteCharacteristicsStore()
+  const { t } = useTranslation('wines')
+  const { toast } = useToast()
 
   const tasteCharacteristicsQuery = useQuery({ ...tasteCharacteristicsQueries.list(['assigned-colors']) })
 
@@ -69,6 +73,10 @@ export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
     },
 
     onSuccess: (newTasteCharacteristics: WineTasteCharacteristics, _, context) => {
+      toast({
+        title: t('taste_characteristics.characteristic_created'),
+        variant: 'default',
+      })
       if (context?.optimisticTasteCharacteristics) {
         const tasteCharacteristicsForApi = {
           ...newTasteCharacteristics,
@@ -118,6 +126,10 @@ export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
     },
 
     onSuccess: (updatedTasteCharacteristic: WineTasteCharacteristics, _, context) => {
+      toast({
+        title: t('taste_characteristics.characteristic_updated'),
+        variant: 'default',
+      })
       if (!updatedTasteCharacteristic && context?.optimisticTasteCharacteristics) {
         return
       }
@@ -160,7 +172,12 @@ export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
 
       return { previousTasteCharacteristics, deletedTasteCharacteristic }
     },
-
+    onSuccess: () => {
+      toast({
+        title: t('taste_characteristics.characteristic_deleted'),
+        variant: 'default',
+      })
+    },
     onError: (_, __, context) => {
       if (context?.previousTasteCharacteristics) {
         queryClient.setQueryData<WineTasteCharacteristics[]>(['taste-characteristics', 'list', 'assigned-colors'], context.previousTasteCharacteristics)

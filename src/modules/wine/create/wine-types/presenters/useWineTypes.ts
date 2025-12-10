@@ -3,12 +3,16 @@ import { useEffect } from 'react'
 import { useWineTypeStore } from '../entities/wine-type-store'
 import { wineTypeQueries } from '../entities/wine-type-queries'
 import { CreateWineTypeRequest, UpdateWineTypeParams, WineType } from '../entities/types/wine-type'
-import { BaseWineColor } from '../../general/entities/types'
+import { BaseWineColor, ReorderItem } from '../../general/entities/types'
 import { getDisplayNames } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import { useToast } from '@/hooks/shadcn/use-toast'
 
 export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
   const queryClient = useQueryClient()
   const store = useWineTypeStore()
+  const { t } = useTranslation('wines')
+  const { toast } = useToast()
 
   const wineTypeQuery = useQuery({ ...wineTypeQueries.list(['assigned-colors']) })
 
@@ -42,7 +46,7 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
         id: `temp-${Date.now()}`,
         translations: newWineType.translations ?? [],
         colors: assignedColors ?? [],
-        sortNumber: 0,
+        sortNumber: newWineType.sortNumber ?? 0,
         nameUa,
         nameEn,
         isSparkling: newWineType.isSparkling ?? false,
@@ -57,6 +61,10 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
     },
 
     onSuccess: (newWineType: WineType, _, context) => {
+      toast({
+        title: t('types.type_created'),
+        variant: 'default',
+      })
       if (context?.optimisticWineType) {
         const finalId = newWineType?.id || context.optimisticWineType.id
 
@@ -90,7 +98,7 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
         id: params.wineTypeId,
         translations: params.newWineType.translations,
         colors: assignedColors,
-        sortNumber: 0,
+        sortNumber: params.newWineType.sortNumber || 0,
         nameUa,
         nameEn,
         isSparkling: params.newWineType.isSparkling ?? false,
@@ -102,6 +110,10 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
     },
 
     onSuccess: (updatedWineType: WineType, _, context) => {
+      toast({
+        title: t('types.type_updated'),
+        variant: 'default',
+      })
       if (!updatedWineType && context?.optimisticWineType) {
         return
       }
@@ -143,10 +155,54 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
 
       return { previousWineTypes, deletedWineType }
     },
-
+    onSuccess: () => {
+      toast({
+        title: t('types.type_deleted'),
+        variant: 'default',
+      })
+    },
     onError: (_, __, context) => {
       if (context?.previousWineTypes) {
         queryClient.setQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'], context.previousWineTypes)
+      }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['wine-types', 'list', 'assigned-colors'] })
+    },
+  })
+
+  const reorderGroupMutation = useMutation({
+    ...wineTypeQueries.reorder(),
+
+    onMutate: async (reorderParams: ReorderItem[]) => {
+      await queryClient.cancelQueries({ queryKey: ['wine-types', 'list', 'assigned-colors'] })
+
+      const previousGroups = queryClient.getQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'])
+
+      store.reorderType(reorderParams)
+
+      const sortMap = new Map(reorderParams.map(item => [item.id, item.sortNumber]))
+
+      queryClient.setQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'], old => {
+        if (!old) return old
+
+        const updatedRows = old
+          .map(group => {
+            const newSortNumber = sortMap.get(Number(group.id))
+            return newSortNumber !== undefined ? { ...group, sortNumber: newSortNumber } : group
+          })
+          .sort((a, b) => a.sortNumber - b.sortNumber)
+
+        return updatedRows
+      })
+
+      return { previousGroups }
+    },
+
+    onError: (_, __, context) => {
+      if (context?.previousGroups) {
+        queryClient.setQueryData(['wine-types', 'list', 'assigned-colors'], context.previousGroups)
       }
     },
 
@@ -198,6 +254,7 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,
+    isReorderingGroup: reorderGroupMutation.isPending,
 
     createWineType,
     updateWineType,
@@ -210,5 +267,6 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
 
     refetchTastes: wineTypeQuery.refetch,
     refetchTastesWithParams: customRefetchGroups,
+    reorderGroup: reorderGroupMutation.mutateAsync,
   }
 }

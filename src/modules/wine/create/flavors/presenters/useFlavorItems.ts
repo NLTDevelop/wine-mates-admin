@@ -161,7 +161,6 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
           groupId: parseInt(groupId),
           translations: newItemData[groupId].translations,
           aromas: newItemData[groupId].aromas || [],
-          // sortNumber: 0,
           colorHex: newItemData[groupId].colorHex || '',
         }
 

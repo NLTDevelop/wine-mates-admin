@@ -39,7 +39,6 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
   const { deleteModal } = useDeleteModal()
 
   const {
-    // aromaGroups,
     isLoading,
     editingGroup,
     newItemData,

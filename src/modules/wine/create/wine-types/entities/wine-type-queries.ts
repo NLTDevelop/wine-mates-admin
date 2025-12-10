@@ -1,5 +1,6 @@
 import { wineTypeService } from './wine-type-service'
 import { CreateWineTypeRequest, UpdateWineTypeParams } from './types/wine-type'
+import { ReorderItem } from '../../general/entities/types'
 
 export const wineTypeQueries = {
   list: (include?: string[]) => ({
@@ -20,5 +21,10 @@ export const wineTypeQueries = {
   delete: () => ({
     mutationKey: ['wine-types', 'delete'],
     mutationFn: (wineTypeValue: string) => wineTypeService.delete(wineTypeValue),
+  }),
+
+  reorder: () => ({
+    mutationKey: ['wine-types', 'reorder'],
+    mutationFn: (params: ReorderItem[]) => wineTypeService.reorder(params),
   }),
 }

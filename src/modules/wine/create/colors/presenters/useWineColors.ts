@@ -6,10 +6,14 @@ import { CreateShadesParams, CreateWineColorParams, UpdateWineColorParams, WineC
 import { DataResponse, ReorderItem } from '../../general/entities/types'
 import { colorService } from '../entities/color-service'
 import { getDisplayNames } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import { useToast } from '@/hooks/shadcn/use-toast'
 
 export const useWineColor = () => {
+  const { t } = useTranslation('wines')
   const queryClient = useQueryClient()
   const store = useWineColorStore()
+  const { toast } = useToast()
 
   const stableFilters = useMemo(() => {
     const filtersWithShades = {
@@ -55,6 +59,7 @@ export const useWineColor = () => {
         nameUa,
         nameEn,
         shades: [],
+        sortNumber: 0,
       }
 
       queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters], old => ({
@@ -75,7 +80,10 @@ export const useWineColor = () => {
     onSuccess: (newGroup, _, ctx) => {
       const optimisticData = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters])
       const tempGroup = optimisticData?.rows.find(g => g.id === ctx.tempId)
-
+      toast({
+        title: t('colors.color_created', { slug: tempGroup?.nameUa }),
+        variant: 'default',
+      })
       if (tempGroup && newGroup.id) {
         const finalGroup: WineColorGroup = {
           ...tempGroup,
@@ -101,11 +109,14 @@ export const useWineColor = () => {
       await queryClient.cancelQueries({ queryKey: ['color-groups', 'list'] })
 
       const prev = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters])
+      const currentGroup = prev?.rows.find(g => g.id === params.colorId)
+
       const optimistic: WineColorGroup = {
         id: params.colorId,
         translations: params.newColor.translations,
         colorHex: params.newColor.colorHex,
         shades: params.newColor.shades || [],
+        sortNumber: currentGroup?.sortNumber || 0,
       }
 
       queryClient.setQueryData(['color-groups', 'list', stableFilters], (old: DataResponse<WineColorGroup>) => ({
@@ -114,6 +125,12 @@ export const useWineColor = () => {
       }))
 
       return { prev }
+    },
+    onSuccess: () => {
+      toast({
+        title: t('colors.color_updated'),
+        variant: 'default',
+      })
     },
 
     onError: (_, __, ctx) => {
@@ -139,6 +156,12 @@ export const useWineColor = () => {
       }))
 
       return { prev }
+    },
+    onSuccess: () => {
+      toast({
+        title: t('colors.color_deleted'),
+        variant: 'default',
+      })
     },
 
     onError: (_, __, ctx) => {
@@ -189,9 +212,14 @@ export const useWineColor = () => {
       }
     },
     onSuccess: (newShade, _, ctx) => {
+      toast({
+        title: t('colors.shade_created'),
+        variant: 'default',
+      })
       if (!newShade || Object.keys(newShade).length === 0) {
         return
       }
+
       queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters], old => ({
         ...old,
         rows:
@@ -239,7 +267,12 @@ export const useWineColor = () => {
 
       return { prev }
     },
-
+    onSuccess: () => {
+      toast({
+        title: t('colors.shade_updated'),
+        variant: 'default',
+      })
+    },
     onError: (_, __, ctx) => {
       if (ctx?.prev) queryClient.setQueryData(['color-groups', 'list', stableFilters], ctx.prev)
     },
@@ -275,7 +308,12 @@ export const useWineColor = () => {
 
       return { prev }
     },
-
+    onSuccess: () => {
+      toast({
+        title: t('colors.shade_deleted'),
+        variant: 'default',
+      })
+    },
     onError: (_, __, ctx) => {
       if (ctx?.prev) {
         queryClient.setQueryData(['color-groups', 'list', stableFilters], ctx.prev)
@@ -287,6 +325,48 @@ export const useWineColor = () => {
         queryKey: ['color-groups', 'list'],
         exact: false,
       })
+    },
+  })
+
+  const reorderGroupMutation = useMutation({
+    ...wineColorQueries.reorderGroup(),
+
+    onMutate: async (reorderParams: ReorderItem[]) => {
+      await queryClient.cancelQueries({ queryKey: ['color-groups', 'list', stableFilters] })
+
+      const previousGroups = queryClient.getQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters])
+
+      store.reorderColorGroups(reorderParams)
+
+      const sortMap = new Map(reorderParams.map(item => [item.id, item.sortNumber]))
+
+      queryClient.setQueryData<DataResponse<WineColorGroup>>(['color-groups', 'list', stableFilters], old => {
+        if (!old) return old
+
+        const updatedRows = old.rows
+          .map(group => {
+            const newSortNumber = sortMap.get(Number(group.id))
+            return newSortNumber !== undefined ? { ...group, sortNumber: newSortNumber } : group
+          })
+          .sort((a, b) => a.sortNumber - b.sortNumber)
+
+        return {
+          ...old,
+          rows: updatedRows,
+        }
+      })
+
+      return { previousGroups }
+    },
+
+    onError: (_, __, context) => {
+      if (context?.previousGroups) {
+        queryClient.setQueryData(['color-groups', 'list', stableFilters], context.previousGroups)
+      }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['color-groups', 'list', stableFilters] })
     },
   })
 
@@ -353,10 +433,12 @@ export const useWineColor = () => {
     isCreatingShade: createShadeMutation.isPending,
     isUpdatingShade: updateShadeMutation.isPending,
     isDeletingShade: deleteShadeMutation.isPending,
+    isReorderingGroup: reorderGroupMutation.isPending,
 
     createGroup: createGroupMutation.mutateAsync,
     updateGroup: updateGroupMutation.mutateAsync,
     deleteGroup: deleteGroupMutation.mutateAsync,
+    reorderGroup: reorderGroupMutation.mutateAsync,
 
     createShade: createShadeMutation.mutateAsync,
     updateShade: updateShadeMutation.mutateAsync,
