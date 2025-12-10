@@ -1,6 +1,7 @@
 import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 import { WineType } from './types/wine-type'
 import { getDisplayNames } from '@/lib/utils'
+import { ReorderItem } from '../../general/entities/types'
 
 interface WineTypeStoreState {
   wineTypes: WineType[]
@@ -12,6 +13,7 @@ interface WineTypeStoreState {
   addWineType: (wineType: WineType) => void
   updateWineType: (wineTypeValue: string, updatedWineType: Partial<WineType>) => void
   deleteWineType: (wineTypeValue: string) => void
+  reorderType: (items: ReorderItem[]) => void
   searchWineType: (searchTerm: string) => void
   clearSearch: () => void
 
@@ -53,6 +55,24 @@ export const useWineTypeStore = createStoreDevToolsWrapper<WineTypeStoreState>((
       }),
       false,
       'wineTypes/deleteWineType'
+    ),
+
+  reorderType: (items: ReorderItem[]) =>
+    set(
+      (state: WineTypeStoreState) => {
+        const sortMap = new Map(items.map(item => [item.id, item.sortNumber]))
+
+        return {
+          typeGroups: state.wineTypes
+            .map(group => {
+              const newSortNumber = sortMap.get(Number(group.id))
+              return newSortNumber !== undefined ? { ...group, sortNumber: newSortNumber } : group
+            })
+            .sort((a, b) => a.sortNumber - b.sortNumber),
+        }
+      },
+      false,
+      'wineTypes/reorderGroups'
     ),
 
   searchWineType: searchTerm => {

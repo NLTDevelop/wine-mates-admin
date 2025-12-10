@@ -5,10 +5,14 @@ import { tasteQueries } from '../entities/wine-taste-queries'
 import { CreateWineTasteRequest, UpdateWineTasteParams, WineTaste } from '../entities/types/tastes'
 import { tasteService } from '../entities/wine-taste-service'
 import { BaseWineColor, DataResponse, ReorderItem } from '../../general/entities/types'
+import { useTranslation } from 'react-i18next'
+import { useToast } from '@/hooks/shadcn/use-toast'
 
 export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
   const queryClient = useQueryClient()
   const store = useTasteStore()
+  const { t } = useTranslation('wines')
+  const { toast } = useToast()
 
   const stableFilters = useMemo(() => {
     const filtersWithSubAromas = {
@@ -68,6 +72,10 @@ export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
     },
 
     onSuccess: (newWineTaste: WineTaste, _, context) => {
+      toast({
+        title: t('tastes.taste_note_created'),
+        variant: 'default',
+      })
       queryClient.setQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters], old => {
         if (!old) return { rows: [newWineTaste], count: 1 }
 
@@ -122,6 +130,10 @@ export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
     },
 
     onSuccess: (updatedTaste: WineTaste) => {
+      toast({
+        title: t('tastes.taste_note_updated'),
+        variant: 'default',
+      })
       queryClient.setQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters], old => {
         if (!old) return { rows: [updatedTaste], count: 1 }
 
@@ -164,7 +176,12 @@ export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
 
       return { prev, deletedTaste }
     },
-
+    onSuccess: () => {
+      toast({
+        title: t('tastes.taste_note_deleted'),
+        variant: 'default',
+      })
+    },
     onError: (error, _, context) => {
       console.error('Failed to delete taste:', error)
       if (context?.prev) {

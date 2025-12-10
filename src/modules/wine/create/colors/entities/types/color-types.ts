@@ -7,6 +7,7 @@ export interface WineColorGroup {
   nameEn?: string
   colorHex: string
   shades: WineShades[]
+  sortNumber: number
 }
 export interface WineShades {
   id: string

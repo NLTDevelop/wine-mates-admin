@@ -4,29 +4,24 @@ import { useToast } from '@/hooks/shadcn/use-toast'
 import { wineQueries } from '@/modules/wine/list/entities/wine-list-queries'
 import { CreateWineRequest } from '@/modules/wine/list/entities/types/types'
 import { useWineStore } from '@/modules/wine/list/entities/wine-list-store'
+import { useTranslation } from 'react-i18next'
 
 export const useCreateWine = () => {
   const navigate = useNavigate()
   const { toast } = useToast()
   const queryClient = useQueryClient()
   const store = useWineStore()
+  const { t } = useTranslation('wines')
 
   const createWineMutation = useMutation({
     ...wineQueries.create(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wines', 'list', store.filters] })
       toast({
-        title: 'Вино успішно створено',
+        title: t('wine_created'),
         variant: 'default',
       })
       navigate('/wines')
-    },
-    onError: () => {
-      toast({
-        title: 'Помилка при створенні вина',
-        description: 'Спробуйте ще раз',
-        variant: 'destructive',
-      })
     },
   })
 

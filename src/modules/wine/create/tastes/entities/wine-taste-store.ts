@@ -78,13 +78,14 @@ export const useTasteStore = createStoreDevToolsWrapper<TasteStoreState>(
         false,
         'tastes/deleteTaste'
       ),
+
     reorderTaste: (items: ReorderItem[]) =>
       set(
         (state: TasteStoreState) => {
           const sortMap = new Map(items.map(item => [item.id, item.sortNumber]))
 
           return {
-            aromaGroups: state.tastes
+            tasteGroups: state.tastes
               .map(group => {
                 const newSortNumber = sortMap.get(Number(group.id))
                 return newSortNumber !== undefined ? { ...group, sortNumber: newSortNumber } : group

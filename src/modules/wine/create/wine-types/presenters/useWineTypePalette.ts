@@ -5,7 +5,7 @@ import { BaseWineColor } from '../../general/entities/types'
 import { arraysEqual, getDisplayNames } from '@/lib/utils'
 
 export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
-  const { wineTypes, isLoading, isCreating, isUpdating, isDeleting, createWineType, updateWineType, deleteWineType } = useWineTypes(cachedColors)
+  const { wineTypes, isLoading, isCreating, isUpdating, isDeleting, createWineType, updateWineType, deleteWineType, isReorderingGroup, reorderGroup } = useWineTypes(cachedColors)
 
   const [isFormOpen, setIsFormOpen] = useState<Record<string, boolean>>({})
   const [formData, setFormData] = useState<Record<string, CreateWineTypeParams>>({})
@@ -135,6 +135,7 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
     isCreating,
     isUpdating,
     isDeleting,
+    isReorderingGroup,
     isFormOpen,
     formData,
     hasChanges,
@@ -144,5 +145,6 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
     handleSaveWineType,
     handleCancelEdit,
     handleDeleteWineType,
+    reorderGroup,
   }
 }
