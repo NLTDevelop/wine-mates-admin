@@ -129,10 +129,11 @@ export const ColorPaletteManager = () => {
                     chevronStyle={cardTextColorClass}
                     header={
                       <div className="flex justify-between items-center w-full pl-8 flex-1 min-w-0">
-                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <div className="flex sm:items-center gap-2 min-w-0 flex-1 sm:flex-row flex-col items-start">
                           <span className={cn('font-medium truncate', cardTextColorClass)}>
-                            {nameUa} ({nameEn}) - {group.colorHex.toUpperCase()}
+                            {nameUa} ({nameEn})
                           </span>
+                          <span className={cn('font-medium', cardTextColorClass)}>{group.colorHex.toUpperCase()}</span>
                         </div>
                         <PaletteItemActions
                           isLoading={isLoading || isReorderingGroup}

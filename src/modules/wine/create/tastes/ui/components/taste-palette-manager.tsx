@@ -116,15 +116,9 @@ export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: Tas
                           {nameUa} ({nameEn})
                         </span>
                         <div className="flex flex-wrap gap-2 min-w-0 w-full flex-1">
-                          {taste?.colors?.map((c: BaseWineColor, idx: number) => (
-                            <div
-                              key={`${c?.id}-${idx}`}
-                              className="inline-flex items-center bg-amber-50 px-2 py-1 rounded-md flex-shrink-0"
-                              style={{
-                                maxWidth: 'calc(50% - 4px)',
-                              }}
-                            >
-                              <span className="text-sm text-foreground truncate whitespace-nowrap w-full">{c?.name}</span>
+                          {taste?.colors?.map((c: BaseWineColor) => (
+                            <div key={c.id} className="flex items-center bg-amber-50 px-2 rounded-md md:w-auto w-full">
+                              <span className=" text-sm text-foreground">{c?.name}</span>
                             </div>
                           ))}
                         </div>

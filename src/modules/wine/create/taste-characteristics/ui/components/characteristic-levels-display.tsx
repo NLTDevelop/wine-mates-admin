@@ -1,6 +1,6 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { getDisplayNameDescription, getDisplayNames } from '@/lib/utils'
+import { getDisplayNameDescription, getDisplayNames, lightenColor } from '@/lib/utils'
 import { Badge } from '@/UIKit/shadcn/ui/badge'
 import { LevelItem, WineTasteCharacteristics } from '../../entities/taste-characteristics'
 
@@ -23,8 +23,13 @@ export const CharacteristicLevelsDisplay: React.FC<CharacteristicLevelsDisplayPr
           {levels.map((level, index) => {
             const { nameUa } = getDisplayNames(level.translations || [])
             return (
-              <Badge key={level.id || `level-${index}`} variant="outline" className="border-0" style={{ backgroundColor: colorBadge?.backgroundColor }}>
-                <p className={colorBadge?.color}>{nameUa}</p>
+              <Badge
+                key={level.id || `level-${index}`}
+                variant="outline"
+                className="border-0"
+                style={{ backgroundColor: level.isEnabled ? colorBadge?.backgroundColor : lightenColor(colorBadge?.backgroundColor ?? '', 85) }}
+              >
+                <p className={level.isEnabled ? colorBadge?.color : 'text-[#d1d1d1]'}>{nameUa}</p>
               </Badge>
             )
           })}
