@@ -24,6 +24,7 @@ const winesRoutes = [
   { path: PATHS.WINE_DETAIL, element: <WineDetailView /> },
 ]
 
+
 export const Router: FC = () => {
   const routes = useRoutes([
     {

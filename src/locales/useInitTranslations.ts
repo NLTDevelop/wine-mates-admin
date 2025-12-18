@@ -6,6 +6,7 @@ export const useInitTranslations = () => {
   i18n.use(initReactI18next).init({
     resources: { uk },
     lng: 'uk',
+    pluralSeparator: '_',
     fallbackLng: 'uk',
     interpolation: {
       escapeValue: false,

@@ -1,12 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { wineListService } from '../entities/wine-list-service'
+import { wineQueries } from '../entities/wine-list-queries'
 
 export const useWineDetail = (wineId: string) => {
-  const wineQuery = useQuery({
-    queryKey: ['wine', 'detail', wineId],
-    queryFn: () => wineListService.detail(wineId),
-    enabled: !!wineId,
-  })
+  const wineQuery = useQuery(wineQueries.detail(wineId))
 
   return {
     wine: wineQuery.data?.data,
