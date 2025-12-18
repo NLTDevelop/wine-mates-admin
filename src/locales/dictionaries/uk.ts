@@ -70,7 +70,7 @@ export const uk = {
     list: 'Список',
     create: 'Створити',
     wines: 'Вина',
-    reviews: 'Відгуки',
+    stats: 'Статистика',
   },
   autorization: {
     login: 'Увійти',
@@ -460,6 +460,7 @@ export const uk = {
     summary_stats: 'Зведена статистика',
     activity_of_assessors: 'Активність оцінювачів',
     detailed_table: 'Детальна таблиця',
+    detailed_stats: 'Детальна статистика',
     total_grades: 'Всього оцінок',
     all_age_groups: 'Усі вікові групи',
     average_rating: 'Середній рейтинг',
@@ -473,6 +474,9 @@ export const uk = {
     years: 'років',
     grades: 'оц.',
     rating: 'Рейтинг',
+    year: 'Рік',
+    sex: 'Стать',
     no_data: 'Немає даних',
+    qty: 'кількість',
   },
 }

@@ -2,7 +2,7 @@ import { Users } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useReviews } from '../../../presenters/useReviews'
 import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
-import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
+// import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { Card } from '@/UIKit/shadcn/ui/card'
 import { formatTimeDate } from '@/lib/date-utils'
 import { WineRate } from './wine-rate'
@@ -20,7 +20,7 @@ interface ReviewsSectionProps {
 export const ReviewsSection = ({ wineName }: ReviewsSectionProps) => {
   const { t } = useTranslation('rate')
   const { t: tc } = useTranslation('common')
-  const { reviewDetail, reviewFilters, totalCount, isLoading, onChangePagination, reviewModal, reviews, isLoadingDetail } = useReviews()
+  const { reviewDetail, reviewFilters, totalCount, /*isLoading,*/ onChangePagination, reviewModal, reviews/*, isLoadingDetail */} = useReviews()
 
   return (
     <>

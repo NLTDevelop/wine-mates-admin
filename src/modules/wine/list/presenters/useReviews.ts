@@ -2,7 +2,7 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import { useCallback, useState } from 'react'
 import { useWineStore } from '../entities/wine-list-store'
 import { wineQueries } from '../entities/wine-list-queries'
-import { IReview, ReviewsResponse } from '../entities/types/types'
+import { ReviewsResponse } from '../entities/types/types'
 import { statistics } from '../ui/components/detail/mockStatictics'
 
 export const mockReviewsResponse: ReviewsResponse = {

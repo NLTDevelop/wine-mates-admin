@@ -5,7 +5,7 @@ import { GenderData, IOverallStats, YearData } from '../entities/types'
 
 export const useStatsData = (initialData: YearData[]) => {
   const [selectedYear, setSelectedYear] = useState<string>('all')
-  const [selectedGender, setSelectedGender] = useState<string>('all')
+const [selectedGender, setSelectedGender] = useState<'male' | 'female' | 'all'>('all')
   const [activeTab, setActiveTab] = useState<string>('overview')
 
   const ageGroups = ['18-25', '25-45', '46-60', '60+']
@@ -78,6 +78,7 @@ export const useStatsData = (initialData: YearData[]) => {
 
     return { totalRatings, averageRating, mostActive, highestRating }
   }, [aggregatedData])
+  
 
 
   return {

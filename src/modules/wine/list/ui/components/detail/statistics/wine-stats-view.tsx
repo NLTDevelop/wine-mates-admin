@@ -5,7 +5,7 @@ import AromaStats from './aroma-stats'
 import { statistics } from '../mockStatictics'
 import FlavorStats from './flavor-stats'
 import TasteCharacteristicsStats from './taste-characteristics-stats'
-import { useParams } from 'react-router-dom'
+// import { useParams } from 'react-router-dom'
 
 export const WineStatsView = () => {
   const { t } = useTranslation('wines')

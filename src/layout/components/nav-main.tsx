@@ -56,7 +56,7 @@ export function NavMain({
                     )}
                   >
                     <Link to={item.url} onClick={handleLinkClick}>
-                      {item.icon && <item.icon className={isActive ? 'text-primary-foreground' : 'text-foreground'} />}
+                      {item.icon && <item.icon className={isActive ? 'text-primary-foreground' : 'text-input'} />}
                       <span className={`${isActive ? 'text-background' : ''}`}>{t(item.titleKey)}</span>
                     </Link>
                   </SidebarMenuButton>

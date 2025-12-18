@@ -4,7 +4,7 @@ export interface WineRating {
 }
 
 export interface AgeGroupData {
-  [key: string]: WineRating 
+  [key: string]: WineRating
 }
 
 export interface GenderData {
@@ -30,4 +30,9 @@ export interface IOverallStats {
     gender: string
     rating: number
   }
+}
+
+export interface AggregatedCellData {
+  ratingsCount: number
+  averageRating: number
 }

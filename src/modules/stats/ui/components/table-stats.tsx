@@ -1,111 +1,159 @@
-import { Badge } from "@/UIKit/shadcn/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/UIKit/shadcn/ui/card"
-import { TabsContent } from "@/UIKit/shadcn/ui/tabs"
-import { Star } from "lucide-react"
-import { Fragment } from "react/jsx-runtime"
+import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { Card, CardContent, CardHeader, CardTitle } from '@/UIKit/shadcn/ui/card'
+import { TabsContent } from '@/UIKit/shadcn/ui/tabs'
+import { Fragment, useMemo } from 'react'
+import { useTableStatsColumns } from '../../presenters/useTableStatsColumns'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/UIKit/shadcn/ui/table'
+import { AggregatedCellData } from '../../entities/types'
+import { Badge } from '@/UIKit/shadcn/ui/badge'
+import { useTranslation } from 'react-i18next'
 
 interface TableStatsProps {
   ageGroups: string[]
   years: number[]
-  aggregatedData: any
+  aggregatedData: Record<string, AggregatedCellData | undefined>
+  selectedGender?: 'male' | 'female' | 'all'
+  selectedYear: string
 }
 
-export const TableStats = ({ageGroups, years,aggregatedData}:TableStatsProps) => {
-  return (
-       <TabsContent value="detailed">
-            <Card>
-              <CardHeader>
-                <CardTitle/>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left p-3 font-medium">Рік</th>
-                        <th className="text-left p-3 font-medium">Стать</th>
-                        {ageGroups.map(group => (
-                          <th key={group} colSpan={2} className="text-center p-3 font-medium border-x">
-                            {group} років
-                          </th>
-                        ))}
-                      </tr>
-                      <tr className="border-b">
-                        <th className="p-2"></th>
-                        <th className="p-2"></th>
-                        {ageGroups.map(group => (
-                          <Fragment key={group}>
-                            <th className="p-2 text-center text-xs text-muted-foreground border-x">кількість</th>
-                            <th className="p-2 text-center text-xs text-muted-foreground border-x">рейтинг</th>
-                          </Fragment>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {years.map(year => (
-                        <Fragment key={year}>
-                          {/* Мужчины */}
-                          <tr className="border-b hover:bg-muted/50">
-                            <td rowSpan={2} className="p-3 align-top font-medium border-r">
-                              {year}
-                            </td>
-                            <td className="p-3 align-top border-r">
-                              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                                👨 Чоловіки
-                              </Badge>
-                            </td>
-                            {ageGroups.map(ageGroup => {
-                              const data = aggregatedData[`${year}-male-${ageGroup}`]
-                              return (
-                                <Fragment key={`${year}-male-${ageGroup}`}>
-                                  <td className="p-3 text-center border-r">{data ? data.ratingsCount : '-'}</td>
-                                  <td className="p-3 text-center border-r">
-                                    {data ? (
-                                      <div className="flex items-center justify-center">
-                                        <span className="font-medium">{data.averageRating.toFixed(1)}</span>
-                                        <Star className="ml-1 h-3 w-3 text-yellow-500 fill-yellow-500" />
-                                      </div>
-                                    ) : (
-                                      '-'
-                                    )}
-                                  </td>
-                                </Fragment>
-                              )
-                            })}
-                          </tr>
+interface TableRowData {
+  year: number
+  gender: 'male' | 'female'
+  rowSpan?: number
+  showYear?: boolean
+}
 
-                          <tr className="border-b hover:bg-muted/50">
-                            <td className="p-3 align-top border-r">
-                              <Badge variant="outline" className="bg-pink-50 text-pink-700 border-pink-200">
-                                👩 Жінки
-                              </Badge>
-                            </td>
-                            {ageGroups.map(ageGroup => {
-                              const data = aggregatedData[`${year}-female-${ageGroup}`]
-                              return (
-                                <Fragment key={`${year}-female-${ageGroup}`}>
-                                  <td className="p-3 text-center border-r">{data ? data.ratingsCount : '-'}</td>
-                                  <td className="p-3 text-center border-r">
-                                    {data ? (
-                                      <div className="flex items-center justify-center">
-                                        <span className="font-medium">{data.averageRating.toFixed(1)}</span>
-                                        <Star className="ml-1 h-3 w-3 text-yellow-500 fill-yellow-500" />
-                                      </div>
-                                    ) : (
-                                      '-'
-                                    )}
-                                  </td>
-                                </Fragment>
-                              )
-                            })}
-                          </tr>
-                        </Fragment>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+const hasDataForRow = (year: number, gender: 'male' | 'female', ageGroups: string[], aggregatedData: Record<string, AggregatedCellData | undefined>): boolean => {
+  return ageGroups.some(age => {
+    const key = `${year}-${gender}-${age}`
+    const data = aggregatedData[key]
+    return data && data.ratingsCount > 0
+  })
+}
+
+export const TableStats = ({ ageGroups, years, aggregatedData, selectedGender = 'all', selectedYear }: TableStatsProps) => {
+  const { t } = useTranslation('stats')
+
+  const data = useMemo<TableRowData[]>(() => {
+    const rows: TableRowData[] = []
+
+    years.forEach(year => {
+      const gendersToShow: ('male' | 'female')[] = selectedGender === 'all' ? ['male', 'female'] : [selectedGender]
+
+      const yearRows: TableRowData[] = []
+
+      gendersToShow.forEach(gender => {
+        if (hasDataForRow(year, gender, ageGroups, aggregatedData)) {
+          yearRows.push({
+            year,
+            gender,
+          })
+        }
+      })
+
+      if (selectedGender === 'all' && yearRows.length > 0) {
+        yearRows.forEach((row, index) => {
+          if (index === 0) {
+            rows.push({ ...row, rowSpan: yearRows.length, showYear: true })
+          } else {
+            rows.push({ ...row, showYear: false })
+          }
+        })
+      } else {
+        rows.push(...yearRows.map(row => ({ ...row, showYear: true })))
+      }
+    })
+
+    return rows
+  }, [years, ageGroups, aggregatedData, selectedGender])
+
+  const columns = useTableStatsColumns({
+    ageGroups,
+    aggregatedData,
+    selectedGender,
+  })
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  })
+
+  if (data.length === 0) {
+    return (
+      <TabsContent value="detailed">
+        <Card>
+          <CardHeader className="border-b-0">
+            <CardTitle className='text-foreground font-bold'>{t('detailed_stats')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-center text-muted-foreground py-8">{t('no_data')}</p>
+          </CardContent>
+        </Card>
+      </TabsContent>
+    )
+  }
+
+  return (
+    <Card>
+      <CardHeader className="pt-0 border-b-0">
+        <div className="flex justify-between items-center">
+          <CardTitle className='text-foreground font-bold'>{t('detailed_stats')}</CardTitle>
+          <Badge className="text-sm text-input bg-accent-foreground/80">{selectedYear === 'all' ? t('data_of_years', { count: years.length }) : t('data_of_years', { slug: selectedYear })}</Badge>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto border border-input rounded-md">
+          <Table>
+            <TableHeader className="bg-secondary">
+              <TableRow className="border-y-input">
+                <TableHead rowSpan={2} className="text-center align-middle  text-input ">
+                  {t('year')}
+                </TableHead>
+                <TableHead rowSpan={2} className=" align-middle  text-input">
+                  {t('sex')}
+                </TableHead>
+                {ageGroups.map(age => (
+                  <TableHead key={age} colSpan={2} className="text-center  text-input ">
+                    {age} {t('years')}
+                  </TableHead>
+                ))}
+              </TableRow>
+
+              <TableRow>
+                {ageGroups.map(age => (
+                  <Fragment key={`sub-${age}`}>
+                    <TableHead className="text-center text-xs   text-input">{t('qty')}</TableHead>
+                    <TableHead className="text-center text-xs  text-input ">{t('rating')}</TableHead>
+                  </Fragment>
+                ))}
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {table.getRowModel().rows.map(row => {
+                const rowData = row.original as TableRowData
+
+                return (
+                  <TableRow key={row.id} className="border-y-secondary/30 pointer-events-none">
+                    {row.getVisibleCells().map(cell => {
+                      if (cell.column.id === 'year' && !rowData.showYear) {
+                        return null
+                      }
+
+                      return (
+                        <TableCell key={cell.id} className="align-top " rowSpan={cell.column.id === 'year' && rowData.rowSpan ? rowData.rowSpan : 1}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      )
+                    })}
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+    </Card>
   )
 }

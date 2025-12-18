@@ -7,7 +7,7 @@ export const DashboardView = () => {
   const { t } = useTranslation('navigation')
 
   const { reviewDetail } = useReviews()
-  console.log(reviewDetail)
+
   return (
     <ContentLayout title={t('dashboard')}>
       <p>Content</p>
