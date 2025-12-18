@@ -4,7 +4,7 @@ export interface WineRating {
 }
 
 export interface AgeGroupData {
-  [key: string]: WineRating
+  [key: string]: WineRating 
 }
 
 export interface GenderData {
