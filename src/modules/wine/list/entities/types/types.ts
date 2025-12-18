@@ -1,5 +1,6 @@
 import { BaseWineColor } from '@/modules/wine/create/general/entities/types'
 import { WineFormData } from '@/modules/wine/create/wine/presenters/wine-form-schema'
+import { TasteCharacteristic, TopAroma, TopColor, TopFlavor } from './statistics-types'
 
 export interface WinesResponse {
   rows: IWines[]
@@ -13,6 +14,8 @@ export interface WineFilters {
   search?: string
 }
 
+export type ReviewFilters = WineFilters & { wineId : number | null}
+
 export interface TypeWine {
   id: number
   name: string
@@ -20,6 +23,17 @@ export interface TypeWine {
 }
 export type LocationWine = Omit<TypeWine, 'isSparkling'>
 
+export interface IVintage {
+  wineId: number
+  vintage: number
+}
+
+export interface IStatistics {
+  topColors: TopColor[]
+  topAromas: TopAroma[]
+  topFlavors: TopFlavor[]
+  tasteCharacteristics: TasteCharacteristic[]
+}
 export interface IWines {
   id?: string
   name?: string
@@ -32,6 +46,11 @@ export interface IWines {
   color?: BaseWineColor
   image?: WineImage
   isConfirmed?: boolean
+  vintages?: IVintage[]
+  averageUserRating?: number
+  averageExpertRating?: number
+  totalReviews?: number
+  statistics?:IStatistics
 }
 
 export interface CreateWineRequest {
@@ -82,3 +101,33 @@ export interface WineImage {
 export interface ImportWineParams {
   file: File
 }
+
+export interface Avatar {
+  smallUrl: string;
+  mediumUrl: string;
+  originalUrl: string;
+}
+
+export interface ReviewUser {
+  id: number;
+  firstName: string;
+  lastName: string;
+  wineExperienceLevel: string;
+  avatar: Avatar | null;
+}
+export interface IReview {
+  id: number
+  userRating: number
+  expertRating: number
+  review: string
+  createdAt: string
+  user: ReviewUser
+  statistics?: IStatistics
+}
+
+export interface ReviewsResponse {
+  count: number
+  totalPages: number
+  rows: IReview[]
+}
+

@@ -1,5 +1,5 @@
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
-import { IWines } from './types/types'
+import { IReview, IWines } from './types/types'
 import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 
 interface WineState {
@@ -12,16 +12,26 @@ interface WineState {
     page: number
   }
   setWines: (wines: IWines[]) => void
+  setReviews: (reviews: IReview[]) => void
   setSearchResults: (results: IWines[]) => void
   setCurrentWine: (wine: IWines | null) => void
   setFilters: (filters: Partial<WineState['filters']>) => void
+  setReviewFilters: (filters: Partial<WineState['reviewFilters']>) => void
   resetFilters: () => void
   updateWine: (wineId: string, newWine: IWines) => void
+  reviews: IReview[]
+  reviewFilters: {
+    search: string
+    limit: number
+    page: number
+    wineId: number | null
+  }
 }
 
 export const useWineStore = createStoreDevToolsWrapper<WineState>(
   set => ({
     wines: [],
+    reviews: [],
     searchResults: [],
     currentWine: null,
 
@@ -29,6 +39,12 @@ export const useWineStore = createStoreDevToolsWrapper<WineState>(
       search: '',
       limit: DEFAULT_PAGINATION_LIMIT,
       page: 1,
+    },
+    reviewFilters: {
+      search: '',
+      limit: DEFAULT_PAGINATION_LIMIT,
+      page: 1,
+      wineId: null
     },
 
     setWines: (wines: IWines[]) => set({ wines }, false, 'wine/setWines'),
@@ -44,6 +60,15 @@ export const useWineStore = createStoreDevToolsWrapper<WineState>(
         }),
         false,
         'wine/setFilters'
+      ),
+
+    setReviewFilters: (newFilters: Partial<WineState['reviewFilters']>) =>
+      set(
+        (state: WineState) => ({
+          reviewFilters: { ...state.resetFilters, ...newFilters },
+        }),
+        false,
+        'wine/setReviewFilters'
       ),
 
     resetFilters: () =>
@@ -69,6 +94,9 @@ export const useWineStore = createStoreDevToolsWrapper<WineState>(
         false,
         'wine/updateWine'
       ),
+      
+    setReviews: (reviews: IReview[]) => set({ reviews }, false, 'wine/setReviesw'),
   }),
+
   'WineStore'
 )

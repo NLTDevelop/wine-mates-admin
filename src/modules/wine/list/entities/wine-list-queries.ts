@@ -1,4 +1,4 @@
-import { UpdateWineListParams, WineFilters, CreateWineRequest } from './types/types'
+import { UpdateWineListParams, WineFilters, CreateWineRequest, ReviewFilters } from './types/types'
 import { wineListService } from './wine-list-service'
 
 export const wineQueries = {
@@ -7,9 +7,10 @@ export const wineQueries = {
     queryFn: () => wineListService.list(filters),
   }),
 
-  detail: (id: string) => ({
-    queryKey: ['wines', 'detail', id],
-    queryFn: () => wineListService.detail(id),
+  detail: (wineId: string) => ({
+    queryKey: ['wines', 'detail', wineId],
+    queryFn: () => wineListService.detail(wineId),
+    enabled: !!wineId,
   }),
 
   confirmWine: () => ({
@@ -35,5 +36,15 @@ export const wineQueries = {
   import: () => ({
     mutationKey: ['wines', 'import'],
     mutationFn: (file: File) => wineListService.import(file),
+  }),
+
+  reviews: (filters: ReviewFilters) => ({
+    queryKey: ['wines', 'reviews', filters],
+    queryFn: () => wineListService.reviews(filters),
+  }),
+
+   review_detail: (id: string) => ({
+    queryKey: ['wines', 'review-detail', id],
+    queryFn: () => wineListService.review_detail(id),
   }),
 }

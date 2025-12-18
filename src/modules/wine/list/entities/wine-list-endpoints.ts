@@ -6,4 +6,6 @@ export const WINE_LIST_ENDPOINTS = {
   DELETE: '/v1/admin/wines/{id}',
   CONFIRM: '/v1/admin/wines/{id}/confirmation',
   IMPORT: '/v1/admin/import-wines',
+  RATES: '/v1/admin/rates',
+  RATE_DETAIL: '/v1/admin/rates/{id}',
 } as const
