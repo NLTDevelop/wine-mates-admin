@@ -470,7 +470,7 @@ export const uk = {
     grade_few: '{{count}} оцінки',
     grade_many: '{{count}} оцінок',
     highest_rating: 'Найвищий рейтинг',
-    distribution_by_age: 'Розподіл рейтингів по віковим групам',
+    distribution_by_age: 'Розподіл активності оцінювання по віковим групам',
     years: 'років',
     grades: 'оц.',
     rating: 'Рейтинг',
@@ -478,5 +478,6 @@ export const uk = {
     sex: 'Стать',
     no_data: 'Немає даних',
     qty: 'кількість',
+    reset_filters: 'очистити фільтри',
   },
 }

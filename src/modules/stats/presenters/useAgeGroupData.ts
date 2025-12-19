@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { YearData } from '../entities/types'
+import { StatsResponse } from '../entities/types'
 
-export const useAgeGroupData = (data: YearData[], selectedYear: string, ageGroups: string[]) => {
+export const useAgeGroupData = (data: StatsResponse[], selectedYear: string, ageGroups: string[]) => {
   const allAgeGroupData = useMemo(() => {
     return ageGroups.map(ageGroup => {
       let maleData = null

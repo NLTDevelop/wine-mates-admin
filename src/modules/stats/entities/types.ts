@@ -1,3 +1,15 @@
+export interface StatsTableResponse {
+  count: number
+  rows: StatsResponse[]
+  totalPages: number
+}
+
+export interface StatsFilters {
+  limit: number
+  page: number
+  year?: number
+  gender?: 'male' | 'female'
+}
 export interface WineRating {
   ratingsCount: number
   averageRating: number
@@ -12,7 +24,7 @@ export interface GenderData {
   female: AgeGroupData
 }
 
-export interface YearData {
+export interface StatsResponse {
   year: number
   data: GenderData
 }

@@ -1,7 +1,7 @@
 import { Badge } from '@/UIKit/shadcn/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/UIKit/shadcn/ui/card'
 import { useTranslation } from 'react-i18next'
-import { YearData } from '../../entities/types'
+import { StatsResponse } from '../../entities/types'
 import { Mars, Venus } from 'lucide-react'
 import { NLTTooltip } from '@/UIKit/components/NLTTooltip'
 import { useAgeGroupData } from '../../presenters/useAgeGroupData'
@@ -10,7 +10,7 @@ interface DistributionByAgeGroupsProps {
   selectedYear: string
   years: number[]
   ageGroups: string[]
-  data: YearData[]
+  data: StatsResponse[]
 }
 
 export const DistributionByAgeGroups = ({ selectedYear, years, ageGroups, data }: DistributionByAgeGroupsProps) => {
@@ -22,8 +22,10 @@ export const DistributionByAgeGroups = ({ selectedYear, years, ageGroups, data }
     <Card>
       <CardHeader className="pt-0 border-b-0">
         <div className="flex justify-between items-center">
-          <CardTitle className='text-foreground font-bold'>{t('distribution_by_age')}</CardTitle>
-          <Badge className="text-sm text-input bg-accent-foreground/80">{selectedYear === 'all' ? t('data_of_years', { count: years.length }) : t('data_of_years', { slug: selectedYear })}</Badge>
+          <CardTitle className="text-foreground font-bold">{t('distribution_by_age')}</CardTitle>
+          {data.length !== 0 && (
+            <Badge className="text-sm text-input bg-accent-foreground/80">{selectedYear === 'all' ? t('data_of_years', { count: years.length }) : t('data_of_years', { slug: selectedYear })}</Badge>
+          )}
         </div>
       </CardHeader>
       <CardContent>
