@@ -1,12 +1,15 @@
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { Card, CardContent, CardHeader, CardTitle } from '@/UIKit/shadcn/ui/card'
 import { TabsContent } from '@/UIKit/shadcn/ui/tabs'
-import { Fragment, useMemo } from 'react'
+import { Fragment } from 'react'
 import { useTableStatsColumns } from '../../presenters/useTableStatsColumns'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/UIKit/shadcn/ui/table'
-import { AggregatedCellData } from '../../entities/types'
+import { AggregatedCellData, StatsFilters } from '../../entities/types'
 import { Badge } from '@/UIKit/shadcn/ui/badge'
 import { useTranslation } from 'react-i18next'
+import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
+import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
+import { TableRowData, useTableStatsData } from '../../presenters/useTableStatsData'
 
 interface TableStatsProps {
   ageGroups: string[]
@@ -14,77 +17,26 @@ interface TableStatsProps {
   aggregatedData: Record<string, AggregatedCellData | undefined>
   selectedGender?: 'male' | 'female' | 'all'
   selectedYear: string
+  totalCount: number
+  filters: StatsFilters
+  onChangePagination: (page: number) => void
 }
 
-interface TableRowData {
-  year: number
-  gender: 'male' | 'female'
-  rowSpan?: number
-  showYear?: boolean
-}
-
-const hasDataForRow = (year: number, gender: 'male' | 'female', ageGroups: string[], aggregatedData: Record<string, AggregatedCellData | undefined>): boolean => {
-  return ageGroups.some(age => {
-    const key = `${year}-${gender}-${age}`
-    const data = aggregatedData[key]
-    return data && data.ratingsCount > 0
-  })
-}
-
-export const TableStats = ({ ageGroups, years, aggregatedData, selectedGender = 'all', selectedYear }: TableStatsProps) => {
+export const TableStats = ({ ageGroups, years, aggregatedData, selectedGender = 'all', selectedYear, totalCount, filters, onChangePagination }: TableStatsProps) => {
   const { t } = useTranslation('stats')
 
-  const data = useMemo<TableRowData[]>(() => {
-    const rows: TableRowData[] = []
+  const { data } = useTableStatsData({ years, ageGroups, aggregatedData, selectedGender })
 
-    years.forEach(year => {
-      const gendersToShow: ('male' | 'female')[] = selectedGender === 'all' ? ['male', 'female'] : [selectedGender]
+  const columns = useTableStatsColumns({ ageGroups, aggregatedData, selectedGender })
 
-      const yearRows: TableRowData[] = []
-
-      gendersToShow.forEach(gender => {
-        if (hasDataForRow(year, gender, ageGroups, aggregatedData)) {
-          yearRows.push({
-            year,
-            gender,
-          })
-        }
-      })
-
-      if (selectedGender === 'all' && yearRows.length > 0) {
-        yearRows.forEach((row, index) => {
-          if (index === 0) {
-            rows.push({ ...row, rowSpan: yearRows.length, showYear: true })
-          } else {
-            rows.push({ ...row, showYear: false })
-          }
-        })
-      } else {
-        rows.push(...yearRows.map(row => ({ ...row, showYear: true })))
-      }
-    })
-
-    return rows
-  }, [years, ageGroups, aggregatedData, selectedGender])
-
-  const columns = useTableStatsColumns({
-    ageGroups,
-    aggregatedData,
-    selectedGender,
-  })
-
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  })
+  const table = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() })
 
   if (data.length === 0) {
     return (
       <TabsContent value="detailed">
         <Card>
           <CardHeader className="border-b-0">
-            <CardTitle className='text-foreground font-bold'>{t('detailed_stats')}</CardTitle>
+            <CardTitle className="text-foreground font-bold">{t('detailed_stats')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-center text-muted-foreground py-8">{t('no_data')}</p>
@@ -95,10 +47,10 @@ export const TableStats = ({ ageGroups, years, aggregatedData, selectedGender = 
   }
 
   return (
-    <Card>
+    <Card className="!px-0">
       <CardHeader className="pt-0 border-b-0">
         <div className="flex justify-between items-center">
-          <CardTitle className='text-foreground font-bold'>{t('detailed_stats')}</CardTitle>
+          <CardTitle className="text-foreground font-bold">{t('detailed_stats')}</CardTitle>
           <Badge className="text-sm text-input bg-accent-foreground/80">{selectedYear === 'all' ? t('data_of_years', { count: years.length }) : t('data_of_years', { slug: selectedYear })}</Badge>
         </div>
       </CardHeader>
@@ -154,6 +106,7 @@ export const TableStats = ({ ageGroups, years, aggregatedData, selectedGender = 
           </Table>
         </div>
       </CardContent>
+      {totalCount && totalCount > DEFAULT_PAGINATION_LIMIT ? <NLTTablePagination limit={filters.limit} page={filters.page} totalRows={totalCount || 1} setPage={onChangePagination} /> : null}
     </Card>
   )
 }
