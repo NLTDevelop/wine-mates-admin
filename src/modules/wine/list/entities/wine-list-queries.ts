@@ -43,7 +43,7 @@ export const wineQueries = {
     queryFn: () => wineListService.reviews(filters),
   }),
 
-   review_detail: (id: string) => ({
+  review_detail: (id: string) => ({
     queryKey: ['wines', 'review-detail', id],
     queryFn: () => wineListService.review_detail(id),
   }),

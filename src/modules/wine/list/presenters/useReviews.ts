@@ -111,8 +111,13 @@ export const useReviews = () => {
     [setReviewFilters]
   )
 
-  const openReviewModal = useCallback((reviewId: string) => {
+  const openReviewModal = useCallback(({ reviewId, name }: { reviewId: string; name: string }) => {
     setReviewId(reviewId)
+    setReviewModal({
+      isOpen: true,
+      reviewId: reviewId,
+      userName: name,
+    })
   }, [])
 
   const closeReviewModal = useCallback(() => {

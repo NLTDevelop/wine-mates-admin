@@ -72,26 +72,18 @@ export const ActivityOfAssessors = ({ ageGroups, aggregatedData, selectedYear, y
                       )
 
                     return (
-                      <NLTTooltip
-                        key={`${ageGroup}-${idx}`}
-                        delay={500}
-                        message={`${ageGroup} ${t('years')}: ${data.averageRating.toFixed(1)}/5 (${t('grade', { count: data.ratingsCount })})`}
-                        className={'bg-blue-500/85  max-w-[300px]'}
-                        trigger={
-                          <div
-                            className="text-center p-3 rounded-lg transition-all hover:scale-105 cursor-pointer"
-                            style={{
-                              backgroundColor: getHeatmapColor(data.averageRating, MAX_RATE),
-                              color: data.averageRating > MAX_RATE ? 'white' : 'black',
-                            }}
-                          >
-                            <div className="text-lg font-bold">{data.averageRating.toFixed(1)}</div>
-                            <div className="text-xs opacity-95">
-                              {data.ratingsCount} {t('grades')}
-                            </div>
-                          </div>
-                        }
-                      />
+                      <div
+                        className="text-center p-3 rounded-lg"
+                        style={{
+                          backgroundColor: getHeatmapColor(data.averageRating, MAX_RATE),
+                          color: data.averageRating > MAX_RATE ? 'white' : 'black',
+                        }}
+                      >
+                        <div className="text-lg font-bold">{data.averageRating.toFixed(1)}</div>
+                        <div className="text-xs opacity-95">
+                          {data.ratingsCount} {t('grades')}
+                        </div>
+                      </div>
                     )
                   })}
                 </div>
@@ -115,26 +107,18 @@ export const ActivityOfAssessors = ({ ageGroups, aggregatedData, selectedYear, y
                       )
 
                     return (
-                      <NLTTooltip
-                        key={`${ageGroup}-${idx}`}
-                        delay={500}
-                        message={`${ageGroup} ${t('years')}: ${data.averageRating.toFixed(1)}/5 (${t('grade', { count: data.ratingsCount })})`}
-                        className={'bg-pink-500/85  max-w-[300px]'}
-                        trigger={
-                          <div
-                            className="text-center p-3 rounded-lg transition-all hover:scale-105 cursor-pointer"
-                            style={{
-                              backgroundColor: getHeatmapColor(data.averageRating, MAX_RATE),
-                              color: data.averageRating > MAX_RATE ? 'white' : 'black',
-                            }}
-                          >
-                            <div className="text-lg font-bold">{data.averageRating.toFixed(1)}</div>
-                            <div className="text-xs opacity-90">
-                              {data.ratingsCount} {t('grades')}
-                            </div>
-                          </div>
-                        }
-                      />
+                      <div
+                        className="text-center p-3 rounded-lg"
+                        style={{
+                          backgroundColor: getHeatmapColor(data.averageRating, MAX_RATE),
+                          color: data.averageRating > MAX_RATE ? 'white' : 'black',
+                        }}
+                      >
+                        <div className="text-lg font-bold">{data.averageRating.toFixed(1)}</div>
+                        <div className="text-xs opacity-90">
+                          {data.ratingsCount} {t('grades')}
+                        </div>
+                      </div>
                     )
                   })}
                 </div>
@@ -170,6 +154,6 @@ export const ActivityOfAssessors = ({ ageGroups, aggregatedData, selectedYear, y
 
 const getHeatmapColor = (value: number, max: number) => {
   const intensity = value / max
-  const hue = 120 * (1 - intensity)
+  const hue = 65 * intensity
   return `hsl(${hue}, 70%, 50%)`
 }

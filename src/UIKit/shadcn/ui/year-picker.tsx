@@ -24,7 +24,7 @@ export function YearPicker({ value, onChange, disabled, placeholder = 'Введ�
   const [inputValue, setInputValue] = React.useState('')
   const containerRef = React.useRef<HTMLDivElement>(null)
   const inputRef = React.useRef<HTMLInputElement>(null)
-  const {t} = useTranslation("common")
+  const { t } = useTranslation('common')
 
   const displayError = error
 
@@ -175,7 +175,7 @@ export function YearPicker({ value, onChange, disabled, placeholder = 'Введ�
 
       {isOpen && filteredYears.length === 0 && inputValue && (
         <div className="absolute top-full left-0 right-0 bg-background border border-border rounded-md shadow-lg z-50 mt-1">
-          <div className="px-3 py-2 text-sm text-muted-foreground text-center">{t("year_not_found")}</div>
+          <div className="px-3 py-2 text-sm text-muted-foreground text-center">{t('year_not_found')}</div>
         </div>
       )}
     </div>

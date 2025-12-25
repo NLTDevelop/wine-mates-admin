@@ -1,5 +1,5 @@
 import { api } from '@/services'
-import { StatsFilters, StatsTableResponse,StatsResponse  } from './types'
+import { StatsFilters, StatsTableResponse, StatsResponse } from './types'
 import { STATS_ENDPOINTS } from './stats-endpoints'
 
 export const statsService = {

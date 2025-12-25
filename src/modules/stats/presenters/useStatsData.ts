@@ -1,44 +1,46 @@
 import { useState, useMemo, useCallback } from 'react'
-import { GenderData, IOverallStats/*, StatsFilters, StatsResponse, WineRating*/ } from '../entities/types'
+import { GenderData, IOverallStats /*, StatsFilters, StatsResponse, WineRating*/ } from '../entities/types'
 // import { useQuery, UseQueryResult } from '@tanstack/react-query'
 // import { statsQueries } from '../entities/stats-queries'
 
-const mockData = {data:[
-  {
-    year: 2025,
-    data: {
-      male: {
-        '18-25': { ratingsCount: 150, averageRating: 4.2 },
-        '25-45': { ratingsCount: 320, averageRating: 3.8 },
-        '46-60': { ratingsCount: 210, averageRating: 2.5 },
-        '60+': { ratingsCount: 95, averageRating: 1.9 },
-      },
-      female: {
-        '18-25': { ratingsCount: 180, averageRating: 0.5 },
-        '25-45': { ratingsCount: 290, averageRating: 4.1 },
-        '46-60': { ratingsCount: 170, averageRating: 4.7 },
-        '60+': { ratingsCount: 80, averageRating: 5.0 },
-      },
-    },
-  },
-  {
-    year: 2024,
-    data: {
-      male: {
-        '18-25': { ratingsCount: 130, averageRating: 4.9 },
-        '25-45': { ratingsCount: 300, averageRating: 3.6 },
-        '46-60': { ratingsCount: 190, averageRating: 3.3 },
-        '60+': { ratingsCount: 85, averageRating: 4.7 },
-      },
-      female: {
-        '18-25': { ratingsCount: 160, averageRating: 4.3 },
-        '25-45': { ratingsCount: 270, averageRating: 2.9 },
-        '46-60': { ratingsCount: 150, averageRating: 4.5 },
-        '60+': { ratingsCount: 75, averageRating: 4.9 },
+const mockData = {
+  data: [
+    {
+      year: 2025,
+      data: {
+        male: {
+          '18-25': { ratingsCount: 150, averageRating: 4.2 },
+          '25-45': { ratingsCount: 320, averageRating: 3.8 },
+          '46-60': { ratingsCount: 210, averageRating: 2.5 },
+          '60+': { ratingsCount: 95, averageRating: 1.9 },
+        },
+        female: {
+          '18-25': { ratingsCount: 180, averageRating: 0.5 },
+          '25-45': { ratingsCount: 290, averageRating: 4.1 },
+          '46-60': { ratingsCount: 170, averageRating: 4.7 },
+          '60+': { ratingsCount: 80, averageRating: 5.0 },
+        },
       },
     },
-  },
-]}
+    {
+      year: 2024,
+      data: {
+        male: {
+          '18-25': { ratingsCount: 130, averageRating: 4.9 },
+          '25-45': { ratingsCount: 300, averageRating: 3.6 },
+          '46-60': { ratingsCount: 190, averageRating: 3.3 },
+          '60+': { ratingsCount: 85, averageRating: 4.7 },
+        },
+        female: {
+          '18-25': { ratingsCount: 160, averageRating: 4.3 },
+          '25-45': { ratingsCount: 270, averageRating: 2.9 },
+          '46-60': { ratingsCount: 150, averageRating: 4.5 },
+          '60+': { ratingsCount: 75, averageRating: 4.9 },
+        },
+      },
+    },
+  ],
+}
 
 export const useStatsData = () => {
   const [selectedYear, setSelectedYear] = useState<string>('all')

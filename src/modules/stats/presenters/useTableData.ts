@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'
-import { GenderData, IOverallStats, StatsFilters/*, StatsResponse, StatsTableResponse, WineRating*/ } from '../entities/types'
+import { GenderData, IOverallStats, StatsFilters /*, StatsResponse, StatsTableResponse, WineRating*/ } from '../entities/types'
 // import { useQuery, UseQueryResult } from '@tanstack/react-query'
 // import { statsQueries } from '../entities/stats-queries'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
@@ -57,8 +57,8 @@ export const useTableData = () => {
     gender: undefined,
   })
 
-//   const statsTableQuery: UseQueryResult<StatsTableResponse | undefined, Error> = useQuery(statsQueries.list(filters))
-    const statsTableQuery = mockData
+  //   const statsTableQuery: UseQueryResult<StatsTableResponse | undefined, Error> = useQuery(statsQueries.list(filters))
+  const statsTableQuery = mockData
 
   const ageGroups = ['18-25', '25-45', '46-60', '60+']
 

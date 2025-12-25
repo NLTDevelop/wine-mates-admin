@@ -14,7 +14,7 @@ export interface WineFilters {
   search?: string
 }
 
-export type ReviewFilters = WineFilters & { wineId : number | null}
+export type ReviewFilters = WineFilters & { wineId: number | null }
 
 export interface TypeWine {
   id: number
@@ -50,7 +50,7 @@ export interface IWines {
   averageUserRating?: number
   averageExpertRating?: number
   totalReviews?: number
-  statistics?:IStatistics
+  statistics?: IStatistics
 }
 
 export interface CreateWineRequest {
@@ -103,17 +103,17 @@ export interface ImportWineParams {
 }
 
 export interface Avatar {
-  smallUrl: string;
-  mediumUrl: string;
-  originalUrl: string;
+  smallUrl: string
+  mediumUrl: string
+  originalUrl: string
 }
 
 export interface ReviewUser {
-  id: number;
-  firstName: string;
-  lastName: string;
-  wineExperienceLevel: string;
-  avatar: Avatar | null;
+  id: number
+  firstName: string
+  lastName: string
+  wineExperienceLevel: string
+  avatar: Avatar | null
 }
 export interface IReview {
   id: number
@@ -130,4 +130,3 @@ export interface ReviewsResponse {
   totalPages: number
   rows: IReview[]
 }
-

@@ -26,7 +26,7 @@ export interface LevelItem {
   id?: string
   translations?: NameDictionary[]
   sortNumber: number
-  isEnabled: boolean
+  // isEnabled: boolean
 }
 
 export interface WineTasteCharacteristics {
@@ -37,6 +37,7 @@ export interface WineTasteCharacteristics {
   colors: BaseWineColor[]
   sortNumber: number
   isPremium: boolean
+  qtyLevels: 2 | 3
 }
 
 export type CreateWineTasteCharacteristicParams = Omit<WineTasteCharacteristics, 'id'>
@@ -48,6 +49,7 @@ export interface CreateWineTasteCharacteristicRequest {
   colorHex: string
   sortNumber?: number
   isPremium: boolean
+  qtyLevels: 2 | 3
 }
 
 export interface UpdateWineTasteCharacteristicRequest {
@@ -57,6 +59,7 @@ export interface UpdateWineTasteCharacteristicRequest {
   colorHex: string
   sortNumber?: number
   isPremium: boolean
+  qtyLevels: 2 | 3
 }
 
 export interface UpdateWineTasteCharacteristicParams {

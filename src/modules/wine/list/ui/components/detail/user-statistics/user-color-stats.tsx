@@ -22,11 +22,11 @@ export const UserColorStats = ({ stats }: UserColorStatsProps) => {
               {color.shades && color.shades.length > 0 && (
                 <div className="flex items-center gap-1">
                   {color.shades.map(shade => (
-                      <div key={shade.id} className="flex items-center gap-1 px-2 py-1 rounded border border-input/40">
-                        <div className="h-3 w-3 rounded-full" style={{ backgroundColor: shade.colorHex }} />
-                        <span className="text-sm">{shade.name}</span>
-                        <span className="text-xs text-gray-400 ml-1">({shade.tone})</span>
-                      </div>
+                    <div key={shade.id} className="flex items-center gap-1 px-2 py-1 rounded border border-input/40">
+                      <div className="h-3 w-3 rounded-full" style={{ backgroundColor: shade.colorHex }} />
+                      <span className="text-sm">{shade.name}</span>
+                      <span className="text-xs text-gray-400 ml-1">({shade.tone})</span>
+                    </div>
                   ))}
                 </div>
               )}

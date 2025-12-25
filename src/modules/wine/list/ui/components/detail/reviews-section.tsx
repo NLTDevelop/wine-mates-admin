@@ -20,7 +20,7 @@ interface ReviewsSectionProps {
 export const ReviewsSection = ({ wineName }: ReviewsSectionProps) => {
   const { t } = useTranslation('rate')
   const { t: tc } = useTranslation('common')
-  const { reviewDetail, reviewFilters, totalCount, /*isLoading,*/ onChangePagination, reviewModal, reviews/*, isLoadingDetail */} = useReviews()
+  const { reviewDetail, reviewFilters, totalCount, /*isLoading,*/ onChangePagination, reviewModal, reviews /*, isLoadingDetail */ } = useReviews()
 
   return (
     <>
@@ -30,7 +30,7 @@ export const ReviewsSection = ({ wineName }: ReviewsSectionProps) => {
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
         {reviews.map(review => (
-          <Card key={review.id} onClick={() => reviewModal.onOpen(String(review.id))} className="cursor-pointer">
+          <Card key={review.id} onClick={() => reviewModal.onOpen({ reviewId: String(review.id), name: `${review.user.firstName} ${review.user.lastName}` })} className="cursor-pointer">
             <div className="h-full">
               <div className="flex items-start gap-2 ">
                 <p className="text-description">

@@ -12,7 +12,7 @@ export const CommonStatsCard = ({ overallStats }: CommonStatsCardProps) => {
 
   return (
     <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-      <Card className='flex flex-col'>
+      <Card className="flex flex-col">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 pt-0 flex-1">
           <CardTitle className="text-sm font-medium">{t('total_grades')}</CardTitle>
           <Users className="h-4 w-4 text-muted-foreground" />
@@ -29,7 +29,7 @@ export const CommonStatsCard = ({ overallStats }: CommonStatsCardProps) => {
         </CardContent>
       </Card>
 
-      <Card className='flex flex-col'>
+      <Card className="flex flex-col">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 pt-0 flex-1">
           <CardTitle className="text-sm font-medium">{t('average_rating')}</CardTitle>
           <Star className="h-4 w-4 text-muted-foreground" />
@@ -49,7 +49,7 @@ export const CommonStatsCard = ({ overallStats }: CommonStatsCardProps) => {
         </CardContent>
       </Card>
 
-      <Card className='flex flex-col'>
+      <Card className="flex flex-col">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 pt-0 flex-1">
           <CardTitle className="text-sm font-medium">{t('most_active_group')}</CardTitle>
           <Wine className="h-4 w-4 text-muted-foreground" />
@@ -68,7 +68,7 @@ export const CommonStatsCard = ({ overallStats }: CommonStatsCardProps) => {
         </CardContent>
       </Card>
 
-      <Card className='flex flex-col'>
+      <Card className="flex flex-col">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 pt-0 flex-1">
           <CardTitle className="text-sm font-medium">{t('highest_rating')}</CardTitle>
           <TrendingUp className="h-4 w-4 text-muted-foreground" />

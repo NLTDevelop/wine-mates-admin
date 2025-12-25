@@ -12,7 +12,7 @@ import { EditWineForm } from '@/modules/wine/create/wine/ui/components/edit-wine
 import { ContentLayout } from '@/layout/components/content-layout'
 import { cn } from '@/lib/utils'
 import { useReviews } from '../../presenters/useReviews'
-import {  BarChart3, MessageSquare, Info} from 'lucide-react'
+import { BarChart3, MessageSquare, Info } from 'lucide-react'
 import { ReviewsSection } from './detail/reviews-section'
 
 type TabType = 'details' | 'statistics' | 'reviews'

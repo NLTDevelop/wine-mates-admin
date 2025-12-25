@@ -1,11 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/UIKit/shadcn/ui/tabs'
 import { ContentLayout } from '@/layout/components/content-layout'
 import { useTranslation } from 'react-i18next'
-import { Selects } from './selects'
-import { CommonStatsCard } from './common-stats-card'
-import { DistributionByAgeGroups } from './distribution_by_age_groups'
-import { TableStats } from './table-stats'
-import { ActivityOfAssessors } from './activity-of-assessors'
+import { Selects, CommonStatsCard, DistributionByAgeGroups, TableStats, ActivityOfAssessors } from '..'
 import { useStats } from '../../presenters/useStats'
 
 export function StatsView() {

@@ -12,10 +12,11 @@ import { LevelsManager } from '..'
 import { useTranslationsDescription } from '../../../general/presenters/useTranslationsDescription'
 import { extractDescriptionsFromTranslations, extractNamesFromTranslations, mergeTranslations } from '../../../general/presenters/helper'
 import { useTranslationsName } from '../../../general/presenters/useTranslationName'
+import { LevelSwitcher } from './level-switcher'
 
 interface CharacteristicFormFieldsProps {
   formData: Partial<CreateWineTasteCharacteristicParams>
-  onFormDataChange: (field: 'translations' | 'colors' | 'colorHex' | 'levels', value: NameDescriptionDictionary[][] | BaseWineColor[] | string | LevelItem[]) => void
+  onFormDataChange: (field: 'translations' | 'colors' | 'colorHex' | 'levels' | 'qtyLevels', value: NameDescriptionDictionary[][] | BaseWineColor[] | string | LevelItem[] | number) => void
   isLoading?: boolean
   autoFocus?: boolean
   cachedColors: BaseWineColor[]
@@ -75,6 +76,10 @@ export const CharacteristicFormFields = ({ formData, onFormDataChange, isLoading
       onFormDataChange('translations', updatedTranslations)
     },
   })
+
+  const handleQtyLevelsChange = (qtyLevels: 2 | 3) => {
+    onFormDataChange('qtyLevels', qtyLevels)
+  }
 
   return (
     <div className="w-full space-y-6 pt-4">
@@ -159,6 +164,7 @@ export const CharacteristicFormFields = ({ formData, onFormDataChange, isLoading
 
         <div>
           <label className="text-sm font-medium mb-2 block">{t('taste_characteristics.levels')} *</label>
+          <LevelSwitcher value={formData.qtyLevels || 3} onChange={handleQtyLevelsChange} />
           <LevelsManager levels={formData?.levels || []} onLevelsChange={levels => onFormDataChange('levels', levels)} onReorder={onReorder} />
         </div>
       </div>

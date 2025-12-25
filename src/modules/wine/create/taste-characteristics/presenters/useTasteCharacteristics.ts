@@ -62,6 +62,7 @@ export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
         levels: [],
         sortNumber: 0,
         isPremium: false,
+        qtyLevels: newTasteCharacteristics.qtyLevels,
       }
 
       queryClient.setQueryData<WineTasteCharacteristics[]>(['taste-characteristics', 'list', 'assigned-colors'], (old = []) => {
@@ -115,6 +116,7 @@ export const useTasteCharacteristics = (cachedColors?: BaseWineColor[]) => {
         levels: params.newCharacteristic.levels,
         isPremium: false,
         sortNumber: params.newCharacteristic.sortNumber ?? 0,
+        qtyLevels: params.newCharacteristic.qtyLevels ?? 3,
       }
 
       queryClient.setQueryData<WineTasteCharacteristics[]>(
