@@ -111,8 +111,7 @@
 //   }
 
 //   const tabs = [
-//     { id: 'analysis' as TabType, label: t('chemical_analysis'), icon: <Beaker className="h-4 w-4" /> },
-//     { id: 'sensoryAnalysis' as TabType, label: t('sensory_analysis'), icon: <ChefHat className="h-4 w-4" /> },
+//     { id: 'analysis' as TabType, label: t('analysis_detail'), icon: <Beaker className="h-4 w-4" /> },
 //     { id: 'reviews' as TabType, label: t('reviews'), icon: <MessageSquare className="h-4 w-4" /> },
 //   ]
 
@@ -156,7 +155,7 @@
 //mock
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Beaker, ChefHat, MessageSquare } from 'lucide-react'
+import { Beaker, MessageSquare } from 'lucide-react'
 import { IWineAnalysisDetail, CharacteristicsHistoryResponse } from '../entities/types'
 import {
   mockWineAnalysisDetail,
@@ -290,8 +289,7 @@ export const useAnalyzedWineDetail = (wineId: string) => {
   }
 
   const tabs = [
-    { id: 'analysis' as TabType, label: t('chemical_analysis'), icon: <Beaker className="h-4 w-4" /> },
-    { id: 'sensoryAnalysis' as TabType, label: t('sensory_analysis'), icon: <ChefHat className="h-4 w-4" /> },
+    { id: 'analysis' as TabType, label: t('analysis_detail'), icon: <Beaker className="h-4 w-4" /> },
     { id: 'reviews' as TabType, label: t('reviews'), icon: <MessageSquare className="h-4 w-4" /> },
   ]
 

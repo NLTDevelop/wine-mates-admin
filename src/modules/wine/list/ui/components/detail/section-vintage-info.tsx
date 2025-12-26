@@ -19,16 +19,7 @@ export const VintageInfoSection: React.FC<{ wine: IWines; onVintageChange?: (win
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
-  //mock
-
-  const vintages = [
-    { wineId: 92, vintage: 2055 },
-    { wineId: 137, vintage: 2045 },
-    { wineId: 138, vintage: 2022 },
-    { wineId: 93, vintage: 214 },
-  ]
-
-  // const vintages = wine?.vintages || []
+  const vintages = wine?.vintages || []
 
   const schema = createVintageFormSchema()
   type VintageFormSchemaType = z.infer<typeof schema>

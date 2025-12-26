@@ -36,7 +36,7 @@ export default function AromaStats({ topAromas, height = 12, showLegend = true }
         className="gap-2"
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
           gap: '1rem',
         }}
       >
@@ -45,16 +45,15 @@ export default function AromaStats({ topAromas, height = 12, showLegend = true }
 
           return (
             <Card key={top.id} className="space-y-2 !w-full min-w-0 bg-accent">
-              <div className="flex items-center gap-2 min-w-0  w-full">
-                <div className="h-10 w-10 rounded-full border-2 border-white shadow-sm flex-shrink-0" style={{ backgroundColor: top.colorHex }} />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className={`text-foreground ${idx === 0 && 'font-bold'} truncate`}>{top.name} </span>
-                    <span className="text-gray-500 text-sm whitespace-nowrap">({t('user', { count: top.userCount })})</span>
-                  </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-xs text-gray-500 font-mono">{top.colorHex}</span>
-                    <span className="text-sm text-foreground">{((top.userCount / totalUsers) * 100).toFixed(0)}%</span>
+              <div className="flex items-start gap-2 min-w-0  w-full">
+                <div className="h-6 w-6 rounded-full border-2 border-white shadow-sm flex-shrink-0" style={{ backgroundColor: top.colorHex }} />
+                <div className="flex-1 min-w-0 overflow-hidden">
+                  <div className="flex items-start gap-2">
+                    <div className="flex-1">
+                      <span className={`text-foreground ${idx === 0 && 'font-bold'}  break-words word-wrap-break-word overflow-wrap-anywhere`}>{top.name} </span>
+                      <span className="text-gray-500 text-sm whitespace-nowrap">({t('user', { count: top.userCount })})</span>
+                    </div>
+                    <span className="text-sm font-bold text-foreground pt-1">{((top.userCount / totalUsers) * 100).toFixed(0)}%</span>
                   </div>
                 </div>
               </div>
@@ -88,10 +87,10 @@ export default function AromaStats({ topAromas, height = 12, showLegend = true }
                 .reverse()
                 .map((sub, i) => (
                   <div key={sub.id} className="space-y-1 p-2 bg-gray-50 rounded">
-                    <div className="flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full flex-shrink-0" style={{ backgroundColor: sub.colorHex }} />
-                      <span className={`text-sm  ${i === 0 && 'font-bold'} text-foreground truncate `}>{sub.name}</span>
-                      <sup className="text-sm text-primary">{sub.userCount}</sup>
+                    <div className="flex items-start gap-2">
+                      <span className="w-4 h-4 rounded-full flex-shrink-0" style={{ backgroundColor: sub.colorHex }} />
+                      <span className={`text-sm  ${i === 0 && 'font-bold'} text-foreground break-words word-wrap-break-word overflow-wrap-anywhere `}>{sub.name}</span>
+                      <span className="text-gray-500 text-sm whitespace-nowrap">({t('user', { count: sub.userCount })})</span>
                     </div>
                     {showLegend && sub.aromas.filter(a => a.userCount > 0).length > 0 && (
                       <div className="text-sm mt-1">
@@ -99,9 +98,9 @@ export default function AromaStats({ topAromas, height = 12, showLegend = true }
                           .filter(a => a.userCount > 0)
                           .reverse()
                           .map(a => (
-                            <div key={a.id} className="pl-8 mb-1">
-                              <div className="flex whitespace-nowrap w-full  rounded bg-input/60 p-1">
-                                <span className="text-sm   text-foreground truncate min-w-0 flex-1">{a.name}</span>
+                            <div key={a.id} className="pl-8 mb-1 ">
+                              <div className="flex flex-wrap items-start gap-1 w-full rounded bg-input/60 p-2 overflow-hidden">
+                                <span className="text-sm   text-foreground break-words word-wrap-break-word overflow-wrap-anywhere min-w-0 flex-1">{a.name}</span>
                                 <span className="text-sm text-gray-500 ml-1">({t('user', { count: a.userCount })})</span>
                               </div>
                             </div>

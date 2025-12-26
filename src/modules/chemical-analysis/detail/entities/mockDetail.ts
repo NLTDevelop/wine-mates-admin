@@ -1,5 +1,5 @@
 import { BaseWineColor } from '@/modules/wine/create/general/entities/types'
-import { IWineAnalysisDetail, CharacteristicsHistoryResponse } from '../entities/types'
+import { IWineAnalysisDetail, CharacteristicsHistoryResponse, IBaseInfoWithoutColor } from '../entities/types'
 import { WineImage } from '@/modules/wine/list/entities/types/types'
 import { IWineForAnalysis } from '../../list/entities/types'
 
@@ -17,6 +17,42 @@ const redWineColor: BaseWineColor = {
   id: '2',
   name: 'Червоне',
   colorHex: '#7c060d',
+}
+const redWineShade: BaseWineColor = {
+  id: '6',
+  name: 'Рубіновий',
+  colorHex: '#9B111E',
+}
+const redWineTone: BaseWineColor = {
+  id: '6',
+  name: 'Блідий',
+  colorHex: '#c55050',
+}
+const aromaGroup: BaseWineColor = {
+  id: '8',
+  name: 'Троянда',
+  colorHex: '#E78AAE',
+}
+const aromaSubGroup: BaseWineColor = {
+  id: '8',
+  name: 'Бардо',
+  colorHex: '#670303',
+}
+const aromas: IBaseInfoWithoutColor[] = [
+  {
+    id: '8',
+    name: 'Першон',
+  },
+  {
+    id: '8',
+    name: 'Свіже-зірвана',
+  },
+]
+
+const tasteGroup: BaseWineColor = {
+  id: '6',
+  name: 'Шоколад',
+  colorHex: '#4B2E16',
 }
 
 const whiteWineColor: BaseWineColor = {
@@ -65,24 +101,20 @@ export const mockWineAnalysisDetail: IWineAnalysisDetail = {
   analysisDates: ['2024-01-15', '2024-01-10', '2024-01-05', '2023-12-28', '2023-12-20', '2026-12-20'],
   sensoryAnalysis: {
     visual: {
-      color: 'рубиновый',
-      shade: 'средней интенсивности',
-      intensity: 7,
-      clarity: 9,
+      color: redWineColor,
+      shade: redWineShade,
+      mousse: 7,
+      perlage: 9,
     },
     aroma: {
-      intensity: 8,
-      complexity: 7,
-      notes: ['черная смородина', 'вишня', 'ваниль', 'дуб'],
+      aromaGroup: aromaGroup,
+      aromaSubGroup: aromaSubGroup,
+      aromas: aromas,
+      note: 'some note about aroma analysis',
     },
     taste: {
-      sweetness: 2,
-      acidity: 6,
-      tannins: 8,
-      body: 7,
-      alcoholLevel: 13.5,
-      finish: 8,
-      notes: ['плотное тело', 'длинное послевкусие', 'хорошо интегрированные танины'],
+      taste: tasteGroup,
+      note: 'some note about taste analysis',
     },
   },
 }
@@ -159,24 +191,21 @@ export const mockWhiteWineAnalysisDetail: IWineAnalysisDetail = {
   analysisDates: ['2024-01-15', '2024-01-08', '2024-01-01', '2023-12-25'],
   sensoryAnalysis: {
     visual: {
-      color: 'соломенный',
-      shade: 'средней интенсивности',
-      intensity: 6,
-      clarity: 9,
+      color: redWineColor,
+      shade: redWineShade,
+      tone: redWineTone,
+      mousse: 7,
+      perlage: 9,
     },
     aroma: {
-      intensity: 7,
-      complexity: 6,
-      notes: ['цитрусовые', 'зеленое яблоко', 'ваниль', 'миндаль'],
+      aromaGroup: aromaGroup,
+      aromaSubGroup: aromaSubGroup,
+      aromas: aromas,
+      note: 'some note about aroma analysis',
     },
     taste: {
-      sweetness: 3,
-      acidity: 7,
-      tannins: 2,
-      body: 5,
-      alcoholLevel: 12.5,
-      finish: 6,
-      notes: ['свежесть', 'хорошая кислотность', 'миндальное послевкусие'],
+      taste: tasteGroup,
+      note: 'some note about taste analysis',
     },
   },
 }
@@ -196,24 +225,21 @@ export const mockRoseWineAnalysisDetail: IWineAnalysisDetail = {
   analysisDates: ['2024-01-15', '2024-01-07', '2023-12-30', '2026-12-30'],
   sensoryAnalysis: {
     visual: {
-      color: 'лососевый',
-      shade: 'легкий',
-      intensity: 5,
-      clarity: 9,
+      color: redWineColor,
+      shade: redWineShade,
+      tone: redWineTone,
+      mousse: 7,
+      perlage: 9,
     },
     aroma: {
-      intensity: 6,
-      complexity: 5,
-      notes: ['красные ягоды', 'цветочные ноты', 'цитрусовые'],
+      aromaGroup: aromaGroup,
+      aromaSubGroup: aromaSubGroup,
+      aromas: aromas,
+      note: 'some note about aroma analysis',
     },
     taste: {
-      sweetness: 4,
-      acidity: 5,
-      tannins: 3,
-      body: 4,
-      alcoholLevel: 12.0,
-      finish: 5,
-      notes: ['свежесть', 'фруктовость', 'легкое тело'],
+      taste: tasteGroup,
+      note: 'some note about taste analysis',
     },
   },
 }

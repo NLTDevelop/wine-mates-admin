@@ -4,7 +4,7 @@ import { Badge } from '@/UIKit/shadcn/ui/badge'
 import { IWines } from '../../../entities/types/types'
 import { useTranslation } from 'react-i18next'
 import { useContrastText } from '@/hooks/ui/useContrastText'
-import { WineRate } from './wine-rate'
+// import { WineRate } from './wine-rate'
 
 interface WineDetailHeaderProps {
   wine: IWines
@@ -39,7 +39,7 @@ export const WineDetailHeader: React.FC<WineDetailHeaderProps> = ({ wine }) => {
               {wine.type?.name && <Badge className="bg-blue-50 text-foreground hover:bg-blue-50 cursor-default">{wine.type.name}</Badge>}
             </div>
           </div>
-          <WineRate userRate={1.7} totalReviews={141} expertRate={75.2} />
+          {/* <WineRate userRate={1.7} totalReviews={141} expertRate={75.2} /> */}
           {wine.isConfirmed && (
             <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
               {t('confirmed')}

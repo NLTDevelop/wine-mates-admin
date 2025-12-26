@@ -50,17 +50,17 @@ export default function ColorStats({ topColor, height = 12 }: ColorStatsProps) {
 
           return (
             <Card key={color.id} className="space-y-3 !w-full min-w-0 p-4 bg-accent">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full border-2 border-white shadow-sm flex-shrink-0" style={{ backgroundColor: color.colorHex }} />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className={`text-foreground ${idx === 0 && 'font-bold'} truncate`}>{color.name}</span>
-                    <span className="text-gray-500 text-sm whitespace-nowrap">({t('user', { count: color.userCount })})</span>
+              <div className="flex items-start gap-3">
+                <div className="h-6 w-6 rounded-full border-2 border-white shadow-sm flex-shrink-0" style={{ backgroundColor: color.colorHex }} />
+                <div className="flex-1 min-w-0  overflow-hidden">
+                  <div className="flex items-start gap-2">
+                    <div className="flex-1">
+                      <span className={`text-foreground ${idx === 0 && 'font-bold'} break-words word-wrap-break-word overflow-wrap-anywhere`}>{color.name}</span>{' '}
+                      <span className="text-gray-500 text-sm whitespace-nowrap">({t('user', { count: color.userCount })})</span>
+                    </div>
+                    <span className="text-sm font-bold text-foreground pt-1">{((color.userCount / totalUsers) * 100).toFixed(0)}%</span>
                   </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-xs text-gray-500 font-mono">{color.colorHex}</span>
-                    <span className="text-sm text-foreground">{((color.userCount / totalUsers) * 100).toFixed(0)}%</span>
-                  </div>
+                  <div className="flex items-center justify-between mt-1"></div>
                 </div>
               </div>
 
@@ -100,18 +100,12 @@ export default function ColorStats({ topColor, height = 12 }: ColorStatsProps) {
                     .map(shade => (
                       <div key={shade.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
                         <div className="flex items-center gap-3 flex-1 min-w-0">
-                          <div className="w-6 h-6 rounded-full border border-gray-300 flex-shrink-0" style={{ backgroundColor: shade.colorHex }} />
+                          <div className="w-4 h-4 rounded-full border border-gray-300 flex-shrink-0" style={{ backgroundColor: shade.colorHex }} />
                           <div className="flex-1 min-w-0 relative">
-                            <div className="flex items-baseline">
+                            <div className="flex gap-1 items-baseline">
                               <span className={`text-sm truncate`}>{shade.name} </span>
-                              <sup className="text-xs text-primary font-bold ml-2 truncate">{shade.userCount} </sup>
+                              <span className="text-gray-500 text-sm whitespace-nowrap">({t('user', { count: shade.userCount })})</span>
                             </div>
-                            {shade.tone && shade.tone !== shade.colorHex && (
-                              <div className="flex items-center gap-2 mt-1">
-                                <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: shade.tone }} />
-                                <span className="text-xs text-gray-500 truncate">{shade.tone}</span>
-                              </div>
-                            )}
                           </div>
                         </div>
                       </div>

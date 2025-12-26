@@ -242,6 +242,11 @@ export const uk = {
     wine_deleted: 'Вино видалено',
     statistics: 'Статистика',
     reviews: 'Відгуки',
+    no_reviews: 'Немає відгуків',
+    no_data: 'Немає даних',
+    visual: 'Візуальні показники',
+    aroma: 'Показники аромату',
+    taste: 'Показники смаку',
     modal: {
       delete_title: 'Видалити {{slug}}?',
       delete_action: 'Видалити',
@@ -291,6 +296,9 @@ export const uk = {
       color: 'Колір',
       shade: 'Відтінок',
       shades: 'відтінки',
+      tone: 'Тон',
+      mousse: 'Mousse',
+      perlage: 'Perlage',
       color_name_ua: 'Назва кольору (UA)',
       color_name_en: 'Назва кольору (EN)',
       shade_name_ua: 'Назва відтінку (UA)',
@@ -307,6 +315,7 @@ export const uk = {
     flavors: {
       flavors: 'Аромати',
       flavor: 'Аромат',
+      flavor_group: 'Група аромату',
       flavor_shade: 'Відтінок аромату',
       flavor_shades: 'відтінки аромату',
       aroma_name_ua: 'Назва аромату (UA)',
@@ -323,6 +332,7 @@ export const uk = {
       flavor_shade_updated: 'Відтінок аромату оновлено',
       flavor_deleted: 'Група аромату видалена',
       flavor_shade_deleted: 'Відтінок аромату видалено',
+      note: 'Нотатка',
     },
     tastes: {
       tastes: 'Смаки',
@@ -337,6 +347,7 @@ export const uk = {
       taste_note_created: 'Смакова нота створена',
       taste_note_updated: 'Смакова нота оновлена',
       taste_note_deleted: 'Смакова нота видалена',
+      note: 'Нотатка',
     },
     taste_characteristics: {
       characteristics: 'Смакові характеристики',
@@ -488,6 +499,7 @@ export const uk = {
     wines_list: 'Список вин з хімічним аналізом',
     chemical_analysis: 'Хімічний аналіз',
     analysis_detail: 'Деталі аналізу',
+    visual_aroma_analysis: 'Візуально-смаковий аналіз',
     sensory_analysis: 'Дегустація',
     reviews: 'Коментарі',
     sugar_content: 'Вміст цукру',
@@ -516,7 +528,7 @@ export const uk = {
     day: 'День',
     month: 'Місяць',
     year: 'Рік',
-    date: 'Дата',
+    date: 'Дата аналізу',
     chose_other_period: 'Оберіть іншу дату або період для перегляду історії',
     table: {
       winename: 'Назва вина',

@@ -45,16 +45,15 @@ export default function FlavorStats({ topFlavors, height = 12 }: FlavorStatsProp
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         {sortedFlavors.map(flavor => (
           <Card key={flavor.id} className="p-3 hover:shadow-md transition-shadow bg-accent">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full border border-gray-300 shadow-sm" style={{ backgroundColor: flavor.colorHex }} />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className={`text-foreground truncate`}>{flavor.name}</span>
-                  <span className="text-gray-500 text-sm whitespace-nowrap">({t('user', { count: flavor.userCount })})</span>
-                </div>
-                <div className="flex items-center justify-between mt-1">
-                  <span className="text-xs text-gray-500 font-mono">{flavor.colorHex}</span>
-                  <span className="text-sm text-foreground">{((flavor.userCount / totalUsers) * 100).toFixed(0)}%</span>
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 rounded-full border border-gray-300 shadow-sm" style={{ backgroundColor: flavor.colorHex }} />
+              <div className="flex-1 min-w-0 overflow-hidden">
+                <div className="flex items-start gap-2">
+                  <div className="flex-1">
+                    <span className={`text-foreground break-words word-wrap-break-word overflow-wrap-anywhere`}>{flavor.name}</span>{' '}
+                    <span className="text-gray-500 text-sm whitespace-nowrap">({t('user', { count: flavor.userCount })})</span>
+                  </div>
+                  <span className="text-sm font-bold text-foreground pt-1">{((flavor.userCount / totalUsers) * 100).toFixed(0)}%</span>
                 </div>
               </div>
             </div>

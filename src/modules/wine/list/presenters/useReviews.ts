@@ -145,7 +145,7 @@ export const useReviews = () => {
       onOpen: openReviewModal,
     },
     reviewDetail: mockReviewsResponse.rows[0],
-    // reviewDetail:reviewQuery
+    // reviewDetail:reviewQuery,
     isLoadingDetail: reviewQuery.isLoading,
   }
 }

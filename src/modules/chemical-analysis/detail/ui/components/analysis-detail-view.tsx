@@ -6,7 +6,6 @@ import { Button } from '@/UIKit/shadcn/ui/button'
 import { Card } from '@/UIKit/shadcn/ui/card'
 import { MessageSquare } from 'lucide-react'
 import { AnalyzedWineDetailContent } from './analyzed-wine-detail-content'
-import { TastingContent } from './tasting-content'
 import { ReviewsContent } from './reviews-content'
 import { ContentLayout } from '@/layout/components/content-layout'
 import { AnalysisDetailHeader } from './analysis-detail-header'
@@ -17,21 +16,8 @@ export const AnalysisDetailView = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
-  const {
-    analyzedWine,
-    currentSnapshot,
-    // sensoryAnalysis,
-    chartData,
-    selectedDate,
-    availableDates,
-    tabs,
-    activeTab,
-    setActiveTab,
-    isLoading,
-    chartRange,
-    setChartRange,
-    handleDateChange,
-  } = useAnalyzedWineDetail(id!)
+  const { analyzedWine, currentSnapshot, sensoryAnalysis, chartData, selectedDate, availableDates, tabs, activeTab, setActiveTab, isLoading, chartRange, setChartRange, handleDateChange } =
+    useAnalyzedWineDetail(id!)
 
   const { reviews } = useReviews()
 
@@ -63,14 +49,8 @@ export const AnalysisDetailView = () => {
             chartRange={chartRange}
             onDateChange={handleDateChange}
             onChartRangeChange={setChartRange}
-          />
-        )
-
-      case 'sensoryAnalysis':
-        return (
-          <TastingContent
-          // sensoryData={sensoryAnalysis}
-          // selectedDate={selectedDate}
+            analysisDates={availableDates}
+            sensoryData={sensoryAnalysis}
           />
         )
 

@@ -1,5 +1,5 @@
 export * from './components/analysis-detail-view'
 export * from './components/analyzed-wine-detail-content'
-export * from './components/tasting-content'
+export * from './components/taste-detail/tasting-content-view'
 export * from './components/reviews-content'
 export * from './components/analysis-detail-view'

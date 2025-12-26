@@ -24,26 +24,35 @@ export interface IWineAnalysisDetail extends IWineForAnalysis {
 
 //taste history (look, smell, taste)
 export interface TasteHistoryResponse {
-  visual: {
-    color: string
-    shade: string
-    intensity: number
-    clarity: number
-  }
-  aroma: {
-    intensity: number
-    complexity: number
-    notes: string[]
-  }
-  taste: {
-    sweetness: number
-    acidity: number
-    tannins: number
-    body: number
-    alcoholLevel: number
-    finish: number
-    notes: string[]
-  }
+  visual: IVisual
+  aroma: IAroma
+  taste: ITaste
+}
+
+export interface IBaseInfo {
+  id: string
+  colorHex: string
+  name?: string
+}
+
+export type IBaseInfoWithoutColor = Omit<IBaseInfo, 'colorHex'>
+
+export interface IVisual {
+  color: IBaseInfo
+  shade?: IBaseInfo
+  tone?: IBaseInfo
+  mousse?: number
+  perlage?: number
+}
+export interface IAroma {
+  aromaGroup: IBaseInfo
+  aromaSubGroup: IBaseInfo
+  aromas: IBaseInfoWithoutColor[]
+  note: string
+}
+export interface ITaste {
+  taste: IBaseInfo
+  note: string
 }
 
 //Characteristics history

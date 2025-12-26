@@ -103,7 +103,7 @@ export const WineDetailView: React.FC = () => {
             ) : (
               <Card className="text-center py-12">
                 <MessageSquare className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <h4 className="text-lg font-medium text-gray-700 mb-2">{t('no_reviews') || 'No reviews yet'}</h4>
+                <h4 className="text-lg font-medium text-gray-700 mb-2">{t('no_reviews')}</h4>
               </Card>
             )}
           </div>
@@ -141,7 +141,7 @@ export const WineDetailView: React.FC = () => {
                 >
                   {tab.icon}
                   <span>{tab.label}</span>
-                  {tab.id === 'reviews' && reviews?.length > 0 && (
+                  {tab.id === 'reviews' && reviews && reviews?.length > 0 && (
                     <span className="inline-flex items-center justify-center h-4 min-w-4 p-1 pt-1 text-xs font-medium bg-primary text-primary-foreground rounded-full">{reviews.length}</span>
                   )}
                 </button>
