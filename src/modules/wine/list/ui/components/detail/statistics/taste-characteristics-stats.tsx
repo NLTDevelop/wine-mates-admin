@@ -41,14 +41,7 @@ export default function TasteCharacteristicsStats({ tasteCharacteristics, height
           })}
       </div>
 
-      <div
-        className="gap-2"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '1rem',
-        }}
-      >
+ <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         {sortedCharacteristics
           .filter(char => char.userCount > 0)
           .map((char, idx) => {

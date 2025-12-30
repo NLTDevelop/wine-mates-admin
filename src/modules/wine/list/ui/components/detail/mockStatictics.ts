@@ -1,5 +1,5 @@
 export const statistics = {
-  topColors: [
+  topColor: [
     {
       id: 1,
       colorHex: '#C68642',

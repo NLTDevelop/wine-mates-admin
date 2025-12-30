@@ -11,9 +11,8 @@ export const WineRate = ({ userRate, expertRate, totalReviews }: WineRateProps) 
   const { t } = useTranslation('rate')
   return (
     <div className="mb-4">
-      {userRate && (
+      {userRate ? (
         <div className="flex items-start md:items-center  gap-1 md:flex-row flex-col">
-          {/* <span>{totalReviews?t('user_rate'):t('user_grade')}</span> */}
           <div className="flex gap-2 items-center">
             {Array.from({ length: 5 }, (_, idx) => {
               const fillPercentage = Math.max(0, Math.min(1, userRate - idx)) * 100
@@ -33,13 +32,14 @@ export const WineRate = ({ userRate, expertRate, totalReviews }: WineRateProps) 
             )}
           </div>
         </div>
-      )}
-      {expertRate && (
+      ):null}
+      {expertRate ? (
         <div className="flex items-center gap-1">
+          <Star size={20} className="fill-yellow-500 text-yellow-500" />
           <span>{totalReviews ? t('expert_rate') : t('expert_grade')}</span>
           <span className="font-bold ">{expertRate}</span>
         </div>
-      )}
+      ):null}
     </div>
   )
 }

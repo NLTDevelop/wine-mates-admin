@@ -1,8 +1,11 @@
 import { useState, useMemo, useCallback } from 'react'
-import { GenderData, IOverallStats, StatsFilters /*, StatsResponse, StatsTableResponse, WineRating*/ } from '../entities/types'
+import { GenderData, IOverallStats, StatsFilters, /*, StatsResponse, StatsTableResponse, WineRating*/ 
+StatsTableResponse} from '../entities/types'
 // import { useQuery, UseQueryResult } from '@tanstack/react-query'
 // import { statsQueries } from '../entities/stats-queries'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
+import { useQuery, UseQueryResult } from '@tanstack/react-query'
+import { statsQueries } from '../entities/stats-queries'
 
 const mockData = {
   data: {
@@ -57,8 +60,8 @@ export const useTableData = () => {
     gender: undefined,
   })
 
-  //   const statsTableQuery: UseQueryResult<StatsTableResponse | undefined, Error> = useQuery(statsQueries.list(filters))
-  const statsTableQuery = mockData
+    const statsTableQuery: UseQueryResult<StatsTableResponse | undefined, Error> = useQuery(statsQueries.list(filters))
+  // const statsTableQuery = mockData
 
   const ageGroups = ['18-25', '25-45', '46-60', '60+']
 
@@ -122,36 +125,36 @@ export const useTableData = () => {
     return result
   }, [filteredData, selectedGender, ageGroups])
 
-  const overallStats: IOverallStats = useMemo(() => {
-    const allRatings = Object.values(aggregatedData).flatMap((d: any) => Array(d.ratingsCount).fill(d.averageRating))
+  // const overallStats: IOverallStats = useMemo(() => {
+  //   const allRatings = Object.values(aggregatedData).flatMap((d: any) => Array(d.ratingsCount).fill(d.averageRating))
 
-    const totalRatings = allRatings.length
-    const averageRating = totalRatings > 0 ? allRatings.reduce((a: number, b: number) => a + b, 0) / totalRatings : 0
+  //   const totalRatings = allRatings.length
+  //   const averageRating = totalRatings > 0 ? allRatings.reduce((a: number, b: number) => a + b, 0) / totalRatings : 0
 
-    let mostActive = { ageGroup: '', gender: '', count: 0 }
-    Object.values(aggregatedData).forEach((d: any) => {
-      if (d.ratingsCount > mostActive.count) {
-        mostActive = {
-          ageGroup: d.ageGroup,
-          gender: d.gender,
-          count: d.ratingsCount,
-        }
-      }
-    })
+  //   let mostActive = { ageGroup: '', gender: '', count: 0 }
+  //   Object.values(aggregatedData).forEach((d: any) => {
+  //     if (d.ratingsCount > mostActive.count) {
+  //       mostActive = {
+  //         ageGroup: d.ageGroup,
+  //         gender: d.gender,
+  //         count: d.ratingsCount,
+  //       }
+  //     }
+  //   })
 
-    let highestRating = { ageGroup: '', gender: '', rating: 0 }
-    Object.values(aggregatedData).forEach((d: any) => {
-      if (d.averageRating > highestRating.rating) {
-        highestRating = {
-          ageGroup: d.ageGroup,
-          gender: d.gender,
-          rating: d.averageRating,
-        }
-      }
-    })
+  //   let highestRating = { ageGroup: '', gender: '', rating: 0 }
+  //   Object.values(aggregatedData).forEach((d: any) => {
+  //     if (d.averageRating > highestRating.rating) {
+  //       highestRating = {
+  //         ageGroup: d.ageGroup,
+  //         gender: d.gender,
+  //         rating: d.averageRating,
+  //       }
+  //     }
+  //   })
 
-    return { totalRatings, averageRating, mostActive, highestRating }
-  }, [aggregatedData])
+  //   return { totalRatings, averageRating, mostActive, highestRating }
+  // }, [aggregatedData])
 
   const resetFilters = useCallback(() => {
     setSelectedYear('all')
@@ -163,10 +166,10 @@ export const useTableData = () => {
   }, [])
 
   return {
-    totalCount: mockData.data?.count || 0,
-    // totalCount: statsTableQuery.data?.count || 0,
-    // isLoading: statsTableQuery.isLoading,
-    // isError: statsTableQuery.isError,
+    // totalCount: mockData.data?.count || 0,
+    totalCount: statsTableQuery.data?.count || 0,
+    isLoading: statsTableQuery.isLoading,
+    isError: statsTableQuery.isError,
 
     selectedYear,
     selectedGender,
@@ -176,7 +179,7 @@ export const useTableData = () => {
     years,
     filteredData,
     aggregatedData,
-    overallStats,
+    // overallStats,
 
     setSelectedYear: handleYearChange,
     setSelectedGender: handleGenderChange,

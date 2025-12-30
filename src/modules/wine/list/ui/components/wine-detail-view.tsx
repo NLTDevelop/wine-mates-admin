@@ -30,7 +30,7 @@ export const WineDetailView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('details')
 
   const { wine, isLoading, refetch } = useWineDetail(id!)
-  const { reviews } = useReviews()
+  const { reviews } = useReviews(id!)
 
   const tabs = [
     { id: 'details' as TabType, label: t('wine_detail'), icon: <Info className="h-4 w-4" /> },
@@ -98,7 +98,7 @@ export const WineDetailView: React.FC = () => {
           <div className="space-y-6">
             {reviews && reviews.length > 0 ? (
               <div className="space-y-4">
-                <ReviewsSection />
+                <ReviewsSection  wineId={id}/>
               </div>
             ) : (
               <Card className="text-center py-12">

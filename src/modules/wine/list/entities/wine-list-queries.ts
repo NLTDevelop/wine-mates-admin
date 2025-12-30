@@ -1,4 +1,4 @@
-import { UpdateWineListParams, WineFilters, CreateWineRequest, ReviewFilters } from './types/types'
+import { UpdateWineListParams, WineFilters, CreateWineRequest, ReviewFilters, IReviewDetail } from './types/types'
 import { wineListService } from './wine-list-service'
 
 export const wineQueries = {
@@ -45,6 +45,9 @@ export const wineQueries = {
 
   review_detail: (id: string) => ({
     queryKey: ['wines', 'review-detail', id],
-    queryFn: () => wineListService.review_detail(id),
+    queryFn: async (): Promise<IReviewDetail> => {
+      const response = await wineListService.review_detail(id)
+      return response.data
+    },
   }),
 }

@@ -1,5 +1,7 @@
 import { useState, useMemo, useCallback } from 'react'
-import { GenderData, IOverallStats /*, StatsFilters, StatsResponse, WineRating*/ } from '../entities/types'
+import { GenderData, IOverallStats, StatsFilters /*, StatsFilters, StatsResponse, WineRating*/, StatsResponse } from '../entities/types'
+import { useQuery, UseQueryResult } from '@tanstack/react-query'
+import { statsQueries } from '../entities/stats-queries'
 // import { useQuery, UseQueryResult } from '@tanstack/react-query'
 // import { statsQueries } from '../entities/stats-queries'
 
@@ -46,8 +48,13 @@ export const useStatsData = () => {
   const [selectedYear, setSelectedYear] = useState<string>('all')
   const [selectedGender, setSelectedGender] = useState<'male' | 'female' | 'all'>('all')
 
-  // const statsQuery: UseQueryResult<StatsResponse[] | undefined, Error> = useQuery(statsQueries.summary())
-  const statsQuery = mockData
+  const filters: StatsFilters = {
+    year: selectedYear === 'all' ? undefined : Number(selectedYear),
+    gender: selectedGender === 'all' ? undefined : (String(selectedGender) as 'male' | 'female'),
+  }
+
+  const summaryStatsQuery: UseQueryResult<IOverallStats | undefined, Error> = useQuery(statsQueries.summary(filters))
+  const statsQuery : UseQueryResult<StatsResponse[] | undefined, Error> = useQuery(statsQueries.activity(filters))
 
   const ageGroups = ['18-25', '25-45', '46-60', '60+']
 
@@ -59,75 +66,77 @@ export const useStatsData = () => {
     setSelectedGender(gender)
   }, [])
 
-  const filteredData = useMemo(() => {
-    if (!statsQuery.data) return []
+  // const filteredData = useMemo(() => {
+  //   if (!statsQuery.data) return []
 
-    if (selectedYear === 'all') return statsQuery.data
+  //   if (selectedYear === 'all') return statsQuery.data
 
-    return statsQuery.data.filter(d => d.year === parseInt(selectedYear))
-  }, [statsQuery.data, selectedYear])
+  //   return statsQuery.data.filter(d => d.year === parseInt(selectedYear))
+  // }, [statsQuery.data, selectedYear])
 
-  const aggregatedData = useMemo(() => {
-    const result: Record<string, any> = {}
+  // const aggregatedData = useMemo(() => {
+  //   const result: Record<string, any> = {}
 
-    filteredData.forEach(yearData => {
-      const genders = selectedGender === 'all' ? ['male', 'female'] : [selectedGender]
+  //   filteredData.forEach(yearData => {
+  //     const genders = selectedGender === 'all' ? ['male', 'female'] : [selectedGender]
 
-      genders.forEach(gender => {
-        ageGroups.forEach(ageGroup => {
-          const key = `${yearData.year}-${gender}-${ageGroup}`
-          const ratingData = (yearData.data as GenderData)[gender as keyof GenderData]?.[ageGroup]
+  //     genders.forEach(gender => {
+  //       ageGroups.forEach(ageGroup => {
+  //         const key = `${yearData.year}-${gender}-${ageGroup}`
+  //         const ratingData = (yearData.data as GenderData)[gender as keyof GenderData]?.[ageGroup]
 
-          if (ratingData) {
-            result[key] = {
-              ...ratingData,
-              year: yearData.year,
-              gender,
-              ageGroup,
-            }
-          }
-        })
-      })
-    })
+  //         if (ratingData) {
+  //           result[key] = {
+  //             ...ratingData,
+  //             year: yearData.year,
+  //             gender,
+  //             ageGroup,
+  //           }
+  //         }
+  //       })
+  //     })
+  //   })
 
-    return result
-  }, [filteredData, selectedGender, ageGroups])
+  //   return result
+  // }, [filteredData, selectedGender, ageGroups])
 
-  const overallStats: IOverallStats = useMemo(() => {
-    const allRatings = Object.values(aggregatedData).flatMap((d: any) => Array(d.ratingsCount).fill(d.averageRating))
+  // const overallStats: IOverallStats = useMemo(() => {
+  //   const allRatings = Object.values(aggregatedData).flatMap((d: any) => Array(d.ratingsCount).fill(d.averageRating))
 
-    const totalRatings = allRatings.length
-    const averageRating = totalRatings > 0 ? allRatings.reduce((a: number, b: number) => a + b, 0) / totalRatings : 0
+  //   const totalRatings = allRatings.length
+  //   const averageRating = totalRatings > 0 ? allRatings.reduce((a: number, b: number) => a + b, 0) / totalRatings : 0
 
-    let mostActive = { ageGroup: '', gender: '', count: 0 }
-    Object.values(aggregatedData).forEach((d: any) => {
-      if (d.ratingsCount > mostActive.count) {
-        mostActive = {
-          ageGroup: d.ageGroup,
-          gender: d.gender,
-          count: d.ratingsCount,
-        }
-      }
-    })
+  //   let mostActive = { ageGroup: '', gender: '', count: 0 }
+  //   Object.values(aggregatedData).forEach((d: any) => {
+  //     if (d.ratingsCount > mostActive.count) {
+  //       mostActive = {
+  //         ageGroup: d.ageGroup,
+  //         gender: d.gender,
+  //         count: d.ratingsCount,
+  //       }
+  //     }
+  //   })
 
-    let highestRating = { ageGroup: '', gender: '', rating: 0 }
-    Object.values(aggregatedData).forEach((d: any) => {
-      if (d.averageRating > highestRating.rating) {
-        highestRating = {
-          ageGroup: d.ageGroup,
-          gender: d.gender,
-          rating: d.averageRating,
-        }
-      }
-    })
+  //   let highestRating = { ageGroup: '', gender: '', rating: 0 }
+  //   Object.values(aggregatedData).forEach((d: any) => {
+  //     if (d.averageRating > highestRating.rating) {
+  //       highestRating = {
+  //         ageGroup: d.ageGroup,
+  //         gender: d.gender,
+  //         rating: d.averageRating,
+  //       }
+  //     }
+  //   })
 
-    return { totalRatings, averageRating, mostActive, highestRating }
-  }, [aggregatedData])
+  //   return { totalRatings, averageRating, mostActive, highestRating }
+  // }, [aggregatedData])
 
-  const years = useMemo(() => {
-    if (!statsQuery.data) return []
-    return Array.from(new Set(statsQuery.data.map(d => d.year))).sort((a, b) => b - a)
-  }, [statsQuery.data])
+  console.log("statsQuery",statsQuery.data)
+
+  // const years = useMemo(() => {
+  //   if (!statsQuery.data) return []
+  //   return Array.from(new Set(statsQuery?.data?.map(d => d.year))).sort((a, b) => b - a)
+  // }, [statsQuery.data])
 
   const resetFilters = useCallback(() => {
     setSelectedYear('all')
@@ -142,12 +151,14 @@ export const useStatsData = () => {
 
     selectedYear,
     selectedGender,
-    years,
+    // years,
 
     ageGroups,
-    filteredData,
-    aggregatedData,
-    overallStats,
+    // filteredData,
+    // aggregatedData,
+
+    overallStats: summaryStatsQuery.data,
+    isLoadingOverallStats: summaryStatsQuery.isFetching && !summaryStatsQuery.data,
 
     setSelectedYear: handleYearChange,
     setSelectedGender: handleGenderChange,

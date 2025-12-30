@@ -6,7 +6,7 @@ export const useWineDetail = (wineId: string) => {
 
   const wine = wineQuery.data?.data
 
-  const isEmptyData = !wine?.statistics?.topColors.length || !wine?.statistics?.topAromas.length || !wine?.statistics?.topFlavors.length || !wine?.statistics?.tasteCharacteristics.length
+  const isEmptyData = !wine?.statistics?.topColor.length || !wine?.statistics?.topAromas.length || !wine?.statistics?.topFlavors.length || !wine?.statistics?.tasteCharacteristics.length
 
   return {
     wine,

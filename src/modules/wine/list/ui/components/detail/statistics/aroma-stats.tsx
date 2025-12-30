@@ -32,14 +32,7 @@ export default function AromaStats({ topAromas, height = 12, showLegend = true }
         })}
       </div>
 
-      <div
-        className="gap-2"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '1rem',
-        }}
-      >
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         {sortedTop.map((top, idx) => {
           const totalSubgroupsInThisGroup = useMemo(() => top.subgroups?.reduce((sum, sub) => sum + (sub.userCount || 0), 0) || 0, [top.subgroups])
 

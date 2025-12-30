@@ -1,6 +1,8 @@
 import { BaseWineColor } from '@/modules/wine/create/general/entities/types'
 import { WineFormData } from '@/modules/wine/create/wine/presenters/wine-form-schema'
 import { TasteCharacteristic, TopAroma, TopColor, TopFlavor } from './statistics-types'
+import { IBaseInfo } from '@/modules/chemical-analysis/detail/entities/types'
+import { boolean } from 'zod'
 
 export interface WinesResponse {
   rows: IWines[]
@@ -29,7 +31,7 @@ export interface IVintage {
 }
 
 export interface IStatistics {
-  topColors: TopColor[]
+  topColor: TopColor[]
   topAromas: TopAroma[]
   topFlavors: TopFlavor[]
   tasteCharacteristics: TasteCharacteristic[]
@@ -117,8 +119,8 @@ export interface ReviewUser {
 }
 export interface IReview {
   id: number
-  userRating: number
-  expertRating: number
+  userRating?: number
+  expertRating?: number
   review: string
   createdAt: string
   user: ReviewUser
@@ -129,4 +131,30 @@ export interface ReviewsResponse {
   count: number
   totalPages: number
   rows: IReview[]
+}
+
+export interface IBaseInfoCharacteristics extends IBaseInfo {
+  isPremium: boolean
+  selectedLevel: {
+    sortNumber: number
+    name: string
+  }
+}
+
+export interface IReviewDetail {
+  color: {
+    name: string
+    colorHex: string
+    mousse: number
+    perlage: number
+    appearance: number
+    shade: {
+      colorHex: string
+      name: string
+      tone: string
+    }
+  }
+  aromas: IBaseInfo[]
+  flavors: IBaseInfo[]
+  tasteCharacteristics: IBaseInfoCharacteristics[]
 }

@@ -23,7 +23,7 @@ export const SelectDate = ({ chartRange, onChartRangeChange, onDateChange, selec
         <TrendingUp className="h-5 w-5" />
         {t('dynamics')}
       </h3>
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mt-4">
+      <div className="flex flex-col md:flex-row gap-4 items-start sm:items-center justify-between mt-4">
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-500">{t('period')}:</span>
           <div className="flex p-1 rounded-md bg-accent">

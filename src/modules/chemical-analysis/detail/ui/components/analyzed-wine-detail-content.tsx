@@ -29,13 +29,13 @@ interface AnalyzedWineDetailContentProps {
   chartRange: 'day' | 'month' | 'year'
   onDateChange: (date: string) => void
   onChartRangeChange: (range: 'day' | 'month' | 'year') => void
-  sensoryData: TasteHistoryResponse
-  analysisDates: string[]
+  sensoryData?: TasteHistoryResponse
+  // analysisDates: string[]
 }
 
 export const AnalyzedWineDetailContent: React.FC<AnalyzedWineDetailContentProps> = ({
   sensoryData,
-  analysisDates,
+  // analysisDates,
   currentSnapshot,
   chartData,
   selectedDate,
@@ -46,13 +46,14 @@ export const AnalyzedWineDetailContent: React.FC<AnalyzedWineDetailContentProps>
 }) => {
   const { t } = useTranslation('analysis')
 
+ 
   return (
     <div className="space-y-6">
       <Card className="!p-0">
         <CardContent className="space-y-6">
           <TastingContentView analysisDates={availableDates} sensoryData={sensoryData} selectedDate={selectedDate} onDateChange={onDateChange} />
           <ChemicalAnalysisView currentSnapshot={currentSnapshot} />
-          <SelectDate chartRange={chartRange} availableDates={analysisDates} onChartRangeChange={onChartRangeChange} onDateChange={onDateChange} selectedDate={selectedDate} />
+          <SelectDate chartRange={chartRange} availableDates={availableDates} onChartRangeChange={onChartRangeChange} onDateChange={onDateChange} selectedDate={selectedDate} />
           {chartData && chartData.data && chartData.data.length > 0 ? (
             <CharacteristicsCharts data={chartData} range={chartRange} />
           ) : (

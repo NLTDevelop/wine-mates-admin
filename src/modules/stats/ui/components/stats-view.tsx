@@ -24,6 +24,7 @@ export function StatsView() {
     tableFilters,
     onChangePagination,
     resetAllFilters,
+    isSummaryLoading
   } = useStats()
 
   const renderDescription = () => (
@@ -44,7 +45,7 @@ export function StatsView() {
       <ContentLayout title={t('grade_stats')} description={renderDescription()}>
         <div className="w-auto mx-auto xl:w-4/5 pt-4">
           <Selects selectedYear={selectedYear} setSelectedYear={setSelectedYear} years={years} selectedGender={selectedGender} setSelectedGender={setSelectedGender} resetFilters={resetAllFilters} />
-          <CommonStatsCard overallStats={overallStats} />
+          <CommonStatsCard overallStats={overallStats} isLoading={isSummaryLoading}/>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full md:w-auto sm:grid-cols-3 grid-cols-1  my-6">

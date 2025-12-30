@@ -5,9 +5,9 @@ export interface StatsTableResponse {
 }
 
 export interface StatsFilters {
-  limit: number
-  page: number
-  year?: number
+  limit?: number
+  page?: number
+  year?: number | null
   gender?: 'male' | 'female'
 }
 export interface WineRating {
@@ -31,16 +31,16 @@ export interface StatsResponse {
 
 export interface IOverallStats {
   totalRatings: number
-  averageRating: number
-  mostActive: {
+  averageUserRating: number
+  mostActiveGroup: {
     ageGroup: string
     gender: string
-    count: number
+    ratingsCount: number
   }
-  highestRating: {
+  highestRatingGroup: {
     ageGroup: string
     gender: string
-    rating: number
+    averageRating: number
   }
 }
 

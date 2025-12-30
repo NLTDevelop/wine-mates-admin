@@ -6,8 +6,12 @@ export const statsQueries = {
     queryKey: ['stats', 'list'],
     queryFn: () => statsService.list(filters),
   }),
-  summary: () => ({
-    queryKey: ['stats', 'summary'],
-    queryFn: () => statsService.summary(),
+  summary: (filters: StatsFilters) => ({
+    queryKey: ['stats', 'summary', filters],
+    queryFn: () => statsService.summary(filters),
+  }),
+  activity: (filters: StatsFilters) => ({
+    queryKey: ['stats', 'activity', filters],
+    queryFn: () => statsService.activity(filters),
   }),
 }

@@ -33,7 +33,7 @@ export const WineStatsView = () => {
         {t('statistics')}
       </h3>
       <div className="space-y-6">
-        <ColorStats topColor={stats?.topColors ?? []} />
+        <ColorStats topColor={stats?.topColor ?? []} />
         <AromaStats topAromas={stats?.topAromas ?? []} />
         <FlavorStats topFlavors={stats?.topFlavors ?? []} />
         <TasteCharacteristicsStats tasteCharacteristics={stats?.tasteCharacteristics ?? []} />

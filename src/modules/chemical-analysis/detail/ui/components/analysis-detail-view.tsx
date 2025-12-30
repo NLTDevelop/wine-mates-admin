@@ -16,10 +16,14 @@ export const AnalysisDetailView = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
-  const { analyzedWine, currentSnapshot, sensoryAnalysis, chartData, selectedDate, availableDates, tabs, activeTab, setActiveTab, isLoading, chartRange, setChartRange, handleDateChange } =
+  const { analyzedWine, currentSnapshot, sensoryAnalysis, chartData, selectedDate, availableDates, tabs, activeTab, setActiveTab /*, isLoading*/, chartRange, setChartRange, handleDateChange } =
     useAnalyzedWineDetail(id!)
 
   const { reviews } = useReviews()
+
+  const isLoading = false
+
+  console.log("selectedDate->", selectedDate)
 
   if (isLoading) {
     return <p>сделаю скелетон</p>
@@ -49,7 +53,7 @@ export const AnalysisDetailView = () => {
             chartRange={chartRange}
             onDateChange={handleDateChange}
             onChartRangeChange={setChartRange}
-            analysisDates={availableDates}
+            // analysisDates={availableDates}
             sensoryData={sensoryAnalysis}
           />
         )

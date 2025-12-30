@@ -27,6 +27,7 @@ export interface TasteHistoryResponse {
   visual: IVisual
   aroma: IAroma
   taste: ITaste
+  analysisDates?: string[]
 }
 
 export interface IBaseInfo {

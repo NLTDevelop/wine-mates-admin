@@ -18,6 +18,21 @@ const MAX_RATE = 5
 export const ActivityOfAssessors = ({ ageGroups, aggregatedData, selectedYear, years, selectedGender }: ActivityOfAssessorsProps) => {
   const { t } = useTranslation('stats')
 
+  const genderConfigs = [
+    {
+      gender: 'male' as const,
+      icon: <Mars />,
+      bgClass: 'bg-blue-50 dark:bg-blue-950/20',
+      isVisible: selectedGender !== 'female',
+    },
+    {
+      gender: 'female' as const,
+      icon: <Venus />,
+      bgClass: 'bg-pink-50 dark:bg-pink-950/20',
+      isVisible: selectedGender !== 'male',
+    },
+  ]
+
   if (Object.keys(aggregatedData).length === 0) {
     return (
       <TabsContent value="heatmap">
@@ -53,76 +68,44 @@ export const ActivityOfAssessors = ({ ageGroups, aggregatedData, selectedYear, y
                   </div>
                 ))}
               </div>
+              {genderConfigs.map(({ gender, icon, bgClass, isVisible }) => {
+                if (!isVisible) return null
 
-              {selectedGender !== 'female' && (
-                <div className="grid grid-cols-5 gap-2 mb-4 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
-                  <div className="flex gap-2 items-center font-medium">
-                    <span>
-                      <Mars />
-                    </span>
-                    <span>{t('male')}</span>
-                  </div>
-                  {ageGroups.map((ageGroup, idx) => {
-                    const data = aggregatedData[`${selectedYear === 'all' ? years[0] : selectedYear}-male-${ageGroup}`]
-                    if (!data)
+                return (
+                  <div key={gender} className={`grid grid-cols-5 gap-2 mb-4 p-3 ${bgClass} rounded-lg`}>
+                    <div className="flex gap-2 items-center font-medium">
+                      {icon}
+                      <span>{t(gender)}</span>
+                    </div>
+                    {ageGroups.map((ageGroup, idx) => {
+                      const data = aggregatedData[gender]?.[ageGroup]
+                      if (!data) {
+                        return (
+                          <div key={`${gender}-${ageGroup}-${idx}`} className="flex items-center justify-center">
+                            <p>-</p>
+                          </div>
+                        )
+                      }
+
                       return (
-                        <div key={`${ageGroup}-${idx}`} className="text-center">
-                          -
+                        <div
+                          key={`${gender}-${ageGroup}-${idx}`}
+                          className="text-center p-3 rounded-lg"
+                          style={{
+                            backgroundColor: getHeatmapColor(data.averageRating, MAX_RATE),
+                            color: data.averageRating > MAX_RATE ? 'white' : 'black',
+                          }}
+                        >
+                          <div className="text-lg font-bold">{data.averageRating.toFixed(1)}</div>
+                          <div className="text-xs opacity-90">
+                            {data.ratingsCount} {t('grades')}
+                          </div>
                         </div>
                       )
-
-                    return (
-                      <div
-                        className="text-center p-3 rounded-lg"
-                        style={{
-                          backgroundColor: getHeatmapColor(data.averageRating, MAX_RATE),
-                          color: data.averageRating > MAX_RATE ? 'white' : 'black',
-                        }}
-                      >
-                        <div className="text-lg font-bold">{data.averageRating.toFixed(1)}</div>
-                        <div className="text-xs opacity-95">
-                          {data.ratingsCount} {t('grades')}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-
-              {selectedGender !== 'male' && (
-                <div className="grid grid-cols-5 gap-2 p-3 bg-pink-50 dark:bg-pink-950/20 rounded-lg">
-                  <div className="flex gap-2 items-center font-medium">
-                    <span>
-                      <Venus />
-                    </span>
-                    <span>{t('female')}</span>
+                    })}
                   </div>
-                  {ageGroups.map((ageGroup, idx) => {
-                    const data = aggregatedData[`${selectedYear === 'all' ? years[0] : selectedYear}-female-${ageGroup}`]
-                    if (!data)
-                      return (
-                        <div key={`${ageGroup}-${idx}`} className="text-center">
-                          -
-                        </div>
-                      )
-
-                    return (
-                      <div
-                        className="text-center p-3 rounded-lg"
-                        style={{
-                          backgroundColor: getHeatmapColor(data.averageRating, MAX_RATE),
-                          color: data.averageRating > MAX_RATE ? 'white' : 'black',
-                        }}
-                      >
-                        <div className="text-lg font-bold">{data.averageRating.toFixed(1)}</div>
-                        <div className="text-xs opacity-90">
-                          {data.ratingsCount} {t('grades')}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
+                )
+              })}
 
               <div className="mt-6 mb-4 flex items-center justify-center space-x-4">
                 <div className="flex h-4 w-48 rounded-full overflow-hidden">
@@ -153,7 +136,7 @@ export const ActivityOfAssessors = ({ ageGroups, aggregatedData, selectedYear, y
 }
 
 const getHeatmapColor = (value: number, max: number) => {
-  const intensity = value / max
-  const hue = 65 * intensity
+  const normalizedValue = Math.min(value / max, 1)
+  const hue = normalizedValue * 65
   return `hsl(${hue}, 70%, 50%)`
 }

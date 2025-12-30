@@ -18,6 +18,9 @@ export const DistributionByAgeGroups = ({ selectedYear, years, ageGroups, data }
 
   const allAgeGroupData = useAgeGroupData(data, selectedYear, ageGroups)
 
+  console.log("allAgeGroupData",allAgeGroupData)
+  console.log("data",data)
+
   return (
     <Card>
       <CardHeader className="pt-0 border-b-0">

@@ -10,7 +10,7 @@ import { TasteAnalysis } from './taste-analysis'
 import { AromaAnalysis } from './aroma-analysis'
 
 interface TastingContentProps {
-  sensoryData: TasteHistoryResponse
+  sensoryData?: TasteHistoryResponse
   selectedDate: string
   analysisDates: string[]
   onDateChange?: (date: string) => void
@@ -77,7 +77,7 @@ export const TastingContentView: React.FC<TastingContentProps> = ({ sensoryData,
           </SelectContent>
         </Select>
       </div>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <VisualAnalysis visual={visual} />
         <AromaAnalysis aroma={aroma} />
         <TasteAnalysis taste={taste} />

@@ -41,16 +41,16 @@ export const useStats = () => {
     tableData: table.aggregatedData,
     tableTotalCount: table.totalCount,
     tableFilters: table.filters,
+    years: table.years,
 
     statsData: summary.statsData,
-    aggregatedData: summary.aggregatedData,
-    overallStats: summary.overallStats,
+    aggregatedData: summary.statsData,
+    // overallStats: summary.overallStats,
     ageGroups: summary.ageGroups,
-    years: summary.years,
 
     // isLoading: table.isLoading || summary.isLoading,
     // isTableLoading: table.isLoading,
-    // isSummaryLoading: summary.isLoading,
+    isSummaryLoading: summary.isLoadingOverallStats,
     // isError: table.isError || summary.isError,
 
     setActiveTab: handleTabChange,
