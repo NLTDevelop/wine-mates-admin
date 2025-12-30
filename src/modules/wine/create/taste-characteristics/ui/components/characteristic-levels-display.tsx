@@ -24,13 +24,8 @@ export const CharacteristicLevelsDisplay: React.FC<CharacteristicLevelsDisplayPr
           {levels.map((level, index) => {
             const { nameUa } = getDisplayNames(level.translations || [])
             return (
-              <Badge
-                key={level.id || `level-${index}`}
-                variant="outline"
-                className="border-0"
-                style={{ backgroundColor: /*level.isEnabled ? colorBadge?.backgroundColor :*/ lightenColor(colorBadge?.backgroundColor ?? '', 10) }}
-              >
-                <p className={/*level.isEnabled ?*/ colorBadge?.color /*: 'text-[#d1d1d1]'*/}>{nameUa}</p>
+              <Badge key={level.id || `level-${index}`} variant="outline" className="border-0" style={{ backgroundColor: lightenColor(colorBadge?.backgroundColor ?? '', 10) }}>
+                <p className={colorBadge?.color}>{nameUa}</p>
               </Badge>
             )
           })}
@@ -38,7 +33,7 @@ export const CharacteristicLevelsDisplay: React.FC<CharacteristicLevelsDisplayPr
       </div>
       <div>
         <h4 className="text-description !mb-0">{t('taste_characteristics.qty_levels')}:</h4>
-        <p className="text-md">{qtyLevels ? qtyLevels : 'чекаю бєк для відображення кількості рівнів'}</p>
+        <p className="text-md">{qtyLevels}</p>
       </div>
       {descriptionUa && (
         <div>

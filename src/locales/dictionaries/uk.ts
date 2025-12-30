@@ -493,6 +493,8 @@ export const uk = {
     no_data: 'Немає даних',
     qty: 'кількість',
     reset_filters: 'очистити фільтри',
+    female_only: 'жінки',
+    male_only: 'чоловіки',
   },
   analysis: {
     search_wine: 'Пошук вина',
@@ -501,7 +503,7 @@ export const uk = {
     analysis_detail: 'Деталі аналізу',
     visual_aroma_analysis: 'Візуально-смаковий аналіз',
     sensory_analysis: 'Дегустація',
-    reviews: 'Коментарі',
+    reviews: 'Нотатки',
     sugar_content: 'Вміст цукру',
     density: 'Щільність',
     malolactic: 'Бродіння',

@@ -1,5 +1,4 @@
 import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
-import { IAnalysisReview } from '../detail/entities/types'
 import { IWineForAnalysis } from '../list/entities/types'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 
@@ -13,19 +12,11 @@ export interface AnalysisState {
     page: number
   }
   setWines: (wines: IWineForAnalysis[]) => void
-  setReviews: (reviews: IAnalysisReview[]) => void
+
   setSearchResults: (results: IWineForAnalysis[]) => void
   setCurrentWine: (wine: IWineForAnalysis | null) => void
   setFilters: (filters: Partial<AnalysisState['filters']>) => void
-  setReviewFilters: (filters: Partial<AnalysisState['reviewFilters']>) => void
   resetFilters: () => void
-  reviews: IAnalysisReview[]
-  reviewFilters: {
-    search: string
-    limit: number
-    page: number
-    wineId: number | null
-  }
 }
 
 export const useAnalysisStore = createStoreDevToolsWrapper<AnalysisState>(
@@ -61,15 +52,6 @@ export const useAnalysisStore = createStoreDevToolsWrapper<AnalysisState>(
         'analysis/setFilters'
       ),
 
-    setReviewFilters: (newFilters: Partial<AnalysisState['reviewFilters']>) =>
-      set(
-        (state: AnalysisState) => ({
-          reviewFilters: { ...state.resetFilters, ...newFilters },
-        }),
-        false,
-        'analysis/setReviewFilters'
-      ),
-
     resetFilters: () =>
       set(
         {
@@ -82,8 +64,6 @@ export const useAnalysisStore = createStoreDevToolsWrapper<AnalysisState>(
         false,
         'analysis/resetFilters'
       ),
-
-    setReviews: (reviews: IAnalysisReview[]) => set({ reviews }, false, 'analysis/setReviews'),
   }),
 
   'AnalysisStore'

@@ -32,14 +32,14 @@ export const WineRate = ({ userRate, expertRate, totalReviews }: WineRateProps) 
             )}
           </div>
         </div>
-      ):null}
+      ) : null}
       {expertRate ? (
         <div className="flex items-center gap-1">
           <Star size={20} className="fill-yellow-500 text-yellow-500" />
           <span>{totalReviews ? t('expert_rate') : t('expert_grade')}</span>
           <span className="font-bold ">{expertRate}</span>
         </div>
-      ):null}
+      ) : null}
     </div>
   )
 }

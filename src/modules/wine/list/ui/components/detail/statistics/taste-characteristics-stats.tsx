@@ -41,7 +41,7 @@ export default function TasteCharacteristicsStats({ tasteCharacteristics, height
           })}
       </div>
 
- <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         {sortedCharacteristics
           .filter(char => char.userCount > 0)
           .map((char, idx) => {

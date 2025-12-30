@@ -26,7 +26,6 @@ export interface LevelItem {
   id?: string
   translations?: NameDictionary[]
   sortNumber: number
-  // isEnabled: boolean
 }
 
 export interface WineTasteCharacteristics {

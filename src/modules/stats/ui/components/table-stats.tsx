@@ -106,7 +106,9 @@ export const TableStats = ({ ageGroups, years, aggregatedData, selectedGender = 
           </Table>
         </div>
       </CardContent>
-      {totalCount && totalCount > DEFAULT_PAGINATION_LIMIT ? <NLTTablePagination limit={filters.limit || DEFAULT_PAGINATION_LIMIT} page={filters.page || 1} totalRows={totalCount || 1} setPage={onChangePagination} /> : null}
+      {totalCount && totalCount > DEFAULT_PAGINATION_LIMIT ? (
+        <NLTTablePagination limit={filters.limit || DEFAULT_PAGINATION_LIMIT} page={filters.page || 1} totalRows={totalCount || 1} setPage={onChangePagination} />
+      ) : null}
     </Card>
   )
 }

@@ -9,19 +9,7 @@ interface ChemicalIndicatorCardProps {
   icon?: React.ReactNode
 }
 
-const formatDate = (dateStr?: string): string => {
-  const { t } = useTranslation('analysis')
-
-  if (!dateStr) return t('no_data')
-
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('ru-RU', {
-    day: '2-digit',
-    month: 'short',
-  })
-}
-
-export const ChemicalIndicatorCard = ({ title, value, unit, date, icon }: ChemicalIndicatorCardProps) => {
+export const ChemicalIndicatorCard = ({ title, value, unit, icon }: ChemicalIndicatorCardProps) => {
   const { t } = useTranslation('analysis')
 
   return (
@@ -31,16 +19,7 @@ export const ChemicalIndicatorCard = ({ title, value, unit, date, icon }: Chemic
           {title} {icon}
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-4 !pb-0">
-        {value ? (
-          <>
-            <div className="text-2xl font-bold">{`${value} ${unit}`}</div>
-            <p className="text-xs text-muted-foreground">{formatDate(date)}</p>
-          </>
-        ) : (
-          <p>{t('no_data')}</p>
-        )}
-      </CardContent>
+      <CardContent className="pt-4 !pb-0">{value ? <div className="text-2xl font-bold">{`${value} ${unit}`}</div> : <p>{t('no_data')}</p>}</CardContent>
     </Card>
   )
 }

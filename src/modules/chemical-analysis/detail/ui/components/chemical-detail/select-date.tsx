@@ -38,22 +38,23 @@ export const SelectDate = ({ chartRange, onChartRangeChange, onDateChange, selec
         </div>
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-500">
-            {chartRange === 'day' && `${t('date')}:`}
             {chartRange === 'month' && `${t('month')}:`}
             {chartRange === 'year' && `${t('year')}:`}
           </span>
-          <Select value={selectedDate} onValueChange={onDateChange}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue>{formatDateForDisplay(selectedDate, chartRange)}</SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {filteredDates.map(date => (
-                <SelectItem key={date} value={date}>
-                  {formatDateForDisplay(date, chartRange)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {chartRange !== 'day' ? (
+            <Select value={selectedDate} onValueChange={onDateChange}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue>{formatDateForDisplay(selectedDate, chartRange)}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {filteredDates.map(date => (
+                  <SelectItem key={date} value={date}>
+                    {formatDateForDisplay(date, chartRange)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : null}
         </div>
       </div>
     </div>

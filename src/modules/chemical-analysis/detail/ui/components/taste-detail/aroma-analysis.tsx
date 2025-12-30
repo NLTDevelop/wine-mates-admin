@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/UIKit/shadcn/ui/card'
-import { IAroma, IBaseInfo } from '../../../entities/types'
+
 import { useTranslation } from 'react-i18next'
 import { useContrastText } from '@/hooks/ui/useContrastText'
 import { cn } from '@/lib/utils'
+import { IAroma, IBaseInfo } from '../../../entities/chemical_types'
 
 interface AromaAnalysisProps {
   aroma: IAroma
@@ -35,7 +36,6 @@ export const AromaAnalysis = ({ aroma }: AromaAnalysisProps) => {
             {renderContent({ ...aroma.aromaGroup }, 'flavor_group')}
             {aroma.aromaSubGroup && renderContent({ ...aroma.aromaSubGroup }, 'flavor_shade')}
             {aroma.aromas && renderContent(aroma.aromas.map(a => a.name).join(', '), aroma.aromas.length !== 1 ? 'flavors' : 'flavor')}
-            {aroma.note && renderContent(aroma.note, 'note')}
           </div>
         ) : (
           <p>{t('no_data')}</p>

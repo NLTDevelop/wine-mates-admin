@@ -1,4 +1,4 @@
-import { IReviewDetail, IStatistics } from '@/modules/wine/list/entities/types/types'
+import { IReviewDetail } from '@/modules/wine/list/entities/types/types'
 import { useTranslation } from 'react-i18next'
 
 interface UserAromaStatsProps {

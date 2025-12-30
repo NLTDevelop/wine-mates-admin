@@ -66,6 +66,7 @@ export const useCharacteristics = ({
         sortNumber: group.sortNumber || 0,
         levels: group.levels || [],
         colors: group.colors || [],
+        gtyLevels: group.qtyLevels || 2,
       }
 
       setEditingCharacteristicData((prev: Record<string, NewCharacteristicData>) => ({
@@ -113,7 +114,7 @@ export const useCharacteristics = ({
           sortNumber: currentGroupIndex >= 0 ? currentGroupIndex : tasteCharacteristics?.length || 0,
           translations: convertToUpdateTranslations(data.translations),
           isPremium: false,
-          qtyLevels: data.qtyLevels || 3,
+          qtyLevels: data.qtyLevels || 2,
         }
 
         await updateTasteCharacteristics({
@@ -199,7 +200,7 @@ export const useCharacteristics = ({
       const colorsChanged = JSON.stringify(originalColorIds) !== JSON.stringify(currentColorIds)
       const colorHexChanged = (currentFormData.colorHex || '') !== (originalCharacteristic.colorHex || '')
       const levelsChanged = !areLevelsEqual(originalCharacteristic.levels || [], currentFormData.levels || [])
-      const qtyLevelsChanged = originalCharacteristic.qtyLevels === currentFormData.qtyLevels
+      const qtyLevelsChanged = originalCharacteristic.qtyLevels !== currentFormData.qtyLevels
 
       const hasChangesResult = translationsChanged || colorsChanged || colorHexChanged || levelsChanged || qtyLevelsChanged
 

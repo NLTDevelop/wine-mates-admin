@@ -2,7 +2,6 @@ import { BarChart3 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import ColorStats from './color-stats'
 import AromaStats from './aroma-stats'
-// import { statistics } from '../mockStatictics'
 import FlavorStats from './flavor-stats'
 import TasteCharacteristicsStats from './taste-characteristics-stats'
 import { useParams } from 'react-router-dom'
@@ -13,7 +12,7 @@ export const WineStatsView = () => {
   const { t } = useTranslation('wines')
 
   const { id } = useParams<{ id: string }>()
-  const { wine /*, isLoading, refetch*/, isEmptyData } = useWineDetail(id!)
+  const { wine, isEmptyData } = useWineDetail(id!)
 
   const stats = wine?.statistics
 

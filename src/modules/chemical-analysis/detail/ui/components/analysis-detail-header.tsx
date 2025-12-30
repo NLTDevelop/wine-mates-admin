@@ -1,11 +1,11 @@
 import { useContrastText } from '@/hooks/ui/useContrastText'
-import { IWineAnalysisDetail } from '../../entities/types'
 import { useTranslation } from 'react-i18next'
 import { Badge } from '@/UIKit/shadcn/ui/badge'
 import { Calendar, Grape, Wine } from 'lucide-react'
+import { IWineForAnalysis } from '@/modules/chemical-analysis/list/entities/types'
 
 interface AnalysisDetailHeaderProps {
-  analyzedWine: IWineAnalysisDetail
+  analyzedWine: IWineForAnalysis
 }
 export const AnalysisDetailHeader = ({ analyzedWine }: AnalysisDetailHeaderProps) => {
   const { t } = useTranslation('analysis')

@@ -1,35 +1,30 @@
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAnalyzedWineDetail } from '../../presenters/useAnalyzedWineDetail'
-import { useReviews } from '../../presenters/useReviews'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { Card } from '@/UIKit/shadcn/ui/card'
-import { MessageSquare } from 'lucide-react'
-import { AnalyzedWineDetailContent } from './analyzed-wine-detail-content'
-import { ReviewsContent } from './reviews-content'
+import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { ContentLayout } from '@/layout/components/content-layout'
 import { AnalysisDetailHeader } from './analysis-detail-header'
 import { cn } from '@/lib/utils'
+import { TastingContentView } from './taste-detail/tasting-content-view'
+import { ChemicalAnalysisView } from './chemical-detail/chemical-analysis-view'
+import { SelectDate } from './chemical-detail/select-date'
+import { CharacteristicsCharts } from './chemical-detail/characteristics-charts'
+import { SkeletonAnalysisView } from './skeleton-analysis-view'
+import { ReviewsContent } from './reviews-content'
 
 export const AnalysisDetailView = () => {
   const { t } = useTranslation('analysis')
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
-  const { analyzedWine, currentSnapshot, sensoryAnalysis, chartData, selectedDate, availableDates, tabs, activeTab, setActiveTab /*, isLoading*/, chartRange, setChartRange, handleDateChange } =
-    useAnalyzedWineDetail(id!)
-
-  const { reviews } = useReviews()
-
-  const isLoading = false
-
-  console.log("selectedDate->", selectedDate)
+  const { wine, sensory, selectedDate, chemical, charts, chartRange, setChartRange, setSelectedDate, availableDates, isLoading, reviews } = useAnalyzedWineDetail(id!)
 
   if (isLoading) {
-    return <p>сделаю скелетон</p>
+    return <SkeletonAnalysisView />
   }
 
-  if (!analyzedWine) {
+  if (!Object.keys(wine).length) {
     return (
       <div className="container mx-auto px-4 py-6 max-w-4xl">
         <div className="text-center py-12">
@@ -40,73 +35,28 @@ export const AnalysisDetailView = () => {
     )
   }
 
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'analysis':
-        return (
-          <AnalyzedWineDetailContent
-            analyzedWine={analyzedWine}
-            currentSnapshot={currentSnapshot}
-            chartData={chartData}
-            selectedDate={selectedDate}
-            availableDates={availableDates}
-            chartRange={chartRange}
-            onDateChange={handleDateChange}
-            onChartRangeChange={setChartRange}
-            // analysisDates={availableDates}
-            sensoryData={sensoryAnalysis}
-          />
-        )
-
-      case 'reviews':
-        return (
-          <div className="space-y-6">
-            {reviews && reviews.length > 0 ? (
-              <div className="space-y-4">
-                <ReviewsContent />
-              </div>
-            ) : (
-              <Card className="text-center py-12">
-                <MessageSquare className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <h4 className="text-lg font-medium text-gray-700 mb-2">{t('no_reviews') || 'No reviews yet'}</h4>
-              </Card>
-            )}
-          </div>
-        )
-
-      default:
-        return null
-    }
-  }
-
   return (
     <ContentLayout title={t('analysis_detail')} handleGoBack={() => navigate(-1)} isGoBack>
       <div className={cn('mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-6xl', !isLoading ? 'fade-in' : '')}>
         <div className="space-y-6">
           <Card className="p-6">
-            <AnalysisDetailHeader analyzedWine={analyzedWine} />
+            <AnalysisDetailHeader analyzedWine={wine} />
+
+            <CardContent className="space-y-6">
+              <TastingContentView analysisDates={availableDates} sensoryData={sensory} selectedDate={selectedDate} onDateChange={setSelectedDate} />
+              <ChemicalAnalysisView currentSnapshot={chemical} />
+              <SelectDate chartRange={chartRange} availableDates={availableDates} onChartRangeChange={setChartRange} onDateChange={setSelectedDate} selectedDate={selectedDate} />
+              {charts && charts.graphs.length > 0 ? (
+                <CharacteristicsCharts charts={charts} />
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-gray-500">{t('no_data')}</p>
+                  <p className="text-sm text-gray-400 mt-2"> {t('chose_other_period')} </p>
+                </div>
+              )}
+              <ReviewsContent reviews={reviews} />
+            </CardContent>
           </Card>
-
-          <div className="flex justify-center space-x-1 mb-6">
-            {tabs.map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={cn(
-                  'flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all',
-                  activeTab === tab.id ? 'border-b-2 border-primary text-primary' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-                )}
-              >
-                {tab.icon}
-                <span>{tab.label}</span>
-                {tab.id === 'reviews' && reviews?.length > 0 && (
-                  <span className="inline-flex items-center justify-center h-4 min-w-4 p-1 pt-1 text-xs font-medium bg-primary text-primary-foreground rounded-full">{reviews.length}</span>
-                )}
-              </button>
-            ))}
-          </div>
-
-          {renderTabContent()}
         </div>
       </div>
     </ContentLayout>

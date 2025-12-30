@@ -1,5 +1,5 @@
 import { api } from '@/services'
-import { StatsFilters, StatsTableResponse, StatsResponse, IOverallStats } from './types'
+import { StatsFilters, StatsTableResponse, IOverallStats, GenderData } from './types'
 import { STATS_ENDPOINTS } from './stats-endpoints'
 
 export const statsService = {
@@ -7,5 +7,5 @@ export const statsService = {
 
   summary: (filters: StatsFilters): Promise<IOverallStats> => api.get(STATS_ENDPOINTS.SUMMARY, { params: filters }).then(response => response.data),
 
-  activity: (filters: StatsFilters): Promise<StatsResponse[]> => api.get(STATS_ENDPOINTS.ACTIVITY, { params: filters }).then(response => response.data),
+  activity: (filters: StatsFilters): Promise<GenderData> => api.get(STATS_ENDPOINTS.ACTIVITY, { params: filters }).then(response => response.data),
 }

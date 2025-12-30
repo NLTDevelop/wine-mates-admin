@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/UIKit/shadcn/ui/card'
-import { IBaseInfo, IVisual } from '../../../entities/types'
 import { useTranslation } from 'react-i18next'
 import { useContrastText } from '@/hooks/ui/useContrastText'
+import { IBaseInfo, IVisual } from '../../../entities/chemical_types'
 
 interface VisualAnalysisProps {
   visual: IVisual
@@ -11,11 +11,11 @@ export const VisualAnalysis = ({ visual }: VisualAnalysisProps) => {
   const { t } = useTranslation('wines')
 
   const renderContent = (char: IBaseInfo | number, label: string) => {
-    const { textColorClass } = useContrastText(typeof char !== 'number' ? char.colorHex : "'#f3efe7")
+    const { textColorClass } = useContrastText(typeof char !== 'number' ? char.colorHex : '#f3efe7')
     return (
-      <div className={`flex items-start gap-1 p-2 rounded-md ${textColorClass}`} style={{ backgroundColor: typeof char !== 'number' ? char.colorHex : "'#f3efe7" }}>
+      <div className={`flex items-start gap-1 p-2 rounded-md ${textColorClass}`} style={{ backgroundColor: typeof char !== 'number' ? char.colorHex : '#f3efe7' }}>
         <label className="flex-1">{t(`colors.${label}`)}:</label>
-        {typeof char !== 'number' ? <p className="">{char.name}</p> : <p className="">{char}</p>}
+        {typeof char !== 'number' ? <p>{char.name}</p> : <p>{char}</p>}
       </div>
     )
   }

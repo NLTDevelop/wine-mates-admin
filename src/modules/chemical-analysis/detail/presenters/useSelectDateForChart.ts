@@ -32,7 +32,6 @@ export const useSelectDateForChart = ({ chartRange, availableDates }: UseSelectD
     }
 
     const uniqueDates = new Set<string>()
-
     availableDates.forEach(dateStr => {
       const date = new Date(dateStr)
 

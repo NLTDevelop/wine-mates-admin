@@ -98,7 +98,7 @@ export const WineDetailView: React.FC = () => {
           <div className="space-y-6">
             {reviews && reviews.length > 0 ? (
               <div className="space-y-4">
-                <ReviewsSection  wineId={id}/>
+                <ReviewsSection wineId={id} />
               </div>
             ) : (
               <Card className="text-center py-12">

@@ -5,12 +5,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Wine } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { VisualAnalysis } from './visual-analysis'
-import { TasteHistoryResponse } from '../../../entities/types'
 import { TasteAnalysis } from './taste-analysis'
 import { AromaAnalysis } from './aroma-analysis'
+import { ISensory } from '../../../entities/chemical_types'
 
 interface TastingContentProps {
-  sensoryData?: TasteHistoryResponse
+  sensoryData?: ISensory
   selectedDate: string
   analysisDates: string[]
   onDateChange?: (date: string) => void
@@ -31,12 +31,6 @@ export const TastingContentView: React.FC<TastingContentProps> = ({ sensoryData,
       }
     }
   }, [selectedDate])
-
-  // const handleDateChange = (date: string) => {
-  //   if (onDateChange) {
-  //     onDateChange(date)
-  //   }
-  // }
 
   if (isLoading) {
     return <p>TODO skeleton</p>

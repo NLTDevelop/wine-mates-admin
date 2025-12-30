@@ -1,7 +1,7 @@
 import { api } from '@/services'
 import { buildUrl } from '@/lib/utils'
 import { WINE_LIST_ENDPOINTS } from './wine-list-endpoints'
-import { ConfirmWineParams, CreateWineRequest, IReview, IReviewDetail, IWines, ReviewFilters, ReviewsResponse, UpdateWineListParams, WineFilters, WinesResponse } from './types/types'
+import { ConfirmWineParams, CreateWineRequest, IReviewDetail, IWines, ReviewFilters, ReviewsResponse, UpdateWineListParams, WineFilters, WinesResponse } from './types/types'
 import { WineFormData } from '../../create/wine/presenters/wine-form-schema'
 import { mapFormDataToUpdateRequestSimple } from '../../create/wine/presenters/useWineForm'
 
@@ -51,5 +51,5 @@ export const wineListService = {
 
   reviews: (filters: ReviewFilters): Promise<ReviewsResponse> => api.get(WINE_LIST_ENDPOINTS.RATES, { params: filters }).then(response => response.data),
 
-  review_detail: (id: string | number): Promise<{data: IReviewDetail}> => api.get(buildUrl(WINE_LIST_ENDPOINTS.RATE_DETAIL, { id })),
+  review_detail: (id: string | number): Promise<{ data: IReviewDetail }> => api.get(buildUrl(WINE_LIST_ENDPOINTS.RATE_DETAIL, { id })),
 }

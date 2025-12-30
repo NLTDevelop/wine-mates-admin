@@ -45,13 +45,12 @@ export const useStats = () => {
 
     statsData: summary.statsData,
     aggregatedData: summary.statsData,
-    // overallStats: summary.overallStats,
+    overallStats: summary.overallStats,
     ageGroups: summary.ageGroups,
 
-    // isLoading: table.isLoading || summary.isLoading,
-    // isTableLoading: table.isLoading,
+    isLoading: table.isLoading || summary.isLoading,
+    isTableLoading: table.isLoading,
     isSummaryLoading: summary.isLoadingOverallStats,
-    // isError: table.isError || summary.isError,
 
     setActiveTab: handleTabChange,
     setSelectedYear: handleYearChange,

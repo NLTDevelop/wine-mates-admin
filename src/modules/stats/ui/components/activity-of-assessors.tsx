@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/UIKit/shadcn/ui/card
 import { TabsContent } from '@/UIKit/shadcn/ui/tabs'
 import { Mars, Venus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { Skeleton } from '@/UIKit/shadcn/ui/skeleton'
 
 interface ActivityOfAssessorsProps {
   ageGroups: string[]
@@ -11,11 +12,12 @@ interface ActivityOfAssessorsProps {
   selectedYear: string
   selectedGender?: 'male' | 'female' | 'all'
   years: number[]
+  isLoading: boolean
 }
 
 const MAX_RATE = 5
 
-export const ActivityOfAssessors = ({ ageGroups, aggregatedData, selectedYear, years, selectedGender }: ActivityOfAssessorsProps) => {
+export const ActivityOfAssessors = ({ ageGroups, aggregatedData, selectedYear, years, selectedGender, isLoading }: ActivityOfAssessorsProps) => {
   const { t } = useTranslation('stats')
 
   const genderConfigs = [
@@ -33,7 +35,7 @@ export const ActivityOfAssessors = ({ ageGroups, aggregatedData, selectedYear, y
     },
   ]
 
-  if (Object.keys(aggregatedData).length === 0) {
+  if (Object.keys(aggregatedData || {}).length === 0 && !isLoading) {
     return (
       <TabsContent value="heatmap">
         <Card>
@@ -68,6 +70,7 @@ export const ActivityOfAssessors = ({ ageGroups, aggregatedData, selectedYear, y
                   </div>
                 ))}
               </div>
+
               {genderConfigs.map(({ gender, icon, bgClass, isVisible }) => {
                 if (!isVisible) return null
 
@@ -77,8 +80,14 @@ export const ActivityOfAssessors = ({ ageGroups, aggregatedData, selectedYear, y
                       {icon}
                       <span>{t(gender)}</span>
                     </div>
+
                     {ageGroups.map((ageGroup, idx) => {
-                      const data = aggregatedData[gender]?.[ageGroup]
+                      const data = aggregatedData?.[gender]?.[ageGroup]
+
+                      if (isLoading) {
+                        return <Skeleton key={`${gender}-${ageGroup}-${idx}`} className="h-16 w-full rounded-lg" />
+                      }
+
                       if (!data) {
                         return (
                           <div key={`${gender}-${ageGroup}-${idx}`} className="flex items-center justify-center">
@@ -90,7 +99,7 @@ export const ActivityOfAssessors = ({ ageGroups, aggregatedData, selectedYear, y
                       return (
                         <div
                           key={`${gender}-${ageGroup}-${idx}`}
-                          className="text-center p-3 rounded-lg"
+                          className="text-center p-3 rounded-lg transition-all duration-300"
                           style={{
                             backgroundColor: getHeatmapColor(data.averageRating, MAX_RATE),
                             color: data.averageRating > MAX_RATE ? 'white' : 'black',

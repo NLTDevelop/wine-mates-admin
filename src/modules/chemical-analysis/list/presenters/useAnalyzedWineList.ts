@@ -9,7 +9,6 @@ import { mockWineForAnalysisResponse } from '../entities/mockWineForAnalysisResp
 export const useAnalyzedWineList = () => {
   const { filters, setFilters, resetFilters } = useAnalysisStore()
 
-  // const [selectedWineId, setSelectedWineId] = useState<string | null>(null)
   const [searchValue, setSearchValue] = useState<string>('')
 
   const analysisQuery: UseQueryResult<WineForAnalysisResponse | undefined, Error> = useQuery(analysisQueries.list(filters))
@@ -17,13 +16,6 @@ export const useAnalyzedWineList = () => {
   const { debouncedWrapper } = useDebounce((searchValue: string) => {
     setFilters({ search: searchValue, page: 1 })
   }, 500)
-
-  // const findAnalysesById = useCallback(
-  //   (wineId: string) => {
-  //     return analysisQuery.data?.rows.find((wine: IWineForAnalysis) => wine.id === wineId)
-  //   },
-  //   [analysisQuery.data?.rows]
-  // )
 
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

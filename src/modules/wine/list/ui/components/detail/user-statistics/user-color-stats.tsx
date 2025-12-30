@@ -20,7 +20,7 @@ export const UserColorStats = ({ color }: UserColorStatsProps) => {
                   <div className="h-4 w-4 rounded-full" style={{ backgroundColor: color.shade.colorHex }} />
                   <span className="">{color.shade.name}</span>
                   <div className="flex items-center gap-1 px-2 py-1 rounded border border-input/40">
-                  <span className="text-sm font-medium">{color.shade.tone}</span>
+                    <span className="text-sm font-medium">{color.shade.tone}</span>
                   </div>
                 </div>
               </div>

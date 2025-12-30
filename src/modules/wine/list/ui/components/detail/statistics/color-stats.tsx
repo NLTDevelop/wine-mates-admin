@@ -37,7 +37,7 @@ export default function ColorStats({ topColor, height = 12 }: ColorStatsProps) {
         })}
       </div>
 
-       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         {sortedColors.map((color, idx) => {
           const totalShadesInThisColor = useMemo(() => color.shades?.reduce((sum, shade) => sum + (shade.userCount || 0), 0) || 0, [color.shades])
 

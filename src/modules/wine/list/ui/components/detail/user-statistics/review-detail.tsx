@@ -27,11 +27,9 @@ const getPluralForm = (count: number): 'one' | 'few' | 'many' => {
 export const ReviewDetail = ({ review, createdAt, detail, isLoading }: ReviewDetailProps) => {
   const { t } = useTranslation('rate')
 
-    if (isLoading) {
+  if (isLoading) {
     return <UserStatSkeleton />
   }
-
-  console.log(review)
 
   return (
     <div className="space-y-4 pr-4 mb-6">

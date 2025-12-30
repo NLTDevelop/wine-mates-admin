@@ -1,5 +1,6 @@
-import { ReviewFilters, WineFilters } from '@/modules/wine/list/entities/types/types'
+import { WineFilters } from '@/modules/wine/list/entities/types/types'
 import { analysisService } from './analysis-service'
+import { DetailFilters } from '../detail/entities/chemical_types'
 
 export const analysisQueries = {
   list: (filters: WineFilters) => ({
@@ -7,14 +8,20 @@ export const analysisQueries = {
     queryFn: () => analysisService.list(filters),
   }),
 
-  detail: (wineId: string | number) => ({
-    queryKey: ['analysis', 'detail'],
-    queryFn: () => analysisService.detail(wineId),
-    enabled: !!wineId,
-  }),
+  detail: (wineId: string | number, filters: DetailFilters) => ({
+    queryKey: ['analysis', 'detail', filters, wineId],
+    queryFn: () => {
+      const params: any = {}
 
-  reviews: (filters: ReviewFilters) => ({
-    queryKey: ['analysis', 'reviews', filters],
-    queryFn: () => analysisService.reviews(filters),
+      if (filters.range === 'day') {
+        params.date = filters.value
+      } else {
+        params.range = filters.range
+        params.period = filters.value
+      }
+
+      return analysisService.detail(wineId, params)
+    },
+    enabled: !!wineId,
   }),
 }

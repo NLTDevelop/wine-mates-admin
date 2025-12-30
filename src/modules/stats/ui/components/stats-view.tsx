@@ -24,7 +24,8 @@ export function StatsView() {
     tableFilters,
     onChangePagination,
     resetAllFilters,
-    isSummaryLoading
+    isSummaryLoading,
+    isLoading,
   } = useStats()
 
   const renderDescription = () => (
@@ -42,10 +43,10 @@ export function StatsView() {
 
   return (
     <div className="space-y-6 ">
-      <ContentLayout title={t('grade_stats')} description={renderDescription()}>
+      <ContentLayout title={t('grade_stats')} description={years.length > 0 ? renderDescription() : null}>
         <div className="w-auto mx-auto xl:w-4/5 pt-4">
           <Selects selectedYear={selectedYear} setSelectedYear={setSelectedYear} years={years} selectedGender={selectedGender} setSelectedGender={setSelectedGender} resetFilters={resetAllFilters} />
-          <CommonStatsCard overallStats={overallStats} isLoading={isSummaryLoading}/>
+          <CommonStatsCard overallStats={overallStats} isLoading={isSummaryLoading} />
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full md:w-auto sm:grid-cols-3 grid-cols-1  my-6">
@@ -54,10 +55,10 @@ export function StatsView() {
               <TabsTrigger value="detailed">{t('detailed_table')}</TabsTrigger>
             </TabsList>
             <TabsContent value="overview" className="space-y-6">
-              <DistributionByAgeGroups selectedYear={selectedYear} years={years} ageGroups={ageGroups} data={statsData} />
+              <DistributionByAgeGroups selectedYear={selectedYear} years={years} ageGroups={ageGroups} data={statsData} genderFilter={selectedGender} isLoading={isLoading} />
             </TabsContent>
             <TabsContent value="heatmap">
-              <ActivityOfAssessors ageGroups={ageGroups} aggregatedData={aggregatedData} selectedYear={selectedYear} years={years} selectedGender={selectedGender} />
+              <ActivityOfAssessors ageGroups={ageGroups} aggregatedData={aggregatedData} selectedYear={selectedYear} years={years} selectedGender={selectedGender} isLoading={isLoading} />
             </TabsContent>
             <TabsContent value="detailed">
               <TableStats

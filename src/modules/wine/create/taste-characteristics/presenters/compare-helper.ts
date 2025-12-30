@@ -20,12 +20,6 @@ export const areLevelsEqual = (levels1: LevelItem[], levels2: LevelItem[]): bool
       return false
     }
 
-    // const isEnabled1 = level1.isEnabled ?? true
-    // const isEnabled2 = level2.isEnabled ?? true
-    // if (isEnabled1 !== isEnabled2) {
-    //   return false
-    // }
-
     const sortNumber1 = level1.sortNumber ?? 0
     const sortNumber2 = level2.sortNumber ?? 0
     if (sortNumber1 !== sortNumber2) {

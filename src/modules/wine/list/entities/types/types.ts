@@ -1,8 +1,7 @@
 import { BaseWineColor } from '@/modules/wine/create/general/entities/types'
 import { WineFormData } from '@/modules/wine/create/wine/presenters/wine-form-schema'
 import { TasteCharacteristic, TopAroma, TopColor, TopFlavor } from './statistics-types'
-import { IBaseInfo } from '@/modules/chemical-analysis/detail/entities/types'
-import { boolean } from 'zod'
+import { IBaseInfo } from '@/modules/chemical-analysis/detail/entities/chemical_types'
 
 export interface WinesResponse {
   rows: IWines[]

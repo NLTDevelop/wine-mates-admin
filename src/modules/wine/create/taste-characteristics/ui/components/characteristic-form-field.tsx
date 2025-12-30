@@ -164,7 +164,7 @@ export const CharacteristicFormFields = ({ formData, onFormDataChange, isLoading
 
         <div>
           <label className="text-sm font-medium mb-2 block">{t('taste_characteristics.levels')} *</label>
-          <LevelSwitcher value={formData.qtyLevels || 3} onChange={handleQtyLevelsChange} />
+          <LevelSwitcher value={formData.qtyLevels || 2} onChange={handleQtyLevelsChange} />
           <LevelsManager levels={formData?.levels || []} onLevelsChange={levels => onFormDataChange('levels', levels)} onReorder={onReorder} />
         </div>
       </div>

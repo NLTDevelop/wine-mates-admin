@@ -2,11 +2,10 @@ import { Separator } from '@/UIKit/shadcn/ui/separator'
 import { Skeleton } from '@/UIKit/shadcn/ui/skeleton'
 
 export const UserStatSkeleton = () => {
-  
   return (
     <div className="space-y-4 pr-4 mb-6">
       <Skeleton className="h-4 w-1/4" />
-      
+
       <div className="flex items-center gap-2 mb-3">
         <Skeleton className="h-8 w-8 rounded-full" />
         <div className="space-y-2 flex-1">
@@ -24,7 +23,7 @@ export const UserStatSkeleton = () => {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4 mt-4">
-          {[1, 2, 3, 4].map((item) => (
+          {[1, 2, 3, 4].map(item => (
             <div key={item} className="text-center p-1 bg-white/10 rounded-lg">
               <Skeleton className="h-8 w-12 mx-auto mb-1 bg-gray-700" />
               <Skeleton className="h-4 w-16 mx-auto bg-gray-700" />
@@ -33,7 +32,7 @@ export const UserStatSkeleton = () => {
         </div>
       </div>
 
-      {[1, 2, 3, 4].map((section) => (
+      {[1, 2, 3, 4].map(section => (
         <div key={section}>
           <div className="space-y-4 p-4 bg-gray-50 rounded-xl">
             <Skeleton className="h-6 w-32" />
