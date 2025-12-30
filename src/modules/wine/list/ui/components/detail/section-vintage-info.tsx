@@ -19,16 +19,7 @@ export const VintageInfoSection: React.FC<{ wine: IWines; onVintageChange?: (win
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
-  //mock
-
-  const vintages = [
-    { wineId: 92, vintage: 2055 },
-    { wineId: 137, vintage: 2045 },
-    { wineId: 138, vintage: 2022 },
-    { wineId: 93, vintage: 214 },
-  ]
-
-  // const vintages = wine?.vintages || []
+  const vintages = wine?.vintages || []
 
   const schema = createVintageFormSchema()
   type VintageFormSchemaType = z.infer<typeof schema>
@@ -69,7 +60,7 @@ export const VintageInfoSection: React.FC<{ wine: IWines; onVintageChange?: (win
         {t('vintage_info')}
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className='flex items-end gap-6 border-b border-input'>
+        <div className="flex items-end gap-6 border-b border-input">
           <span className="text-sm font-medium text-gray-500 flex-1 pb-2">{t('table.vintageconfig')}</span>
 
           <Form {...form}>

@@ -37,6 +37,7 @@ export const useCreateTasteCharacteristic = ({ onCreateTasteCharacteristic, isLo
     translations: [],
     isPremium: false,
     sortNumber: 1,
+    qtyLevels: 2,
   }
   const [formData, setFormData] = useState<CreateWineTasteCharacteristicParams>(initialData)
 
@@ -52,6 +53,7 @@ export const useCreateTasteCharacteristic = ({ onCreateTasteCharacteristic, isLo
         colorHex: formData.colorHex,
         levels: formData.levels,
         isPremium: false,
+        qtyLevels: formData.qtyLevels,
       }
       onCreateTasteCharacteristic(characteristicDataForApi)
       setFormData(initialData)

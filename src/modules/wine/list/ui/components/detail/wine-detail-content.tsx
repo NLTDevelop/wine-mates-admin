@@ -9,7 +9,6 @@ interface WineDetailContentProps {
 }
 
 export const WineDetailContent: React.FC<WineDetailContentProps> = ({ wine, onVintageChange }) => {
-
   return (
     <Card className="space-y-6">
       <BasicInfoSection wine={wine} />

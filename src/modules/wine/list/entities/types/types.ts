@@ -1,6 +1,7 @@
 import { BaseWineColor } from '@/modules/wine/create/general/entities/types'
 import { WineFormData } from '@/modules/wine/create/wine/presenters/wine-form-schema'
 import { TasteCharacteristic, TopAroma, TopColor, TopFlavor } from './statistics-types'
+import { IBaseInfo } from '@/modules/chemical-analysis/detail/entities/chemical_types'
 
 export interface WinesResponse {
   rows: IWines[]
@@ -14,7 +15,7 @@ export interface WineFilters {
   search?: string
 }
 
-export type ReviewFilters = WineFilters & { wineId : number | null}
+export type ReviewFilters = WineFilters & { wineId: number | null }
 
 export interface TypeWine {
   id: number
@@ -29,7 +30,7 @@ export interface IVintage {
 }
 
 export interface IStatistics {
-  topColors: TopColor[]
+  topColor: TopColor[]
   topAromas: TopAroma[]
   topFlavors: TopFlavor[]
   tasteCharacteristics: TasteCharacteristic[]
@@ -50,7 +51,7 @@ export interface IWines {
   averageUserRating?: number
   averageExpertRating?: number
   totalReviews?: number
-  statistics?:IStatistics
+  statistics?: IStatistics
 }
 
 export interface CreateWineRequest {
@@ -103,22 +104,22 @@ export interface ImportWineParams {
 }
 
 export interface Avatar {
-  smallUrl: string;
-  mediumUrl: string;
-  originalUrl: string;
+  smallUrl: string
+  mediumUrl: string
+  originalUrl: string
 }
 
 export interface ReviewUser {
-  id: number;
-  firstName: string;
-  lastName: string;
-  wineExperienceLevel: string;
-  avatar: Avatar | null;
+  id: number
+  firstName: string
+  lastName: string
+  wineExperienceLevel: string
+  avatar: Avatar | null
 }
 export interface IReview {
   id: number
-  userRating: number
-  expertRating: number
+  userRating?: number
+  expertRating?: number
   review: string
   createdAt: string
   user: ReviewUser
@@ -131,3 +132,28 @@ export interface ReviewsResponse {
   rows: IReview[]
 }
 
+export interface IBaseInfoCharacteristics extends IBaseInfo {
+  isPremium: boolean
+  selectedLevel: {
+    sortNumber: number
+    name: string
+  }
+}
+
+export interface IReviewDetail {
+  color: {
+    name: string
+    colorHex: string
+    mousse: number
+    perlage: number
+    appearance: number
+    shade: {
+      colorHex: string
+      name: string
+      tone: string
+    }
+  }
+  aromas: IBaseInfo[]
+  flavors: IBaseInfo[]
+  tasteCharacteristics: IBaseInfoCharacteristics[]
+}

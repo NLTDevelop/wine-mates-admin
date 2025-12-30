@@ -1,51 +1,8 @@
 import { useState, useMemo, useCallback } from 'react'
-import { GenderData, IOverallStats, StatsFilters/*, StatsResponse, StatsTableResponse, WineRating*/ } from '../entities/types'
-// import { useQuery, UseQueryResult } from '@tanstack/react-query'
-// import { statsQueries } from '../entities/stats-queries'
+import { GenderData, StatsFilters, StatsTableResponse } from '../entities/types'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
-
-const mockData = {
-  data: {
-    count: 2,
-    totalPages: 1,
-    rows: [
-      {
-        year: 2025,
-        data: {
-          male: {
-            '18-25': { ratingsCount: 150, averageRating: 4.2 },
-            '25-45': { ratingsCount: 320, averageRating: 3.8 },
-            '46-60': { ratingsCount: 210, averageRating: 2.5 },
-            '60+': { ratingsCount: 95, averageRating: 1.9 },
-          },
-          female: {
-            '18-25': { ratingsCount: 180, averageRating: 0.5 },
-            '25-45': { ratingsCount: 290, averageRating: 4.1 },
-            '46-60': { ratingsCount: 170, averageRating: 4.7 },
-            '60+': { ratingsCount: 80, averageRating: 5.0 },
-          },
-        },
-      },
-      {
-        year: 2024,
-        data: {
-          male: {
-            '18-25': { ratingsCount: 130, averageRating: 4.9 },
-            '25-45': { ratingsCount: 300, averageRating: 3.6 },
-            '46-60': { ratingsCount: 190, averageRating: 3.3 },
-            '60+': { ratingsCount: 85, averageRating: 4.7 },
-          },
-          female: {
-            '18-25': { ratingsCount: 160, averageRating: 4.3 },
-            '25-45': { ratingsCount: 270, averageRating: 2.9 },
-            '46-60': { ratingsCount: 150, averageRating: 4.5 },
-            '60+': { ratingsCount: 75, averageRating: 4.9 },
-          },
-        },
-      },
-    ],
-  },
-}
+import { useQuery, UseQueryResult } from '@tanstack/react-query'
+import { statsQueries } from '../entities/stats-queries'
 
 export const useTableData = () => {
   const [selectedYear, setSelectedYear] = useState<string>('all')
@@ -57,8 +14,7 @@ export const useTableData = () => {
     gender: undefined,
   })
 
-//   const statsTableQuery: UseQueryResult<StatsTableResponse | undefined, Error> = useQuery(statsQueries.list(filters))
-    const statsTableQuery = mockData
+  const statsTableQuery: UseQueryResult<StatsTableResponse | undefined, Error> = useQuery(statsQueries.list(filters))
 
   const ageGroups = ['18-25', '25-45', '46-60', '60+']
 
@@ -122,37 +78,6 @@ export const useTableData = () => {
     return result
   }, [filteredData, selectedGender, ageGroups])
 
-  const overallStats: IOverallStats = useMemo(() => {
-    const allRatings = Object.values(aggregatedData).flatMap((d: any) => Array(d.ratingsCount).fill(d.averageRating))
-
-    const totalRatings = allRatings.length
-    const averageRating = totalRatings > 0 ? allRatings.reduce((a: number, b: number) => a + b, 0) / totalRatings : 0
-
-    let mostActive = { ageGroup: '', gender: '', count: 0 }
-    Object.values(aggregatedData).forEach((d: any) => {
-      if (d.ratingsCount > mostActive.count) {
-        mostActive = {
-          ageGroup: d.ageGroup,
-          gender: d.gender,
-          count: d.ratingsCount,
-        }
-      }
-    })
-
-    let highestRating = { ageGroup: '', gender: '', rating: 0 }
-    Object.values(aggregatedData).forEach((d: any) => {
-      if (d.averageRating > highestRating.rating) {
-        highestRating = {
-          ageGroup: d.ageGroup,
-          gender: d.gender,
-          rating: d.averageRating,
-        }
-      }
-    })
-
-    return { totalRatings, averageRating, mostActive, highestRating }
-  }, [aggregatedData])
-
   const resetFilters = useCallback(() => {
     setSelectedYear('all')
     setSelectedGender('all')
@@ -163,10 +88,9 @@ export const useTableData = () => {
   }, [])
 
   return {
-    totalCount: mockData.data?.count || 0,
-    // totalCount: statsTableQuery.data?.count || 0,
-    // isLoading: statsTableQuery.isLoading,
-    // isError: statsTableQuery.isError,
+    totalCount: statsTableQuery.data?.count || 0,
+    isLoading: statsTableQuery.isLoading,
+    isError: statsTableQuery.isError,
 
     selectedYear,
     selectedGender,
@@ -176,7 +100,6 @@ export const useTableData = () => {
     years,
     filteredData,
     aggregatedData,
-    overallStats,
 
     setSelectedYear: handleYearChange,
     setSelectedGender: handleGenderChange,

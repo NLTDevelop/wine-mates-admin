@@ -159,7 +159,12 @@ export const TasteCharacteristicsPaletteManager = ({ cachedColors, colorsLoading
                     >
                       {isGroupOpen && !isGroupFormOpen && (
                         <div className="mt-4">
-                          <CharacteristicLevelsDisplay levels={group.levels || []} group={group} colorBadge={{ backgroundColor: group.colorHex, color: cardTextColorClass }} />
+                          <CharacteristicLevelsDisplay
+                            levels={group.levels || []}
+                            group={group}
+                            colorBadge={{ backgroundColor: group.colorHex, color: cardTextColorClass }}
+                            qtyLevels={group.qtyLevels}
+                          />
                         </div>
                       )}
 

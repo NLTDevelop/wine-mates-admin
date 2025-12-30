@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/UIKit/shadcn/ui/card
 import { TabsContent } from '@/UIKit/shadcn/ui/tabs'
 import { Mars, Venus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { Skeleton } from '@/UIKit/shadcn/ui/skeleton'
 
 interface ActivityOfAssessorsProps {
   ageGroups: string[]
@@ -11,14 +12,30 @@ interface ActivityOfAssessorsProps {
   selectedYear: string
   selectedGender?: 'male' | 'female' | 'all'
   years: number[]
+  isLoading: boolean
 }
 
 const MAX_RATE = 5
 
-export const ActivityOfAssessors = ({ ageGroups, aggregatedData, selectedYear, years, selectedGender }: ActivityOfAssessorsProps) => {
+export const ActivityOfAssessors = ({ ageGroups, aggregatedData, selectedYear, years, selectedGender, isLoading }: ActivityOfAssessorsProps) => {
   const { t } = useTranslation('stats')
 
-  if (Object.keys(aggregatedData).length === 0) {
+  const genderConfigs = [
+    {
+      gender: 'male' as const,
+      icon: <Mars />,
+      bgClass: 'bg-blue-50 dark:bg-blue-950/20',
+      isVisible: selectedGender !== 'female',
+    },
+    {
+      gender: 'female' as const,
+      icon: <Venus />,
+      bgClass: 'bg-pink-50 dark:bg-pink-950/20',
+      isVisible: selectedGender !== 'male',
+    },
+  ]
+
+  if (Object.keys(aggregatedData || {}).length === 0 && !isLoading) {
     return (
       <TabsContent value="heatmap">
         <Card>
@@ -54,91 +71,50 @@ export const ActivityOfAssessors = ({ ageGroups, aggregatedData, selectedYear, y
                 ))}
               </div>
 
-              {selectedGender !== 'female' && (
-                <div className="grid grid-cols-5 gap-2 mb-4 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
-                  <div className="flex gap-2 items-center font-medium">
-                    <span>
-                      <Mars />
-                    </span>
-                    <span>{t('male')}</span>
-                  </div>
-                  {ageGroups.map((ageGroup, idx) => {
-                    const data = aggregatedData[`${selectedYear === 'all' ? years[0] : selectedYear}-male-${ageGroup}`]
-                    if (!data)
+              {genderConfigs.map(({ gender, icon, bgClass, isVisible }) => {
+                if (!isVisible) return null
+
+                return (
+                  <div key={gender} className={`grid grid-cols-5 gap-2 mb-4 p-3 ${bgClass} rounded-lg`}>
+                    <div className="flex gap-2 items-center font-medium">
+                      {icon}
+                      <span>{t(gender)}</span>
+                    </div>
+
+                    {ageGroups.map((ageGroup, idx) => {
+                      const data = aggregatedData?.[gender]?.[ageGroup]
+
+                      if (isLoading) {
+                        return <Skeleton key={`${gender}-${ageGroup}-${idx}`} className="h-16 w-full rounded-lg" />
+                      }
+
+                      if (!data) {
+                        return (
+                          <div key={`${gender}-${ageGroup}-${idx}`} className="flex items-center justify-center">
+                            <p>-</p>
+                          </div>
+                        )
+                      }
+
                       return (
-                        <div key={`${ageGroup}-${idx}`} className="text-center">
-                          -
+                        <div
+                          key={`${gender}-${ageGroup}-${idx}`}
+                          className="text-center p-3 rounded-lg transition-all duration-300"
+                          style={{
+                            backgroundColor: getHeatmapColor(data.averageRating, MAX_RATE),
+                            color: data.averageRating > MAX_RATE ? 'white' : 'black',
+                          }}
+                        >
+                          <div className="text-lg font-bold">{data.averageRating.toFixed(1)}</div>
+                          <div className="text-xs opacity-90">
+                            {data.ratingsCount} {t('grades')}
+                          </div>
                         </div>
                       )
-
-                    return (
-                      <NLTTooltip
-                        key={`${ageGroup}-${idx}`}
-                        delay={500}
-                        message={`${ageGroup} ${t('years')}: ${data.averageRating.toFixed(1)}/5 (${t('grade', { count: data.ratingsCount })})`}
-                        className={'bg-blue-500/85  max-w-[300px]'}
-                        trigger={
-                          <div
-                            className="text-center p-3 rounded-lg transition-all hover:scale-105 cursor-pointer"
-                            style={{
-                              backgroundColor: getHeatmapColor(data.averageRating, MAX_RATE),
-                              color: data.averageRating > MAX_RATE ? 'white' : 'black',
-                            }}
-                          >
-                            <div className="text-lg font-bold">{data.averageRating.toFixed(1)}</div>
-                            <div className="text-xs opacity-95">
-                              {data.ratingsCount} {t('grades')}
-                            </div>
-                          </div>
-                        }
-                      />
-                    )
-                  })}
-                </div>
-              )}
-
-              {selectedGender !== 'male' && (
-                <div className="grid grid-cols-5 gap-2 p-3 bg-pink-50 dark:bg-pink-950/20 rounded-lg">
-                  <div className="flex gap-2 items-center font-medium">
-                    <span>
-                      <Venus />
-                    </span>
-                    <span>{t('female')}</span>
+                    })}
                   </div>
-                  {ageGroups.map((ageGroup, idx) => {
-                    const data = aggregatedData[`${selectedYear === 'all' ? years[0] : selectedYear}-female-${ageGroup}`]
-                    if (!data)
-                      return (
-                        <div key={`${ageGroup}-${idx}`} className="text-center">
-                          -
-                        </div>
-                      )
-
-                    return (
-                      <NLTTooltip
-                        key={`${ageGroup}-${idx}`}
-                        delay={500}
-                        message={`${ageGroup} ${t('years')}: ${data.averageRating.toFixed(1)}/5 (${t('grade', { count: data.ratingsCount })})`}
-                        className={'bg-pink-500/85  max-w-[300px]'}
-                        trigger={
-                          <div
-                            className="text-center p-3 rounded-lg transition-all hover:scale-105 cursor-pointer"
-                            style={{
-                              backgroundColor: getHeatmapColor(data.averageRating, MAX_RATE),
-                              color: data.averageRating > MAX_RATE ? 'white' : 'black',
-                            }}
-                          >
-                            <div className="text-lg font-bold">{data.averageRating.toFixed(1)}</div>
-                            <div className="text-xs opacity-90">
-                              {data.ratingsCount} {t('grades')}
-                            </div>
-                          </div>
-                        }
-                      />
-                    )
-                  })}
-                </div>
-              )}
+                )
+              })}
 
               <div className="mt-6 mb-4 flex items-center justify-center space-x-4">
                 <div className="flex h-4 w-48 rounded-full overflow-hidden">
@@ -169,7 +145,7 @@ export const ActivityOfAssessors = ({ ageGroups, aggregatedData, selectedYear, y
 }
 
 const getHeatmapColor = (value: number, max: number) => {
-  const intensity = value / max
-  const hue = 120 * (1 - intensity)
+  const normalizedValue = Math.min(value / max, 1)
+  const hue = normalizedValue * 65
   return `hsl(${hue}, 70%, 50%)`
 }

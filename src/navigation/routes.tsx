@@ -9,8 +9,10 @@ import { AuthorizationView } from '@/modules/autorization'
 import { UsersDetailView, UsersView } from '@/modules/users/ui'
 import { FeaturesView } from '@/modules/features/ui'
 import { WineManagementView } from '@/modules/wine/create/dashboard/ui'
-import { WineDetailView,  WineView } from '@/modules/wine/list/ui'
-import { StatsView } from '@/modules/stats/ui/components/stats-view'
+import { WineDetailView, WineView } from '@/modules/wine/list/ui'
+import { StatsView } from '@/modules/stats/ui'
+import { AnalysisView } from '@/modules/chemical-analysis/list/ui'
+import { AnalysisDetailView } from '@/modules/chemical-analysis/detail/ui'
 
 const usersRoutes = [
   { path: PATHS.USERS, element: <UsersView /> },
@@ -26,6 +28,11 @@ const winesRoutes = [
 ]
 const winesStats = [{ path: PATHS.STATS, element: <StatsView /> }]
 
+const winesAnalysis = [
+  { path: PATHS.ANALYSIS, element: <AnalysisView /> },
+  { path: PATHS.ANALYSIS_DETAIL, element: <AnalysisDetailView /> },
+]
+
 export const Router: FC = () => {
   const routes = useRoutes([
     {
@@ -35,7 +42,7 @@ export const Router: FC = () => {
           <Layout />
         </PrivateRoutes>
       ),
-      children: [{ path: PATHS.HOME, element: <DashboardView />, index: true }, ...usersRoutes, ...featuresRoutes, ...winesRoutes, ...winesStats],
+      children: [{ path: PATHS.HOME, element: <DashboardView />, index: true }, ...usersRoutes, ...featuresRoutes, ...winesRoutes, ...winesStats, ...winesAnalysis],
     },
     {
       path: PATHS.LOGIN,

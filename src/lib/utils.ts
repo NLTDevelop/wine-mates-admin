@@ -16,6 +16,24 @@ export const buildUrl = (url: string, params?: Record<string, string | number>):
   }, url)
 }
 
+export const buildUrlWithDate = (url: string, params?: Record<string, string | number>): string => {
+  if (!params) return url
+
+  let result = url
+
+  if (params.id) {
+    const idRegex = new RegExp(`[\\{:]id\\}?`, 'g')
+    result = result.replace(idRegex, String(params.id))
+  }
+
+  if (params.date) {
+    const dateRegex = new RegExp(`[\\{:]date\\}?`, 'g')
+    result = result.replace(dateRegex, String(params.date))
+  }
+
+  return result
+}
+
 export const getCategoryLabel = (category: string): string => {
   const categoryLabels = {
     lover: i18n.t('users:lover'),

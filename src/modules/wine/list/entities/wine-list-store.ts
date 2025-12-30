@@ -44,7 +44,7 @@ export const useWineStore = createStoreDevToolsWrapper<WineState>(
       search: '',
       limit: DEFAULT_PAGINATION_LIMIT,
       page: 1,
-      wineId: null
+      wineId: null,
     },
 
     setWines: (wines: IWines[]) => set({ wines }, false, 'wine/setWines'),
@@ -94,8 +94,8 @@ export const useWineStore = createStoreDevToolsWrapper<WineState>(
         false,
         'wine/updateWine'
       ),
-      
-    setReviews: (reviews: IReview[]) => set({ reviews }, false, 'wine/setReviesw'),
+
+    setReviews: (reviews: IReview[]) => set({ reviews }, false, 'wine/setReviews'),
   }),
 
   'WineStore'

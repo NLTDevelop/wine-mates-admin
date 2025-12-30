@@ -6,10 +6,9 @@ interface UseVintageOptionsProps {
 }
 
 export const useVintageOptions = ({ vintages = [] }: UseVintageOptionsProps) => {
-
   const fetchOptions = useCallback(
     async (search?: string) => {
-      const options = vintages?.map((v) => ({
+      const options = vintages?.map(v => ({
         value: v.wineId.toString(),
         label: String(v.vintage),
       }))

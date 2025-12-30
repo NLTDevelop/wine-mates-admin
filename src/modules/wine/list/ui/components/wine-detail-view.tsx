@@ -12,7 +12,7 @@ import { EditWineForm } from '@/modules/wine/create/wine/ui/components/edit-wine
 import { ContentLayout } from '@/layout/components/content-layout'
 import { cn } from '@/lib/utils'
 import { useReviews } from '../../presenters/useReviews'
-import {  BarChart3, MessageSquare, Info} from 'lucide-react'
+import { BarChart3, MessageSquare, Info } from 'lucide-react'
 import { ReviewsSection } from './detail/reviews-section'
 
 type TabType = 'details' | 'statistics' | 'reviews'
@@ -30,7 +30,7 @@ export const WineDetailView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('details')
 
   const { wine, isLoading, refetch } = useWineDetail(id!)
-  const { reviews } = useReviews()
+  const { reviews } = useReviews(id!)
 
   const tabs = [
     { id: 'details' as TabType, label: t('wine_detail'), icon: <Info className="h-4 w-4" /> },
@@ -98,12 +98,12 @@ export const WineDetailView: React.FC = () => {
           <div className="space-y-6">
             {reviews && reviews.length > 0 ? (
               <div className="space-y-4">
-                <ReviewsSection />
+                <ReviewsSection wineId={id} />
               </div>
             ) : (
               <Card className="text-center py-12">
                 <MessageSquare className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <h4 className="text-lg font-medium text-gray-700 mb-2">{t('no_reviews') || 'No reviews yet'}</h4>
+                <h4 className="text-lg font-medium text-gray-700 mb-2">{t('no_reviews')}</h4>
               </Card>
             )}
           </div>
@@ -141,7 +141,7 @@ export const WineDetailView: React.FC = () => {
                 >
                   {tab.icon}
                   <span>{tab.label}</span>
-                  {tab.id === 'reviews' && reviews?.length > 0 && (
+                  {tab.id === 'reviews' && reviews && reviews?.length > 0 && (
                     <span className="inline-flex items-center justify-center h-4 min-w-4 p-1 pt-1 text-xs font-medium bg-primary text-primary-foreground rounded-full">{reviews.length}</span>
                   )}
                 </button>
