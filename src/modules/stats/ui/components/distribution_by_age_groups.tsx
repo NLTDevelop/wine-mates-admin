@@ -31,7 +31,7 @@ export const DistributionByAgeGroups = ({ selectedYear, years, ageGroups, data, 
             {!isLoading && genderFilter !== 'all' && <span className="ml-2 text-sm font-normal text-muted-foreground">({genderFilter === 'male' ? t('male_only') : t('female_only')})</span>}
           </CardTitle>
           {!isLoading && hasData && (
-            <Badge className="text-sm text-input bg-accent-foreground/80">{selectedYear === 'all' ? t('data_of_years', { count: years.length }) : t('data_of_year', { year: selectedYear })}</Badge>
+            <Badge className="text-sm text-input bg-accent-foreground/80">{selectedYear === 'all' ? t('data_of_years', { count: years.length }) : t('data_of_years', { slug: selectedYear })}</Badge>
           )}
         </div>
       </CardHeader>

@@ -40,9 +40,9 @@ export const ReviewsSection = ({ wineName, wineId }: ReviewsSectionProps) => {
           <Card
             key={review.id}
             onClick={() => reviewModal.onOpen({ reviewId: String(review.id), name: `${review.user.firstName} ${review.user.lastName}`, createdAt: review.createdAt, review: review.review })}
-            className="cursor-pointer"
+            className="cursor-pointer flex flex-col"
           >
-            <div className="h-full">
+            <div className="flex-1">
               <div className="flex items-start gap-2 ">
                 <p className="text-description">
                   {review.user?.firstName ?? ''} {review.user?.lastName ?? ''}
@@ -56,7 +56,7 @@ export const ReviewsSection = ({ wineName, wineId }: ReviewsSectionProps) => {
               <WineRate userRate={review.userRating} expertRate={review.expertRating} />
               <p>{review.review}</p>
             </div>
-            <p className="pb-2 text-gray-400 text-sm text-end">{formatTimeDate(review.createdAt)}</p>
+            <p className="pt-2 text-gray-400 text-sm text-end">{formatTimeDate(review.createdAt)}</p>
           </Card>
         ))}
       </div>

@@ -19,7 +19,7 @@ export const ChemicalIndicatorCard = ({ title, value, unit, icon }: ChemicalIndi
           {title} {icon}
         </CardTitle>
       </CardHeader>
-      <CardContent className="pt-4 !pb-0">{value ? <div className="text-2xl font-bold">{`${value} ${unit}`}</div> : <p>{t('no_data')}</p>}</CardContent>
+      <CardContent className="pt-4 !pb-0">{value ? <div className="text-2xl font-bold text-center">{`${value} ${unit}`}</div> : <p>{t('no_data')}</p>}</CardContent>
     </Card>
   )
 }

@@ -19,8 +19,8 @@ export const ReviewsContent = ({ reviews }: ReviewsContentProps) => {
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
         {reviews?.map(review => (
-          <Card key={review.id}>
-            <div className="h-full">
+          <Card key={review.id} className="flex flex-col">
+            <div className="flex-1">
               <div className="flex items-start gap-2 ">
                 <p className="text-description">
                   {review.user?.firstName ?? ''} {review.user?.lastName ?? ''}
@@ -29,7 +29,7 @@ export const ReviewsContent = ({ reviews }: ReviewsContentProps) => {
               <WineRate userRate={review.userRating} expertRate={review.expertRating} />
               <p>{review.review}</p>
             </div>
-            <p className="pb-2 text-gray-400 text-sm text-end">{formatTimeDate(review.createdAt)}</p>
+            <p className="pt-2 text-gray-400 text-sm text-end">{formatTimeDate(review.createdAt)}</p>
           </Card>
         ))}
       </div>
