@@ -13,6 +13,7 @@ import { WineDetailView, WineView } from '@/modules/wine/list/ui'
 import { StatsView } from '@/modules/stats/ui'
 import { AnalysisView } from '@/modules/chemical-analysis/list/ui'
 import { AnalysisDetailView } from '@/modules/chemical-analysis/detail/ui'
+import { AiPromtsView } from '@/modules/ai-promts/ui'
 
 const usersRoutes = [
   { path: PATHS.USERS, element: <UsersView /> },
@@ -32,6 +33,7 @@ const winesAnalysis = [
   { path: PATHS.ANALYSIS, element: <AnalysisView /> },
   { path: PATHS.ANALYSIS_DETAIL, element: <AnalysisDetailView /> },
 ]
+const aiPromts = [{ path: PATHS.AI_PROMTS, element: <AiPromtsView /> }]
 
 export const Router: FC = () => {
   const routes = useRoutes([
@@ -42,7 +44,7 @@ export const Router: FC = () => {
           <Layout />
         </PrivateRoutes>
       ),
-      children: [{ path: PATHS.HOME, element: <DashboardView />, index: true }, ...usersRoutes, ...featuresRoutes, ...winesRoutes, ...winesStats, ...winesAnalysis],
+      children: [{ path: PATHS.HOME, element: <DashboardView />, index: true }, ...usersRoutes, ...featuresRoutes, ...winesRoutes, ...winesStats, ...winesAnalysis, ...aiPromts],
     },
     {
       path: PATHS.LOGIN,

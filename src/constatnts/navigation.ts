@@ -1,4 +1,4 @@
-import { BarChart3, Beaker, Cog, Users, Wine } from 'lucide-react'
+import { BarChart3, Beaker, Brain, Cog, Users, Wine } from 'lucide-react'
 
 import { generateLinks } from '@/lib/generate-links'
 
@@ -25,6 +25,7 @@ export const LINKS = {
   wines: generateLinks('wines', { hasList: true, hasCreate: true, hasDetail: true }),
   stats: generateLinks('stats'),
   analysis: generateLinks('analysis', { hasList: true, hasDetail: true }),
+  aiPromts: generateLinks('aiPromts'),
 }
 
 export const NAV_LINKS = [
@@ -34,4 +35,5 @@ export const NAV_LINKS = [
   { ...LINKS.wines.root, icon: Wine, isActive: false, items: [LINKS.wines.create, LINKS.wines.list] as NavSubItem[] },
   { ...LINKS.stats.root, icon: BarChart3, isActive: false },
   { ...LINKS.analysis.root, icon: Beaker, isActive: false, items: [LINKS.analysis.list] as NavSubItem[] },
+  { ...LINKS.aiPromts.root, icon: Brain, isActive: false },
 ]

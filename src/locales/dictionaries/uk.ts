@@ -72,6 +72,7 @@ export const uk = {
     wines: 'Вина',
     stats: 'Статистика',
     analysis: 'Хімічний аналіз вин',
+    aiPromts: 'Налаштування ШІ промтів',
   },
   autorization: {
     login: 'Увійти',
@@ -542,4 +543,8 @@ export const uk = {
       images: 'Зображення',
     },
   },
+  ai_promts:{
+    setting_ai_promts: "Налаштування ШІ",
+    description_ai_promts: "Керування промптами-шаблонами для спілкування з ШІ та балансом кредитів на генерації"
+  }
 }
