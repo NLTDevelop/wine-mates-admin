@@ -52,6 +52,7 @@ export interface IWines {
   averageExpertRating?: number
   totalReviews?: number
   statistics?: IStatistics
+  aromaIds?: number[] | null
 }
 
 export interface CreateWineRequest {
@@ -65,6 +66,7 @@ export interface CreateWineRequest {
   image?: Image | null
   typeId: number | null
   colorId: number | null
+  aromaIds?: number[] | null
 }
 
 export interface ConfirmWineParams {

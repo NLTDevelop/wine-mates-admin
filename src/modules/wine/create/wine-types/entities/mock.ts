@@ -3,7 +3,7 @@ import { WineType } from './types/wine-type'
 
 export const mockWineTypes: WineType[] = [
   {
-    id: 'dry',
+    id: '107',
     sortNumber: 0,
     translations: [
       { name: 'Сухе', language: 'uk' },
@@ -11,6 +11,60 @@ export const mockWineTypes: WineType[] = [
       { name: 'Dry Wine', language: 'fr' },
     ],
     colors: [mockBaseWineColors[0], mockBaseWineColors[1]],
+    aromas: [
+      {
+        id: '19',
+        translations: [
+          {
+            language: 'en',
+            name: 'Bubble',
+          },
+          {
+            language: 'uk',
+            name: 'Бульбашки',
+          },
+        ],
+      },
+      {
+        id: '20',
+        translations: [
+          {
+            language: 'en',
+            name: 'Apple',
+          },
+          {
+            language: 'uk',
+            name: 'Яблуко',
+          },
+        ],
+      },
+      {
+        id: '21',
+        translations: [
+          {
+            language: 'en',
+            name: 'Pear',
+          },
+          {
+            language: 'uk',
+            name: 'Груша',
+          },
+        ],
+      },
+      {
+        id: '22',
+        translations: [
+          {
+            language: 'en',
+            name: 'Red Berries',
+          },
+          {
+            language: 'uk',
+            name: 'Червоні ягоди',
+          },
+        ],
+      },
+    ],
   },
   {
     id: 'semi-dry',

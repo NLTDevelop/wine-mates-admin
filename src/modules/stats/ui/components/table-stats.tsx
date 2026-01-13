@@ -85,7 +85,6 @@ export const TableStats = ({ ageGroups, years, aggregatedData, selectedGender = 
             <TableBody>
               {table.getRowModel().rows.map(row => {
                 const rowData = row.original as TableRowData
-
                 return (
                   <TableRow key={row.id} className="border-y-secondary/30 pointer-events-none">
                     {row.getVisibleCells().map(cell => {

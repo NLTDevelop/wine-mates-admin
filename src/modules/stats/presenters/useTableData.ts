@@ -48,7 +48,6 @@ export const useTableData = () => {
     if (!statsTableQuery.data?.rows) return []
 
     if (selectedYear === 'all') return statsTableQuery.data.rows
-
     return statsTableQuery.data.rows.filter(d => d.year === parseInt(selectedYear))
   }, [statsTableQuery.data?.rows, selectedYear])
 

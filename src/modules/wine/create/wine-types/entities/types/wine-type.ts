@@ -1,3 +1,4 @@
+import { WineAromaItem } from '../../../flavors/entities/types/flavor-types'
 import { BaseWineColor, NameDictionary } from '../../../general/entities/types'
 
 export interface WineType {
@@ -8,6 +9,7 @@ export interface WineType {
   nameUa?: string
   nameEn?: string
   isSparkling?: boolean
+  aromas?: WineAromaItem[]
 }
 
 export interface CreateWineTypeParams {

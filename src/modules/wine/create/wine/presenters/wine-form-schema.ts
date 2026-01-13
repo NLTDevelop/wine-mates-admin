@@ -49,6 +49,8 @@ export const createWineFormSchema = () =>
     producer: z.string().optional(),
     grapeVariety: z.string().optional(),
 
+    aromaIds: z.array(z.number()).optional().default([]),
+
     image: z.union([z.instanceof(File), existingImageSchema, z.null()]).optional(),
   })
 

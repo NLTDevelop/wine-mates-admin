@@ -23,6 +23,7 @@ export const useWineForm = ({ initialData }: UseWineFormProps = {}) => {
       producer: formData?.producer || '',
       grapeVariety: formData?.grapeVariety || '',
       image: formData?.image ?? null,
+      aromaIds: formData?.aromaIds ?? [],
     },
     mode: 'onChange',
   })
