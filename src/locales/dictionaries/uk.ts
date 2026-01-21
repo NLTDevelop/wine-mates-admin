@@ -72,6 +72,8 @@ export const uk = {
     wines: 'Вина',
     stats: 'Статистика',
     analysis: 'Хімічний аналіз вин',
+    user_propositions: 'Користувацькі смаки і аромати',
+    tasting: 'Створити дегустацію',
   },
   autorization: {
     login: 'Увійти',
@@ -362,7 +364,7 @@ export const uk = {
       entry_level: 'Рівень',
       levels: 'Рівні смакової характеристики',
       level_name_ua: 'Назва рівню (UA)',
-      level_name_en: 'Назва рівню (UA)',
+      level_name_en: 'Назва рівню (EN)',
       characteristic_created: 'Смакова характеристика створена',
       characteristic_updated: 'Смакова характеристика оновлена',
       characteristic_deleted: 'Смакова характеристика видалена',
@@ -540,6 +542,17 @@ export const uk = {
       grapevariety: 'Сорт винограду',
       vintage: 'Вінтаж',
       images: 'Зображення',
+    },
+  },
+  propositions: {
+    propositions: 'Пропозиції смаків і ароматів від користувачів',
+    search_proposition: 'Пошук пропозиції',
+    tastes: 'Смаки',
+    aromas: 'Аромати',
+    table: {
+      taste: 'Назва смаку',
+      aroma: 'Назва аромату',
+      created_at: 'Дата створення',
     },
   },
 }

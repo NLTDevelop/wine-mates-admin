@@ -9,6 +9,8 @@ export const PATHS = {
   WINE_CREATE: '/wines/create',
   WINE_LIST: '/wines',
   WINE_DETAIL: '/wines/:id',
+  WINE_USER_PROPOSITIONS: '/wines/user-propositions',
+  WINE_TASTING: '/wines/tasting',
   STATS: '/stats',
   ANALYSIS: '/analysis',
   ANALYSIS_DETAIL: '/analysis/:id',
