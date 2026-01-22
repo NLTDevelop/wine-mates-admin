@@ -9,16 +9,22 @@ export interface GeneratedLinks {
   list?: LinkItem
   create?: LinkItem
   detailUrl?: (id: string | number) => string
+  additional?: Record<string, LinkItem>
 }
 
 interface GeneratorOptions {
   hasList?: boolean
   hasCreate?: boolean
   hasDetail?: boolean
+  additionalLinks?: Array<{
+    titleKey: string
+    title: string
+    url: string
+  }>
 }
 
 export const generateLinks = (entityName: string, options: GeneratorOptions = {}): GeneratedLinks => {
-  const { hasList, hasCreate, hasDetail } = options
+  const { hasList, hasCreate, hasDetail, additionalLinks } = options
   const baseUrl = `/${entityName}`
 
   const links: GeneratedLinks = {
@@ -47,6 +53,17 @@ export const generateLinks = (entityName: string, options: GeneratorOptions = {}
 
   if (hasDetail) {
     links.detailUrl = (id: string | number) => `${baseUrl}/${id}`
+  }
+
+  if (additionalLinks && additionalLinks.length > 0) {
+    links.additional = {}
+    additionalLinks.forEach(linkItem => {
+      links.additional![linkItem.titleKey] = {
+        titleKey: linkItem.titleKey,
+        title: linkItem.title,
+        url: linkItem.url,
+      }
+    })
   }
 
   return links
