@@ -8,8 +8,8 @@ import { ColorPaletteManager } from '../../../colors/ui'
 import { WineTypeManager } from '../../../wine-types/ui/components/wine-type-manager'
 import { useCachedColors } from '../../../general/presenters/useCachedColors'
 import { TasteCharacteristicsPaletteManager } from '../../../taste-characteristics/ui'
-import { CreateWineForm } from '../../../wine/ui'
 import { useCachedWineTypes } from '../../../general/presenters/useCachedWineTypes'
+import { WineProfileTemplates } from '../../../wine-profile/ui'
 
 export const WineManagementView = () => {
   const { t } = useTranslation('wines')
@@ -37,8 +37,8 @@ export const WineManagementView = () => {
         return <TastePaletteManager cachedColors={cachedColors} colorsLoading={colorsLoading} />
       case 'taste_characteristics_palette':
         return <TasteCharacteristicsPaletteManager cachedColors={cachedColors} colorsLoading={colorsLoading} />
-      case 'wine_creation':
-        return <CreateWineForm wineTypes={cachedWineTypes} cachedColors={cachedColors} colorsLoading={colorsLoading} wineTypesLoading={wineTypesLoading} />
+      case 'wine_profile':
+        return <WineProfileTemplates wineTypes={cachedWineTypes} cachedColors={cachedColors} colorsLoading={colorsLoading} wineTypesLoading={wineTypesLoading} />
       default:
         return <WineTemplateSelector selectedTemplate={selectedTemplate} onTemplateSelect={handleTemplateSelect} />
     }
@@ -55,10 +55,10 @@ export const WineManagementView = () => {
         return t('taste_palette')
       case 'taste_characteristics_palette':
         return t('taste_characteristics.characteristics')
-      case 'wine_creation':
-        return t('create_wine')
+      case 'wine_profile':
+        return t('wine_profile')
       default:
-        return t('create_wine')
+        return t('settings')
     }
   }
 

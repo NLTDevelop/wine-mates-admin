@@ -2,10 +2,9 @@ import { memo } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Card } from '@/UIKit/shadcn/ui/card'
-
 import { Label } from '@/UIKit/shadcn/ui/label'
-import { WineFormData } from '../../../presenters/wine-form-schema'
 import { NLTFormSingleFileDropZone } from '@/UIKit/components/NLTFormSingleFileDropZone'
+import { WineFormData } from '../../../presenters/wine-form-schema'
 
 interface MediaSectionProps {
   form: UseFormReturn<WineFormData>

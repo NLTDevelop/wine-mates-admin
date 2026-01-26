@@ -5,8 +5,8 @@ import { MediaSection } from './media-section'
 import { ProducerInfoSection } from './producer-info-section'
 import { LocationSection } from './location-section'
 import { WineTypeSection } from './wine-type-section'
-import { WineFormData } from '../../../presenters/wine-form-schema'
 import { BaseWineColor } from '@/modules/wine/create/general/entities/types'
+import { WineFormData } from '../../../presenters/wine-form-schema'
 
 interface BasicInfoSectionProps {
   form: UseFormReturn<WineFormData>

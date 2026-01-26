@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next'
 import { UseFormReturn } from 'react-hook-form'
 import { Form } from '@/UIKit/shadcn/ui/form'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { WineType } from '../../../wine-types/entities/types/wine-type'
-import { WineFormData } from '../../presenters/wine-form-schema'
 import { BasicInfoSection } from './forms/basic-info-section'
-import { BaseWineColor } from '../../../general/entities/types'
+import { WineFormData } from '../../presenters/wine-form-schema'
+import { WineType } from '@/modules/wine/create/wine-types/entities/types/wine-type'
+import { BaseWineColor } from '@/modules/wine/create/general/entities/types'
 
 interface WineFormProps {
   form: UseFormReturn<WineFormData>
