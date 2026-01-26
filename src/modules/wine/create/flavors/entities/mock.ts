@@ -1,4 +1,3 @@
-import { mockBaseWineColors } from '../../general/entities/mockBaseColor'
 import { WineAromaGroup } from './types/flavor-types'
 
 export const mockAromaGroups: WineAromaGroup[] = [
@@ -90,7 +89,6 @@ export const mockAromaGroups: WineAromaGroup[] = [
         ],
       },
     ],
-    colors: mockBaseWineColors,
   },
   {
     id: '2',
@@ -140,7 +138,6 @@ export const mockAromaGroups: WineAromaGroup[] = [
         ],
       },
     ],
-    colors: mockBaseWineColors,
   },
   {
     id: '3',
@@ -199,7 +196,6 @@ export const mockAromaGroups: WineAromaGroup[] = [
         ],
       },
     ],
-    colors: mockBaseWineColors,
   },
   {
     id: '4',
@@ -258,7 +254,6 @@ export const mockAromaGroups: WineAromaGroup[] = [
         ],
       },
     ],
-    colors: mockBaseWineColors,
   },
   {
     id: '5',
@@ -317,7 +312,6 @@ export const mockAromaGroups: WineAromaGroup[] = [
         ],
       },
     ],
-    colors: mockBaseWineColors,
   },
   {
     id: '6',
@@ -376,7 +370,6 @@ export const mockAromaGroups: WineAromaGroup[] = [
         ],
       },
     ],
-    colors: mockBaseWineColors,
   },
   {
     id: '7',
@@ -426,7 +419,6 @@ export const mockAromaGroups: WineAromaGroup[] = [
         ],
       },
     ],
-    colors: mockBaseWineColors,
   },
   {
     id: '8',
@@ -476,7 +468,6 @@ export const mockAromaGroups: WineAromaGroup[] = [
         ],
       },
     ],
-    colors: mockBaseWineColors,
   },
   {
     id: '9',
@@ -487,7 +478,6 @@ export const mockAromaGroups: WineAromaGroup[] = [
     colorHex: '#FF6B6B',
     sortNumber: 9,
     subgroups: [],
-    colors: mockBaseWineColors,
   },
   {
     id: '10',
@@ -498,7 +488,6 @@ export const mockAromaGroups: WineAromaGroup[] = [
     colorHex: '#A29BFE',
     sortNumber: 10,
     subgroups: [],
-    colors: mockBaseWineColors,
   },
   {
     id: '11',
@@ -509,7 +498,6 @@ export const mockAromaGroups: WineAromaGroup[] = [
     colorHex: '#6BCF7F',
     sortNumber: 11,
     subgroups: [],
-    colors: mockBaseWineColors,
   },
   {
     id: '12',
@@ -520,7 +508,6 @@ export const mockAromaGroups: WineAromaGroup[] = [
     colorHex: '#CD6133',
     sortNumber: 12,
     subgroups: [],
-    colors: mockBaseWineColors,
   },
 ]
 

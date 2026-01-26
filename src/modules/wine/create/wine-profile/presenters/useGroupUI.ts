@@ -73,7 +73,6 @@ export const useGroupUI = ({
   }
 
   const getSubgroupSelectedValues = (subgroup: any): string[] => {
-    console.log(subgroup)
     return (subgroup.selectedItems || []).map((id: number) => id.toString())
   }
 

@@ -1,16 +1,16 @@
 import { useCallback, useState } from 'react'
-import { CreateWineAromaGroupParams, CreateWineAromaGroupRequest } from '../entities/types/flavor-types'
 import { BaseWineColor, NameDictionary } from '../../general/entities/types'
 import { createTranslations, getDisplayNames } from '@/lib/utils'
+import { CreateWineTasteGroupParams, CreateWineTasteGroupRequest } from '../entities/types/tastes'
 
 interface UseCreateFlavorGroupProps {
-  onCreateGroup: (groupData: CreateWineAromaGroupRequest) => void
+  onCreateGroup: (groupData: CreateWineTasteGroupRequest) => void
   isLoading?: boolean
 }
 
-interface UseCreateFlavorGroupReturn {
+interface UseCreateTasteGroupReturn {
   isExpanded: boolean
-  formData: Omit<CreateWineAromaGroupParams, 'sortNumber' | 'subgroups'>
+  formData: Omit<CreateWineTasteGroupParams, 'sortNumber' | 'taste'>
   canCreateGroup: boolean
   setIsExpanded: (expanded: boolean) => void
   updateFormData: (field: 'translations' | 'colorHex', value: string | BaseWineColor[] | NameDictionary[]) => void
@@ -19,19 +19,19 @@ interface UseCreateFlavorGroupReturn {
   expandForm: () => void
 }
 
-export const useCreateFlavorGroup = ({ onCreateGroup }: UseCreateFlavorGroupProps): UseCreateFlavorGroupReturn => {
+export const useCreateTasteGroup = ({ onCreateGroup }: UseCreateFlavorGroupProps): UseCreateTasteGroupReturn => {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const initialData = { translations: createTranslations('', ''), colorHex: '' }
-  const [formData, setFormData] = useState<Omit<CreateWineAromaGroupParams, 'sortNumber' | 'subgroups'>>(initialData)
+  const [formData, setFormData] = useState<Omit<CreateWineTasteGroupParams, 'sortNumber' | 'taste'>>(initialData)
 
-  const updateFormData = useCallback((field: keyof CreateWineAromaGroupParams, value: any) => {
+  const updateFormData = useCallback((field: keyof CreateWineTasteGroupParams, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }, [])
 
   const handleCreateGroup = () => {
     if (canCreateGroup) {
-      const groupDataForApi: CreateWineAromaGroupRequest = {
+      const groupDataForApi: CreateWineTasteGroupRequest = {
         translations: formData.translations || [],
         colorHex: formData.colorHex || '',
       }

@@ -6,12 +6,7 @@ import { CreateWineTasteCharacteristicRequest, UpdateWineTasteCharacteristicPara
 import { ReorderItem } from '../../general/entities/types'
 
 export const tasteCharacteristicsService = {
-  list: (include?: string[]): Promise<WineTasteCharacteristics[]> =>
-    api
-      .get(TASTE_CHARACTERISTICS_ENDPOINTS.LIST, {
-        params: include && include.length > 0 ? { include } : {},
-      })
-      .then(response => response.data),
+  list: (): Promise<WineTasteCharacteristics[]> => api.get(TASTE_CHARACTERISTICS_ENDPOINTS.LIST).then(response => response.data),
 
   create: (characteristic: CreateWineTasteCharacteristicRequest): Promise<WineTasteCharacteristics> => api.post(TASTE_CHARACTERISTICS_ENDPOINTS.CREATE, characteristic).then(response => response.data),
 

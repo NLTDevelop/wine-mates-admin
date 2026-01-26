@@ -1,35 +1,27 @@
 import { useTranslation } from 'react-i18next'
 import { useTranslationsName } from '../../../general/presenters/useTranslationName'
-import { useColorForm } from '../../../general/presenters/useColorForm'
 import { Input } from '@/UIKit/shadcn/ui/input'
-import { ColorPicker } from '@/UIKit/shadcn/ui/color-picker'
-import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
-import { Button } from '@/UIKit/shadcn/ui/button'
+import { NameDictionary } from '../../../general/entities/types'
 import { AdditionalTranslations } from '../../../general/ui/components/additional-translations'
-import { BaseWineColor } from '../../../general/entities/types'
-import { CreateWineTasteParams } from '../../entities/types/tastes'
-import { Plus, Save } from 'lucide-react'
+import { ColorPicker } from '@/UIKit/shadcn/ui/color-picker'
 
-interface TasteFormProps {
-  formData: CreateWineTasteParams
-  onFormDataChange: (field: 'translations' | 'colors' | 'colorHex', value: any) => void
-  onSave: () => void
-  onCancel: () => void
-  isLoading?: boolean
-  cachedColors: BaseWineColor[]
-  mode?: 'create' | 'edit'
-  hasChanges?: boolean
+interface TasteFormData {
+  translations: NameDictionary[]
+  colorHex: string
 }
 
-export const TasteForm: React.FC<TasteFormProps> = ({ formData, onFormDataChange, onSave, onCancel, isLoading = false, cachedColors, mode = 'edit', hasChanges }) => {
-  const { t } = useTranslation('wines')
-  const { t: tc } = useTranslation('common')
+interface TasteFormProps {
+  data: TasteFormData
+  onDataChange: (field: keyof TasteFormData, value: string | NameDictionary[]) => void
+  nameLabel: string
+  nameEnLabel: string
+  namePlaceholder: string
+  nameEnPlaceholder: string
+  autoFocus?: boolean
+}
 
-  const { colorValues, handleColorChange, fetchOptions } = useColorForm({
-    cachedColors,
-    initialColors: formData.colors || [],
-    onColorsChange: colors => onFormDataChange('colors', colors),
-  })
+export const TasteForm: React.FC<TasteFormProps> = ({ data, onDataChange, nameLabel, nameEnLabel, namePlaceholder, nameEnPlaceholder, autoFocus = false }) => {
+  const { t } = useTranslation('wines')
 
   const {
     nameUa,
@@ -43,65 +35,40 @@ export const TasteForm: React.FC<TasteFormProps> = ({ formData, onFormDataChange
     handleTranslationValueChange,
     getAvailableLanguages,
   } = useTranslationsName({
-    initialTranslations: formData.translations || [],
-    onTranslationsChange: translations => onFormDataChange('translations', translations),
+    initialTranslations: data.translations || [],
+    onTranslationsChange: translations => onDataChange('translations', translations),
   })
 
-  const canSave = mode === 'create' ? nameUa && nameEn && formData.colors.length && !isLoading : nameUa && nameEn && formData.colors.length && hasChanges && !isLoading
-
-  const SaveIcon = mode === 'create' ? Plus : Save
-  const saveText = isLoading ? (mode === 'create' ? tc('button.saving') : tc('button.updating')) : tc('button.save')
-
   return (
-    <div className="space-y-4 pl-1 pr-1 sm:pl-6 sm:pr-6 pb-2 pt-0 transition-all flex-1 bg-muted rounded-t-none rounded-b-md">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-        <div>
-          <label className="text-sm font-medium mb-2 block">{t('tastes.taste_name_ua')} *</label>
-          <Input value={nameUa} onChange={e => handleNameUaChange(e.target.value)} placeholder={t('tastes.taste_name_ua')} className="w-full" autoFocus />
+    <div className="border-1 border-input py-2 rounded-b-md bg-muted w-full">
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm font-medium mb-2 block">{nameLabel} *</label>
+            <Input value={nameUa} onChange={e => handleNameUaChange(e.target.value)} placeholder={namePlaceholder} className="w-full" autoFocus={autoFocus} />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-2 block">{nameEnLabel} *</label>
+            <Input value={nameEn} onChange={e => handleNameEnChange(e.target.value)} placeholder={nameEnPlaceholder} className="w-full" />
+          </div>
         </div>
 
-        <div>
-          <label className="text-sm font-medium mb-2 block">{t('tastes.taste_name_en')} *</label>
-          <Input value={nameEn} onChange={e => handleNameEnChange(e.target.value)} placeholder={t('tastes.taste_name_en')} className="w-full" />
-        </div>
-      </div>
-
-      <div className="mb-4">
-        <label className="text-sm font-medium mb-2 block">{t('tastes.base_color')} *</label>
-        <div className="flex items-center gap-4">
-          <ColorPicker value={formData.colorHex} onChange={color => onFormDataChange('colorHex', color)} />
-        </div>
-      </div>
-
-      <AdditionalTranslations
-        additionalTranslations={additionalTranslations}
-        onAddTranslation={handleAddTranslation}
-        onRemoveTranslation={handleRemoveTranslation}
-        onLanguageChange={handleLanguageChange}
-        onTranslationValueChange={handleTranslationValueChange}
-        getAvailableLanguages={getAvailableLanguages}
-      />
-
-      <div className="space-y-2">
-        <label className="text-sm font-medium mb-2 block">{t('color_wine')} *</label>
-        <MultiSelect
-          value={colorValues}
-          onChange={handleColorChange}
-          placeholder={t('flavors.choose_color')}
-          searchLabel={t('flavors.search_color')}
-          fetchOptions={fetchOptions}
-          mode="multiple"
-          disabled={isLoading}
+        <AdditionalTranslations
+          additionalTranslations={additionalTranslations}
+          onAddTranslation={handleAddTranslation}
+          onRemoveTranslation={handleRemoveTranslation}
+          onLanguageChange={handleLanguageChange}
+          onTranslationValueChange={handleTranslationValueChange}
+          getAvailableLanguages={getAvailableLanguages}
         />
-      </div>
-      <div className="flex gap-3 justify-end mt-4">
-        <Button size="sm" variant="ghost" className="border-1 hover:bg-muted-foreground hover:text-input sm:w-auto w-full" onClick={onCancel} disabled={isLoading}>
-          {tc('button.cancel')}
-        </Button>
-        <Button size="sm" onClick={onSave} disabled={!canSave} className="sm:w-auto w-full">
-          <SaveIcon className="w-4 h-4" />
-          {saveText}
-        </Button>
+
+        <div className="my-3">
+          <label className="text-sm font-medium mb-2 block">{t('tastes.taste_color')} *</label>
+          <div className="flex items-center gap-4">
+            <ColorPicker value={data.colorHex || ''} onChange={color => onDataChange('colorHex', color)} />
+          </div>
+        </div>
       </div>
     </div>
   )

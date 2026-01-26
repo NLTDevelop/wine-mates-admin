@@ -1,30 +1,54 @@
-import { FiltersParams, ReorderItem } from '../../general/entities/types'
-import { CreateWineTasteRequest, UpdateWineTasteParams } from './types/tastes'
+import { ReorderItem } from '../../general/entities/types'
+import { CreateWineTasteGroupRequest, CreateWineTasteParams, UpdateWineTasteGroupParams, UpdateWineTasteParams } from './types/tastes'
 import { tasteService } from './wine-taste-service'
 
-export const tasteQueries = {
-  list: (filters: FiltersParams = {}) => ({
-    queryKey: ['tastes', 'list', filters],
-    queryFn: () => tasteService.list(filters),
+export const wineTasteQueries = {
+  listGroups: () => ({
+    queryKey: ['taste-groups', 'list'],
+    queryFn: () => tasteService.listGroups(),
   }),
 
-  create: () => ({
-    mutationKey: ['tastes', 'create'],
-    mutationFn: (taste: CreateWineTasteRequest) => tasteService.create(taste),
+  createGroup: () => ({
+    mutationKey: ['taste-groups', 'create'],
+    mutationFn: (group: CreateWineTasteGroupRequest) => tasteService.createGroup(group),
   }),
 
-  update: () => ({
-    mutationKey: ['tastes', 'update'],
-    mutationFn: (params: UpdateWineTasteParams) => tasteService.update(params),
+  updateGroup: () => ({
+    mutationKey: ['taste-groups', 'update'],
+    mutationFn: (params: UpdateWineTasteGroupParams) => tasteService.updateGroup(params),
   }),
 
-  delete: () => ({
-    mutationKey: ['tastes', 'delete'],
-    mutationFn: (tasteId: string) => tasteService.delete(tasteId),
+  deleteGroup: () => ({
+    mutationKey: ['taste-groups', 'delete'],
+    mutationFn: (groupId: string) => tasteService.deleteGroup(groupId),
   }),
 
-  reorder: () => ({
-    mutationKey: ['tastes', 'reorder'],
-    mutationFn: (params: ReorderItem[]) => tasteService.reorder(params),
+  reorderGroup: () => ({
+    mutationKey: ['taste-groups', 'reorder'],
+    mutationFn: (params: ReorderItem[]) => tasteService.reorderGroup(params),
+  }),
+
+  createTaste: () => ({
+    mutationKey: ['taste', 'create'],
+    mutationFn: ({ groupId, tasteData }: { groupId: string; tasteData: CreateWineTasteParams }) =>
+      tasteService.createTaste({
+        ...tasteData,
+        groupId: parseInt(groupId),
+      }),
+  }),
+
+  updateTaste: () => ({
+    mutationKey: ['taste', 'update'],
+    mutationFn: (params: UpdateWineTasteParams) => tasteService.updateTaste(params),
+  }),
+
+  deleteTaste: () => ({
+    mutationKey: ['taste', 'delete'],
+    mutationFn: ({ tasteId }: { groupId: string; tasteId: string }) => tasteService.deleteTaste(tasteId),
+  }),
+
+  reorderTaste: () => ({
+    mutationKey: ['taste', 'reorder'],
+    mutationFn: (params: ReorderItem[]) => tasteService.reorderTaste(params),
   }),
 }

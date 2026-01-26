@@ -3,9 +3,9 @@ import { CreateWineTypeRequest, UpdateWineTypeParams } from './types/wine-type'
 import { ReorderItem } from '../../general/entities/types'
 
 export const wineTypeQueries = {
-  list: (include?: string[]) => ({
-    queryKey: ['wine-types', 'list', ...(include || [])],
-    queryFn: () => wineTypeService.list(include),
+  list: () => ({
+    queryKey: ['wine-types', 'list'],
+    queryFn: () => wineTypeService.list(),
   }),
 
   create: () => ({

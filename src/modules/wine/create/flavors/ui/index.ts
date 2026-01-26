@@ -1,6 +1,6 @@
 export * from './components/create-flavor-group-section'
 export * from './components/aroma-manager'
 export * from './components/flavor-form'
-export * from './components/flavor-group-form-field'
+export * from '../../tastes/ui/components/taste-group-form-field'
 export * from './components/flavor-list'
 export * from './components/flavor-palette-manager'

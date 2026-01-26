@@ -1,6 +1,5 @@
 import { useCallback } from 'react'
 import { useTasteCharacteristics } from './useTasteCharacteristics'
-import { BaseWineColor } from '../../general/entities/types'
 import { getDisplayNameDescription } from '@/lib/utils'
 import { CreateWineTasteCharacteristicParams, CreateWineTasteCharacteristicRequest, LevelItem, UpdateWineTasteCharacteristicRequest, WineTasteCharacteristics } from '../entities/taste-characteristics'
 import { NewCharacteristicData } from '../entities/characteristics-palette-types'
@@ -15,7 +14,6 @@ interface UseCharacteristicsProps {
   setForceOpenKeys: (keys: any) => void
   setOpenAccordions: (accordions: any) => void
   setNewCharacteristicData: (data: any) => void
-  cachedColors: BaseWineColor[]
 }
 
 export const useCharacteristics = ({
@@ -26,9 +24,8 @@ export const useCharacteristics = ({
   setForceOpenKeys,
   setOpenAccordions,
   setNewCharacteristicData,
-  cachedColors,
 }: UseCharacteristicsProps) => {
-  const { isLoading, isCreating, isUpdating, isDeleting, createTasteCharacteristics, updateTasteCharacteristics, deleteTasteCharacteristics, reorderLevels } = useTasteCharacteristics(cachedColors)
+  const { isLoading, isCreating, isUpdating, isDeleting, createTasteCharacteristics, updateTasteCharacteristics, deleteTasteCharacteristics, reorderLevels } = useTasteCharacteristics()
 
   const handleAddCharacteristic = useCallback(
     async (characteristicData: CreateWineTasteCharacteristicRequest) => {
@@ -65,8 +62,7 @@ export const useCharacteristics = ({
         colorHex: group.colorHex || '',
         sortNumber: group.sortNumber || 0,
         levels: group.levels || [],
-        colors: group.colors || [],
-        gtyLevels: group.qtyLevels || 2,
+        qtyLevels: group.qtyLevels || 2,
       }
 
       setEditingCharacteristicData((prev: Record<string, NewCharacteristicData>) => ({
@@ -110,7 +106,6 @@ export const useCharacteristics = ({
         const updateData: UpdateWineTasteCharacteristicRequest = {
           colorHex: data.colorHex || '',
           levels: data.levels || [],
-          colorIds: data.colors?.map((color: BaseWineColor) => color.id) || [],
           sortNumber: currentGroupIndex >= 0 ? currentGroupIndex : tasteCharacteristics?.length || 0,
           translations: convertToUpdateTranslations(data.translations),
           isPremium: false,
@@ -165,11 +160,12 @@ export const useCharacteristics = ({
   const canSave = useCallback(
     (characteristicId: string) => {
       const data = editingCharacteristicData[characteristicId]
+
       if (!data?.translations) return false
 
       const { nameUa, nameEn } = getDisplayNameDescription(data.translations)
 
-      if (!nameUa || !nameEn || !data?.colorHex || !data?.levels || data?.levels.length < 2 || !data.colors || data.colors.length === 0) {
+      if (!nameUa || !nameEn || !data?.colorHex || !data?.levels || data?.levels.length < 2) {
         return false
       }
 
@@ -195,14 +191,11 @@ export const useCharacteristics = ({
       if (!originalCharacteristic || !currentFormData) return false
       const translationsChanged = !compareCharacteristicTranslations(originalCharacteristic.translations, currentFormData.translations)
 
-      const originalColorIds = originalCharacteristic.colors?.map((c: BaseWineColor) => c?.id).sort() || []
-      const currentColorIds = currentFormData.colors?.map(c => c?.id).sort() || []
-      const colorsChanged = JSON.stringify(originalColorIds) !== JSON.stringify(currentColorIds)
       const colorHexChanged = (currentFormData.colorHex || '') !== (originalCharacteristic.colorHex || '')
       const levelsChanged = !areLevelsEqual(originalCharacteristic.levels || [], currentFormData.levels || [])
-      const qtyLevelsChanged = originalCharacteristic.qtyLevels !== currentFormData.qtyLevels
+      const qtyLevelsChanged = (originalCharacteristic.qtyLevels || '') !== (currentFormData.qtyLevels || 2)
 
-      const hasChangesResult = translationsChanged || colorsChanged || colorHexChanged || levelsChanged || qtyLevelsChanged
+      const hasChangesResult = translationsChanged || colorHexChanged || levelsChanged || qtyLevelsChanged
 
       return hasChangesResult
     },

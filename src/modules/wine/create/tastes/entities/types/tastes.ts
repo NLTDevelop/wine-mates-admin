@@ -1,23 +1,52 @@
-import { BaseWineColor, NameDictionary } from '../../../general/entities/types'
+import { NameDictionary } from '../../../general/entities/types'
 
-export interface WineTaste {
+export interface WineTasteItem {
   id: string
   translations: NameDictionary[]
+  sortNumber: number
   colorHex: string
-  colors: BaseWineColor[]
+  groupId?: number
+}
+
+export interface WineTasteGroup {
+  id: string
+  nameUa?: string
+  nameEn?: string
+  translations: NameDictionary[]
+  colorHex: string
+  sortNumber: number
+  flavors?: WineTasteItem[]
+}
+
+export interface CreateWineTasteGroupParams {
+  translations: NameDictionary[]
+  colorHex: string
   sortNumber: number
 }
 
-export type CreateWineTasteParams = Omit<WineTaste, 'id'>
+export interface UpdateWineTasteGroupParams {
+  groupId: string
+  newGroup: CreateWineTasteGroupRequest
+}
 
-export interface CreateWineTasteRequest {
+export interface CreateWineTasteGroupRequest {
   translations: NameDictionary[]
   colorHex: string
-  colorIds: string[]
   sortNumber?: number
 }
 
+export interface CreateWineTasteParams {
+  translations: NameDictionary[]
+  sortNumber?: number
+  colorHex: string
+}
+
 export interface UpdateWineTasteParams {
-  tasteId: string
-  newTaste: CreateWineTasteRequest
+  groupId: string
+  newTaste?: CreateWineTasteParams
+}
+
+export interface ReorderTasteParams {
+  groupId: string
+  tasteIds: string[]
 }

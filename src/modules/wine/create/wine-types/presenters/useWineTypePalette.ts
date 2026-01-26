@@ -1,11 +1,10 @@
 import { useState, useCallback } from 'react'
 import { useWineTypes } from './useWineTypes'
 import { CreateWineTypeParams, CreateWineTypeRequest, UpdateWineTypeParams, WineType } from '../entities/types/wine-type'
-import { BaseWineColor } from '../../general/entities/types'
 import { arraysEqual, getDisplayNames } from '@/lib/utils'
 
-export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
-  const { wineTypes, isLoading, isCreating, isUpdating, isDeleting, createWineType, updateWineType, deleteWineType, isReorderingGroup, reorderGroup } = useWineTypes(cachedColors)
+export const useWineTypePalette = () => {
+  const { wineTypes, isLoading, isCreating, isUpdating, isDeleting, createWineType, updateWineType, deleteWineType, isReorderingGroup, reorderGroup } = useWineTypes()
 
   const [isFormOpen, setIsFormOpen] = useState<Record<string, boolean>>({})
   const [formData, setFormData] = useState<Record<string, CreateWineTypeParams>>({})
@@ -22,13 +21,10 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
 
       const nameChanged = originalNameUa !== currentNameUa || originalNameEn !== currentNameEn
 
-      const originalColorIds = originalWineType.colors?.map((c: BaseWineColor) => c?.id) || []
-      const currentColorIds = currentFormData.colors?.map(c => c?.id) || []
-      const colorsChanged = JSON.stringify(originalColorIds.sort()) !== JSON.stringify(currentColorIds.sort())
       const translationsChanged = !arraysEqual(originalWineType.translations, currentFormData.translations)
       const checkboxChanged = currentFormData.isSparkling !== originalWineType.isSparkling
 
-      return nameChanged || colorsChanged || translationsChanged || checkboxChanged
+      return nameChanged || translationsChanged || checkboxChanged
     },
     [wineTypes, formData]
   )
@@ -55,7 +51,6 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
             ...prev,
             [wineTypeId]: {
               translations: wineType.translations || [],
-              colors: wineType.colors || [],
               isSparkling: wineType.isSparkling || false,
             },
           }))
@@ -91,7 +86,6 @@ export const useWineTypePalette = (cachedColors: BaseWineColor[]) => {
       try {
         const updateData: CreateWineTypeRequest = {
           translations: data.translations || [],
-          colorIds: data.colors.map(color => color?.id),
           isSparkling: data.isSparkling || false,
         }
         const updateParams: UpdateWineTypeParams = {

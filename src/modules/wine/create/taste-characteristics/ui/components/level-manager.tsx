@@ -6,7 +6,6 @@ import { Button } from '@/UIKit/shadcn/ui/button'
 import { SortableList } from '@/UIKit/app-components/sortable-list'
 import { SortableItem } from '@/UIKit/app-components/sortable-item'
 import { Input } from '@/UIKit/shadcn/ui/input'
-// import { Checkbox } from '@/UIKit/shadcn/ui/checkbox'
 import { AdditionalTranslations } from '../../../general/ui/components/additional-translations'
 import { Plus, X } from 'lucide-react'
 import { LevelItem } from '../../entities/taste-characteristics'
@@ -23,7 +22,6 @@ export const LevelsManager: React.FC<LevelsManagerProps> = ({ levels, onLevelsCh
   const addNewInput = () => {
     const newLevel: LevelItem = {
       translations: createTranslations('', ''),
-      // isEnabled: true,
       sortNumber: 0,
     }
     onLevelsChange([...levels, newLevel])
@@ -96,10 +94,6 @@ const LevelItemWithTranslations: React.FC<LevelItemWithTranslationsProps> = ({ l
     onTranslationsChange: translations => onUpdate(index, { ...level, translations }),
   })
 
-  // const handleShowChange = (isEnabled: boolean) => {
-  //   onUpdate(index, { ...level, isEnabled })
-  // }
-
   const getLevelId = () => {
     return level.id || `level-${index}`
   }
@@ -112,8 +106,6 @@ const LevelItemWithTranslations: React.FC<LevelItemWithTranslationsProps> = ({ l
             <div className="flex items-start">
               <p className="pt-3 pr-1 text-foreground/50">№{index + 1}</p>
               <div className="p-1 flex items-center space-x-2 mb-3 border-1 rounded-md border-muted">
-                {/* <Checkbox id={`show-level-${index}`} checked={level.isEnabled ?? true} onCheckedChange={handleShowChange} /> */}
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 ">
                   <Input value={nameUa} onChange={e => handleNameUaChange(e.target.value)} placeholder={t('taste_characteristics.level_name_ua')} className="h-9 w-full" />
 
