@@ -25,8 +25,8 @@ export const UserPropositionsView = () => {
       <div className={cn('pb-2', !isLoading ? 'fade-in' : '')}>
         <Tabs value={activeTab} onValueChange={value => onChangeTab(value as PropositionsType)} className="w-full">
           <TabsList className="grid w-full md:w-auto sm:grid-cols-2 grid-cols-1  my-6">
-            <TabsTrigger value="tastes">{t('tastes')}</TabsTrigger>
-            <TabsTrigger value="aromas">{t('aromas')}</TabsTrigger>
+            <TabsTrigger value="taste">{t('tastes')}</TabsTrigger>
+            <TabsTrigger value="aroma">{t('aromas')}</TabsTrigger>
           </TabsList>
           <TabsContent value={activeTab} className="space-y-6">
             <NLTDataTable

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react'
-import { WineType } from '../../wine-types/entities/types/wine-type'
+import { WineType } from '../../create/wine-types/entities/types/wine-type'
 
 interface UseWineTypeOptionsProps {
   cachedWineTypes: WineType[]

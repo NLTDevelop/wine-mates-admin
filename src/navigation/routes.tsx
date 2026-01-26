@@ -14,6 +14,7 @@ import { StatsView } from '@/modules/stats/ui'
 import { AnalysisView } from '@/modules/chemical-analysis/list/ui'
 import { AnalysisDetailView } from '@/modules/chemical-analysis/detail/ui'
 import { UserPropositionsView } from '@/modules/wine/user-propositions/ui'
+import { CreateTasteFormView } from '@/modules/wine/create-taste/ui'
 
 const usersRoutes = [
   { path: PATHS.USERS, element: <UsersView /> },
@@ -27,7 +28,7 @@ const winesRoutes = [
   { path: PATHS.WINE_LIST, element: <WineView /> },
   { path: PATHS.WINE_DETAIL, element: <WineDetailView /> },
   { path: PATHS.WINE_USER_PROPOSITIONS, element: <UserPropositionsView /> },
-  { path: PATHS.WINE_TASTING, element: <UserPropositionsView /> },
+  { path: PATHS.WINE_TASTING, element: <CreateTasteFormView /> },
 ]
 const winesStats = [{ path: PATHS.STATS, element: <StatsView /> }]
 

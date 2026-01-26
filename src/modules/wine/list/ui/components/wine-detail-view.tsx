@@ -8,12 +8,12 @@ import { useTranslation } from 'react-i18next'
 import { SkeletonWineDetail, WineStatsView } from '..'
 import { WineDetailHeader, WineDetailContent, WineDetailActions } from '..'
 import { wineListService } from '../../entities/wine-list-service'
-import { EditWineForm } from '@/modules/wine/create/wine/ui/components/edit-wine-form'
 import { ContentLayout } from '@/layout/components/content-layout'
 import { cn } from '@/lib/utils'
 import { useReviews } from '../../presenters/useReviews'
 import { BarChart3, MessageSquare, Info } from 'lucide-react'
 import { ReviewsSection } from './detail/reviews-section'
+import { EditWineForm } from '@/modules/wine/create-taste/ui'
 
 type TabType = 'details' | 'statistics' | 'reviews'
 

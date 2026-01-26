@@ -46,9 +46,9 @@ export const getWineTemplates = (t: TFunction): WineTemplate[] => {
     },
     {
       id: 'wine_creation_1',
-      type: 'wine_creation',
-      name: t('wine_creation'),
-      description: t('add_wine'),
+      type: 'wine_profile',
+      name: t('wine_profile'),
+      description: t('add_profile'),
       icon: <Wine size={20} />,
       order: 5,
     },

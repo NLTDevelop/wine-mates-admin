@@ -1,11 +1,11 @@
 import { memo, useMemo } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { WineFormData } from '../../../presenters/wine-form-schema'
+import { useWineTypeOptions } from '../../../presenters/useWineTypeOptions'
 import { FormFieldCombobox, IOption } from '@/UIKit/app-components/form-field-combobox'
 import { YearPickerFormField } from '@/UIKit/app-components/year-picker-form-field'
-import { useWineTypeOptions } from '../../../presenters/useWineTypeOptions'
 import { WineType } from '@/modules/wine/create/wine-types/entities/types/wine-type'
+import { WineFormData } from '../../../presenters/wine-form-schema'
 
 interface WineTypeSectionProps {
   form: UseFormReturn<WineFormData>

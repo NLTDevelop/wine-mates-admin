@@ -1,10 +1,10 @@
 import { UseFormReturn } from 'react-hook-form'
-import { WineFormData } from '../../../presenters/wine-form-schema'
-import { useTranslation } from 'react-i18next'
 import { memo, useMemo, useEffect } from 'react'
-import { FormFieldCombobox, IOption } from '@/UIKit/app-components/form-field-combobox'
+import { useTranslation } from 'react-i18next'
 import { useCountryOptions } from '../../../presenters/useCountryOptions'
 import { useRegionOptions } from '../../../presenters/useRegionOptions'
+import { FormFieldCombobox, IOption } from '@/UIKit/app-components/form-field-combobox'
+import { WineFormData } from '../../../presenters/wine-form-schema'
 
 interface LocationSectionProps {
   form: UseFormReturn<WineFormData>

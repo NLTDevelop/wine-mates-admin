@@ -1,11 +1,11 @@
 import React from 'react'
 import { WineForm } from './wine-form'
-import { useEditWineForm } from '../../presenters/useEditWineForm'
-import { IWines } from '@/modules/wine/list/entities/types/types'
 import { UseFormReturn } from 'react-hook-form'
+import { useEditWineForm } from '../../presenters/useEditWineForm'
+import { useCachedColors } from '@/modules/wine/create/general/presenters/useCachedColors'
+import { useCachedWineTypes } from '@/modules/wine/create/general/presenters/useCachedWineTypes'
+import { IWines } from '@/modules/wine/list/entities/types/types'
 import { WineFormData } from '../../presenters/wine-form-schema'
-import { useCachedColors } from '../../../general/presenters/useCachedColors'
-import { useCachedWineTypes } from '../../../general/presenters/useCachedWineTypes'
 
 interface EditWineFormProps {
   wine: IWines
