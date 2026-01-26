@@ -1,53 +1,57 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useTastePalette } from '../../presenters/useTastePalette'
+import { useDeleteModal } from '../../../general/presenters/useDeleteModal'
 import { useContrastText } from '@/hooks/ui/useContrastText'
-import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
-import { cn, getDisplayNames } from '@/lib/utils'
-import { PaletteItemActions } from '@/modules/wine/create/general/ui'
-import { EmptyState } from '../../../general/ui/components/empty-state'
+import { cn, createTranslations, getDisplayNames, lightenColor } from '@/lib/utils'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
+import { AccordionWrapper } from '@/UIKit/shadcn/ui/accordion-wrapper'
 import { SortableList } from '@/UIKit/app-components/sortable-list'
 import { SortableItem } from '@/UIKit/app-components/sortable-item'
-import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
+import { Button } from '@/UIKit/shadcn/ui/button'
+import { Separator } from '@/UIKit/shadcn/ui/separator'
 import { SkeletonWinePalette } from '../../../general/ui/components/skeleton-wine-palette'
-import { useDeleteModal } from '../../../general/presenters/useDeleteModal'
-import { BaseWineColor } from '../../../general/entities/types'
-import { WineTaste } from '../../entities/types/tastes'
+import { PaletteItemActions } from '@/modules/wine/create/general/ui'
+import { EmptyState } from '../../../general/ui/components/empty-state'
+import { Save } from 'lucide-react'
 import { WarningModal } from '@/modals/warningModal'
-import { CreateTasteSection, TasteForm } from '..'
-import { useTasteStore } from '../../entities/wine-taste-store'
+import { useWineTasteStore } from '../../entities/wine-taste-store'
+import { useTastePalette } from '../../presenters/useTastePalette'
+import { WineTasteGroup } from '../../entities/types/tastes'
+import { CreateTasteGroupSection } from './create-taste-group-section'
+import { TasteGroupFormFields } from './taste-group-form-field'
+import { TasteList } from './taste-list'
+import { TasteForm } from './taste-form'
 
-interface TastePaletteManagerProps {
-  cachedColors: BaseWineColor[]
-  colorsLoading?: boolean
-}
-
-export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: TastePaletteManagerProps) => {
+export const TastePaletteManager = () => {
   const { t } = useTranslation('wines')
+  const { t: tc } = useTranslation('common')
 
-  const store = useTasteStore()
+  const store = useWineTasteStore()
 
-  const tastes = store.tastes
-
-  const {
-    loadings,
-    isFormOpen,
-    handleAddTaste,
-    handleDeleteTaste,
-    handleToggleForm,
-    handleCancelEdit,
-    formData,
-    updateFormData,
-    handleSaveTaste,
-    totalCount,
-    filters,
-    onChangePagination,
-    hasChanges,
-    reorderGroup,
-  } = useTastePalette(cachedColors)
+  const tasteGroups = store.tasteGroups
 
   const { deleteModal } = useDeleteModal()
+
+  const {
+    isLoading,
+    editingGroup,
+    newItemData,
+    editingGroupData,
+    forceOpenKeys,
+    setOpenAccordions,
+    setEditingGroup,
+    setNewItemData,
+    setEditingGroupData,
+    groups,
+    items,
+    ui,
+    isReorderingGroup,
+    reorderGroup,
+  } = useTastePalette()
+
+  const isEditable = true
+
+  const toggleCallbacks = { setOpenAccordions, setEditingGroup, setNewItemData, setEditingGroupData }
 
   const handleOpenDeleteModal = useCallback(
     (groupId: string, groupNameUa: string) => {
@@ -58,14 +62,14 @@ export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: Tas
 
   const handleConfirmDelete = useCallback(() => {
     if (deleteModal.id) {
-      handleDeleteTaste(deleteModal.id)
+      groups.handleDeleteGroup(deleteModal.id)
       deleteModal.close()
     }
-  }, [deleteModal, handleDeleteTaste])
+  }, [deleteModal, groups])
 
   const onReorder = useCallback(
-    (reorderedGroups: WineTaste[]) => {
-      store.reorderTaste(
+    (reorderedGroups: WineTasteGroup[]) => {
+      store.reorderTasteGroups(
         reorderedGroups.map((group, index) => ({
           id: Number(group.id),
           sortNumber: index,
@@ -81,9 +85,9 @@ export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: Tas
     [reorderGroup, store]
   )
 
-  const isReordering = loadings.isReorderingGroup
+  const isReordering = isReorderingGroup
 
-  if (loadings.isLoadingData && tastes?.length === 0) {
+  if (isLoading && tasteGroups?.length === 0) {
     return (
       <Card>
         <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
@@ -97,74 +101,154 @@ export const TastePaletteManager = ({ cachedColors, colorsLoading = false }: Tas
     <Card>
       <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
         <div>
-          <CreateTasteSection onCreateTaste={handleAddTaste} isLoading={loadings.isCreating || isReordering} cachedColors={cachedColors} />
+          <CreateTasteGroupSection onCreateGroup={groups.handleAddGroup} isLoading={isLoading || isReordering} />
         </div>
-        {!loadings.isLoadingData && tastes?.length === 0 && totalCount === 0 && <EmptyState type="taste" />}
-        <SortableList items={tastes} onReorder={onReorder}>
+        {!isLoading && tasteGroups?.length === 0 && <EmptyState type="taste" />}
+        <SortableList items={tasteGroups} onReorder={onReorder}>
           <div className="mx-auto flex flex-col justify-center gap-2 w-full">
-            {tastes?.map((taste, idx) => {
-              const isEditing = isFormOpen[taste.id] || false
-              const currentFormData = formData[taste.id]
-              const { textColorClass } = useContrastText(taste.colorHex)
-              const { nameUa, nameEn } = getDisplayNames(taste.translations)
-              return (
-                <SortableItem key={`${taste?.id} - ${idx}`} id={taste.id} gridColor={textColorClass} handleClassName="top-2 hover:bg-transparent" disabled={isReordering}>
-                  <div className={cn('border-1 border-input rounded-md transition-all cursor-default', isEditing && 'rounded-b-none')} style={{ backgroundColor: taste.colorHex }}>
-                    <div className="flex justify-between items-center w-full pr-2 py-2 pl-8 min-w-0 flex-1">
-                      <div className="flex gap-2 sm:flex-row flex-col sm:w-auto w-full min-w-0 flex-1">
-                        <span className={cn('font-medium truncate flex-1', textColorClass)}>
-                          {nameUa} ({nameEn})
-                        </span>
-                        <div className="flex flex-wrap gap-2 min-w-0 w-full flex-1">
-                          {taste?.colors?.map((c: BaseWineColor) => (
-                            <div key={c.id} className="flex items-center bg-amber-50 px-2 rounded-md md:w-auto w-full">
-                              <span className=" text-sm text-foreground">{c?.name}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      <PaletteItemActions
-                        isLoading={loadings.isLoading || isReordering}
-                        onRemove={handleConfirmDelete}
-                        dataId={taste.id}
-                        onEdit={() => handleToggleForm(taste.id)}
-                        showEditButton={true}
-                        isHeader
-                        cardTextColorClass={textColorClass}
-                        deleteModal={() => handleOpenDeleteModal(taste.id, nameUa)}
-                      />
-                    </div>
+            {tasteGroups?.map((group: WineTasteGroup) => {
+              const { textColorClass: cardTextColorClass } = useContrastText(group.colorHex)
 
-                    {isEditing && currentFormData && (
-                      <div className="px-2 pb-2">
-                        <TasteForm
-                          formData={currentFormData}
-                          onFormDataChange={(field, value) => updateFormData(taste.id, field, value)}
-                          onSave={() => handleSaveTaste(taste.id)}
-                          onCancel={() => handleCancelEdit(taste.id)}
-                          cachedColors={cachedColors}
-                          isLoading={loadings.isUpdating || colorsLoading}
-                          mode="edit"
-                          hasChanges={hasChanges(taste.id)}
+              const isGroupOpen = ui.isAccordionOpen(group.id)
+              const isGroupEditing = ui.isEditing(group.id)
+              const isItemFormOpen = ui.isFormItemOpen(group.id)
+              const isGroupFormOpen = ui.isFormGroupOpen(group.id)
+
+              const currentEditingGroupData = editingGroupData[group.id]
+              const forceOpenKey = forceOpenKeys[group.id] || 0
+              const accordionKey = isGroupOpen && forceOpenKey > 0 ? `forced-${group.id}-${forceOpenKey}` : group.id
+              const { nameUa, nameEn } = getDisplayNames(group.translations)
+
+              return (
+                <SortableItem key={accordionKey} id={group.id} className="flex flex-col" handleClassName="top-1.5 hover:bg-transparent" gridColor={cardTextColorClass} disabled={isReordering}>
+                  <AccordionWrapper
+                    label={`${nameUa} (${nameEn})`}
+                    isOpen={isGroupOpen}
+                    onToggle={() => ui.handleToggleAccordion(group.id, toggleCallbacks)}
+                    style={{ backgroundColor: group.colorHex, padding: '8px' }}
+                    chevronStyle={cardTextColorClass}
+                    header={
+                      <div className="flex justify-between items-center w-full pl-8 flex-1 min-w-0">
+                        <div className="flex md:items-center items-start gap-2 md:flex-row flex-col flex-1 min-w-0">
+                          <span className={cn('font-medium truncate min-w-0 flex-1 text-start', cardTextColorClass)}>
+                            {nameUa} ({nameEn})
+                          </span>
+                        </div>
+                        <PaletteItemActions
+                          isLoading={isLoading || isReordering}
+                          onRemove={handleConfirmDelete}
+                          dataId={group.id}
+                          cardTextColorClass={cardTextColorClass}
+                          onEdit={() => groups.startEditingGroup(group.id)}
+                          showEditButton={!isGroupEditing && !isReordering}
+                          isHeader
+                          deleteModal={() => handleOpenDeleteModal(group.id, nameUa)}
                         />
                       </div>
-                    )}
-                  </div>
+                    }
+                  >
+                    <div
+                      className={cn(
+                        'relative flex flex-col h-auto min-h-8 w-full items-start justify-between pl-1 pr-1 sm:pl-3 sm:pr-6 pb-2 pt-0 mt-2 transition-all flex-1 bg-muted z-20',
+                        isItemFormOpen ? 'rounded-t-md rounded-b-0' : 'rounded-t-none rounded-b-md',
+                        'cursor-default'
+                      )}
+                    >
+                      {isGroupFormOpen && currentEditingGroupData && (
+                        <TasteGroupFormFields formData={currentEditingGroupData} onFormDataChange={(field, value) => groups.updateGroupFormData(group.id, field, value)} autoFocus={true} />
+                      )}
+
+                      {isGroupOpen && !isGroupFormOpen && (
+                        <>
+                          <TasteList
+                            items={items.getTasteForGroup(group.id)}
+                            isLoading={isLoading}
+                            onRemove={id => items.onRemoveItem(group.id, id)}
+                            onEdit={item => items.handleEditItem(group.id, item)}
+                            getItemName={items.getItemName}
+                            cardTextColorClass={cardTextColorClass}
+                            isEditable={isEditable}
+                            showEditButton={isEditable}
+                            hexColor={`${lightenColor(group.colorHex, 40)}`}
+                            onReorder={reorderedTaste => items.handleReorderTaste(group.id, reorderedTaste)}
+                          />
+
+                          {isItemFormOpen && group?.flavors && group?.flavors.length > 0 && <Separator className="mt-2" style={{ backgroundColor: group.colorHex }} />}
+                        </>
+                      )}
+
+                      {isItemFormOpen && (
+                        <>
+                          <TasteForm
+                            data={{
+                              translations: newItemData[group.id]?.translations || createTranslations('', ''),
+                              colorHex: newItemData[group.id].colorHex || '',
+                            }}
+                            onDataChange={(field, value) => {
+                              items.updateItemFormData(group.id, field as 'name' | 'nameEn', value)
+                            }}
+                            nameLabel={t('tastes.taste_name_ua')}
+                            nameEnLabel={t('tastes.taste_name_en')}
+                            namePlaceholder={t('tastes.taste_name_ua')}
+                            nameEnPlaceholder={t('tastes.taste_name_en')}
+                            autoFocus={!editingGroup?.editingItem}
+                          />
+                        </>
+                      )}
+
+                      <div className={cn('w-full flex gap-3 justify-end mt-3')}>
+                        {!isGroupFormOpen && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="border-1 hover:bg-muted-foreground hover:text-input"
+                            onClick={() => (isItemFormOpen ? items.handleCancelItemEdit(group.id) : items.handleAddAromaClick(group.id))}
+                          >
+                            {isItemFormOpen ? t('button.cancel') : t('button.create_new_taste')}
+                          </Button>
+                        )}
+
+                        {isGroupFormOpen && (
+                          <>
+                            <Button size="sm" variant="ghost" className="border-1 hover:bg-muted-foreground hover:text-input" onClick={() => groups.handleCancelGroupEdit(group.id)}>
+                              {tc('button.cancel')}
+                            </Button>
+                            <Button size="sm" onClick={() => groups.handleSaveGroup(group.id)} disabled={!groups.canSaveGroup(group.id) || isLoading || !groups.hasChanges(group.id)}>
+                              <Save className="w-4 h-4" />
+                              {isLoading ? tc('button.saving') : tc('button.save')}
+                            </Button>
+                          </>
+                        )}
+
+                        {isItemFormOpen && !isGroupFormOpen && (
+                          <Button
+                            onClick={() => {
+                              items.handleSaveItem(group.id)
+                            }}
+                            disabled={!items.canAddItem(group.id) || isLoading || !items.hasChanges(group.id)}
+                            size="sm"
+                          >
+                            <Save className="w-4 h-4" />
+                            {isLoading ? tc('button.saving') : tc('button.save')}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </AccordionWrapper>
                 </SortableItem>
               )
             })}
           </div>
         </SortableList>
         <WarningModal
-          title={t('modal.delete_title', { slug: t('tastes.taste') })}
+          title={t('modal.delete_title', { slug: t('tastes.taste_group').toLowerCase() })}
           actionTitle={t('modal.delete_action')}
-          description={t('modal.delete_description', { name: deleteModal.nameUa, slug: t('tastes.taste_note') })}
+          description={t('modal.delete_description', { name: deleteModal.nameUa, slug: t('tastes.taste_group') })}
           isOpen={deleteModal.isOpen}
           onClose={deleteModal.close}
           onSubmit={handleConfirmDelete}
         />
       </CardContent>
-      {totalCount > DEFAULT_PAGINATION_LIMIT && <NLTTablePagination limit={filters.limit} page={filters.page} totalRows={totalCount || 0} setPage={onChangePagination} />}
     </Card>
   )
 }

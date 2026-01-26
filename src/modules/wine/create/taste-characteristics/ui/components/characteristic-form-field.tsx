@@ -1,7 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { useColorForm } from '../../../general/presenters/useColorForm'
 import { Input } from '@/UIKit/shadcn/ui/input'
-import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
 import { ColorPicker } from '@/UIKit/shadcn/ui/color-picker'
 import { BaseWineColor, Language, NameDescriptionDictionary, NameDictionary } from '../../../general/entities/types'
 import { AdditionalTranslations } from '../../../general/ui/components/additional-translations'
@@ -16,21 +14,13 @@ import { LevelSwitcher } from './level-switcher'
 
 interface CharacteristicFormFieldsProps {
   formData: Partial<CreateWineTasteCharacteristicParams>
-  onFormDataChange: (field: 'translations' | 'colors' | 'colorHex' | 'levels' | 'qtyLevels', value: NameDescriptionDictionary[][] | BaseWineColor[] | string | LevelItem[] | number) => void
-  isLoading?: boolean
+  onFormDataChange: (field: 'translations' | 'colorHex' | 'levels' | 'qtyLevels', value: NameDescriptionDictionary[][] | BaseWineColor[] | string | LevelItem[] | number) => void
   autoFocus?: boolean
-  cachedColors: BaseWineColor[]
   onReorder?: (reorderedLevels: LevelItem[]) => void
 }
 
-export const CharacteristicFormFields = ({ formData, onFormDataChange, isLoading = false, autoFocus = true, cachedColors, onReorder }: CharacteristicFormFieldsProps) => {
+export const CharacteristicFormFields = ({ formData, onFormDataChange, autoFocus = true, onReorder }: CharacteristicFormFieldsProps) => {
   const { t } = useTranslation('wines')
-
-  const { colorValues, handleColorChange, fetchOptions } = useColorForm({
-    cachedColors,
-    initialColors: formData?.colors || [],
-    onColorsChange: colors => onFormDataChange('colors', colors),
-  })
 
   const {
     nameUa,
@@ -147,19 +137,6 @@ export const CharacteristicFormFields = ({ formData, onFormDataChange, isLoading
           <div className="flex items-center gap-4">
             <ColorPicker value={formData?.colorHex || ''} onChange={color => onFormDataChange('colorHex', color)} />
           </div>
-        </div>
-
-        <div>
-          <label className="text-sm font-medium mb-2 block">{t('color_wine')} *</label>
-          <MultiSelect
-            value={colorValues}
-            onChange={handleColorChange}
-            placeholder={t('flavors.choose_color')}
-            searchLabel={t('flavors.search_color')}
-            fetchOptions={fetchOptions}
-            mode="multiple"
-            disabled={isLoading}
-          />
         </div>
 
         <div>

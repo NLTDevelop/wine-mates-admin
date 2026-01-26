@@ -1,13 +1,13 @@
-import { WineTaste } from './types/tastes'
+import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { getDisplayNames } from '@/lib/utils'
-import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 import { ReorderItem } from '../../general/entities/types'
+import { WineTasteGroup, WineTasteItem } from './types/tastes'
 
-interface TasteStoreState {
-  tastes: WineTaste[]
-  searchResults: WineTaste[]
-  currentTaste: WineTaste | null
+interface WineTasteStoreState {
+  tasteGroups: WineTasteGroup[]
+  searchResults: WineTasteGroup[]
+  currentTasteGroup: WineTasteGroup | null
   filters: {
     search: string
     limit: number
@@ -15,77 +15,80 @@ interface TasteStoreState {
     include?: string[]
   }
 
-  setTastes: (tastes: WineTaste[]) => void
-  setCurrentTaste: (taste: WineTaste | null) => void
-  addTaste: (taste: WineTaste) => void
-  updateTaste: (tasteId: string, newTaste: WineTaste) => void
-  deleteTaste: (tasteId: string) => void
-  searchTastes: (searchTerm: string) => void
+  setTasteGroups: (groups: WineTasteGroup[]) => void
+  setCurrentTasteGroup: (group: WineTasteGroup | null) => void
+  addTasteGroup: (group: WineTasteGroup) => void
+  updateTasteGroup: (groupId: string, newGroup: WineTasteGroup) => void
+  deleteTasteGroup: (groupId: string) => void
+  reorderTasteGroups: (item: ReorderItem[]) => void
+  searchTasteGroups: (searchTerm: string) => void
   clearSearch: () => void
-  setFilters: (filters: Partial<TasteStoreState['filters']>) => void
+  setFilters: (filters: Partial<WineTasteStoreState['filters']>) => void
   resetFilters: () => void
-  reorderTaste: (items: ReorderItem[]) => void
 
-  getTasteById: (id: string) => WineTaste | undefined
-  getTasteByValue: (value: string) => WineTaste | undefined
-  hasTaste: (id: string) => boolean
-  hasTasteByValue: (value: string) => boolean
+  addTaste: (groupId: string, taste: WineTasteItem) => void
+  updateTaste: (groupId: string, tasteId: string, newTaste: WineTasteItem) => void
+  deleteTaste: (groupId: string, tasteId: string) => void
+  reorderTastes: (groupId: string, tastes: WineTasteItem[]) => void
+
+  getTasteGroupById: (id: string) => WineTasteGroup | undefined
+  hasTasteGroup: (id: string) => boolean
 }
 
-export const useTasteStore = createStoreDevToolsWrapper<TasteStoreState>(
+export const useWineTasteStore = createStoreDevToolsWrapper<WineTasteStoreState>(
   (set, get) => ({
-    tastes: [],
+    tasteGroups: [],
     searchResults: [],
-    currentTaste: null,
+    currentTasteGroup: null,
     filters: {
       search: '',
       limit: DEFAULT_PAGINATION_LIMIT,
       page: 1,
-      include: ['assigned-colors'],
+      include: ['taste'],
     },
 
-    setTastes: tastes => set({ tastes }, false, 'tastes/setTastes'),
+    setTasteGroups: groups => set({ tasteGroups: groups }, false, 'tasteGroups/setTasteGroups'),
 
-    setCurrentTaste: taste => set({ currentTaste: taste }, false, 'tastes/setCurrentTaste'),
+    setCurrentTasteGroup: group => set({ currentTasteGroup: group }, false, 'tasteGroups/setCurrentTasteGroup'),
 
-    addTaste: taste =>
+    addTasteGroup: group =>
       set(
-        (state: TasteStoreState) => ({
-          tastes: [...state.tastes, taste],
+        (state: WineTasteStoreState) => ({
+          TasteGroups: [...state.tasteGroups, group],
         }),
         false,
-        'tastes/addTaste'
+        'tasteGroups/addTasteGroup'
       ),
 
-    updateTaste: (tasteId, newTaste) =>
+    updateTasteGroup: (groupId, newGroup) =>
       set(
-        (state: TasteStoreState) => ({
-          tastes: state.tastes.map(t => (t.id === tasteId ? newTaste : t)),
-          currentTaste: state.currentTaste?.id === tasteId ? newTaste : state.currentTaste,
-          searchResults: state.searchResults.map(t => (t.id === tasteId ? newTaste : t)),
+        (state: WineTasteStoreState) => ({
+          tasteGroups: state.tasteGroups.map(g => (g.id === groupId ? newGroup : g)),
+          currentTasteGroup: state.currentTasteGroup?.id === groupId ? newGroup : state.currentTasteGroup,
+          searchResults: state.searchResults.map(g => (g.id === groupId ? newGroup : g)),
         }),
         false,
-        'tastes/updateTaste'
+        'tasteGroups/updateTasteGroup'
       ),
 
-    deleteTaste: tasteId =>
+    deleteTasteGroup: groupId =>
       set(
-        (state: TasteStoreState) => ({
-          tastes: state.tastes.filter(t => t.id !== tasteId),
-          currentTaste: state.currentTaste?.id === tasteId ? null : state.currentTaste,
-          searchResults: state.searchResults.filter(t => t.id !== tasteId),
+        (state: WineTasteStoreState) => ({
+          tasteGroups: state.tasteGroups.filter(g => g.id !== groupId),
+          currentTasteGroup: state.currentTasteGroup?.id === groupId ? null : state.currentTasteGroup,
+          searchResults: state.searchResults.filter(g => g.id !== groupId),
         }),
         false,
-        'tastes/deleteTaste'
+        'tasteGroups/deleteTasteGroup'
       ),
 
-    reorderTaste: (items: ReorderItem[]) =>
+    reorderTasteGroups: (items: ReorderItem[]) =>
       set(
-        (state: TasteStoreState) => {
+        (state: WineTasteStoreState) => {
           const sortMap = new Map(items.map(item => [item.id, item.sortNumber]))
 
           return {
-            tasteGroups: state.tastes
+            tasteGroups: state.tasteGroups
               .map(group => {
                 const newSortNumber = sortMap.get(Number(group.id))
                 return newSortNumber !== undefined ? { ...group, sortNumber: newSortNumber } : group
@@ -94,16 +97,40 @@ export const useTasteStore = createStoreDevToolsWrapper<TasteStoreState>(
           }
         },
         false,
-        'tastes/reorderGroups'
+        'tasteGroups/reorderGroups'
+      ),
+
+    searchTasteGroups: searchTerm =>
+      set(
+        (state: WineTasteStoreState) => {
+          const searchTermLower = searchTerm.toLowerCase()
+
+          return {
+            searchResults: state.tasteGroups.filter(group => {
+              const { nameUa: groupNameUa, nameEn: groupNameEn } = getDisplayNames(group.translations)
+
+              const groupMatch = groupNameUa.toLowerCase().includes(searchTermLower) || groupNameEn.toLowerCase().includes(searchTermLower)
+
+              const tastesMatch = group.flavors?.some(tastes => {
+                const { nameUa: tastesNameUa, nameEn: tastesNameEn } = getDisplayNames(tastes.translations)
+                return tastesNameUa.toLowerCase().includes(searchTermLower) || tastesNameEn.toLowerCase().includes(searchTermLower)
+              })
+
+              return groupMatch || tastesMatch
+            }),
+          }
+        },
+        false,
+        'tasteGroups/searchTAsteGroups'
       ),
 
     setFilters: newFilters =>
       set(
-        (state: TasteStoreState) => ({
+        (state: WineTasteStoreState) => ({
           filters: { ...state.filters, ...newFilters },
         }),
         false,
-        'tastes/setFilters'
+        'tasteGroups/setFilters'
       ),
 
     resetFilters: () =>
@@ -116,44 +143,82 @@ export const useTasteStore = createStoreDevToolsWrapper<TasteStoreState>(
           },
         },
         false,
-        'tastes/resetFilters'
+        'tasteGroups/resetFilters'
       ),
 
-    searchTastes: searchTerm => {
-      const { tastes } = get()
-      if (!searchTerm.trim()) {
-        set({ searchResults: [] }, false, 'tastes/searchTastes')
-        return
-      }
+    clearSearch: () => set({ searchResults: [] }, false, 'tasteGroups/clearSearch'),
 
-      const searchTermLower = searchTerm.toLowerCase()
+    addTaste: (groupId, taste) =>
+      set(
+        (state: WineTasteStoreState) => ({
+          tasteGroups: state.tasteGroups.map(g =>
+            g.id === groupId
+              ? {
+                  ...g,
+                  tastes: [...(g.flavors || []), taste],
+                }
+              : g
+          ),
+        }),
+        false,
+        'tasteGroups/addTaste'
+      ),
 
-      const filtered = tastes.filter((t: WineTaste) => {
-        const { nameUa: groupNameUa, nameEn: groupNameEn } = getDisplayNames(t.translations)
+    updateTaste: (groupId, tasteId, newTaste) =>
+      set(
+        (state: WineTasteStoreState) => ({
+          tasteGroups: state.tasteGroups.map(g =>
+            g.id === groupId
+              ? {
+                  ...g,
+                  tastes: g.flavors?.map(t => (t.id === tasteId ? newTaste : t)),
+                }
+              : g
+          ),
+        }),
+        false,
+        'tasteGroups/updateTaste'
+      ),
 
-        return groupNameUa.toLowerCase().includes(searchTermLower) || (groupNameEn && groupNameEn.toLowerCase().includes(searchTermLower))
-      })
+    deleteTaste: (groupId, tasteId) =>
+      set(
+        (state: WineTasteStoreState) => ({
+          tasteGroups: state.tasteGroups.map(g =>
+            g.id === groupId
+              ? {
+                  ...g,
+                  tastes: g.flavors?.filter(t => t.id !== tasteId),
+                }
+              : g
+          ),
+        }),
+        false,
+        'tasteGroups/deleteTaste'
+      ),
 
-      set({ searchResults: filtered }, false, 'tastes/searchTastes')
+    reorderTastes: (groupId, tastes) =>
+      set(
+        (state: WineTasteStoreState) => ({
+          tasteGroups: state.tasteGroups.map(g =>
+            g.id === groupId
+              ? {
+                  ...g,
+                  tastes: tastes,
+                }
+              : g
+          ),
+        }),
+        false,
+        'TasteGroups/reorderTastes'
+      ),
+
+    getTasteGroupById: id => {
+      return get().tasteGroups.find((g: WineTasteGroup) => g.id === id)
     },
 
-    clearSearch: () => set({ searchResults: [] }, false, 'tastes/clearSearch'),
-
-    getTasteById: id => {
-      return get().tastes.find((t: WineTaste) => t.id === id)
-    },
-
-    getTasteByValue: value => {
-      return get().tastes.find((t: WineTaste) => t.colorHex === value)
-    },
-
-    hasTaste: id => {
-      return get().tastes.some((t: WineTaste) => t.id === id)
-    },
-
-    hasTasteByValue: value => {
-      return get().tastes.some((t: WineTaste) => t.colorHex === value)
+    hasTasteGroup: id => {
+      return get().tasteGroups.some((t: WineTasteGroup) => t.id === id)
     },
   }),
-  'TasteStore'
+  'WineTasteStore'
 )

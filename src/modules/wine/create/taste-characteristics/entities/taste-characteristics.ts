@@ -1,4 +1,4 @@
-import { BaseWineColor, Language, NameDescriptionDictionary, NameDictionary } from '../../general/entities/types'
+import { Language, NameDescriptionDictionary, NameDictionary } from '../../general/entities/types'
 
 export type CreateTranslation =
   | {
@@ -33,7 +33,6 @@ export interface WineTasteCharacteristics {
   translations?: NameDescriptionDictionary[][]
   colorHex: string
   levels: LevelItem[]
-  colors: BaseWineColor[]
   sortNumber: number
   isPremium: boolean
   qtyLevels: 2 | 3
@@ -44,7 +43,6 @@ export type CreateWineTasteCharacteristicParams = Omit<WineTasteCharacteristics,
 export interface CreateWineTasteCharacteristicRequest {
   translations?: CreateTranslation[]
   levels: LevelItem[]
-  colorIds: string[]
   colorHex: string
   sortNumber?: number
   isPremium: boolean
@@ -54,7 +52,6 @@ export interface CreateWineTasteCharacteristicRequest {
 export interface UpdateWineTasteCharacteristicRequest {
   translations?: UpdateTranslation[]
   levels: LevelItem[]
-  colorIds: string[]
   colorHex: string
   sortNumber?: number
   isPremium: boolean

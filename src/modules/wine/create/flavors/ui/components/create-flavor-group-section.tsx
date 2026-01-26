@@ -3,17 +3,15 @@ import { useCreateFlavorGroup } from '../../presenters/useCreateFlavorGroup'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Card, CardContent, CardHeader } from '@/UIKit/shadcn/ui/card'
 import { CreateWineAromaGroupRequest } from '../../entities/types/flavor-types'
-import { BaseWineColor } from '../../../general/entities/types'
 import { Plus, Flower } from 'lucide-react'
-import { FlavorGroupFormFields } from '..'
+import { FlavorGroupFormFields } from './flavor-group-form-field'
 
 interface CreateFlavorGroupSectionProps {
   onCreateGroup: (groupData: CreateWineAromaGroupRequest) => void
   isLoading?: boolean
-  cachedColors: BaseWineColor[]
 }
 
-export const CreateFlavorGroupSection = ({ onCreateGroup, isLoading = false, cachedColors }: CreateFlavorGroupSectionProps) => {
+export const CreateFlavorGroupSection = ({ onCreateGroup, isLoading = false }: CreateFlavorGroupSectionProps) => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
@@ -46,7 +44,7 @@ export const CreateFlavorGroupSection = ({ onCreateGroup, isLoading = false, cac
           </h3>
         </CardHeader>
 
-        <FlavorGroupFormFields formData={formData} onFormDataChange={updateFormData} isLoading={isLoading} cachedColors={cachedColors} />
+        <FlavorGroupFormFields formData={formData} onFormDataChange={updateFormData} />
 
         <div className="flex justify-end gap-2 flex-col sm:flex-row mt-4">
           <Button onClick={handleCancel} variant="outline" disabled={isLoading}>

@@ -124,7 +124,7 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
           }
         },
         false,
-        'colorGroups/searchColorGroups'
+        'aromaGroups/searchAromaGroups'
       ),
 
     setFilters: newFilters =>
@@ -133,7 +133,7 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
           filters: { ...state.filters, ...newFilters },
         }),
         false,
-        'wineTypes/setFilters'
+        'aromaGroups/setFilters'
       ),
 
     resetFilters: () =>
@@ -146,7 +146,7 @@ export const useWineFlavorStore = createStoreDevToolsWrapper<WineFlavorStoreStat
           },
         },
         false,
-        'wineTypes/resetFilters'
+        'aromaGroups/resetFilters'
       ),
 
     clearSearch: () => set({ searchResults: [] }, false, 'aromaGroups/clearSearch'),

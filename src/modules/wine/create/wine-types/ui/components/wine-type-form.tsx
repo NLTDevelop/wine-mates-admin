@@ -1,12 +1,9 @@
 import { useTranslation } from 'react-i18next'
-import { useColorForm } from '../../../general/presenters/useColorForm'
 import { useTranslationsName } from '../../../general/presenters/useTranslationName'
 import { Input } from '@/UIKit/shadcn/ui/input'
-import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Save, Plus, Tags } from 'lucide-react'
 import { CreateWineTypeParams } from '../../entities/types/wine-type'
-import { BaseWineColor } from '../../../general/entities/types'
 import { AdditionalTranslations } from '../../../general/ui/components/additional-translations'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/UIKit/shadcn/ui/checkbox'
@@ -17,20 +14,13 @@ interface WineTypeFormProps {
   onSave: () => void
   onCancel: () => void
   isLoading?: boolean
-  cachedColors: BaseWineColor[]
   mode?: 'create' | 'edit'
   hasChanges?: boolean
 }
 
-export const WineTypeForm: React.FC<WineTypeFormProps> = ({ formData, onFormDataChange, onSave, onCancel, isLoading = false, cachedColors, mode = 'edit', hasChanges = true }) => {
+export const WineTypeForm: React.FC<WineTypeFormProps> = ({ formData, onFormDataChange, onSave, onCancel, isLoading = false, mode = 'edit', hasChanges = true }) => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
-
-  const { colorValues, handleColorChange, fetchOptions } = useColorForm({
-    cachedColors,
-    initialColors: formData.colors || [],
-    onColorsChange: colors => onFormDataChange('colors', colors),
-  })
 
   const {
     nameUa,
@@ -48,7 +38,7 @@ export const WineTypeForm: React.FC<WineTypeFormProps> = ({ formData, onFormData
     onTranslationsChange: translations => onFormDataChange('translations', translations),
   })
 
-  const canSave = mode === 'create' ? nameUa && nameEn && formData.colors.length && !isLoading : nameUa && nameEn && formData.colors.length && hasChanges && !isLoading
+  const canSave = mode === 'create' ? nameUa && nameEn && !isLoading : nameUa && nameEn && hasChanges && !isLoading
 
   const SaveIcon = mode === 'create' ? Plus : Save
   const saveText = isLoading ? tc('button.saving') : mode === 'create' ? tc('button.save') : tc('button.save')
@@ -81,19 +71,6 @@ export const WineTypeForm: React.FC<WineTypeFormProps> = ({ formData, onFormData
         onTranslationValueChange={handleTranslationValueChange}
         getAvailableLanguages={getAvailableLanguages}
       />
-
-      <div className="space-y-2">
-        <label className="text-sm font-medium mb-2 block">{t('color_wine')} *</label>
-        <MultiSelect
-          value={colorValues}
-          onChange={handleColorChange}
-          placeholder={t('flavors.choose_color')}
-          searchLabel={t('flavors.search_color')}
-          fetchOptions={fetchOptions}
-          mode="multiple"
-          disabled={isLoading}
-        />
-      </div>
 
       <div>
         <label className="text-sm font-medium mb-2 block">{t('types.scales_for_sparkling')} </label>

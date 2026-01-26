@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from 'react'
-import { BaseWineColor, NameDescriptionDictionary } from '../../general/entities/types'
+import { NameDescriptionDictionary } from '../../general/entities/types'
 import { CreateWineTasteCharacteristicParams, LevelItem } from './taste-characteristics'
 
 export interface EditingCharacteristicState {
@@ -11,7 +11,6 @@ export interface NewCharacteristicData {
   translations: NameDescriptionDictionary[][]
   levels: LevelItem[]
   colorHex: string
-  colors: BaseWineColor[]
   description?: string
 }
 

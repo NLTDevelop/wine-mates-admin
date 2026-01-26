@@ -1,13 +1,13 @@
 import { useCallback } from 'react'
-import { useWineFlavor } from './useWineFlavors'
-import { WineAromaGroup, WineAromaItem, WineAromaSubgroup } from '../entities/types/flavor-types'
-import { EditingGroupState, NewItemData } from '../entities/types/flavor-palette-types'
 import { NameDictionary } from '../../general/entities/types'
-import { areNestedArrEqual, arraysEqual, createTranslations, getDisplayNames } from '@/lib/utils'
-import { useWineFlavorStore } from '../entities/wine-flavor-store'
+import { arraysEqual, createTranslations, getDisplayNames } from '@/lib/utils'
+import { WineTasteGroup, WineTasteItem } from '../entities/types/tastes'
+import { useWineTaste } from './useWineTaste'
+import { useWineTasteStore } from '../entities/wine-taste-store'
+import { EditingGroupState, NewItemData } from '../entities/taste-palette-types'
 
-interface UseFlavorItemsProps {
-  aromaGroups: WineAromaGroup[] | undefined
+interface UseTasteItemsProps {
+  tasteGroups: WineTasteGroup[] | undefined
   editingGroup: any
   newItemData: Record<string, any>
   openAccordions: Set<string>
@@ -16,10 +16,10 @@ interface UseFlavorItemsProps {
   setOpenAccordions: (accordions: any) => void
 }
 
-export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAccordions, setEditingGroup, setNewItemData, setOpenAccordions }: UseFlavorItemsProps) => {
-  const { createSubgroup, updateSubgroup, deleteSubgroup, reorderSubgroup, reorderAromas } = useWineFlavor()
+export const useTasteItems = ({ tasteGroups, editingGroup, newItemData, openAccordions, setEditingGroup, setNewItemData, setOpenAccordions }: UseTasteItemsProps) => {
+  const { createTaste, updateTaste, deleteTaste, reorderTaste } = useWineTaste()
 
-  const store = useWineFlavorStore()
+  const store = useWineTasteStore()
 
   const handleAddAromaClick = useCallback(
     (groupId: string) => {
@@ -32,7 +32,7 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
       } else {
         setNewItemData((prev: Record<string, NewItemData>) => ({
           ...prev,
-          [groupId]: { translations: createTranslations('', ''), aromas: [], colorHex: '' },
+          [groupId]: { translations: createTranslations('', ''), colorHex: '' },
         }))
         if (editingGroup?.groupId === groupId && editingGroup.isEditingGroup) {
           setEditingGroup(null)
@@ -43,7 +43,7 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
   )
 
   const handleEditItem = useCallback(
-    (groupId: string, item?: WineAromaSubgroup) => {
+    (groupId: string, item?: WineTasteItem) => {
       if (!item) return
 
       setEditingGroup({
@@ -56,7 +56,6 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
         ...prev,
         [groupId]: {
           translations: item.translations || [],
-          aromas: item.aromas || [],
           colorHex: item.colorHex || '',
         },
       }))
@@ -69,11 +68,11 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
   )
 
   const onRemoveItem = useCallback(
-    async (groupId: string, subgroupId: string) => {
+    async (groupId: string, tasteId: string) => {
       try {
-        const isEditingCurrentItem = editingGroup?.groupId === groupId && editingGroup?.editingItem?.id === subgroupId
+        const isEditingCurrentItem = editingGroup?.groupId === groupId && editingGroup?.editingItem?.id === tasteId
 
-        await deleteSubgroup({ groupId, subgroupId })
+        await deleteTaste({ groupId, tasteId })
 
         if (isEditingCurrentItem) {
           setEditingGroup(null)
@@ -87,7 +86,7 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
         console.error('Failed to delete shade:', error)
       }
     },
-    [deleteSubgroup, editingGroup, setEditingGroup, setNewItemData]
+    [deleteTaste, editingGroup, setEditingGroup, setNewItemData]
   )
 
   const hasChanges = useCallback(
@@ -108,12 +107,11 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
 
       const namesChanged = editingNameUa !== currentNameUa || editingNameEn !== currentNameEn
       const colorHexChanged = editingItem.colorHex !== currentData.colorHex
-      const aromasChanged = !areNestedArrEqual(editingItem.aromas || [], currentData.aromas || [])
       const translationsChanged = !arraysEqual(editingItem.translations || [], currentData.translations || [])
 
-      return namesChanged || colorHexChanged || aromasChanged || translationsChanged
+      return namesChanged || colorHexChanged || translationsChanged
     },
-    [editingGroup, newItemData, aromaGroups]
+    [editingGroup, newItemData, tasteGroups]
   )
 
   const handleSaveItem = useCallback(
@@ -131,20 +129,15 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
       }
 
       if (editingGroup?.editingItem && editingGroup.groupId === groupId) {
-        const cleanAromas = (aromas: WineAromaItem[] | undefined) => {
-          return aromas?.map(({ sortNumber, ...aroma }) => aroma) || []
-        }
-
-        const subgroupData = {
+        const tasteData = {
           translations: newItemData[groupId]?.translations || editingGroup.editingItem.translations,
-          aromas: cleanAromas(newItemData[groupId]?.aromas) || cleanAromas(editingGroup.editingItem.aromas),
           colorHex: newItemData[groupId]?.colorHex || editingGroup.editingItem.colorHex || '',
         }
 
         try {
-          await updateSubgroup({
-            subgroupId: editingGroup.editingItem.id,
-            newSubgroup: subgroupData,
+          await updateTaste({
+            groupId: editingGroup.editingItem.id,
+            newTaste: tasteData,
           })
           setEditingGroup(null)
           setNewItemData((prev: Record<string, NewItemData>) => {
@@ -153,29 +146,28 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
             return newData
           })
         } catch (error) {
-          console.error('Failed to update subgroup:', error)
+          console.error('Failed to update taste:', error)
         }
       } else if (newItemData[groupId]) {
-        const subgroupData = {
+        const tasteData = {
           groupId: parseInt(groupId),
           translations: newItemData[groupId].translations,
-          aromas: newItemData[groupId].aromas || [],
           colorHex: newItemData[groupId].colorHex || '',
         }
 
         try {
-          await createSubgroup({ groupId, subgroupData })
+          await createTaste({ groupId, tasteData })
           setNewItemData((prev: Record<string, NewItemData>) => {
             const newData = { ...prev }
             delete newData[groupId]
             return newData
           })
         } catch (error) {
-          console.error('Failed to create subgroup:', error)
+          console.error('Failed to create taste:', error)
         }
       }
     },
-    [editingGroup, newItemData, updateSubgroup, createSubgroup, setEditingGroup, setNewItemData, hasChanges]
+    [editingGroup, newItemData, updateTaste, createTaste, setEditingGroup, setNewItemData, hasChanges]
   )
 
   const handleCancelItemEdit = useCallback(
@@ -191,7 +183,7 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
   )
 
   const updateItemFormData = useCallback(
-    (groupId: string, field: 'name' | 'nameEn' | 'colorHex' | 'translations' | 'aromas', value: string | NameDictionary[]) => {
+    (groupId: string, field: 'name' | 'nameEn' | 'colorHex' | 'translations', value: string | NameDictionary[]) => {
       setNewItemData((prev: Record<string, NewItemData>) => {
         const newData = {
           ...prev,
@@ -217,16 +209,6 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
         return false
       }
 
-      if (data.aromas && data.aromas.length > 0) {
-        const hasInvalidAromas = data.aromas.some((aroma: WineAromaItem) => {
-          const { nameUa: aromaNameUa, nameEn: aromaNameEn } = getDisplayNames(aroma.translations || [])
-          return !aromaNameUa?.trim() || !aromaNameEn?.trim()
-        })
-        if (hasInvalidAromas) {
-          return false
-        }
-      }
-
       const isEditingItem = editingGroup?.groupId === groupId && editingGroup?.editingItem
       if (isEditingItem) {
         return hasChanges(groupId)
@@ -237,48 +219,32 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
     [newItemData, editingGroup, hasChanges]
   )
 
-  const getItemName = useCallback((item: WineAromaSubgroup) => {
+  const getItemName = useCallback((item: WineTasteItem) => {
     const { nameUa } = getDisplayNames(item.translations || [])
     return nameUa || ''
   }, [])
 
-  const handleReorderSubgr = useCallback(
-    async (groupId: string, reorderedSubgr: WineAromaSubgroup[]) => {
-      store.reorderSubgroups(groupId, reorderedSubgr)
-      const reorderParams = reorderedSubgr.map((subgroup, index) => ({
-        id: Number(subgroup.id),
+  const handleReorderTaste = useCallback(
+    async (groupId: string, reorderedTaste: WineTasteItem[]) => {
+      store.reorderTastes(groupId, reorderedTaste)
+      const reorderParams = reorderedTaste.map((t, index) => ({
+        id: Number(t.id),
         sortNumber: index,
       }))
 
-      await reorderSubgroup(reorderParams)
+      await reorderTaste(reorderParams)
     },
-    [reorderSubgroup]
+    [reorderTaste]
   )
 
-  const getSubgroupForGroup = useCallback(
+  const getTasteForGroup = useCallback(
     (groupId: string) => {
-      const group = aromaGroups?.find(g => g.id === groupId)
+      const group = tasteGroups?.find(g => g.id === groupId)
 
-      return group?.subgroups || []
+      return group?.flavors || []
     },
-    [aromaGroups]
+    [tasteGroups]
   )
-
-  const handleReorderAromas = useCallback(
-    async (reorderedAromas: WineAromaItem[]) => {
-      const reorderParams = reorderedAromas.map((aroma, index) => ({
-        id: Number(aroma.id),
-        sortNumber: index,
-      }))
-
-      await reorderAromas(reorderParams)
-    },
-    [reorderAromas]
-  )
-
-  const getAromasForGroup = useCallback((originalAromas: WineAromaItem[]) => {
-    return originalAromas
-  }, [])
 
   return {
     handleAddAromaClick,
@@ -290,10 +256,8 @@ export const useFlavorItems = ({ aromaGroups, editingGroup, newItemData, openAcc
     canAddItem,
     getItemName,
 
-    handleReorderSubgr,
-    getSubgroupForGroup,
-    handleReorderAromas,
-    getAromasForGroup,
+    handleReorderTaste,
+    getTasteForGroup,
 
     hasChanges,
   }

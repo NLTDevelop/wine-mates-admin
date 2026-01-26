@@ -3,10 +3,9 @@ import { useFlavorGroups } from './useFlavorGroups'
 import { useFlavorItems } from './useFlavorItems'
 import { useFlavorUI } from './useFlavorUI'
 import { useWineFlavor } from './useWineFlavors'
-import { BaseWineColor } from '../../general/entities/types'
 
-export const useFlavorPalette = (cachedColors: BaseWineColor[]) => {
-  const { aromaGroups, isLoading: wineFlavorLoading, isCreatingGroup, totalCount, filters, onChangePagination, reorderGroup, isReorderingGroup } = useWineFlavor(cachedColors)
+export const useFlavorPalette = () => {
+  const { aromaGroups, isLoading: wineFlavorLoading, isCreatingGroup, totalCount, filters, onChangePagination, reorderGroup, isReorderingGroup } = useWineFlavor()
 
   const {
     state: { openAccordions, editingGroup, newItemData, editingGroupData, forceOpenKeys },
@@ -25,7 +24,6 @@ export const useFlavorPalette = (cachedColors: BaseWineColor[]) => {
     setForceOpenKeys,
     setOpenAccordions,
     setNewItemData,
-    cachedColors,
   })
 
   const items = useFlavorItems({
@@ -36,7 +34,6 @@ export const useFlavorPalette = (cachedColors: BaseWineColor[]) => {
     setEditingGroup,
     setNewItemData,
     setOpenAccordions,
-    cachedColors,
   })
 
   const ui = useFlavorUI({

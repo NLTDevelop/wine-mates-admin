@@ -2,17 +2,17 @@ import { useTranslation } from 'react-i18next'
 import { useTranslationsName } from '../../../general/presenters/useTranslationName'
 import { Input } from '@/UIKit/shadcn/ui/input'
 import { ColorPicker } from '@/UIKit/shadcn/ui/color-picker'
-import { CreateWineAromaGroupParams } from '../../entities/types/flavor-types'
 import { BaseWineColor, NameDictionary } from '../../../general/entities/types'
 import { AdditionalTranslations } from '../../../general/ui/components/additional-translations'
+import { CreateWineTasteGroupParams } from '../../entities/types/tastes'
 
-interface FlavorGroupFormFieldsProps {
-  formData: Partial<CreateWineAromaGroupParams>
+interface TasteGroupFormFieldsProps {
+  formData: Partial<CreateWineTasteGroupParams>
   onFormDataChange: (field: 'translations' | 'colorHex', value: string | BaseWineColor[] | NameDictionary[]) => void
   autoFocus?: boolean
 }
 
-export const FlavorGroupFormFields = ({ formData, onFormDataChange, autoFocus = true }: FlavorGroupFormFieldsProps) => {
+export const TasteGroupFormFields = ({ formData, onFormDataChange, autoFocus = true }: TasteGroupFormFieldsProps) => {
   const { t } = useTranslation('wines')
 
   const {
@@ -35,13 +35,13 @@ export const FlavorGroupFormFields = ({ formData, onFormDataChange, autoFocus = 
     <div className="w-full">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
         <div>
-          <label className="text-sm font-medium mb-2 block">{t('flavors.group_name_ua')} *</label>
-          <Input value={nameUa} onChange={e => handleNameUaChange(e.target.value)} placeholder={t('flavors.group_name_ua')} className="w-full" autoFocus={autoFocus} />
+          <label className="text-sm font-medium mb-2 block">{t('tastes.group_name_ua')} *</label>
+          <Input value={nameUa} onChange={e => handleNameUaChange(e.target.value)} placeholder={t('tastes.group_name_ua')} className="w-full" autoFocus={autoFocus} />
         </div>
 
         <div>
-          <label className="text-sm font-medium mb-2 block">{t('flavors.group_name_en')} *</label>
-          <Input value={nameEn} onChange={e => handleNameEnChange(e.target.value)} placeholder={t('flavors.group_name_en')} className="w-full" />
+          <label className="text-sm font-medium mb-2 block">{t('tastes.group_name_en')} *</label>
+          <Input value={nameEn} onChange={e => handleNameEnChange(e.target.value)} placeholder={t('tastes.group_name_en')} className="w-full" />
         </div>
       </div>
 

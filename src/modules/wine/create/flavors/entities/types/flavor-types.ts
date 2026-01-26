@@ -1,4 +1,4 @@
-import { BaseWineColor, NameDictionary } from '../../../general/entities/types'
+import { NameDictionary } from '../../../general/entities/types'
 
 export interface WineAromaItem {
   id?: string
@@ -24,7 +24,6 @@ export interface WineAromaGroup {
   colorHex: string
   sortNumber: number
   subgroups: WineAromaSubgroup[]
-  colors: BaseWineColor[]
 }
 
 export interface CreateWineAromaGroupParams {
@@ -32,13 +31,11 @@ export interface CreateWineAromaGroupParams {
   colorHex: string
   sortNumber: number
   subgroups: WineAromaSubgroup[]
-  colors: BaseWineColor[]
 }
 
 export interface CreateWineAromaGroupRequest {
   translations: NameDictionary[]
   colorHex: string
-  colorIds: string[]
 }
 
 export interface UpdateWineAromaGroupParams {

@@ -27,9 +27,9 @@ export const useWineOptions = () => {
     [fetchWithErrorHandling]
   )
 
-  const useWineTypes = (search?: string[]) =>
+  const useWineTypes = () =>
     useQuery({
-      ...wineTypeQueries.list(search),
+      ...wineTypeQueries.list(),
       retry: 2,
       staleTime: 5 * 60 * 1000,
     })

@@ -3,17 +3,15 @@ import { useCreateWineType } from '../../presenters/useCreateWineType'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Card, CardContent, CardHeader } from '@/UIKit/shadcn/ui/card'
 import { CreateWineTypeRequest } from '../../entities/types/wine-type'
-import { BaseWineColor } from '../../../general/entities/types'
 import { WineTypeForm } from '..'
 import { Plus, Tags } from 'lucide-react'
 
 interface CreateWineTypeSectionProps {
   onCreateWineType: (wineTypeData: CreateWineTypeRequest) => void
   isLoading?: boolean
-  cachedColors: BaseWineColor[]
 }
 
-export const CreateWineTypeSection = ({ onCreateWineType, isLoading = false, cachedColors }: CreateWineTypeSectionProps) => {
+export const CreateWineTypeSection = ({ onCreateWineType, isLoading = false }: CreateWineTypeSectionProps) => {
   const { t } = useTranslation('wines')
 
   const { isExpanded, formData, updateFormData, handleCreateWineType, handleCancel, expandForm } = useCreateWineType({
@@ -43,7 +41,7 @@ export const CreateWineTypeSection = ({ onCreateWineType, isLoading = false, cac
           </h3>
         </CardHeader>
 
-        <WineTypeForm mode="create" formData={formData} onFormDataChange={updateFormData} onSave={handleCreateWineType} onCancel={handleCancel} isLoading={isLoading} cachedColors={cachedColors} />
+        <WineTypeForm mode="create" formData={formData} onFormDataChange={updateFormData} onSave={handleCreateWineType} onCancel={handleCancel} isLoading={isLoading} />
       </CardContent>
     </Card>
   )

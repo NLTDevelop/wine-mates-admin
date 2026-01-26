@@ -3,9 +3,9 @@ import { CreateWineTasteCharacteristicRequest, UpdateWineTasteCharacteristicPara
 import { tasteCharacteristicsService } from './taste-characteristics-service'
 
 export const tasteCharacteristicsQueries = {
-  list: (include?: string[]) => ({
-    queryKey: ['taste-characteristics', 'list', ...(include || [])],
-    queryFn: () => tasteCharacteristicsService.list(include),
+  list: () => ({
+    queryKey: ['taste-characteristics', 'list'],
+    queryFn: () => tasteCharacteristicsService.list(),
   }),
 
   create: () => ({

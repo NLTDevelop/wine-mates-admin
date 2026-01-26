@@ -5,7 +5,6 @@ import { useWineTypePalette } from '../../presenters/useWineTypePalette'
 import { cn, getDisplayNames } from '@/lib/utils'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { PaletteItemActions } from '@/modules/wine/create/general/ui'
-import { BaseWineColor } from '../../../general/entities/types'
 import { SkeletonWinePalette } from '../../../general/ui/components/skeleton-wine-palette'
 import { EmptyState } from '../../../general/ui/components/empty-state'
 import { WarningModal } from '@/modals/warningModal'
@@ -15,12 +14,7 @@ import { WineType } from '../../entities/types/wine-type'
 import { SortableList } from '@/UIKit/app-components/sortable-list'
 import { SortableItem } from '@/UIKit/app-components/sortable-item'
 
-interface WineTypeManagerProps {
-  cachedColors: BaseWineColor[]
-  colorsLoading?: boolean
-}
-
-export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTypeManagerProps) => {
+export const WineTypeManager = () => {
   const { t } = useTranslation('wines')
 
   const { deleteModal } = useDeleteModal()
@@ -42,7 +36,7 @@ export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTyp
     hasChanges,
     isReorderingGroup,
     reorderGroup,
-  } = useWineTypePalette(cachedColors)
+  } = useWineTypePalette()
 
   const handleOpenDeleteModal = useCallback(
     (groupId: string, groupNameUa: string) => {
@@ -90,7 +84,7 @@ export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTyp
     <Card>
       <CardContent className={cn('space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0', !isLoading ? 'fade-in' : '')}>
         <div>
-          <CreateWineTypeSection onCreateWineType={handleAddWineType} isLoading={isLoading || isReorderingGroup} cachedColors={cachedColors} />
+          <CreateWineTypeSection onCreateWineType={handleAddWineType} isLoading={isLoading || isReorderingGroup} />
         </div>
 
         {!isLoading && wineTypes?.length === 0 && <EmptyState type="wine-types" />}
@@ -117,14 +111,6 @@ export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTyp
                             <span className="font-medium truncate flex-1">
                               {nameUa} ({nameEn})
                             </span>
-
-                            <div className="flex flex-wrap gap-2 min-w-0 w-full flex-1">
-                              {wineType?.colors?.map((c: BaseWineColor) => (
-                                <div key={c.id} className="flex items-center bg-amber-50 px-2 rounded-md md:w-auto w-full">
-                                  <span className=" text-sm text-foreground">{c?.name}</span>
-                                </div>
-                              ))}
-                            </div>
                           </div>
                           <PaletteItemActions
                             isLoading={isLoading || isReorderingGroup}
@@ -143,8 +129,7 @@ export const WineTypeManager = ({ cachedColors, colorsLoading = false }: WineTyp
                             onFormDataChange={(field, value) => updateFormData(wineType.id, field, value)}
                             onSave={() => handleSaveWineType(wineType.id)}
                             onCancel={() => handleCancelEdit(wineType.id)}
-                            cachedColors={cachedColors}
-                            isLoading={isLoading || colorsLoading}
+                            isLoading={isLoading}
                             mode="edit"
                             hasChanges={hasChanges(wineType.id)}
                           />

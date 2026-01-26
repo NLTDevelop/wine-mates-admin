@@ -15,20 +15,15 @@ import { Separator } from '@/UIKit/shadcn/ui/separator'
 import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
 import { SkeletonWinePalette } from '../../../general/ui/components/skeleton-wine-palette'
 import { PaletteItemActions } from '@/modules/wine/create/general/ui'
-import { BaseWineColor } from '../../../general/entities/types'
 import { EmptyState } from '../../../general/ui/components/empty-state'
 import { WineAromaGroup } from '../../entities/types/flavor-types'
 import { Save } from 'lucide-react'
 import { WarningModal } from '@/modals/warningModal'
-import { CreateFlavorGroupSection, FlavorList, AromasManager, FlavorForm, FlavorGroupFormFields } from '..'
+import { CreateFlavorGroupSection, FlavorList, AromasManager, FlavorForm } from '..'
 import { useWineFlavorStore } from '../../entities/wine-flavor-store'
+import { FlavorGroupFormFields } from './flavor-group-form-field'
 
-interface FlavorPaletteManagerProps {
-  cachedColors: BaseWineColor[]
-  colorsLoading?: boolean
-}
-
-export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: FlavorPaletteManagerProps) => {
+export const FlavorPaletteManager = () => {
   const { t } = useTranslation('wines')
   const { t: tc } = useTranslation('common')
 
@@ -56,7 +51,7 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
     onChangePagination,
     isReorderingGroup,
     reorderGroup,
-  } = useFlavorPalette(cachedColors)
+  } = useFlavorPalette()
 
   const isEditable = true
 
@@ -110,7 +105,7 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
     <Card>
       <CardContent className="space-y-2 sm:space-y-6 max-sm:p-0 sm:p-0">
         <div>
-          <CreateFlavorGroupSection onCreateGroup={groups.handleAddGroup} isLoading={isLoading || isReordering} cachedColors={cachedColors} />
+          <CreateFlavorGroupSection onCreateGroup={groups.handleAddGroup} isLoading={isLoading || isReordering} />
         </div>
         {!isLoading && aromaGroups?.length === 0 && totalCount === 0 && <EmptyState type="aromas" />}
         <SortableList items={aromaGroups} onReorder={onReorder}>
@@ -145,13 +140,6 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
                           <span className={cn('font-medium truncate min-w-0 flex-1 text-start', cardTextColorClass)}>
                             {nameUa} ({nameEn})
                           </span>
-                          <div className="flex flex-wrap gap-2 min-w-0 w-full flex-1">
-                            {group?.colors?.map((c: BaseWineColor) => (
-                              <div key={c.id} className="flex items-center bg-amber-50 px-2 rounded-md md:w-auto w-full">
-                                <span className=" text-sm text-foreground">{c?.name}</span>
-                              </div>
-                            ))}
-                          </div>
                         </div>
                         <PaletteItemActions
                           isLoading={isLoading || isReordering}
@@ -175,13 +163,7 @@ export const FlavorPaletteManager = ({ cachedColors, colorsLoading = false }: Fl
                       )}
                     >
                       {isGroupFormOpen && currentEditingGroupData && (
-                        <FlavorGroupFormFields
-                          formData={currentEditingGroupData}
-                          onFormDataChange={(field, value) => groups.updateGroupFormData(group.id, field, value)}
-                          cachedColors={cachedColors}
-                          isLoading={isLoading || colorsLoading}
-                          autoFocus={true}
-                        />
+                        <FlavorGroupFormFields formData={currentEditingGroupData} onFormDataChange={(field, value) => groups.updateGroupFormData(group.id, field, value)} autoFocus={true} />
                       )}
 
                       {isGroupOpen && !isGroupFormOpen && (

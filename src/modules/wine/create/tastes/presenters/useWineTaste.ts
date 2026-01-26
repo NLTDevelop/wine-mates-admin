@@ -1,221 +1,170 @@
 import { useQuery, useMutation, useQueryClient, UseQueryResult } from '@tanstack/react-query'
-import { useEffect, useMemo } from 'react'
-import { useTasteStore } from '../entities/wine-taste-store'
-import { tasteQueries } from '../entities/wine-taste-queries'
-import { CreateWineTasteRequest, UpdateWineTasteParams, WineTaste } from '../entities/types/tastes'
-import { tasteService } from '../entities/wine-taste-service'
-import { BaseWineColor, DataResponse, ReorderItem } from '../../general/entities/types'
+import { DataResponse, ReorderItem } from '../../general/entities/types'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '@/hooks/shadcn/use-toast'
+import { useWineTasteStore } from '../entities/wine-taste-store'
+import { CreateWineTasteGroupRequest, CreateWineTasteParams, UpdateWineTasteGroupParams, WineTasteGroup, WineTasteItem } from '../entities/types/tastes'
+import { tasteService } from '../entities/wine-taste-service'
+import { wineTasteQueries } from '../entities/wine-taste-queries'
 
-export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
+export const useWineTaste = () => {
   const queryClient = useQueryClient()
-  const store = useTasteStore()
+  const store = useWineTasteStore()
   const { t } = useTranslation('wines')
   const { toast } = useToast()
 
-  const stableFilters = useMemo(() => {
-    const filtersWithSubAromas = {
-      ...store.filters,
-      include: Array.from(new Set([...(store.filters.include || []), 'assigned-colors'])),
-    }
-    return JSON.stringify(filtersWithSubAromas)
-  }, [store.filters])
-
-  const tastesQuery: UseQueryResult<DataResponse<WineTaste>, Error> = useQuery({
-    queryKey: ['tastes', 'list', stableFilters],
-    queryFn: () =>
-      tasteService.list({
-        ...store.filters,
-        include: ['assigned-colors'],
-      }),
+  const groupsQuery: UseQueryResult<WineTasteGroup[], Error> = useQuery({
+    queryKey: ['taste-groups', 'list'],
+    queryFn: () => tasteService.listGroups(),
     placeholderData: prev => prev,
   })
 
   useEffect(() => {
-    if (!tastesQuery.data || tastesQuery.isFetching) return
-    store.setTastes(tastesQuery.data.rows)
-  }, [tastesQuery.data, tastesQuery.isFetching])
+    if (!groupsQuery.data || groupsQuery.isFetching) return
+    store.setTasteGroups(groupsQuery.data)
+  }, [groupsQuery.data, groupsQuery.isFetching])
 
-  const createTasteMutation = useMutation({
-    ...tasteQueries.create(),
-    onMutate: async (newWineTaste: CreateWineTasteRequest) => {
-      await queryClient.cancelQueries({ queryKey: ['tastes', 'list', stableFilters] })
+  const tasteGroups = (): WineTasteGroup[] => {
+    const cached = queryClient.getQueryData<WineTasteGroup[]>(['taste-groups', 'list'])
+    return cached ?? []
+  }
 
-      const prev = queryClient.getQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters])
-      const assignedColors = cachedColors?.filter(color => newWineTaste.colorIds.includes(color.id)) || []
-      const optimisticWineTaste: WineTaste = {
-        id: `temp-${Date.now()}`,
-        translations: newWineTaste.translations ?? [],
-        colorHex: newWineTaste.colorHex ?? '',
-        colors: assignedColors ?? [],
-        sortNumber: newWineTaste.sortNumber ?? 0,
+  const createGroupMutation = useMutation({
+    ...wineTasteQueries.createGroup(),
+
+    onMutate: async (groupData: CreateWineTasteGroupRequest) => {
+      await queryClient.cancelQueries({ queryKey: ['taste-groups', 'list'] })
+      const prev = queryClient.getQueryData<DataResponse<WineTasteGroup>>(['taste-groups', 'list'])
+
+      const tempGroup: WineTasteGroup = {
+        id: 'temp-id-' + Date.now(),
+        ...groupData,
+        sortNumber: 0,
       }
 
-      queryClient.setQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters], old => {
-        if (!old) {
-          return { rows: [optimisticWineTaste], count: 1 }
-        }
-
-        return {
-          rows: [...old.rows, optimisticWineTaste],
-          count: old.count + 1,
-        }
+      queryClient.setQueryData<WineTasteGroup[]>(['taste-groups', 'list'], (old = []) => {
+        const newData = [...old, tempGroup]
+        return newData
       })
 
-      return { prev, tempId: optimisticWineTaste.id }
-    },
-    onError: (_, __, context) => {
-      if (context?.prev) {
-        queryClient.setQueryData(['tastes', 'list', stableFilters], context.prev)
-      }
+      return { prev, tempGroup }
     },
 
-    onSuccess: (newWineTaste: WineTaste, _, context) => {
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['taste-groups', 'list'], ctx.prev)
+    },
+
+    onSuccess: (newGroup: WineTasteGroup, _, ctx) => {
       toast({
-        title: t('tastes.taste_note_created'),
+        title: t('tastes.tastes_group_created'),
         variant: 'default',
       })
-      queryClient.setQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters], old => {
-        if (!old) return { rows: [newWineTaste], count: 1 }
 
-        return {
-          rows: old.rows.map(taste => (taste.id === context?.tempId ? newWineTaste : taste)),
-          count: old.count,
+      if (ctx?.tempGroup) {
+        const finalId = newGroup?.id || ctx.tempGroup.id
+
+        const finalWineTaste = {
+          ...ctx.tempGroup,
+          id: finalId,
         }
-      })
+        queryClient.invalidateQueries({ queryKey: ['taste-groups', 'list'] })
+        queryClient.setQueryData<WineTasteGroup[]>(['taste-groups', 'list'], (old = []) => old.map(wt => (wt.id === ctx.tempGroup.id ? finalWineTaste : wt)))
+      }
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['tastes', 'list'] })
+      queryClient.invalidateQueries({ queryKey: ['taste-groups', 'list'], exact: false })
     },
   })
 
-  const updateTasteMutation = useMutation({
-    ...tasteQueries.update(),
-    onMutate: async (params: UpdateWineTasteParams) => {
-      await queryClient.cancelQueries({ queryKey: ['tastes', 'list', stableFilters] })
+  const updateGroupMutation = useMutation({
+    ...wineTasteQueries.updateGroup(),
 
-      const prev = queryClient.getQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters])
+    onMutate: async (params: UpdateWineTasteGroupParams) => {
+      await queryClient.cancelQueries({ queryKey: ['taste-groups', 'list'] })
+      const prev = queryClient.getQueryData<WineTasteGroup[]>(['taste-groups', 'list'])
 
-      const assignedColors = cachedColors?.filter(color => params.newTaste.colorIds.includes(color.id)) || []
+      const currentGroup = prev?.find(g => g.id === params.groupId)
 
-      const optimisticWineTaste: WineTaste = {
-        id: params.tasteId,
-        translations: params.newTaste.translations,
-        colorHex: params.newTaste.colorHex,
-        colors: assignedColors,
-        sortNumber: params.newTaste.sortNumber || 0,
+      const optimistic: WineTasteGroup = {
+        id: params.groupId,
+        translations: params.newGroup.translations,
+        colorHex: params.newGroup.colorHex,
+        sortNumber: currentGroup?.sortNumber || 0,
       }
 
-      queryClient.setQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters], old => {
-        if (!old) {
-          return { rows: [optimisticWineTaste], count: 1 }
-        }
-
-        return {
-          rows: old.rows.map(wt => (wt.id === params.tasteId ? optimisticWineTaste : wt)),
-          count: old.count,
-        }
-      })
+      queryClient.setQueryData<WineTasteGroup[]>(['taste-groups', 'list'], (old = []) => old?.map(g => (g.id === params.groupId ? optimistic : g)) || [])
 
       return { prev }
     },
-
-    onError: (error, _, context) => {
-      console.error('Failed to update taste:', error)
-      if (context?.prev) {
-        queryClient.setQueryData(['tastes', 'list', stableFilters], context.prev)
-      }
-    },
-
-    onSuccess: (updatedTaste: WineTaste) => {
+    onSuccess: () => {
       toast({
-        title: t('tastes.taste_note_updated'),
+        title: t('tastes.taste_group_updated'),
         variant: 'default',
       })
-      queryClient.setQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters], old => {
-        if (!old) return { rows: [updatedTaste], count: 1 }
-
-        const tasteWithColors = {
-          ...updatedTaste,
-          colors: updatedTaste.colors && updatedTaste.colors.length > 0 ? updatedTaste.colors : old.rows.find(t => t.id === updatedTaste.id)?.colors || [],
-          translations: updatedTaste.translations || [],
-        }
-
-        return {
-          rows: old.rows.map(wt => (wt.id === updatedTaste.id ? tasteWithColors : wt)),
-          count: old.count,
-        }
-      })
+    },
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['taste-groups', 'list'], ctx.prev)
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['tastes', 'list'] })
+      queryClient.invalidateQueries({ queryKey: ['taste-groups', 'list'], exact: false })
     },
   })
 
-  const deleteTasteMutation = useMutation({
-    ...tasteQueries.delete(),
-    onMutate: async (wineTasteId: string) => {
-      await queryClient.cancelQueries({ queryKey: ['tastes', 'list', stableFilters] })
+  const deleteGroupMutation = useMutation({
+    ...wineTasteQueries.deleteGroup(),
 
-      const prev = queryClient.getQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters])
-      const deletedTaste = prev?.rows?.find(wt => wt.id === wineTasteId)
+    onMutate: async (groupId: string) => {
+      await queryClient.cancelQueries({ queryKey: ['taste-groups', 'list'] })
 
-      queryClient.setQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters], old => {
-        if (!old) {
-          return { rows: [], count: 0 }
-        }
+      const prev = queryClient.getQueryData<DataResponse<WineTasteGroup>>(['taste-groups', 'list'])
 
-        return {
-          rows: old.rows.filter(t => t.id !== wineTasteId),
-          count: Math.max(old.count - 1, 0),
-        }
-      })
+      store.deleteTasteGroup(groupId)
 
-      return { prev, deletedTaste }
+      queryClient.setQueryData<WineTasteGroup[]>(['taste-groups', 'list'], (old = []) => old?.filter(g => g.id !== groupId) || [])
+
+      return { prev }
     },
     onSuccess: () => {
       toast({
-        title: t('tastes.taste_note_deleted'),
+        title: t('tastes.taste_group_deleted'),
         variant: 'default',
       })
     },
-    onError: (error, _, context) => {
-      console.error('Failed to delete taste:', error)
-      if (context?.prev) {
-        queryClient.setQueryData(['tastes', 'list', stableFilters], context.prev)
-      }
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['taste-groups', 'list'], ctx.prev)
     },
+
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['tastes', 'list'] })
+      queryClient.invalidateQueries({ queryKey: ['taste-groups', 'list'], exact: false })
     },
   })
 
   const reorderGroupMutation = useMutation({
-    ...tasteQueries.reorder(),
+    ...wineTasteQueries.reorderGroup(),
 
     onMutate: async (reorderParams: ReorderItem[]) => {
-      await queryClient.cancelQueries({ queryKey: ['tastes', 'list', stableFilters] })
+      await queryClient.cancelQueries({ queryKey: ['taste-groups', 'list'] })
 
-      const previousGroups = queryClient.getQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters])
+      const previousGroups = queryClient.getQueryData<WineTasteGroup[]>(['taste-groups', 'list'])
 
-      store.reorderTaste(reorderParams)
+      store.reorderTasteGroups(reorderParams)
 
       const sortMap = new Map(reorderParams.map(item => [item.id, item.sortNumber]))
 
-      queryClient.setQueryData<DataResponse<WineTaste>>(['tastes', 'list', stableFilters], old => {
+      queryClient.setQueryData<WineTasteGroup[]>(['taste-groups', 'list'], old => {
         if (!old) return old
 
-        const updatedRows = old.rows
-          .map(group => {
+        const updatedRows = old
+          ?.map(group => {
             const newSortNumber = sortMap.get(Number(group.id))
             return newSortNumber !== undefined ? { ...group, sortNumber: newSortNumber } : group
           })
           .sort((a, b) => a.sortNumber - b.sortNumber)
 
-        return { ...old, rows: updatedRows }
+        return updatedRows
       })
 
       return { previousGroups }
@@ -223,85 +172,208 @@ export const useWineTaste = (cachedColors?: BaseWineColor[]) => {
 
     onError: (_, __, context) => {
       if (context?.previousGroups) {
-        queryClient.setQueryData(['tastes', 'list', stableFilters], context.previousGroups)
+        queryClient.setQueryData(['taste-groups', 'list'], context.previousGroups)
       }
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['tastes', 'list', stableFilters] })
+      queryClient.invalidateQueries({ queryKey: ['taste-groups', 'list'] })
     },
   })
 
-  const createTaste = (taste: CreateWineTasteRequest) => {
-    return createTasteMutation.mutateAsync(taste)
-  }
+  const createTaste = useMutation({
+    ...wineTasteQueries.createTaste(),
 
-  const updateTaste = (params: UpdateWineTasteParams) => {
-    return updateTasteMutation.mutateAsync(params)
-  }
+    onMutate: async ({ groupId, tasteData }: { groupId: string; tasteData: CreateWineTasteParams }) => {
+      await queryClient.cancelQueries({ queryKey: ['taste-groups', 'list'] })
 
-  const deleteTaste = (tasteId: string) => {
-    return deleteTasteMutation.mutateAsync(tasteId)
-  }
+      const prev = queryClient.getQueryData<DataResponse<WineTasteGroup>>(['taste-groups', 'list'])
 
-  const searchTastes = (searchTerm: string) => {
-    store.searchTastes(searchTerm)
-  }
+      const tempTaste: WineTasteItem = {
+        id: 'temp-id-' + Date.now(),
+        translations: tasteData.translations ?? [],
+        sortNumber: tasteData.sortNumber ?? 0,
+        groupId: parseInt(groupId),
+        colorHex: tasteData.colorHex ?? '',
+      }
 
-  const clearSearch = () => {
-    store.clearSearch()
-  }
+      queryClient.setQueryData<WineTasteGroup[]>(['taste-groups', 'list'], (old = []) => {
+        return old.map(group => {
+          if (group.id === groupId) {
+            return {
+              ...group,
+              flavors: [...(group.flavors || []), tempTaste],
+            }
+          }
+          return group
+        })
+      })
 
-  const setCurrentTaste = (taste: WineTaste | null) => {
-    store.setCurrentTaste(taste)
-  }
+      return { prev, tempTaste, groupId }
+    },
 
-  const getTasteById = (id: string) => {
-    return store.getTasteById(id)
-  }
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['taste-groups', 'list'], ctx.prev)
+    },
 
-  const getTasteByValue = (value: string) => {
-    return store.getTasteByValue(value)
-  }
+    onSuccess: (newTaste, _, ctx) => {
+      toast({
+        title: t('tastes.taste_created'),
+        variant: 'default',
+      })
+      queryClient.setQueryData<WineTasteGroup[]>(['taste-groups', 'list'], (old = []) => {
+        return old.map(group => {
+          if (group.id === ctx?.groupId) {
+            const filteredFlavors = (group.flavors || []).filter(t => t.id !== ctx?.tempTaste?.id)
+            return {
+              ...group,
+              flavors: [...filteredFlavors, newTaste],
+            }
+          }
+          return group
+        })
+      })
+    },
 
-  const hasTaste = (id: string) => {
-    return store.hasTaste(id)
-  }
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['taste-groups', 'list'] })
+    },
+  })
 
-  const hasTasteByValue = (value: string) => {
-    return store.hasTasteByValue(value)
-  }
+  const updateTaste = useMutation({
+    ...wineTasteQueries.updateTaste(),
+
+    onMutate: async ({ groupId }: any) => {
+      await queryClient.cancelQueries({ queryKey: ['taste-groups', 'list'] })
+
+      const prev = queryClient.getQueryData<WineTasteGroup[]>(['taste-groups', 'list'])
+
+      queryClient.setQueryData<WineTasteGroup[]>(['taste-groups', 'list'], old => {
+        if (!old) return []
+
+        return old.map(g => (g.id === groupId ? { ...g, flavor: g?.flavors?.map(f => f) } : g))
+      })
+
+      return { prev }
+    },
+    onSuccess: () => {
+      toast({
+        title: t('tastes.taste_updated'),
+        variant: 'default',
+      })
+    },
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['taste-groups', 'list'], ctx.prev)
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['taste-groups', 'list'] })
+    },
+  })
+
+  const deleteTaste = useMutation({
+    ...wineTasteQueries.deleteTaste(),
+
+    onMutate: async ({ groupId, tasteId }) => {
+      await queryClient.cancelQueries({ queryKey: ['taste-groups', 'list'] })
+
+      const prev = queryClient.getQueryData<WineTasteGroup[]>(['taste-groups', 'list'])
+
+      queryClient.setQueryData<WineTasteGroup[]>(['taste-groups', 'list'], old => {
+        if (!old) return []
+
+        return old.map(g => (g.id === groupId ? { ...g, flavors: g?.flavors?.filter(s => s.id !== tasteId) } : g))
+      })
+
+      return { prev }
+    },
+    onSuccess: () => {
+      toast({
+        title: t('tastes.taste_deleted'),
+        variant: 'default',
+      })
+    },
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['taste-groups', 'list'], ctx.prev)
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['taste-groups', 'list'] })
+    },
+  })
+
+  const reorderTasteMutation = useMutation({
+    ...wineTasteQueries.reorderTaste(),
+    onMutate: async (items: ReorderItem[]) => {
+      await queryClient.cancelQueries({ queryKey: ['taste-groups', 'list'] })
+
+      const previousGroups = queryClient.getQueryData(['taste-groups', 'list'])
+
+      const sortMap = new Map(items.map(item => [item.id, item.sortNumber]))
+
+      queryClient.setQueryData(['taste-groups', 'list'], (old: any) => {
+        if (!old) return old
+
+        const updatedRows = old.map((group: WineTasteGroup) => {
+          const updatedFlavors =
+            group.flavors
+              ?.map(f => {
+                const newSortNumber = sortMap.get(parseInt(f.id))
+                return newSortNumber !== undefined ? { ...f, sortNumber: newSortNumber } : f
+              })
+              .sort((a: any, b: any) => a.sortNumber - b.sortNumber) || []
+
+          return {
+            ...group,
+            flavors: updatedFlavors,
+          }
+        })
+
+        return updatedRows
+      })
+
+      return { previousGroups }
+    },
+
+    onError: (_, __, context) => {
+      if (context?.previousGroups) {
+        queryClient.setQueryData(['taste-groups', 'list'], context.previousGroups)
+      }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['taste-groups', 'list'] })
+    },
+  })
+
+  const onChangePagination = (page: number) => store.setFilters({ page })
 
   return {
-    tastes: tastesQuery.data?.rows || [],
-    searchResults: store.searchResults,
-    currentTaste: store.currentTaste,
-    totalCount: tastesQuery.data?.count || 0,
+    tasteGroups: tasteGroups(),
+
     filters: store.filters,
-    onChangePagination: (page: number) => store.setFilters({ page }),
+    isLoading: groupsQuery.isLoading,
+    isError: groupsQuery.isError,
+    error: groupsQuery.error,
 
-    isLoading: tastesQuery.isLoading,
-    isError: tastesQuery.isError,
-    error: tastesQuery.error,
-
-    isCreating: createTasteMutation.isPending,
-    isUpdating: updateTasteMutation.isPending,
-    isDeleting: deleteTasteMutation.isPending,
+    isCreatingGroup: createGroupMutation.isPending,
+    isUpdatingGroup: updateGroupMutation.isPending,
+    isDeletingGroup: deleteGroupMutation.isPending,
     isReorderingGroup: reorderGroupMutation.isPending,
+    isCreatingTaste: createTaste.isPending,
+    isUpdatingTaste: updateTaste.isPending,
+    isDeletingTaste: deleteTaste.isPending,
 
-    createTaste,
-    updateTaste,
-    deleteTaste,
-    searchTastes,
-    clearSearch,
-    setCurrentTaste,
-    getTasteById,
-    getTasteByValue,
-    hasTaste,
-    hasTasteByValue,
-
-    refetchTastes: tastesQuery.refetch,
-    tastesQuery,
+    createGroup: createGroupMutation.mutateAsync,
+    updateGroup: updateGroupMutation.mutateAsync,
+    deleteGroup: deleteGroupMutation.mutateAsync,
     reorderGroup: reorderGroupMutation.mutateAsync,
+    createTaste: createTaste.mutateAsync,
+    updateTaste: updateTaste.mutateAsync,
+    deleteTaste: deleteTaste.mutateAsync,
+    reorderTaste: reorderTasteMutation.mutateAsync,
+
+    onChangePagination,
+    refetchGroups: groupsQuery.refetch,
   }
 }

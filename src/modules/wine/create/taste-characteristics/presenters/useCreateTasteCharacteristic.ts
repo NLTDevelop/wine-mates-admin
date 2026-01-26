@@ -31,7 +31,6 @@ export const useCreateTasteCharacteristic = ({ onCreateTasteCharacteristic, isLo
   }
 
   const initialData: CreateWineTasteCharacteristicParams = {
-    colors: [],
     colorHex: '',
     levels: createEmptyLevels(3),
     translations: [],
@@ -49,7 +48,6 @@ export const useCreateTasteCharacteristic = ({ onCreateTasteCharacteristic, isLo
     if (!isLoading) {
       const characteristicDataForApi: CreateWineTasteCharacteristicRequest = {
         translations: convertToCreateTranslations(formData.translations),
-        colorIds: formData.colors.map(color => color.id),
         colorHex: formData.colorHex,
         levels: formData.levels,
         isPremium: false,
@@ -86,7 +84,7 @@ export const useCreateTasteCharacteristic = ({ onCreateTasteCharacteristic, isLo
     })
   }
 
-  const canCreate = !!(nameUa && nameEn && formData.colors && formData.colors.length > 0 && formData.levels && formData.levels.length > 2 && hasValidLevelTranslations(formData.levels))
+  const canCreate = !!(nameUa && nameEn && formData.levels && formData.levels.length > 2 && hasValidLevelTranslations(formData.levels))
 
   return {
     isExpanded,

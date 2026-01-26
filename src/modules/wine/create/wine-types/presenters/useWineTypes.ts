@@ -3,30 +3,22 @@ import { useEffect } from 'react'
 import { useWineTypeStore } from '../entities/wine-type-store'
 import { wineTypeQueries } from '../entities/wine-type-queries'
 import { CreateWineTypeRequest, UpdateWineTypeParams, WineType } from '../entities/types/wine-type'
-import { BaseWineColor, ReorderItem } from '../../general/entities/types'
+import { ReorderItem } from '../../general/entities/types'
 import { getDisplayNames } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '@/hooks/shadcn/use-toast'
 
-export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
+export const useWineTypes = () => {
   const queryClient = useQueryClient()
   const store = useWineTypeStore()
   const { t } = useTranslation('wines')
   const { toast } = useToast()
 
-  const wineTypeQuery = useQuery({ ...wineTypeQueries.list(['assigned-colors']) })
+  const wineTypeQuery = useQuery({ ...wineTypeQueries.list() })
 
-  const customRefetchGroups = (include?: string[]) => {
-    return queryClient.fetchQuery(wineTypeQueries.list(include))
+  const customRefetchGroups = () => {
+    return queryClient.fetchQuery(wineTypeQueries.list())
   }
-
-  useEffect(() => {
-    if (cachedColors && cachedColors.length > 0) {
-      queryClient.invalidateQueries({
-        queryKey: ['wine-types', 'list', 'assigned-colors'],
-      })
-    }
-  }, [cachedColors, queryClient])
 
   useEffect(() => {
     if (wineTypeQuery.data !== undefined) {
@@ -37,22 +29,19 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
   const createMutation = useMutation({
     ...wineTypeQueries.create(),
     onMutate: async (newWineType: CreateWineTypeRequest) => {
-      await queryClient.cancelQueries({ queryKey: ['wine-types', 'list', 'assigned-colors'] })
-
-      const assignedColors = cachedColors?.filter(color => newWineType.colorIds.includes(color.id)) || []
+      await queryClient.cancelQueries({ queryKey: ['wine-types', 'list'] })
 
       const { nameUa, nameEn } = getDisplayNames(newWineType.translations || [])
       const optimisticWineType: WineType = {
         id: `temp-${Date.now()}`,
         translations: newWineType.translations ?? [],
-        colors: assignedColors ?? [],
         sortNumber: newWineType.sortNumber ?? 0,
         nameUa,
         nameEn,
         isSparkling: newWineType.isSparkling ?? false,
       }
 
-      queryClient.setQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'], (old = []) => {
+      queryClient.setQueryData<WineType[]>(['wine-types', 'list'], (old = []) => {
         const newData = [...old, optimisticWineType]
         return newData
       })
@@ -72,13 +61,13 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
           ...context.optimisticWineType,
           id: finalId,
         }
-        queryClient.invalidateQueries({ queryKey: ['wine-types', 'list', 'assigned-colors'] })
-        queryClient.setQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'], (old = []) => old.map(wt => (wt.id === context.optimisticWineType.id ? finalWineType : wt)))
+        queryClient.invalidateQueries({ queryKey: ['wine-types', 'list'] })
+        queryClient.setQueryData<WineType[]>(['wine-types', 'list'], (old = []) => old.map(wt => (wt.id === context.optimisticWineType.id ? finalWineType : wt)))
       }
     },
     onError: (_, __, context) => {
       if (context?.optimisticWineType) {
-        queryClient.setQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'], (old = []) => old.filter(wt => wt.id !== context.optimisticWineType.id))
+        queryClient.setQueryData<WineType[]>(['wine-types', 'list'], (old = []) => old.filter(wt => wt.id !== context.optimisticWineType.id))
       }
     },
   })
@@ -86,25 +75,22 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
   const updateMutation = useMutation({
     ...wineTypeQueries.update(),
     onMutate: async (params: UpdateWineTypeParams) => {
-      await queryClient.cancelQueries({ queryKey: ['wine-types', 'list', 'assigned-colors'] })
+      await queryClient.cancelQueries({ queryKey: ['wine-types', 'list'] })
 
-      const previousWineTypes = queryClient.getQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'])
-
-      const assignedColors = cachedColors?.filter(color => params.newWineType.colorIds.includes(color.id)) || []
+      const previousWineTypes = queryClient.getQueryData<WineType[]>(['wine-types', 'list'])
 
       const { nameUa, nameEn } = getDisplayNames(params.newWineType.translations || [])
 
       const optimisticWineType: WineType = {
         id: params.wineTypeId,
         translations: params.newWineType.translations,
-        colors: assignedColors,
         sortNumber: params.newWineType.sortNumber || 0,
         nameUa,
         nameEn,
         isSparkling: params.newWineType.isSparkling ?? false,
       }
 
-      queryClient.setQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'], (old = []) => old?.map(wt => (wt.id === params.wineTypeId ? optimisticWineType : wt)) || [])
+      queryClient.setQueryData<WineType[]>(['wine-types', 'list'], (old = []) => old?.map(wt => (wt.id === params.wineTypeId ? optimisticWineType : wt)) || [])
 
       return { previousWineTypes, optimisticWineType, params }
     },
@@ -118,40 +104,38 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
         return
       }
 
-      const assignedColors = cachedColors?.filter(color => context?.params?.newWineType.colorIds.includes(color.id)) || []
       const { nameUa, nameEn } = getDisplayNames(updatedWineType.translations || [])
       if (updatedWineType) {
         const wineTypeWithColors = {
           ...updatedWineType,
-          colors: assignedColors.length > 0 ? assignedColors : updatedWineType.colors || [],
           translations: updatedWineType.translations || [],
           nameUa: nameUa || updatedWineType.nameUa || '',
           nameEn: nameEn || updatedWineType.nameEn || '',
         }
 
-        queryClient.setQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'], (old = []) => old?.map(wt => (wt.id === updatedWineType.id ? wineTypeWithColors : wt)) || [])
+        queryClient.setQueryData<WineType[]>(['wine-types', 'list'], (old = []) => old?.map(wt => (wt.id === updatedWineType.id ? wineTypeWithColors : wt)) || [])
       }
     },
 
     onError: (_, __, context) => {
       if (context?.previousWineTypes) {
-        queryClient.setQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'], context.previousWineTypes)
+        queryClient.setQueryData<WineType[]>(['wine-types', 'list'], context.previousWineTypes)
       }
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['wine-types', 'list', 'assigned-colors'] })
+      queryClient.invalidateQueries({ queryKey: ['wine-types', 'list'] })
     },
   })
 
   const deleteMutation = useMutation({
     ...wineTypeQueries.delete(),
     onMutate: async (wineTypeId: string) => {
-      await queryClient.cancelQueries({ queryKey: ['wine-types', 'list', 'assigned-colors'] })
+      await queryClient.cancelQueries({ queryKey: ['wine-types', 'list'] })
 
-      const previousWineTypes = queryClient.getQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'])
+      const previousWineTypes = queryClient.getQueryData<WineType[]>(['wine-types', 'list'])
       const deletedWineType = previousWineTypes?.find(wt => wt.id === wineTypeId)
-      queryClient.setQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'], (old = []) => old?.filter(wt => wt.id !== wineTypeId) || [])
+      queryClient.setQueryData<WineType[]>(['wine-types', 'list'], (old = []) => old?.filter(wt => wt.id !== wineTypeId) || [])
 
       return { previousWineTypes, deletedWineType }
     },
@@ -163,12 +147,12 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
     },
     onError: (_, __, context) => {
       if (context?.previousWineTypes) {
-        queryClient.setQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'], context.previousWineTypes)
+        queryClient.setQueryData<WineType[]>(['wine-types', 'list'], context.previousWineTypes)
       }
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['wine-types', 'list', 'assigned-colors'] })
+      queryClient.invalidateQueries({ queryKey: ['wine-types', 'list'] })
     },
   })
 
@@ -176,15 +160,15 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
     ...wineTypeQueries.reorder(),
 
     onMutate: async (reorderParams: ReorderItem[]) => {
-      await queryClient.cancelQueries({ queryKey: ['wine-types', 'list', 'assigned-colors'] })
+      await queryClient.cancelQueries({ queryKey: ['wine-types', 'list'] })
 
-      const previousGroups = queryClient.getQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'])
+      const previousGroups = queryClient.getQueryData<WineType[]>(['wine-types', 'list'])
 
       store.reorderType(reorderParams)
 
       const sortMap = new Map(reorderParams.map(item => [item.id, item.sortNumber]))
 
-      queryClient.setQueryData<WineType[]>(['wine-types', 'list', 'assigned-colors'], old => {
+      queryClient.setQueryData<WineType[]>(['wine-types', 'list'], old => {
         if (!old) return old
 
         const updatedRows = old
@@ -202,12 +186,12 @@ export const useWineTypes = (cachedColors?: BaseWineColor[]) => {
 
     onError: (_, __, context) => {
       if (context?.previousGroups) {
-        queryClient.setQueryData(['wine-types', 'list', 'assigned-colors'], context.previousGroups)
+        queryClient.setQueryData(['wine-types', 'list'], context.previousGroups)
       }
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['wine-types', 'list', 'assigned-colors'] })
+      queryClient.invalidateQueries({ queryKey: ['wine-types', 'list'] })
     },
   })
 

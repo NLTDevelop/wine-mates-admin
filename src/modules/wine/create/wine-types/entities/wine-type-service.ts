@@ -5,12 +5,7 @@ import { WineType, UpdateWineTypeParams, CreateWineTypeRequest } from './types/w
 import { ReorderItem } from '../../general/entities/types'
 
 export const wineTypeService = {
-  list: (include?: string[]): Promise<WineType[]> =>
-    api
-      .get(WINE_TYPE_ENDPOINTS.LIST, {
-        params: include && include.length > 0 ? { include } : {},
-      })
-      .then(response => response.data),
+  list: (): Promise<WineType[]> => api.get(WINE_TYPE_ENDPOINTS.LIST).then(response => response.data),
 
   create: (wineType: CreateWineTypeRequest): Promise<WineType> => api.post(WINE_TYPE_ENDPOINTS.CREATE, wineType).then(response => response.data),
 
