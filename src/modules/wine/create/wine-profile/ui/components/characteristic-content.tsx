@@ -62,7 +62,7 @@ export const CharacteristicContent: React.FC<CharacteristicContentProps> = ({
 
         return (
           <Card key={groupKey} className={`mb-2 cursor-auto transition-all duration-300 p-1 ${isGroupDeletedFlag ? 'blur-[0.7px] bg-gray-100' : 'opacity-100 blur-0'}`}>
-            <div className="flex items-start gap-2 min-w-0 w-full">
+            <div className="flex items-start gap-2 min-w-0 w-full " onClick={() => handleGroupDeleteOrRestore(group.id)}>
               <div
                 className={`h-6 w-6 rounded-full border-0 shadow-sm flex-shrink-0 transition-all duration-300 ${isGroupDeletedFlag ? 'opacity-50' : 'opacity-100'}`}
                 style={{ backgroundColor: group.colorHex }}
@@ -77,10 +77,7 @@ export const CharacteristicContent: React.FC<CharacteristicContentProps> = ({
                     message={isGroupDeletedFlag ? t('restore_group') : t('del_group')}
                     className={`${isGroupDeletedFlag ? 'bg-blue-500/85 max-w-[300px]' : 'bg-red-500/85 max-w-[300px]'}`}
                     trigger={
-                      <button
-                        className={`transition-all duration-300 cursor-pointer ${isGroupDeletedFlag ? 'text-blue-500 hover:text-blue-700' : 'text-gray-400 hover:text-red-500'}`}
-                        onClick={() => handleGroupDeleteOrRestore(group.id)}
-                      >
+                      <button className={`transition-all duration-300 cursor-pointer ${isGroupDeletedFlag ? 'text-blue-500 hover:text-blue-700' : 'text-gray-400 hover:text-red-500'}`}>
                         {isGroupDeletedFlag ? <RotateCcw className="w-5 h-5" /> : <X className="w-5 h-5" />}
                       </button>
                     }
@@ -96,7 +93,11 @@ export const CharacteristicContent: React.FC<CharacteristicContentProps> = ({
                       const selectedValues = getSubgroupSelectedValues(sub)
 
                       return (
-                        <div key={subgroupKey} className={`mt-2 space-y-2 transition-all duration-300 ${isSubgroupDeletedFlag || isGroupDeletedFlag ? 'blur-[0.7px]' : 'opacity-100 blur-0'}`}>
+                        <div
+                          onClick={() => handleSubgroupDeleteOrRestore(group.id, sub.id)}
+                          key={subgroupKey}
+                          className={`mt-2 space-y-2 transition-all duration-300 ${isSubgroupDeletedFlag || isGroupDeletedFlag ? 'blur-[0.7px]' : 'opacity-100 blur-0'}`}
+                        >
                           <div className={`p-2 rounded transition-all duration-300 ${isSubgroupDeletedFlag ? 'bg-gray-200' : 'bg-gray-50'}`}>
                             <div className="flex items-center gap-2">
                               <span
@@ -136,7 +137,6 @@ export const CharacteristicContent: React.FC<CharacteristicContentProps> = ({
                                     trigger={
                                       <button
                                         className={`transition-all duration-300 cursor-pointer ${isSubgroupDeletedFlag ? 'text-blue-500 hover:text-blue-700' : 'text-gray-400 hover:text-red-500'}`}
-                                        onClick={() => handleSubgroupDeleteOrRestore(group.id, sub.id)}
                                         disabled={isGroupDeletedFlag}
                                       >
                                         {isSubgroupDeletedFlag ? <RotateCcw className="w-5 h-5" /> : <X className="w-5 h-5" />}

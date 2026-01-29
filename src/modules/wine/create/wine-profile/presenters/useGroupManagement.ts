@@ -148,7 +148,7 @@ export function useGroupManagement<TItem extends IItem, TSubgroup extends Subgro
   const getSubgroupOptions = useCallback(
     (groupId: number, subgroupId: number) => {
       const group = groups.find(g => g.id === groupId)
-      const subgroup = group?.subgroups.find(s => s.id === subgroupId)
+      const subgroup = group?.subgroups.find(s => s.id.toString() === subgroupId.toString())
       if (!subgroup) return []
 
       return subgroup?.items?.map(item => ({
@@ -171,15 +171,6 @@ export function useGroupManagement<TItem extends IItem, TSubgroup extends Subgro
             ...s,
             items: s?.items?.filter(i => s.selectedItems.includes(i.id)) ?? [],
           })),
-      }))
-  }, [groups, deletedGroups, deletedSubgroups])
-
-  const getResultDataFl = useCallback(() => {
-    return groups
-      .filter(g => !deletedGroups.includes(g.id))
-      .map(g => ({
-        ...g,
-        subgroups: g.subgroups,
       }))
   }, [groups, deletedGroups, deletedSubgroups])
 
@@ -227,7 +218,6 @@ export function useGroupManagement<TItem extends IItem, TSubgroup extends Subgro
     isSubgroupDeleted,
     initializeFromData,
     reset,
-    getResultDataFl,
     resetAll,
   }
 }

@@ -2,27 +2,25 @@ import { Group, Subgroup, IItem } from '../enteties/types/items-types'
 import { ISubgroup } from '../enteties/types/types'
 
 export const mapResultDataToGroups = <TItem extends IItem>(data: any[]): Group<Subgroup<TItem>>[] => {
-  return data.map(group => ({
-    id: group.groupId,
-    name: group.name,
-    colorHex: group.colorHex,
-    subgroups: group.subgroups.map((subgroup: any) => ({
-      id: subgroup.subgroupId || subgroup.id,
-      name: subgroup.name,
-      colorHex: subgroup.subgroupColorHex,
-      items: subgroup?.items,
-      selectedItems: subgroup?.items?.map((item: TItem) => item.id),
-    })),
-  }))
+  return data.map(group => {
+    return {
+      id: group.groupId,
+      name: group.name,
+      colorHex: group.colorHex,
+      subgroups: group.subgroups.map((subgroup: any) => ({
+        id: subgroup.subgroupId || subgroup.id,
+        name: subgroup.name,
+        colorHex: subgroup.subgroupColorHex,
+        items: subgroup?.items,
+        selectedItems: subgroup?.items?.map((item: TItem) => item.id),
+      })),
+    }
+  })
 }
 
 type GroupType = 'aroma' | 'flavor' | 'characteristic'
 
 export const mapProfileToGroups = (sourceGroups: any[], selectedData: any[], type: GroupType) => {
-  if (!selectedData || selectedData.length === 0) {
-    return sourceGroups
-  }
-
   switch (type) {
     case 'aroma':
       return sourceGroups.map(group => {
@@ -84,3 +82,13 @@ export const mapProfileToGroups = (sourceGroups: any[], selectedData: any[], typ
       return sourceGroups
   }
 }
+
+export const mapGroupsForCreate = <TItem extends IItem>(groups: Group<Subgroup<TItem>>[]): Group<Subgroup<TItem>>[] =>
+  groups.map(group => ({
+    ...group,
+    subgroups: group.subgroups.map(sub => ({
+      ...sub,
+      selectedItems: sub.items.map(a => a.id),
+      items: sub.items ?? [],
+    })),
+  }))
