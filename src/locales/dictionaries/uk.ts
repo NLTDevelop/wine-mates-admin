@@ -378,6 +378,10 @@ export const uk = {
       qty_levels: 'Кількість рівнів для відображення',
       level: 'рівні',
     },
+    wine_profiles: {
+      profile: 'Шаблони вина',
+      of_profile: 'Шаблон вина',
+    },
     table: {
       actions: 'Дії',
       winename: 'Назва вина',
@@ -563,6 +567,7 @@ export const uk = {
     },
   },
   wine_profile: {
+    templates: 'Шаблони',
     type_placeholder: 'Тип вина',
     color_placeholder: 'Колір вина',
     create_new_profile: 'Створення нового профілю вина',
@@ -570,12 +575,24 @@ export const uk = {
     characteristics: 'Смакові характеристики',
     aromas: 'Аромати',
     flavors: 'Смаки',
-    make_choosing: 'Виберіть тип, колір, аромати та смаки вина',
-    selected_aromas: 'Обрані аромати',
-    selected_flavors: 'Обрані смаки',
+    aroma_result: 'Обрані аромати',
+    flavor_result: 'Обрані смаки',
+    char_result: 'Обрані смакові характеристики',
     del_group: 'Видалити групу',
     del_subgroup: 'Видалити підгрупу',
     restore_group: 'Відновити групу',
     restore_subgroup: 'Відновити підгрупу',
+    profile_deleted: 'Шаблон вина видалено',
+    profile_updated: 'Шаблон вина оновлено',
+    profile_created: 'Шаблон вина створено',
+    select_options: 'Оберіть аромати',
+    button: {
+      create_new_template: 'Створити шаблон',
+    },
+    modal: {
+      delete_template: 'Видалити шаблон',
+      delete_action: 'Видалити',
+      delete_description: "Шаблон буде остаточно видалено з каталогу. Усі пов'язані з ним дані будуть втрачені.",
+    },
   },
 }

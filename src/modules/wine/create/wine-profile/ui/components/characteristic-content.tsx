@@ -6,242 +6,6 @@ import { useGroupUI } from '../../presenters/useGroupUI'
 import { NLTTooltip } from '@/UIKit/components/NLTTooltip'
 import { useTranslation } from 'react-i18next'
 
-export const aromasMock = [
-  {
-    id: 60,
-    colorHex: '#E78AAE',
-    name: 'Троянда',
-    subgroups: [
-      {
-        id: 53,
-        colorHex: '#97057b',
-        name: 'біла',
-        aromas: [
-          {
-            id: 57,
-            colorHex: '#f0f5e0',
-            name: 'свіже зірвана',
-          },
-          {
-            id: 56,
-            colorHex: '#f0f5e0',
-            name: 'суха',
-          },
-        ],
-      },
-      {
-        id: 54,
-        colorHex: '#670303',
-        name: 'бардо',
-        aromas: [
-          {
-            id: 58,
-            colorHex: '#670303',
-            name: 'Першон',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 61,
-    colorHex: '#dd9350',
-    name: 'Дерево',
-    subgroups: [
-      {
-        id: 55,
-        colorHex: '#de9e58',
-        name: 'Дуб',
-        aromas: [
-          {
-            id: 59,
-            colorHex: '#de9e58',
-            name: 'Листя',
-          },
-          {
-            id: 60,
-            colorHex: '#de9e58',
-            name: 'Корінь',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 58,
-    colorHex: '#A8D86E',
-    name: 'Зелене яблуко',
-    subgroups: [],
-  },
-  {
-    id: 63,
-    colorHex: '#7bbb32',
-    name: 'Овочі',
-    subgroups: [],
-  },
-  {
-    id: 62,
-    colorHex: '#036117',
-    name: 'Трави',
-    subgroups: [
-      {
-        id: 56,
-        colorHex: '#26a856',
-        name: 'М’ята',
-        aromas: [
-          {
-            id: 61,
-            colorHex: '#26a856',
-            name: 'М’ята 1',
-          },
-          {
-            id: 62,
-            colorHex: '#26a856',
-            name: 'М’ята 2',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 57,
-    colorHex: '#A01428',
-    name: 'Вишня',
-    subgroups: [
-      {
-        id: 52,
-        colorHex: '#dd1324',
-        name: 'перший1',
-        aromas: [
-          {
-            id: 55,
-            colorHex: '#e2c9c9',
-            name: 'аромат1',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 69,
-    colorHex: '#822e9d',
-    name: 'Ягідні аромати',
-    subgroups: [
-      {
-        id: 59,
-        colorHex: '#f27070',
-        name: 'Малина',
-        aromas: [
-          {
-            id: 64,
-            colorHex: '#f27070',
-            name: 'Свіжа',
-          },
-        ],
-      },
-    ],
-  },
-]
-export const flavorMock = [
-  {
-    id: 60,
-    colorHex: '#E78AAE',
-    name: 'Яблоко',
-    subgroups: [
-      {
-        id: 53,
-        colorHex: '#97057b',
-        name: 'червоне',
-      },
-      {
-        id: 54,
-        colorHex: '#670303',
-        name: 'зелене',
-      },
-    ],
-  },
-  {
-    id: 61,
-    colorHex: '#dd9350',
-    name: 'Резина',
-    subgroups: [
-      {
-        id: 55,
-        colorHex: '#de9e58',
-        name: 'жуйка',
-      },
-    ],
-  },
-  {
-    id: 58,
-    colorHex: '#A8D86E',
-    name: 'Гівно',
-    subgroups: [],
-  },
-  {
-    id: 63,
-    colorHex: '#7bbb32',
-    name: 'Бумага',
-    subgroups: [],
-  },
-  {
-    id: 62,
-    colorHex: '#036117',
-    name: 'Трава',
-    subgroups: [
-      {
-        id: 56,
-        colorHex: '#26a856',
-        name: 'Свіже покошена',
-      },
-    ],
-  },
-  {
-    id: 57,
-    colorHex: '#A01428',
-    name: 'Банан',
-    subgroups: [
-      {
-        id: 52,
-        colorHex: '#dd1324',
-        name: "в'ялений",
-      },
-    ],
-  },
-]
-export const charMock = [
-  {
-    id: 60,
-    colorHex: '#E78AAE',
-    name: 'характ 1',
-  },
-  {
-    id: 61,
-    colorHex: '#dd9350',
-    name: 'характ 1',
-  },
-  {
-    id: 58,
-    colorHex: '#A8D86E',
-    name: 'характ 1',
-  },
-  {
-    id: 63,
-    colorHex: '#7bbb32',
-    name: 'характ 1',
-  },
-  {
-    id: 62,
-    colorHex: '#036117',
-    name: 'характ 1',
-  },
-  {
-    id: 57,
-    colorHex: '#A01428',
-    name: 'характ 1',
-  },
-]
-
 interface CharacteristicContentProps {
   groups: any[]
   deleteGroup: (groupId: number) => void
@@ -336,54 +100,51 @@ export const CharacteristicContent: React.FC<CharacteristicContentProps> = ({
                           <div className={`p-2 rounded transition-all duration-300 ${isSubgroupDeletedFlag ? 'bg-gray-200' : 'bg-gray-50'}`}>
                             <div className="flex items-center gap-2">
                               <span
-                                className={`w-4 h-4 rounded-full flex-shrink-0 transition-all duration-300 ${isSubgroupDeletedFlag ? 'opacity-50' : 'opacity-100'}`}
-                                style={{ backgroundColor: sub.colorHex }}
-                              />
-                              <span
                                 className={`text-sm ${i === 0 ? 'font-bold' : ''} text-foreground break-words word-wrap-break-word overflow-wrap-anywhere ${
                                   isSubgroupDeletedFlag ? 'text-gray-400' : ''
                                 }`}
                               >
                                 {sub.name}
                               </span>
+                              <div className="flex justify-end flex-1 gap-2">
+                                {!isGroupDeletedFlag && (
+                                  <div className="flex-1 max-w-md">
+                                    {isItems && options.length > 0 ? (
+                                      <MultiSelect
+                                        mode="multiple"
+                                        value={selectedValues}
+                                        onChange={values => handleItemSelect(group.id, sub.id, values)}
+                                        placeholder={t('select_options')}
+                                        fetchOptions={createSubgroupFetchOptions(group.id, sub.id)}
+                                        itemOptions={options}
+                                        animationConfig={{
+                                          popoverAnimation: 'slide',
+                                          duration: 300,
+                                        }}
+                                        className={`w-full transition-all duration-300 ${isSubgroupDeletedFlag ? 'pointer-events-none opacity-50' : ''}`}
+                                        disabled={isSubgroupDeletedFlag}
+                                      />
+                                    ) : null}
+                                  </div>
+                                )}
 
-                              {!isGroupDeletedFlag && (
-                                <div className="flex-1 max-w-md">
-                                  {isItems && options.length > 0 ? (
-                                    <MultiSelect
-                                      mode="multiple"
-                                      value={selectedValues}
-                                      onChange={values => handleItemSelect(group.id, sub.id, values)}
-                                      placeholder="Select options"
-                                      fetchOptions={createSubgroupFetchOptions(group.id, sub.id)}
-                                      itemOptions={options}
-                                      animationConfig={{
-                                        popoverAnimation: 'slide',
-                                        duration: 300,
-                                      }}
-                                      className={`w-full transition-all duration-300 ${isSubgroupDeletedFlag ? 'pointer-events-none opacity-50' : ''}`}
-                                      disabled={isSubgroupDeletedFlag}
-                                    />
-                                  ) : null}
-                                </div>
-                              )}
-
-                              {!isGroupDeletedFlag && (
-                                <NLTTooltip
-                                  delay={500}
-                                  message={isSubgroupDeletedFlag ? t('restore_subgroup') : t('del_subgroup')}
-                                  className={`${isSubgroupDeletedFlag ? 'bg-blue-500/85 max-w-[300px]' : 'bg-red-500/85 max-w-[300px]'}`}
-                                  trigger={
-                                    <button
-                                      className={`transition-all duration-300 cursor-pointer ${isSubgroupDeletedFlag ? 'text-blue-500 hover:text-blue-700' : 'text-gray-400 hover:text-red-500'}`}
-                                      onClick={() => handleSubgroupDeleteOrRestore(group.id, sub.id)}
-                                      disabled={isGroupDeletedFlag}
-                                    >
-                                      {isSubgroupDeletedFlag ? <RotateCcw className="w-5 h-5" /> : <X className="w-5 h-5" />}
-                                    </button>
-                                  }
-                                />
-                              )}
+                                {!isGroupDeletedFlag && (
+                                  <NLTTooltip
+                                    delay={500}
+                                    message={isSubgroupDeletedFlag ? t('restore_subgroup') : t('del_subgroup')}
+                                    className={`${isSubgroupDeletedFlag ? 'bg-blue-500/85 max-w-[300px]' : 'bg-red-500/85 max-w-[300px]'}`}
+                                    trigger={
+                                      <button
+                                        className={`transition-all duration-300 cursor-pointer ${isSubgroupDeletedFlag ? 'text-blue-500 hover:text-blue-700' : 'text-gray-400 hover:text-red-500'}`}
+                                        onClick={() => handleSubgroupDeleteOrRestore(group.id, sub.id)}
+                                        disabled={isGroupDeletedFlag}
+                                      >
+                                        {isSubgroupDeletedFlag ? <RotateCcw className="w-5 h-5" /> : <X className="w-5 h-5" />}
+                                      </button>
+                                    }
+                                  />
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>

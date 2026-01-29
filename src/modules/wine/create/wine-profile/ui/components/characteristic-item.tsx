@@ -15,7 +15,7 @@ export const CharacteristicItem: React.FC<CharacteristicItemProps> = ({ label, i
       label={label}
       isOpen={isOpen}
       onToggle={onToggle}
-      style={{ padding: '8px', marginBottom: '12px', backgroundColor: '#d1d1d1' }}
+      style={{ padding: '8px', marginBottom: '12px', backgroundColor: '#ececec' }}
       chevronStyle="#2e2e38"
       header={header || <p>{label}</p>}
     >

@@ -71,9 +71,8 @@ export const useGroupUI = ({
       return options
     }
   }
-
-  const getSubgroupSelectedValues = (subgroup: any): string[] => {
-    return (subgroup.selectedItems || []).map((id: number) => id.toString())
+  const getSubgroupSelectedValues = (subgroup: { selectedItems: number[] }): string[] => {
+    return subgroup?.selectedItems?.map(id => String(id))
   }
 
   return {
