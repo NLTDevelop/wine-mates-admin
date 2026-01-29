@@ -127,14 +127,21 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
   }, [flavorGroups])
 
   const expandForm = () => {
-    resetForm({
-      type: types[0]?.id.toString() ?? '',
-      color: colors[0]?.id.toString() ?? '',
-    })
+    aromas.resetAll()
+    flavors.resetAll()
+    characteristic.resetAll()
+
+    setSelectedType(types[0]?.id.toString() ?? '')
+    setSelectedColor(colors[0]?.id.toString() ?? '')
+
     setIsExpanded(true)
+    setIsEditing(false)
   }
 
   const handleCancel = () => {
+    aromas.initializeFromData(mapProfileToGroups(aromaGroups, [], 'aroma'))
+    flavors.initializeFromData(mapProfileToGroups(flavorGroups, [], 'flavor'))
+    characteristic.initializeFromData(mapProfileToGroups(tasteCharacteristics, [], 'characteristic'))
     if (isEditing) {
       setIsExpanded(false)
       setIsEditing(false)

@@ -196,6 +196,20 @@ export function useGroupManagement<TItem extends IItem, TSubgroup extends Subgro
     setDeletedSubgroups([])
   }, [initialGroups])
 
+  const resetAll = useCallback(() => {
+    setGroups(
+      initialGroups.map(group => ({
+        ...group,
+        subgroups: group.subgroups.map(sub => ({
+          ...sub,
+          selectedItems: [],
+        })),
+      }))
+    )
+    setDeletedGroups([])
+    setDeletedSubgroups([])
+  }, [initialGroups])
+
   return {
     groups,
     deletedGroups,
@@ -214,5 +228,6 @@ export function useGroupManagement<TItem extends IItem, TSubgroup extends Subgro
     initializeFromData,
     reset,
     getResultDataFl,
+    resetAll,
   }
 }
