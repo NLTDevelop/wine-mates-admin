@@ -64,6 +64,7 @@ export const mapProfileToGroups = (sourceGroups: any[], selectedData: any[], typ
             name: item.name,
             colorHex: item.colorHex,
           })),
+          selectedItems: subgroup.selectedItems,
         }
       })
 
