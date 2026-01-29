@@ -85,7 +85,12 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
         return
       }
 
-      const allOptionsAvailable = selectedValues.every(val => options.some(opt => opt.value === val) || itemOptions?.some(opt => opt.value === val))
+      const allOptionsAvailable = selectedValues.every(
+        val =>
+          options.some(opt => {
+            opt.value === val
+          }) || itemOptions?.some(opt => opt.value === val)
+      )
 
       if (allOptionsAvailable) {
         const orderedOptions = selectedValues.map(val => options.find(opt => opt.value === val) || itemOptions?.find(opt => opt.value === val)).filter(Boolean) as MultiSelectOption[]
@@ -100,7 +105,11 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
       if (missingValues.length > 0) {
         try {
           const missingOptions = await fetchOptions()
-          const foundMissingOptions = missingOptions.filter(opt => missingValues.includes(opt.value))
+
+          const foundMissingOptions = missingOptions.filter(opt => {
+            return missingValues.includes(opt.value)
+          })
+
           const orderedOptions = selectedValues.map(val => knownOptions.find(opt => opt.value === val) || foundMissingOptions.find(opt => opt.value === val)).filter(Boolean) as MultiSelectOption[]
           setSelectedOptions(orderedOptions)
         } catch (error) {
@@ -116,7 +125,6 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 
     updateSelectedOptions()
   }, [selectedValues, options, itemOptions, fetchOptions])
-
   React.useEffect(() => {
     if (itemOptions?.length) {
       setOptions(itemOptions)

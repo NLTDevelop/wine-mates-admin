@@ -1,15 +1,14 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/UIKit/shadcn/ui/select'
-import { NameDictionary } from '../../../general/entities/types'
-import { getDisplayNames } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
+import { IOption, IOptionWithColor } from '../../enteties/types/types'
 
 interface ProfileSelectsProps {
   selectedType: string
   setSelectedType: (type: string) => void
   selectedColor: string
   setSelectedColor: (color: string) => void
-  typeNames: NameDictionary[][]
-  colorNames: NameDictionary[][]
+  typeNames: IOption[]
+  colorNames: IOptionWithColor[]
 }
 
 export const ProfileSelects = ({ selectedType, setSelectedType, selectedColor, setSelectedColor, typeNames, colorNames }: ProfileSelectsProps) => {
@@ -24,10 +23,9 @@ export const ProfileSelects = ({ selectedType, setSelectedType, selectedColor, s
         <SelectContent>
           {typeNames.length > 0 &&
             typeNames.map((wt, idx) => {
-              const { nameEn, nameUa } = getDisplayNames(wt || [])
               return (
-                <SelectItem key={`${nameEn}_${idx}`} value={nameEn || nameUa}>
-                  {nameEn || nameEn}
+                <SelectItem key={`${wt.name}_${idx}`} value={wt.id?.toString()}>
+                  {wt.name}
                 </SelectItem>
               )
             })}
@@ -41,10 +39,9 @@ export const ProfileSelects = ({ selectedType, setSelectedType, selectedColor, s
         <SelectContent>
           {colorNames.length > 0 &&
             colorNames.map((c, idx) => {
-              const { nameEn, nameUa } = getDisplayNames(c || [])
               return (
-                <SelectItem key={`${nameEn}_${idx}`} value={nameEn || nameUa}>
-                  {nameEn || nameUa}
+                <SelectItem key={`${c.name}_${idx}`} value={c.id?.toString()}>
+                  {c.name}
                 </SelectItem>
               )
             })}

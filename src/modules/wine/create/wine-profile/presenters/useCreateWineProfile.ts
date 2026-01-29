@@ -1,70 +1,262 @@
-import { useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { CreateWineProfileRequest, ISubgroup, IWineProfileDetail, UpdateWineProfileParams } from '../enteties/types/types'
 import { useGroupManagement } from './useGroupManagement'
-import { Group } from '../enteties/items-types'
+import { mapProfileToGroups, mapResultDataToGroups } from './wineProfileAdapters'
 
-export interface WineProfileFormData {
-  wineTypeId: string
-  colorId: string
-  aromaGroupIds: string[]
-  aromaSubgroupIds: string[]
-  aromaIds: string[]
-
-  flavorGroupIds: string[]
-  flavorIds: string[]
-  characteristicGroupIds: string[]
-  characteristicIds: string[]
+interface UseCreateWineProfileProps {
+  types: any[]
+  colors: any[]
+  aromaGroups: any[]
+  flavorGroups: any[]
+  tasteCharacteristics: any[]
+  onCreateProfile: (data: CreateWineProfileRequest) => void
+  onUpdateProfile: (params: UpdateWineProfileParams) => void
+  isLoading?: boolean
 }
 
-export const useCreateWineProfile = (aromasData: Group[]) => {
-  const [wineTypeId, setWineTypeId] = useState('')
-  const [colorId, setColorId] = useState('')
+export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups, tasteCharacteristics, onCreateProfile, onUpdateProfile }: UseCreateWineProfileProps) => {
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editingProfileId, setEditingProfileId] = useState<string | null>(null)
 
-  const aromas = useGroupManagement({ initialGroups: aromasData, itemName: 'aromas' })
+  const [selectedType, setSelectedType] = useState('')
+  const [selectedColor, setSelectedColor] = useState('')
 
-  // TODO: Добавить для вкусов и характеристик
-  const [flavorGroupIds, _setFlavorGroupIds] = useState<string[]>([])
-  const [flavorIds, _setFlavorIds] = useState<string[]>([])
-  const [characteristicGroupIds, _setCharacteristicGroupIds] = useState<string[]>([])
-  const [characteristicIds, _setCharacteristicIds] = useState<string[]>([])
+  const baseAromaGroups = useMemo(() => structuredClone(aromaGroups), [aromaGroups])
 
-  const getFormData = (): WineProfileFormData => {
-    const aromasData = aromas.getSelectedGroupData()
+  const baseFlavorGroups = useMemo(() => structuredClone(flavorGroups), [flavorGroups])
+
+  const baseTasteGroups = useMemo(() => structuredClone(tasteCharacteristics), [tasteCharacteristics])
+
+  const aromas = useGroupManagement({ initialGroups: baseAromaGroups })
+  const flavors = useGroupManagement({ initialGroups: baseFlavorGroups })
+  const characteristic = useGroupManagement({ initialGroups: baseTasteGroups })
+
+  const originalRef = useRef<{
+    selectedType: string
+    selectedColor: string
+    aromas: any
+    flavors: any
+    characteristics: any
+  } | null>(null)
+
+  const getDisplayName = useCallback((id: string, items: any[]) => {
+    if (!id) return ''
+    const item = items.find(i => i.id?.toString() === id)
+    return item?.translations?.[0]?.name || item?.name || id
+  }, [])
+
+  const wineType = useMemo(() => getDisplayName(selectedType, types), [selectedType, types, getDisplayName])
+
+  const wineColor = useMemo(() => getDisplayName(selectedColor, colors), [selectedColor, colors, getDisplayName])
+
+  const resultAromasDataGroups = useMemo(() => mapResultDataToGroups(aromas.getResultData()), [aromas])
+
+  const resultFlavorsDataGroups = useMemo(() => mapResultDataToGroups(flavors.getResultDataFl()), [flavors])
+
+  const resultCharacteristicDataGroups = useMemo(() => mapResultDataToGroups(characteristic.getResultData()), [characteristic])
+
+  const canSaveProfile = Boolean(selectedType && selectedColor)
+
+  const buildProfileData = useCallback((): CreateWineProfileRequest => {
+    const selectedAromas = aromas.groups
+      .filter(g => !aromas.isGroupDeleted(g.id))
+      .map(g => ({
+        aromaGroupId: g.id,
+        aromaSubgroups: g.subgroups
+          .filter((s: any) => !aromas.isSubgroupDeleted(g.id, s.id) && s.selectedItems.length > 0)
+          .map((s: any) => ({
+            aromaSubgroupId: s.id,
+            aromas: s.selectedItems.filter((id: number | string): id is number | string => id != null).map((id: number | string) => Number(id)),
+          })),
+      }))
+      .filter(g => g.aromaSubgroups.length > 0)
+
+    const selectedFlavors = flavors.groups
+      .filter(g => !flavors.isGroupDeleted(g.id))
+      .map(g => ({
+        flavorGroupId: g.id,
+        flavors: g.subgroups
+          .flatMap((s: any) => s.selectedItems)
+          .filter((id: number | string): id is number | string => id != null)
+          .map((id: number | string) => Number(id)),
+      }))
+      .filter(g => g.flavors.length > 0)
+
+    const selectedTasteCharacteristics = characteristic.groups.filter(ch => !characteristic.isGroupDeleted(ch.id)).map(ch => Number(ch.id))
 
     return {
-      wineTypeId,
-      colorId,
-      aromaGroupIds: aromasData.groupIds,
-      aromaSubgroupIds: aromasData.subgroupIds,
-      aromaIds: aromasData.itemIds,
-      flavorGroupIds,
-      flavorIds,
-      characteristicGroupIds,
-      characteristicIds,
+      typeId: Number(selectedType),
+      colorId: Number(selectedColor),
+      selectedAromas,
+      selectedFlavors,
+      selectedTasteCharacteristics,
+    }
+  }, [aromas, flavors, characteristic, selectedType, selectedColor])
+
+  const resetForm = useCallback((defaults?: { type?: string; color?: string }) => {
+    setSelectedType(defaults?.type ?? '')
+    setSelectedColor(defaults?.color ?? '')
+
+    aromas.reset()
+    flavors.initializeFromData(mapProfileToGroups(flavorGroups, [], 'flavor'))
+    characteristic.reset()
+
+    setIsEditing(false)
+    setEditingProfileId(null)
+  }, [])
+
+  const resetGroupsOnly = useCallback(() => {
+    aromas.reset()
+    flavors.reset()
+    characteristic.reset()
+  }, [flavorGroups])
+
+  const expandForm = () => {
+    resetForm({
+      type: types[0]?.id.toString() ?? '',
+      color: colors[0]?.id.toString() ?? '',
+    })
+    setIsExpanded(true)
+  }
+
+  const handleCancel = () => {
+    if (isEditing) {
+      setIsExpanded(false)
+      setIsEditing(false)
+    } else {
+      resetForm()
+      setIsExpanded(false)
     }
   }
 
-  const canSaveProfile = () => {
-    return wineTypeId !== '' && colorId !== ''
+  const closeEditMode = () => {
+    setIsEditing(false)
+    setIsExpanded(false)
+    setEditingProfileId(null)
+    originalRef.current = null
   }
 
-  const resetForm = () => {
-    setWineTypeId('')
-    setColorId('')
-    // TODO: для ароматов, вкусов, характеристик
+  const handleSaveProfile = () => {
+    const payload = buildProfileData()
+
+    if (isEditing && editingProfileId) {
+      onUpdateProfile({ profileId: editingProfileId, newProfile: payload })
+      closeEditMode()
+    } else {
+      onCreateProfile(payload)
+      resetForm({
+        type: types[0]?.id.toString() ?? '',
+        color: colors[0]?.id.toString() ?? '',
+      })
+      setIsExpanded(false)
+    }
   }
+
+  const initializeDeletedFlagsFromProfile = (profile: IWineProfileDetail) => {
+    const deletedAromaGroups: number[] = []
+    const deletedAromaSubgroups: string[] = []
+
+    aromas.groups.forEach(group => {
+      const profileGroup = profile.selectedAromas.find(g => g.id === group.id)
+      if (!profileGroup) {
+        deletedAromaGroups.push(group.id)
+      } else {
+        group.subgroups.forEach((sub: ISubgroup) => {
+          const profileSub = profileGroup.subgroups.find(s => s.id === sub.id)
+          if (!profileSub) deletedAromaSubgroups.push(`${group.id}-${sub.id}`)
+        })
+      }
+    })
+
+    const deletedFlavorGroups: number[] = []
+    const deletedFlavorSubgroups: string[] = []
+
+    // flavors.groups.forEach(group => {
+    //   const profileGroup = profile.selectedFlavors.find(g => g.id === group.id)
+    //   if (!profileGroup) {
+    //     deletedFlavorGroups.push(group.id)
+    //   } else {
+    //     group.subgroups.forEach((sub: ISubgroup) => {
+    //       const profileSub = profileGroup.flavors?.find(s => s.id === sub.id)
+    //       if (!profileSub) deletedFlavorSubgroups.push(`${group.id}-${sub.id}`)
+    //     })
+    //   }
+    // })
+    flavors.groups.forEach(group => {
+      const profileGroup = profile.selectedFlavors.find(g => g.id === group.id)
+
+      if (!profileGroup) {
+        deletedFlavorGroups.push(group.id)
+        return
+      }
+
+      const profileFlavorIds = new Set((profileGroup.flavors ?? []).map(f => f.id))
+
+      group.subgroups.forEach((item: any) => {
+        if (!profileFlavorIds.has(item.id)) {
+          deletedFlavorSubgroups.push(`${group.id}-${item.id}`)
+        }
+      })
+    })
+
+    const deletedCharacteristicGroups = characteristic.groups.filter(char => !profile.selectedTasteCharacteristics.some(selected => selected.id === char.id)).map(char => char.id)
+
+    aromas.setDeletedGroups(deletedAromaGroups)
+    aromas.setDeletedSubgroups(deletedAromaSubgroups)
+
+    flavors.setDeletedGroups(deletedFlavorGroups)
+    flavors.setDeletedSubgroups(deletedFlavorSubgroups)
+
+    characteristic.setDeletedGroups(deletedCharacteristicGroups)
+  }
+
+  const initializeFormFromProfile = (profile: IWineProfileDetail) => {
+    setSelectedType(profile.type?.id?.toString() ?? '')
+    setSelectedColor(profile.color?.id?.toString() ?? '')
+
+    aromas.initializeFromData(mapProfileToGroups(aromaGroups, profile.selectedAromas, 'aroma'))
+    flavors.initializeFromData(mapProfileToGroups(flavorGroups, profile.selectedFlavors, 'flavor'))
+    characteristic.initializeFromData(mapProfileToGroups(tasteCharacteristics, profile.selectedTasteCharacteristics, 'characteristic'))
+
+    initializeDeletedFlagsFromProfile(profile)
+
+    setIsEditing(true)
+    setIsExpanded(true)
+    setEditingProfileId(profile.id)
+  }
+
+  const openForEditing = useCallback(() => {
+    setIsExpanded(true)
+    setIsEditing(true)
+  }, [])
 
   return {
-    wineTypeId,
-    setWineTypeId,
-    colorId,
-    setColorId,
+    isExpanded,
+    isEditing,
 
-    ...aromas,
+    selectedType,
+    selectedColor,
+    setSelectedType,
+    setSelectedColor,
 
-    // TODO: Добавить вкусы и характеристики
+    aromas,
+    flavors,
+    characteristic,
 
-    getFormData,
+    wineType,
+    wineColor,
+    resultAromasDataGroups,
+    resultFlavorsDataGroups,
+    resultCharacteristicDataGroups,
+
     canSaveProfile,
-    resetForm,
+
+    expandForm,
+    handleCancel,
+    handleSaveProfile,
+    initializeFormFromProfile,
+    resetGroupsOnly,
+    openForEditing,
   }
 }

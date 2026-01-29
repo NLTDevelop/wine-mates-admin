@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 import { Tags, Palette, Grape, Flower } from 'lucide-react'
 
 interface EmptyStateProps {
-  type: 'wine-types' | 'colors' | 'aromas' | 'taste' | 'taste-characteristics'
+  type: 'wine-types' | 'colors' | 'aromas' | 'taste' | 'taste-characteristics' | 'profile'
   className?: string
 }
 
@@ -34,6 +34,11 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ type, className }) => {
       icon: Grape,
       title: t('empty', { slug: t('taste_characteristics.characteristics') }),
       description: t('empty_description', { slug: t('taste_characteristics.of_characteristic').toLowerCase() }),
+    },
+    profile: {
+      icon: Grape,
+      title: t('empty', { slug: t('wine_profiles.profile') }),
+      description: t('empty_description', { slug: t('wine_profiles.of_profile').toLowerCase() }),
     },
   }
 
