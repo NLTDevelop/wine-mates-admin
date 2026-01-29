@@ -73,7 +73,7 @@ export const uk = {
     stats: 'Статистика',
     analysis: 'Хімічний аналіз вин',
     user_propositions: 'Користувацькі смаки і аромати',
-    tasting: 'Створити дегустацію',
+    tasting: 'Додати вино',
     settings: 'Налаштування',
   },
   autorization: {
@@ -251,7 +251,7 @@ export const uk = {
     visual: 'Візуальні показники',
     aroma: 'Показники аромату',
     taste: 'Показники смаку',
-    creating_taste: 'Створення дегустації',
+    creating_taste: 'Додавання вина в базу',
     modal: {
       delete_title: 'Видалити {{slug}}?',
       delete_action: 'Видалити',
@@ -563,7 +563,7 @@ export const uk = {
     table: {
       taste: 'Назва смаку',
       aroma: 'Назва аромату',
-      created_at: 'Дата створення',
+      createdAt: 'Дата створення',
     },
   },
   wine_profile: {
