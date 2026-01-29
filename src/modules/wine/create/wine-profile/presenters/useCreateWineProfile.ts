@@ -24,12 +24,28 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
 
   const baseAromaGroups = useMemo(() => structuredClone(aromaGroups), [aromaGroups])
 
-  const baseFlavorGroups = useMemo(() => structuredClone(flavorGroups), [flavorGroups])
+  const baseFlavorGroups = flavorGroups.map(group => {
+    const subgroup = group.subgroups[0]
+    if (!subgroup) return group
+
+    return {
+      ...group,
+      subgroups: subgroup.items.map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        colorHex: item.colorHex,
+        items: [item],
+        selectedItems: [item.id],
+      })),
+    }
+  })
 
   const baseTasteGroups = useMemo(() => structuredClone(tasteCharacteristics), [tasteCharacteristics])
 
   const aromas = useGroupManagement({ initialGroups: baseAromaGroups })
+
   const flavors = useGroupManagement({ initialGroups: baseFlavorGroups })
+
   const characteristic = useGroupManagement({ initialGroups: baseTasteGroups })
 
   const originalRef = useRef<{
@@ -70,16 +86,14 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
             aromas: s.selectedItems.filter((id: number | string): id is number | string => id != null).map((id: number | string) => Number(id)),
           })),
       }))
+
       .filter(g => g.aromaSubgroups.length > 0)
 
     const selectedFlavors = flavors.groups
       .filter(g => !flavors.isGroupDeleted(g.id))
       .map(g => ({
         flavorGroupId: g.id,
-        flavors: g.subgroups
-          .flatMap((s: any) => s.selectedItems)
-          .filter((id: number | string): id is number | string => id != null)
-          .map((id: number | string) => Number(id)),
+        flavors: g.subgroups.filter((s: any) => !flavors.isSubgroupDeleted(g.id, s.id)).map((f: any) => f.id),
       }))
       .filter(g => g.flavors.length > 0)
 
@@ -94,9 +108,9 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
     }
   }, [aromas, flavors, characteristic, selectedType, selectedColor])
 
-  const resetForm = useCallback((defaults?: { type?: string; color?: string }) => {
-    setSelectedType(defaults?.type ?? '')
-    setSelectedColor(defaults?.color ?? '')
+  const resetForm = useCallback((_?: { type?: string; color?: string }) => {
+    setSelectedType('')
+    setSelectedColor('')
 
     aromas.reset()
     flavors.initializeFromData(mapProfileToGroups(flavorGroups, [], 'flavor'))
@@ -172,33 +186,34 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
     const deletedFlavorGroups: number[] = []
     const deletedFlavorSubgroups: string[] = []
 
-    // flavors.groups.forEach(group => {
-    //   const profileGroup = profile.selectedFlavors.find(g => g.id === group.id)
-    //   if (!profileGroup) {
-    //     deletedFlavorGroups.push(group.id)
-    //   } else {
-    //     group.subgroups.forEach((sub: ISubgroup) => {
-    //       const profileSub = profileGroup.flavors?.find(s => s.id === sub.id)
-    //       if (!profileSub) deletedFlavorSubgroups.push(`${group.id}-${sub.id}`)
-    //     })
-    //   }
-    // })
     flavors.groups.forEach(group => {
       const profileGroup = profile.selectedFlavors.find(g => g.id === group.id)
-
       if (!profileGroup) {
         deletedFlavorGroups.push(group.id)
-        return
+      } else {
+        group.subgroups.forEach((sub: ISubgroup) => {
+          const profileSub = profileGroup.flavors.find(s => s.id === sub.id)
+          if (!profileSub) deletedFlavorSubgroups.push(`${group.id}-${sub.id}`)
+        })
       }
-
-      const profileFlavorIds = new Set((profileGroup.flavors ?? []).map(f => f.id))
-
-      group.subgroups.forEach((item: any) => {
-        if (!profileFlavorIds.has(item.id)) {
-          deletedFlavorSubgroups.push(`${group.id}-${item.id}`)
-        }
-      })
     })
+
+    // flavors.groups.forEach(group => {
+    //   const profileGroup = profile.selectedFlavors.find(g => g.id === group.id)
+
+    //   if (!profileGroup) {
+    //     deletedFlavorGroups.push(group.id)
+    //     return
+    //   }
+
+    //   const profileFlavorIds = new Set((profileGroup.flavors ?? []).map(f => f.id))
+
+    //   group.subgroups.forEach((item: any) => {
+    //     if (!profileFlavorIds.has(item.id)) {
+    //       deletedFlavorSubgroups.push(`${group.id}-${item.id}`)
+    //     }
+    //   })
+    // })
 
     const deletedCharacteristicGroups = characteristic.groups.filter(char => !profile.selectedTasteCharacteristics.some(selected => selected.id === char.id)).map(char => char.id)
 

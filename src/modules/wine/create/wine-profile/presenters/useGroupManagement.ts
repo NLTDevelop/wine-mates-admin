@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { Group, IItem, Subgroup } from '../enteties/types/items-types'
 
 interface UseGroupManagementProps<TGroup> {
@@ -6,15 +6,57 @@ interface UseGroupManagementProps<TGroup> {
 }
 
 export function useGroupManagement<TItem extends IItem, TSubgroup extends Subgroup<TItem>, TGroup extends Group<TSubgroup>>({ initialGroups }: UseGroupManagementProps<TGroup>) {
-  const [groups, setGroups] = useState<TGroup[]>(() =>
-    initialGroups.map(group => ({
-      ...group,
-      subgroups: group.subgroups.map(subgroup => ({
-        ...subgroup,
-        selectedItems: subgroup.items.map(item => item.id),
-      })),
-    }))
-  )
+  const [groups, setGroups] = useState<TGroup[]>(() => {
+    const result = initialGroups.map(group => {
+      const processedGroup = {
+        ...group,
+        subgroups: group.subgroups.map(subgroup => {
+          return {
+            ...subgroup,
+            selectedItems: subgroup.items.map(item => item.id),
+          }
+        }),
+      }
+
+      return processedGroup
+    })
+
+    return result
+  })
+
+  useEffect(() => {
+    const shouldUpdate =
+      initialGroups.length > 0 &&
+      (groups.length === 0 || groups.length !== initialGroups.length || groups[0]?.id !== initialGroups[0]?.id || JSON.stringify(groups[0]?.subgroups) !== JSON.stringify(initialGroups[0]?.subgroups))
+
+    if (shouldUpdate) {
+      const newGroups = initialGroups.map(group => {
+        return {
+          ...group,
+          subgroups: (group.subgroups || []).map(subgroup => {
+            const items =
+              subgroup.items && subgroup.items.length > 0
+                ? subgroup.items
+                : [
+                    {
+                      id: subgroup.id || group.id,
+                      name: subgroup.name || group.name,
+                      colorHex: subgroup.colorHex || group.colorHex,
+                    },
+                  ]
+
+            return {
+              ...subgroup,
+              items,
+              selectedItems: subgroup.selectedItems || [],
+            }
+          }),
+        }
+      })
+
+      setGroups(newGroups)
+    }
+  }, [initialGroups])
 
   const [deletedGroups, setDeletedGroups] = useState<number[]>([])
   const [deletedSubgroups, setDeletedSubgroups] = useState<string[]>([])
