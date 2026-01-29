@@ -1,3 +1,4 @@
 export const PROPOSITIONS_ENDPOINTS = {
-  LIST: '/v1/admin/user-propositions',
+  AROMA_LIST: 'v1/admin/wine-aroma-suggestions',
+  FLAVOR_LIST: 'v1/admin/wine-flavor-suggestions',
 } as const

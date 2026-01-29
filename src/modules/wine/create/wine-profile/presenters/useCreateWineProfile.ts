@@ -34,7 +34,7 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
         id: item.id,
         name: item.name,
         colorHex: item.colorHex,
-        items: [item],
+        items: [''],
         selectedItems: [item.id],
       })),
     }
@@ -68,7 +68,7 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
 
   const resultAromasDataGroups = useMemo(() => mapResultDataToGroups(aromas.getResultData()), [aromas])
 
-  const resultFlavorsDataGroups = useMemo(() => mapResultDataToGroups(flavors.getResultDataFl()), [flavors])
+  const resultFlavorsDataGroups = useMemo(() => mapResultDataToGroups(flavors.getResultData()), [flavors])
 
   const resultCharacteristicDataGroups = useMemo(() => mapResultDataToGroups(characteristic.getResultData()), [characteristic])
 
@@ -112,7 +112,7 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
     setSelectedType('')
     setSelectedColor('')
 
-    aromas.reset()
+    aromas.initializeFromData(mapProfileToGroups(aromaGroups, [], 'aroma'))
     flavors.initializeFromData(mapProfileToGroups(flavorGroups, [], 'flavor'))
     characteristic.reset()
 
@@ -127,14 +127,21 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
   }, [flavorGroups])
 
   const expandForm = () => {
-    resetForm({
-      type: types[0]?.id.toString() ?? '',
-      color: colors[0]?.id.toString() ?? '',
-    })
+    aromas.initializeFromData(mapProfileToGroups(aromaGroups, [], 'aroma'))
+    flavors.resetAll()
+    characteristic.resetAll()
+
+    setSelectedType('')
+    setSelectedColor('')
+
     setIsExpanded(true)
+    setIsEditing(false)
   }
 
   const handleCancel = () => {
+    aromas.initializeFromData(mapProfileToGroups(aromaGroups, [], 'aroma'))
+    flavors.initializeFromData(mapProfileToGroups(flavorGroups, [], 'flavor'))
+    characteristic.initializeFromData(mapProfileToGroups(tasteCharacteristics, [], 'characteristic'))
     if (isEditing) {
       setIsExpanded(false)
       setIsEditing(false)

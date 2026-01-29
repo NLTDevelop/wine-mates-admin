@@ -22,7 +22,7 @@ export const ItemResult = <TItem extends IItem>({ groups }: ItemResultProps<TIte
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-bold text-foreground break-words word-wrap-break-word overflow-wrap-anywhere">{subgroup.name}</span>
 
-                      {subgroup.items?.length > 0 && (
+                      {subgroup.items.filter(item => item)?.length > 0 && (
                         <div className="flex-1">
                           <div className="flex flex-wrap gap-1 ml-2">
                             <span className="text-sm">({subgroup.items.map((item: TItem) => item.name).join(', ')})</span>

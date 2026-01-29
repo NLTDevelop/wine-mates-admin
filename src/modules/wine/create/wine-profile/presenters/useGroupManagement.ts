@@ -148,7 +148,7 @@ export function useGroupManagement<TItem extends IItem, TSubgroup extends Subgro
   const getSubgroupOptions = useCallback(
     (groupId: number, subgroupId: number) => {
       const group = groups.find(g => g.id === groupId)
-      const subgroup = group?.subgroups.find(s => s.id === subgroupId)
+      const subgroup = group?.subgroups.find(s => s.id.toString() === subgroupId.toString())
       if (!subgroup) return []
 
       return subgroup?.items?.map(item => ({
@@ -174,15 +174,6 @@ export function useGroupManagement<TItem extends IItem, TSubgroup extends Subgro
       }))
   }, [groups, deletedGroups, deletedSubgroups])
 
-  const getResultDataFl = useCallback(() => {
-    return groups
-      .filter(g => !deletedGroups.includes(g.id))
-      .map(g => ({
-        ...g,
-        subgroups: g.subgroups,
-      }))
-  }, [groups, deletedGroups, deletedSubgroups])
-
   const isGroupDeleted = useCallback((groupId: number) => deletedGroups.includes(groupId), [deletedGroups])
   const isSubgroupDeleted = useCallback((groupId: number, subgroupId: number) => deletedSubgroups.includes(`${groupId}-${subgroupId}`), [deletedSubgroups])
 
@@ -192,6 +183,20 @@ export function useGroupManagement<TItem extends IItem, TSubgroup extends Subgro
 
   const reset = useCallback(() => {
     setGroups(initialGroups || [])
+    setDeletedGroups([])
+    setDeletedSubgroups([])
+  }, [initialGroups])
+
+  const resetAll = useCallback(() => {
+    setGroups(
+      initialGroups.map(group => ({
+        ...group,
+        subgroups: group.subgroups.map(sub => ({
+          ...sub,
+          selectedItems: [],
+        })),
+      }))
+    )
     setDeletedGroups([])
     setDeletedSubgroups([])
   }, [initialGroups])
@@ -213,6 +218,6 @@ export function useGroupManagement<TItem extends IItem, TSubgroup extends Subgro
     isSubgroupDeleted,
     initializeFromData,
     reset,
-    getResultDataFl,
+    resetAll,
   }
 }

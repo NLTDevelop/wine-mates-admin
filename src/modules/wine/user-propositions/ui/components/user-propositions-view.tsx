@@ -10,19 +10,17 @@ import { useUserPropositions } from '../../presenters/useUserPropositions'
 import { useUserPropositionsColumns } from '../../presenters/useUserPropositionsColumns'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/UIKit/shadcn/ui/tabs'
 import { PropositionsType } from '../../entities/types/types'
-import { allPropositionsMock } from '../../entities/mock'
 
 export const UserPropositionsView = () => {
   const { t } = useTranslation('propositions')
 
-  const propositions = allPropositionsMock
-  const { /*propositions,*/ filters, onChangeSearch, handleClearSearch, onChangePagination, searchValue, isLoading, totalCount, activeTab, onChangeTab } = useUserPropositions()
+  const { propositions, filters, onChangeSearch, handleClearSearch, onChangePagination, searchValue, isLoading, totalCount, activeTab, onChangeTab } = useUserPropositions()
   const columns = useUserPropositionsColumns(activeTab)
   const { table } = useDataTable(propositions ?? [], columns)
 
   return (
     <ContentLayout title={t('propositions')}>
-      <div className={cn('pb-2', !isLoading ? 'fade-in' : '')}>
+      <div className={cn('pb-2 w-full md:w-4/5 mx-auto', !isLoading ? 'fade-in' : '')}>
         <Tabs value={activeTab} onValueChange={value => onChangeTab(value as PropositionsType)} className="w-full">
           <TabsList className="grid w-full md:w-auto sm:grid-cols-2 grid-cols-1  my-6">
             <TabsTrigger value="taste">{t('tastes')}</TabsTrigger>

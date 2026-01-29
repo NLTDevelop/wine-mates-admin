@@ -8,13 +8,15 @@ interface PropositionsState {
   search: string
   limit: number
 
-  data?: PropositionsResponse
+  aromas?: PropositionsResponse
+  flavors?: PropositionsResponse
   isLoading: boolean
 
   setActiveTab: (tab: PropositionsType) => void
   setPage: (page: number) => void
   setSearch: (search: string) => void
-  setData: (data?: PropositionsResponse) => void
+  setAromas: (aromas?: PropositionsResponse) => void
+  setFlavors: (flavors?: PropositionsResponse) => void
   setIsLoading: (isLoading: boolean) => void
 
   resetPagination: () => void
@@ -42,7 +44,9 @@ export const usePropositionsStore = create<PropositionsState>(set => ({
       page: 1,
     })),
 
-  setData: data => set({ data }),
+  setAromas: aromas => set({ aromas }),
+
+  setFlavors: flavors => set({ flavors }),
 
   setIsLoading: isLoading => set({ isLoading }),
 

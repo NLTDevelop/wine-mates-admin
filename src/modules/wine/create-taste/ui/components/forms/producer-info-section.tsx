@@ -1,48 +1,18 @@
 import { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useCallback } from 'react'
-import i18n from 'i18next'
-import { adaptFetchOptions } from '@/lib/utils'
 import { WineFormData } from '../../../presenters/wine-form-schema'
 import { FormControl, FormField, FormItem, FormLabel } from '@/UIKit/shadcn/ui/form'
 import { InputWithTooltip } from '@/UIKit/app-components/input-with-tooltip'
-import { BaseWineColor } from '@/modules/wine/create/general/entities/types'
-import { FormFieldCombobox } from '@/UIKit/app-components/form-field-combobox'
+import { YearPickerFormField } from '@/UIKit/app-components/year-picker-form-field'
 
 interface ProducerInfoSectionProps {
   form: UseFormReturn<WineFormData>
-  colors: BaseWineColor[]
-  colorsLoading: boolean
 }
 
-export const ProducerInfoSection = ({ form, colors, colorsLoading }: ProducerInfoSectionProps) => {
+export const ProducerInfoSection = ({ form }: ProducerInfoSectionProps) => {
   const { t } = useTranslation('wines')
-  const { t: tc } = useTranslation('common')
 
-  const colorId = form.watch('colorId')
-
-  const selectedColor = colors.find(c => Number(c.id) === colorId)
-  const currentLanguage = i18n.language
-
-  const displayValue = selectedColor ? selectedColor.translations?.find(t => t.language === currentLanguage)?.name || selectedColor.translations?.[0]?.name || '' : ''
-
-  const fetchOptions = useCallback(
-    async (search?: string) => {
-      const fetchFn = async (searchParam?: string) => {
-        if (!searchParam?.trim()) {
-          return colors
-        }
-
-        const term = searchParam.toLowerCase()
-        return colors.filter(color => color.translations?.some(t => t.name.toLowerCase().includes(term)))
-      }
-
-      return adaptFetchOptions(fetchFn)(search)
-    },
-    [colors]
-  )
-
-  const placeholder = selectedColor ? displayValue : colorsLoading ? tc('loading') : t('color_wine')
+  const currentYear = new Date().getFullYear()
 
   return (
     <>
@@ -85,7 +55,7 @@ export const ProducerInfoSection = ({ form, colors, colorsLoading }: ProducerInf
             </FormItem>
           )}
         />
-        <FormFieldCombobox form={form} formLabel={t('color_wine') + '*'} name="colorId" placeholder={placeholder} searchLabel={tc('search')} fetchOptions={fetchOptions} disabled={colorsLoading} />
+        <YearPickerFormField form={form} name="vintage" label={t('vintage_config')} placeholder={t('vintage_config')} fromYear={1900} toYear={currentYear} />
       </div>
     </>
   )

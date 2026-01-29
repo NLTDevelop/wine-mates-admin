@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table'
-import { IPropositions, PropositionsType } from '../entities/types/types'
+import { Proposition, PropositionsType } from '../entities/types/types'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -7,7 +7,7 @@ export const useUserPropositionsColumns = (activeTab: PropositionsType) => {
   const { t } = useTranslation('propositions')
 
   return useMemo(() => {
-    const baseColumns: ColumnDef<IPropositions>[] = [
+    const baseColumns: ColumnDef<Proposition>[] = [
       {
         id: 'index',
         header: '№',
@@ -26,21 +26,15 @@ export const useUserPropositionsColumns = (activeTab: PropositionsType) => {
       {
         id: 'name',
         header: activeTab === 'taste' ? t('table.taste') : t('table.aroma'),
-        accessorFn: row => {
-          if (row.type === 'aroma') {
-            return (row as any).aroma
-          } else {
-            return (row as any).taste
-          }
-        },
+        accessorKey: 'name',
         cell: info => info.getValue(),
         size: 200,
         meta: { cellClassName: 'text-start' },
       },
       {
-        id: 'created_at',
-        header: t('table.created_at'),
-        accessorKey: 'created_at',
+        id: 'createdAt',
+        header: t('table.createdAt'),
+        accessorKey: 'createdAt',
         cell: info => {
           const date = info.getValue<string>()
           return new Date(date).toLocaleDateString('ru-RU')
