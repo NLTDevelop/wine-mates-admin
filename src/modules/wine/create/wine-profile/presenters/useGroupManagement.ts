@@ -175,6 +175,7 @@ export function useGroupManagement<TItem extends IItem, TSubgroup extends Subgro
   }, [groups, deletedGroups, deletedSubgroups])
 
   const isGroupDeleted = useCallback((groupId: number) => deletedGroups.includes(groupId), [deletedGroups])
+
   const isSubgroupDeleted = useCallback((groupId: number, subgroupId: number) => deletedSubgroups.includes(`${groupId}-${subgroupId}`), [deletedSubgroups])
 
   const initializeFromData = useCallback((mappedData: TGroup[]) => {
