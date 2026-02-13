@@ -62,7 +62,13 @@ export const CharacteristicContent: React.FC<CharacteristicContentProps> = ({
 
         return (
           <Card key={groupKey} className={`mb-2 cursor-auto transition-all duration-300 p-1 ${isGroupDeletedFlag ? 'blur-[0.7px] bg-gray-100' : 'opacity-100 blur-0'}`}>
-            <div className="flex items-start gap-2 min-w-0 w-full " onClick={() => handleGroupDeleteOrRestore(group.id)}>
+            <div
+              className="flex items-start gap-2 min-w-0 w-full "
+              onClick={e => {
+                e.stopPropagation()
+                handleGroupDeleteOrRestore(group.id)
+              }}
+            >
               <div
                 className={`h-6 w-6 rounded-full border-0 shadow-sm flex-shrink-0 transition-all duration-300 ${isGroupDeletedFlag ? 'opacity-50' : 'opacity-100'}`}
                 style={{ backgroundColor: group.colorHex }}
@@ -94,7 +100,10 @@ export const CharacteristicContent: React.FC<CharacteristicContentProps> = ({
 
                       return (
                         <div
-                          onClick={() => handleSubgroupDeleteOrRestore(group.id, sub.id)}
+                          onClick={e => {
+                            e.stopPropagation()
+                            handleSubgroupDeleteOrRestore(group.id, sub.id)
+                          }}
                           key={subgroupKey}
                           className={`mt-2 space-y-2 transition-all duration-300 ${isSubgroupDeletedFlag || isGroupDeletedFlag ? 'blur-[0.7px]' : 'opacity-100 blur-0'}`}
                         >
