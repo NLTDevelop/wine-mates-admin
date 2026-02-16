@@ -1,10 +1,11 @@
-import { ColumnDef, createColumnHelper } from '@tanstack/react-table'
+import { ColumnDef, createColumnHelper, Table } from '@tanstack/react-table'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { Edit, Trash2 /*Check, X*/ } from 'lucide-react'
+import { Edit, Trash2 } from 'lucide-react'
 import { IWines } from '../entities/types/types'
 import { useMemo } from 'react'
-// import { NLTTooltip } from '@/UIKit/components/NLTTooltip'
 import { useTranslation } from 'react-i18next'
+import { NLTTooltip } from '@/UIKit/components/NLTTooltip'
+import { Checkbox } from '@/UIKit/shadcn/ui/checkbox'
 
 const columnHelper = createColumnHelper<IWines>()
 
@@ -12,15 +13,29 @@ interface WineTableProps {
   onEdit: (wine: IWines) => void
   onDelete: (wineId: string, name: string) => void
   onConfirm: (wineId?: string) => void
+  onUnion: () => void
 }
 
-export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) => {
+const getIsMoreThanOneRowSelected = (table: Table<IWines>) => {
+  return (table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()) && table.getSelectedRowModel().rows.length > 1
+}
+
+export const useWineColumns = ({ onEdit, onDelete, onConfirm,onUnion }: WineTableProps) => {
   const { t } = useTranslation('wines')
   return useMemo(
     () => [
       columnHelper.display({
         id: 'actions',
-        header: t('table.actions'),
+        header: ({ table }) => {
+          const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
+          return isAnyRowSelected ? (
+            <Button className="h-6 absolute top-2 left-3" onClick={onUnion}>
+              {t('list.union_btn')}
+            </Button>
+          ) : (
+            t('table.actions')
+          )
+        },
         cell: ({ row }) => {
           const stopEvent = (e: React.MouseEvent) => {
             e.stopPropagation()
@@ -37,28 +52,33 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
             row.original.id && onDelete(row.original.id, row.original.name || t('not_known_wine'))
           }
 
-          // const handleConfirmWine = (e: React.MouseEvent) => {
-          //   stopEvent(e)
-          //   onConfirm(row.original.id)
-          // }
           return (
-            <div className="flex">
+            <div className="flex items-center">
+              <div className="pt-1 pr-3" onClick={e => stopEvent(e)}>
+                <NLTTooltip
+                  delay={700}
+                  message={''}
+                  // className={finalReason ? 'bg-red-500' : 'hidden'}
+                  trigger={
+                    <Checkbox
+                      checked={row.getIsSelected()}
+                      onCheckedChange={value => {
+                        row.toggleSelected(!!value)
+                      }}
+                      aria-label="Select row"
+                      disabled={false}
+                      className="h-5 w-5"
+                    />
+                  }
+                />
+              </div>
+
               <Button variant="ghost" size="sm" onClick={handleEditWine} className="h-8 w-8 p-0 flex-1">
                 <Edit className="h-4 w-4 text-muted-foreground" />
               </Button>
               <Button variant="ghost" size="sm" onClick={handleDeleteWine} className="h-8 w-8 p-0 text-destructive hover:text-destructive flex-1">
                 <Trash2 className="h-4 w-4 text-red-700" />
               </Button>
-              {/* <NLTTooltip
-                delay={500}
-                message={!row.original.isConfirmed ? t('button.cancel_confirm') : t('button.confirm')}
-                className="bg-blue-100 text-popover-foreground max-w-[400px] break-words"
-                trigger={
-                  <Button variant="ghost" size="sm" onClick={handleConfirmWine} style={{ pointerEvents: 'auto' }}>
-                    {!row.original.isConfirmed ? <Check className="text-green-600" /> : <X className="text-red-500" />}
-                  </Button>
-                }
-              /> */}
             </div>
           )
         },
@@ -66,13 +86,19 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         meta: { cellClassName: 'text-center' },
       }),
       columnHelper.accessor('name', {
-        header: t('table.winename'),
+        header: ({ table }) => {
+          const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
+          return <span className={isAnyRowSelected ? 'opacity-0' : ''}> {t('table.winename')}</span>
+        },
         cell: info => info.getValue() || '-',
         size: 200,
         meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor('color', {
-        header: t('table.color'),
+        header: ({ table }) => {
+          const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
+          return <span className={isAnyRowSelected ? 'opacity-0' : ''}> {t('table.color')}</span>
+        },
         cell: info => {
           const color = info.getValue()
           return color?.name || '-'
@@ -81,19 +107,28 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor('producer', {
-        header: t('table.producertitle'),
+        header: ({ table }) => {
+          const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
+          return <span className={isAnyRowSelected ? 'opacity-0' : ''}> {t('table.producertitle')}</span>
+        },
         cell: info => info.getValue() || '-',
         size: 150,
         meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor('grapeVariety', {
-        header: t('table.grapevariety'),
+        header: ({ table }) => {
+          const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
+          return <span className={isAnyRowSelected ? 'opacity-0' : ''}> {t('table.grapevariety')}</span>
+        },
         cell: info => info.getValue() || '-',
         size: 150,
         meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor('type', {
-        header: t('table.type'),
+        header: ({ table }) => {
+          const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
+          return <span className={isAnyRowSelected ? 'opacity-0' : ''}> {t('table.type')}</span>
+        },
         cell: info => {
           const type = info.getValue()
           return type?.name || '-'
@@ -102,17 +137,35 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor('vintage', {
-        header: t('table.vintageconfig'),
+        header: ({ table }) => {
+          const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
+          return <span className={isAnyRowSelected ? 'opacity-0' : ''}> {t('table.vintageconfig')}</span>
+        },
         cell: info => info.getValue() || '-',
         size: 140,
         meta: { cellClassName: 'text-start' },
       }),
       columnHelper.display({
         id: 'images',
-        header: t('table.images'),
-        cell: ({ row }) => <div>{row.original.image ? '+' : '-'}</div>,
+        header: ({ table }) => {
+          const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
+          return <span className={isAnyRowSelected ? 'opacity-0' : ''}> {t('table.images')}</span>
+        },
+        cell: ({ row }) => {
+          // const wine = row.original
+          // return (
+          //   <div className="mx-auto w-10 h-10 overflow-hidden">
+          //     {wine.image ? (
+          //       <img src={wine.image.smallUrl || wine.image.mediumUrl} alt={wine.image.name || 'Image'} className="w-full h-full object-cover rounded-lg" />
+          //     ) : (
+          //       null
+          //     )}
+          //   </div>
+          // )
+          return <div>{row.original.image ? '+' : '-'}</div>
+        },
         size: 120,
-        meta: { cellClassName: 'text-start' },
+        meta: { cellClassName: 'text-center' },
       }),
     ],
     [onEdit, onDelete, onConfirm, t]

@@ -16,6 +16,8 @@ import { ImportFileModal } from '@/modals/ImportFileModal'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { cn } from '@/lib/utils'
 import { useEffect } from 'react'
+import { UnionWinesModal } from '@/modals/unionWinesModal'
+import { useCreateUnionWinesForm } from '../../presenters/useCreateUnionWinesForm'
 
 export const WineView = () => {
   const { t } = useTranslation('wines')
@@ -23,12 +25,18 @@ export const WineView = () => {
   const navigate = useNavigate()
 
   const { wines, filters, onChangeSearch, handleClearSearch, onChangePagination, deleteModal, searchValue, deleteWine, wineToConfirm, confirmModal, importWines, isLoading, totalCount } = useWineList()
-  const columns = useWineColumns({ onEdit: wine => navigate(`/wines/${wine.id}?edit=true`), onDelete: deleteWine, onConfirm: confirmModal.open })
+  
+  const { form, onCreateOption, onSubmit, wineNames, unionModal } = useCreateUnionWinesForm()
+
+  const columns = useWineColumns({ onEdit: wine => navigate(`/wines/${wine.id}?edit=true`), onDelete: deleteWine, onConfirm: confirmModal.open, onUnion:unionModal.onOpen })
   const { table } = useDataTable(wines ?? [], columns)
 
   const modalActionTitle = wineToConfirm.isConfirm ? t('list.cancel_action') : t('list.confirm_action')
 
   const modalMessage = wineToConfirm.isConfirm ? t('list.cancel_actions', { slug: wineToConfirm.wineName }) : t('list.confirm_actions', { slug: wineToConfirm.wineName })
+
+
+
 
   const handleRowClick = (row: any) => {
     const wineId = row.original.id
@@ -86,6 +94,7 @@ export const WineView = () => {
         acceptedFileTypes={['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']}
         maxSizeMB={10}
       />
+      <UnionWinesModal isOpen={unionModal.isOpen} onClose={unionModal.onClose} form={form} onCreateOption={onCreateOption} onSubmit={onSubmit} wineNames={wineNames}/>
     </ContentLayout>
   )
 }
