@@ -5,6 +5,7 @@ import { Dispatch, SetStateAction } from 'react'
 import { useGroupUI } from '../../presenters/useGroupUI'
 import { NLTTooltip } from '@/UIKit/components/NLTTooltip'
 import { useTranslation } from 'react-i18next'
+import { cn } from '@/lib/utils'
 
 interface CharacteristicContentProps {
   groups: any[]
@@ -62,32 +63,34 @@ export const CharacteristicContent: React.FC<CharacteristicContentProps> = ({
 
         return (
           <Card key={groupKey} className={`mb-2 cursor-auto transition-all duration-300 p-1 ${isGroupDeletedFlag ? 'blur-[0.7px] bg-gray-100' : 'opacity-100 blur-0'}`}>
-            <div
-              className="flex items-start gap-2 min-w-0 w-full "
-              onClick={e => {
-                e.stopPropagation()
-                handleGroupDeleteOrRestore(group.id)
-              }}
-            >
+            <div className="flex items-start gap-2 min-w-0 w-full">
               <div
                 className={`h-6 w-6 rounded-full border-0 shadow-sm flex-shrink-0 transition-all duration-300 ${isGroupDeletedFlag ? 'opacity-50' : 'opacity-100'}`}
                 style={{ backgroundColor: group.colorHex }}
               />
 
-              <div className="flex-1 min-w-0 overflow-hidden">
-                <div className="flex items-start gap-2">
+              <div className="flex-1 min-w-0 overflow-hidden ">
+                <div className="flex items-start gap-2 relative">
                   <span className={`text-foreground font-bold break-words word-wrap-break-word overflow-wrap-anywhere flex-1 ${isGroupDeletedFlag ? 'text-gray-400' : ''}`}>{group.name}</span>
 
-                  <NLTTooltip
-                    delay={500}
-                    message={isGroupDeletedFlag ? t('restore_group') : t('del_group')}
-                    className={`${isGroupDeletedFlag ? 'bg-blue-500/85 max-w-[300px]' : 'bg-red-500/85 max-w-[300px]'}`}
-                    trigger={
-                      <button className={`transition-all duration-300 cursor-pointer ${isGroupDeletedFlag ? 'text-blue-500 hover:text-blue-700' : 'text-gray-400 hover:text-red-500'}`}>
-                        {isGroupDeletedFlag ? <RotateCcw className="w-5 h-5" /> : <X className="w-5 h-5" />}
-                      </button>
-                    }
-                  />
+                  <div
+                    className={cn('absolute -top-4 -right-4 ', 'p-4 cursor-pointer flex items-center justify-center', 'transition-transform active:scale-95')}
+                    onClick={e => {
+                      e.stopPropagation()
+                      handleGroupDeleteOrRestore(group.id)
+                    }}
+                  >
+                    <NLTTooltip
+                      delay={500}
+                      message={isGroupDeletedFlag ? t('restore_group') : t('del_group')}
+                      className={`${isGroupDeletedFlag ? 'bg-blue-500/85 max-w-[300px]' : 'bg-red-500/85 max-w-[300px]'}`}
+                      trigger={
+                        <button className={`text-center transition-all duration-300 cursor-pointer ${isGroupDeletedFlag ? 'text-blue-500 hover:text-blue-700' : 'text-gray-400 hover:text-red-500'}`}>
+                          {isGroupDeletedFlag ? <RotateCcw className="w-5 h-5" /> : <X className="w-5 h-5" />}
+                        </button>
+                      }
+                    />
+                  </div>
                 </div>
 
                 {group.subgroups
@@ -99,14 +102,7 @@ export const CharacteristicContent: React.FC<CharacteristicContentProps> = ({
                       const selectedValues = getSubgroupSelectedValues(sub)
 
                       return (
-                        <div
-                          onClick={e => {
-                            e.stopPropagation()
-                            handleSubgroupDeleteOrRestore(group.id, sub.id)
-                          }}
-                          key={subgroupKey}
-                          className={`mt-2 space-y-2 transition-all duration-300 ${isSubgroupDeletedFlag || isGroupDeletedFlag ? 'blur-[0.7px]' : 'opacity-100 blur-0'}`}
-                        >
+                        <div key={subgroupKey} className={`mt-2 space-y-2 transition-all duration-300 ${isSubgroupDeletedFlag || isGroupDeletedFlag ? 'blur-[0.7px]' : 'opacity-100 blur-0'}`}>
                           <div className={`p-2 rounded transition-all duration-300 ${isSubgroupDeletedFlag ? 'bg-gray-200' : 'bg-gray-50'}`}>
                             <div className="flex items-center gap-2">
                               <span
@@ -118,7 +114,7 @@ export const CharacteristicContent: React.FC<CharacteristicContentProps> = ({
                               </span>
                               <div className="flex justify-end flex-1 gap-2">
                                 {!isGroupDeletedFlag && (
-                                  <div className="flex-1 max-w-md">
+                                  <div className="flex-1 max-w-md" onClick={e => e.stopPropagation()}>
                                     {isItems && options.length > 0 ? (
                                       <MultiSelect
                                         mode="multiple"
@@ -137,22 +133,29 @@ export const CharacteristicContent: React.FC<CharacteristicContentProps> = ({
                                     ) : null}
                                   </div>
                                 )}
-
-                                {!isGroupDeletedFlag && (
-                                  <NLTTooltip
-                                    delay={500}
-                                    message={isSubgroupDeletedFlag ? t('restore_subgroup') : t('del_subgroup')}
-                                    className={`${isSubgroupDeletedFlag ? 'bg-blue-500/85 max-w-[300px]' : 'bg-red-500/85 max-w-[300px]'}`}
-                                    trigger={
-                                      <button
-                                        className={`transition-all duration-300 cursor-pointer ${isSubgroupDeletedFlag ? 'text-blue-500 hover:text-blue-700' : 'text-gray-400 hover:text-red-500'}`}
-                                        disabled={isGroupDeletedFlag}
-                                      >
-                                        {isSubgroupDeletedFlag ? <RotateCcw className="w-5 h-5" /> : <X className="w-5 h-5" />}
-                                      </button>
-                                    }
-                                  />
-                                )}
+                                <div
+                                  className={cn('py-4 cursor-pointer flex items-center justify-center', 'transition-transform active:scale-95')}
+                                  onClick={e => {
+                                    e.stopPropagation()
+                                    handleSubgroupDeleteOrRestore(group.id, sub.id)
+                                  }}
+                                >
+                                  {!isGroupDeletedFlag && (
+                                    <NLTTooltip
+                                      delay={500}
+                                      message={isSubgroupDeletedFlag ? t('restore_subgroup') : t('del_subgroup')}
+                                      className={`${isSubgroupDeletedFlag ? 'bg-blue-500/85 max-w-[300px]' : 'bg-red-500/85 max-w-[300px]'}`}
+                                      trigger={
+                                        <button
+                                          className={`transition-all duration-300 cursor-pointer ${isSubgroupDeletedFlag ? 'text-blue-500 hover:text-blue-700' : 'text-gray-400 hover:text-red-500'}`}
+                                          disabled={isGroupDeletedFlag}
+                                        >
+                                          {isSubgroupDeletedFlag ? <RotateCcw className="w-5 h-5" /> : <X className="w-5 h-5" />}
+                                        </button>
+                                      }
+                                    />
+                                  )}
+                                </div>
                               </div>
                             </div>
                           </div>
