@@ -67,10 +67,14 @@ export const uk = {
     title: 'WineMates',
     users: 'Користувачі',
     features: 'Управління',
+    places: 'Заклади',
+    event: 'Події',
+    map: 'Карта',
     list: 'Список',
     create: 'Створити',
     wines: 'Вина',
     stats: 'Статистика',
+    events: 'Події та заклади',
   },
   autorization: {
     login: 'Увійти',
@@ -133,6 +137,41 @@ export const uk = {
       feature_name: 'Назва модулю',
       status: 'Статус',
       action: 'Зміна статутсу',
+    },
+  },
+  events: {
+    list: 'Список подій',
+    search_event: 'Пошук події',
+    table: {
+      place_name: 'Назва закладу',
+      event_name: 'Назва події',
+      data_event: 'Дата події',
+      time_work: 'Час роботи',
+      address: 'Адреса',
+      cost: 'Вартість',
+    },
+  },
+  map: {
+    map: 'Карта подій',
+  },
+  places: {
+    delete_place: 'Заклад видалено',
+    delete_description: 'Ви впевнені, що хочете видалити заклад {{slug}}. Його повернення до списку після цієї дії буде неможливе.',
+    search_place: 'Пошук закладу',
+    add_place: 'Додати заклад',
+    time_work: 'Час роботи',
+    list: 'Список закладів',
+    button: {
+      add_place: 'Додати заклад',
+      save: 'Зберегти',
+      cancel: 'Скасувати',
+    },
+
+    table: {
+      action: 'Дія',
+      place_name: 'Назва закладу',
+      time_work: 'Час роботи',
+      address: 'Адреса',
     },
   },
   wines: {

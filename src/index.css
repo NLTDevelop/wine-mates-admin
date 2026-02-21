@@ -264,3 +264,21 @@ body[data-scroll-locked][data-scroll-locked] {
   transform: scale(1.02) !important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
 }
+
+img[src*='gstatic.com/'],
+img[src*='googleapis.com/'] {
+  max-width: none !important;
+}
+
+.gm-ui-hover-effect {
+  background-image: url('/public/icon.svg') !important;
+  background-repeat: no-repeat !important;
+  width: 15px !important;
+  height: 15px !important;
+  margin-right: 5px !important;
+  margin-top: 5px !important;
+}
+
+.gm-style-iw + div {
+  display: none !important;
+}
