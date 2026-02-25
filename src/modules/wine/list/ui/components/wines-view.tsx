@@ -37,8 +37,6 @@ export const WineView = () => {
       const selected = table.getSelectedRowModel().rows.map(row => row.original as IWines)
 
       const selectionInfo = getSelectionInfo(selected)
-      console.log('Selected wines info:', selectionInfo)
-
       unionModal.onOpen(selectionInfo)
     }
   }

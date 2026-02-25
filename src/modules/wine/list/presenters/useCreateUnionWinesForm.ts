@@ -22,9 +22,6 @@ export const useCreateUnionWinesForm = () => {
   }
 
   const onSubmit = async (formData: any) => {
-    console.log('Form data:', formData)
-    console.log('Selected IDs to merge:', selectedIds)
-
     const mergeRequest: CreateMergeRequest = {
       newWineData: {
         name: formData.name || '',
@@ -39,9 +36,6 @@ export const useCreateUnionWinesForm = () => {
       },
       wineIdsToMerge: selectedIds,
     }
-
-    console.log('Sending to server->', mergeRequest)
-
     try {
       await mergeWines(mergeRequest)
       handleClose()
@@ -51,8 +45,6 @@ export const useCreateUnionWinesForm = () => {
   }
 
   const onCreateOption = async (value: string, fieldName: string) => {
-    console.log(`Create new option for ${fieldName}:`, value)
-
     const newOption = { value: value, label: value }
 
     form.setValue(fieldName as any, value)
