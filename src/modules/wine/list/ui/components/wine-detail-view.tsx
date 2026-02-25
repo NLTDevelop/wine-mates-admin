@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils'
 import { useReviews } from '../../presenters/useReviews'
 import { BarChart3, MessageSquare, Info } from 'lucide-react'
 import { ReviewsSection } from './detail/reviews-section'
-import { EditWineForm } from '@/modules/wine/create-taste/ui'
+import { EditWineForm } from '@/modules/wine/create-wine/ui'
 
 type TabType = 'details' | 'statistics' | 'reviews'
 

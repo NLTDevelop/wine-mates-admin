@@ -8,12 +8,13 @@ interface IProps {
   children: ReactNode
   isOpen: boolean
   onClose: () => void
+  className?: string
 }
 
-export const NLTModal: FC<IProps> = ({ title, description, isOpen, onClose, children }) => {
+export const NLTModal: FC<IProps> = ({ title, description, isOpen, onClose, children, className }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[525px]">
+      <DialogContent className={`${className ? className : 'sm:max-w-[525px]'}`}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

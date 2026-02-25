@@ -41,6 +41,7 @@ export const uk = {
     or: 'або',
     import_description: 'Перетягніть файл для імпорту або натисніть, щоб вибрати',
     year_not_found: 'Рік не знайдено',
+    found_nothing: 'Нічого не знайдено',
     button: {
       save: 'Зберегти',
       cancel: 'Скасувати',
@@ -73,7 +74,7 @@ export const uk = {
     stats: 'Статистика',
     analysis: 'Хімічний аналіз вин',
     user_propositions: 'Користувацькі смаки і аромати',
-    tasting: 'Додати вино',
+    creating: 'Додати вино',
     settings: 'Налаштування',
   },
   autorization: {
@@ -161,7 +162,7 @@ export const uk = {
     flavor_palette: 'Палітра ароматів',
     taste_palette: 'Палітра смакових нот',
     wine_creation: 'Створення вина',
-    wine_type: 'Типи вина',
+    wine_type: 'Тип вина',
     taste_characteristics_palette: 'Палітра смакових характеристик',
     settings_color_palette: 'Налаштування палітри кольорів',
     settings_flavor_palette: 'Налаштування палітри ароматів',
@@ -267,7 +268,7 @@ export const uk = {
       cancel_action: 'Анулювати',
       confirm_actions: 'Будь ласка, підтвердьте вино {{slug}}. Зверніть увагу, що ця дія може вплинути на його відображення у системі.',
       cancel_actions: 'Ви дійсно хочете скасувати підтвердження вина {{slug}}? Зверніть увагу, що ця дія може вплинути на його відображення у системі.',
-      union_btn: "Об'єднати вина"
+      union_btn: "Об'єднати вина",
     },
     types: {
       colors: 'Кольори',
@@ -396,6 +397,21 @@ export const uk = {
       vintageconfig: 'Вінтаж',
       images: 'Зображення',
     },
+    merge: {
+      merge_wines: "Об'єднання вин",
+      search_or_create: 'Пошук або створення власного значення',
+      chose_or_type: 'Виберіть або введіть {{field}}',
+      name: 'назву',
+      year: 'рік',
+      country: 'країну',
+      region: 'регіон',
+      producer: 'виробника',
+      grape_variety: 'сорт винограду',
+      type: 'тип',
+      color: 'колір',
+      chose_image: 'Виберіть зображення',
+      wines_merged_successfully: "Вина об'єднані",
+    },
     button: {
       edit: 'Редагувати',
       delete: 'Видалити',
@@ -415,6 +431,7 @@ export const uk = {
       cancel_confirm: 'Вино підтверждено. Скасувати?',
       add_translation: 'Додати переклад',
       go_detail: 'Детальний екран',
+      merge: "Об'єднати",
     },
   },
   messages: {
@@ -596,7 +613,5 @@ export const uk = {
       delete_description: "Шаблон буде остаточно видалено з каталогу. Усі пов'язані з ним дані будуть втрачені.",
     },
   },
-  union_wines:{
-    
-  }
+  union_wines: {},
 }

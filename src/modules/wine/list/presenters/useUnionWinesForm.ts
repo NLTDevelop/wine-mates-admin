@@ -1,27 +1,57 @@
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CreateWineRequest, IWines } from '@/modules/wine/list/entities/types/types'
-import { createUnionWinesFormSchema, UnionWinesFormData } from './union-wines-form-schema'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
-interface UseUnionWinesFormProps {
-  initialData?: Partial<UnionWinesFormData> | CreateWineRequest | IWines
-}
+const currentYear = new Date().getFullYear()
 
-export const useUnionWinesForm = ({ initialData }: UseUnionWinesFormProps = {}) => {
-  const formData = initialData 
+const wineSchema = z.object({
+  typeId: z.any().refine(val => val !== null && val !== undefined, {
+    message: "Тип вина обов'язковий",
+  }),
+  colorId: z.any().refine(val => val !== null && val !== undefined, {
+    message: "Колір вина обов'язковий",
+  }),
+  countryId: z.any().refine(val => val !== null && val !== undefined, {
+    message: "Країна обов'язкова",
+  }),
+  producer: z.string().min(1, { message: "Виробник обов'язковий" }),
+  grapeVariety: z.string().min(1, { message: "Сорт винограду обов'язковий" }),
 
-  const form = useForm({
-    resolver: zodResolver(createUnionWinesFormSchema()),
+  name: z.string().optional(),
+  vintage: z
+    .union([z.number(), z.string(), z.null()])
+    .optional()
+    .nullable()
+    .transform(val => {
+      if (!val) return null
+      const num = Number(val)
+      return isNaN(num) ? null : num
+    })
+    .refine(
+      val => {
+        if (val === null) return true
+        return val >= 1900 && val <= currentYear
+      },
+      { message: `Рік має бути від 1900 до ${currentYear}` }
+    )
+    .optional(),
+  regionId: z.any().nullable().optional(),
+  image: z.any().nullable().optional(),
+})
+
+export const useUnionWinesForm = () => {
+  return useForm({
+    resolver: zodResolver(wineSchema),
     defaultValues: {
-      id: formData?.id || '',
-      name: formData?.name || '',
-      // countryId: formData?.countryId || null,
-      // regionId: formData?.regionId || null,
-      // producer: formData?.producer || '',
-      // image: formData?.image ?? null,
+      name: '',
+      vintage: null,
+      producer: '',
+      grapeVariety: '',
+      countryId: null,
+      regionId: null,
+      typeId: null,
+      colorId: null,
+      image: null,
     },
-    mode: 'onChange',
   })
-
-  return form
 }

@@ -4,7 +4,6 @@ import { Edit, Trash2 } from 'lucide-react'
 import { IWines } from '../entities/types/types'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { NLTTooltip } from '@/UIKit/components/NLTTooltip'
 import { Checkbox } from '@/UIKit/shadcn/ui/checkbox'
 
 const columnHelper = createColumnHelper<IWines>()
@@ -20,7 +19,7 @@ const getIsMoreThanOneRowSelected = (table: Table<IWines>) => {
   return (table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()) && table.getSelectedRowModel().rows.length > 1
 }
 
-export const useWineColumns = ({ onEdit, onDelete, onConfirm,onUnion }: WineTableProps) => {
+export const useWineColumns = ({ onEdit, onDelete, onConfirm, onUnion }: WineTableProps) => {
   const { t } = useTranslation('wines')
   return useMemo(
     () => [
@@ -55,21 +54,14 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm,onUnion }: WineTabl
           return (
             <div className="flex items-center">
               <div className="pt-1 pr-3" onClick={e => stopEvent(e)}>
-                <NLTTooltip
-                  delay={700}
-                  message={''}
-                  // className={finalReason ? 'bg-red-500' : 'hidden'}
-                  trigger={
-                    <Checkbox
-                      checked={row.getIsSelected()}
-                      onCheckedChange={value => {
-                        row.toggleSelected(!!value)
-                      }}
-                      aria-label="Select row"
-                      disabled={false}
-                      className="h-5 w-5"
-                    />
-                  }
+                <Checkbox
+                  checked={row.getIsSelected()}
+                  onCheckedChange={value => {
+                    row.toggleSelected(!!value)
+                  }}
+                  aria-label="Select row"
+                  disabled={false}
+                  className="h-5 w-5"
                 />
               </div>
 

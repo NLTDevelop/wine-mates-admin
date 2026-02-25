@@ -1,9 +1,9 @@
 import { api } from '@/services'
 import { buildUrl } from '@/lib/utils'
 import { WINE_LIST_ENDPOINTS } from './wine-list-endpoints'
-import { ConfirmWineParams, CreateWineRequest, IReviewDetail, IWines, ReviewFilters, ReviewsResponse, UpdateWineListParams, WineFilters, WinesResponse } from './types/types'
-import { WineFormData } from '../../create-taste/presenters/wine-form-schema'
-import { mapFormDataToUpdateRequestSimple } from '../../create-taste/presenters/useWineForm'
+import { ConfirmWineParams, CreateMergeRequest, CreateWineRequest, IReviewDetail, IWines, ReviewFilters, ReviewsResponse, UpdateWineListParams, WineFilters, WinesResponse } from './types/types'
+import { WineFormData } from '../../create-wine/presenters/wine-form-schema'
+import { mapFormDataToUpdateRequestSimple } from '../../create-wine/presenters/useWineForm'
 
 export const wineListService = {
   detail: (id: string | number): Promise<{ data: IWines }> => api.get(buildUrl(WINE_LIST_ENDPOINTS.DETAIL, { id })),
@@ -41,6 +41,8 @@ export const wineListService = {
   },
 
   delete: (id: string): Promise<void> => api.delete(buildUrl(WINE_LIST_ENDPOINTS.DELETE, { id })).then(response => response.data),
+
+  merge: (mergeData: CreateMergeRequest): Promise<IWines> => api.post(WINE_LIST_ENDPOINTS.MERGE, mergeData).then(response => response.data),
 
   import: (file: File): Promise<void> => {
     const formData = new FormData()

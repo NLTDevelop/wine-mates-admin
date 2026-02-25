@@ -8,4 +8,5 @@ export const WINE_LIST_ENDPOINTS = {
   IMPORT: '/v1/admin/import-wines',
   RATES: '/v1/admin/rates',
   RATE_DETAIL: '/v1/admin/rates/{id}',
+  MERGE: '/v1/admin/wines/merge',
 } as const

@@ -1,5 +1,5 @@
 import { BaseWineColor } from '@/modules/wine/create/general/entities/types'
-import { WineFormData } from '@/modules/wine/create-taste/presenters/wine-form-schema'
+import { WineFormData } from '@/modules/wine/create-wine/presenters/wine-form-schema'
 import { TasteCharacteristic, TopAroma, TopColor, TopFlavor } from './statistics-types'
 import { IBaseInfo } from '@/modules/chemical-analysis/detail/entities/chemical_types'
 
@@ -56,7 +56,7 @@ export interface IWines {
 
 export interface CreateWineRequest {
   id?: string
-  name: string
+  name?: string
   vintage?: number | null
   countryId?: number | null
   regionId?: number | null
@@ -87,6 +87,7 @@ export interface Image {
   mimeType?: string
   preview?: string
   _isExistingImage?: boolean
+  [key: string]: any
 }
 
 export interface WineImage {
@@ -156,4 +157,9 @@ export interface IReviewDetail {
   aromas: IBaseInfo[]
   flavors: IBaseInfo[]
   tasteCharacteristics: IBaseInfoCharacteristics[]
+}
+
+export interface CreateMergeRequest {
+  newWineData: CreateWineRequest
+  wineIdsToMerge: number[]
 }
