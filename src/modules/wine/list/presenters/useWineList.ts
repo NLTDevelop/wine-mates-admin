@@ -5,7 +5,7 @@ import { useDebounce } from '@/hooks/ui/useDebounce'
 import { Image, IWines, UpdateWineListParams, WineImage, WinesResponse } from '../entities/types/types'
 import { useWineStore } from '../entities/wine-list-store'
 import { wineQueries } from '../entities/wine-list-queries'
-import { WineFormData } from '../../create-taste/presenters/wine-form-schema'
+import { WineFormData } from '../../create-wine/presenters/wine-form-schema'
 import { useToast } from '@/hooks/shadcn/use-toast'
 import { useTranslation } from 'react-i18next'
 

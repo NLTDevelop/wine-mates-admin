@@ -28,7 +28,7 @@ export const LINKS = {
     additionalLinks: [
       { titleKey: 'settings', title: 'settings', url: PATHS.WINE_CREATE },
       { titleKey: 'user_propositions', title: 'user_propositions', url: PATHS.WINE_USER_PROPOSITIONS },
-      { titleKey: 'tasting', title: 'tasting', url: PATHS.WINE_TASTING },
+      { titleKey: 'creating', title: 'creating', url: PATHS.WINE_CREATING },
     ],
   }),
   stats: generateLinks('stats'),

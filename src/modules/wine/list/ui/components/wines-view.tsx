@@ -16,6 +16,10 @@ import { ImportFileModal } from '@/modals/ImportFileModal'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { cn } from '@/lib/utils'
 import { useEffect } from 'react'
+import { UnionWinesModal } from '@/modules/wine/list/ui/components/unionWinesModal'
+import { IWines } from '../../entities/types/types'
+import { useWineSelection } from '../../presenters/useWineSelection'
+import { useCreateUnionWinesForm } from '../../presenters/useCreateUnionWinesForm'
 
 export const WineView = () => {
   const { t } = useTranslation('wines')
@@ -23,7 +27,21 @@ export const WineView = () => {
   const navigate = useNavigate()
 
   const { wines, filters, onChangeSearch, handleClearSearch, onChangePagination, deleteModal, searchValue, deleteWine, wineToConfirm, confirmModal, importWines, isLoading, totalCount } = useWineList()
-  const columns = useWineColumns({ onEdit: wine => navigate(`/wines/${wine.id}?edit=true`), onDelete: deleteWine, onConfirm: confirmModal.open })
+
+  const { getSelectionInfo } = useWineSelection()
+
+  const { form, onCreateOption, onSubmit, unionModal } = useCreateUnionWinesForm()
+
+  const handleUnionClick = () => {
+    if (table) {
+      const selected = table.getSelectedRowModel().rows.map(row => row.original as IWines)
+
+      const selectionInfo = getSelectionInfo(selected)
+      unionModal.onOpen(selectionInfo)
+    }
+  }
+
+  const columns = useWineColumns({ onEdit: wine => navigate(`/wines/${wine.id}?edit=true`), onDelete: deleteWine, onConfirm: confirmModal.open, onUnion: handleUnionClick })
   const { table } = useDataTable(wines ?? [], columns)
 
   const modalActionTitle = wineToConfirm.isConfirm ? t('list.cancel_action') : t('list.confirm_action')
@@ -33,6 +51,15 @@ export const WineView = () => {
   const handleRowClick = (row: any) => {
     const wineId = row.original.id
     navigate(PATHS.WINE_DETAIL.replace(':id', wineId))
+  }
+
+  const handleSubmit = async (data: any) => {
+    await onSubmit(data)
+    table?.resetRowSelection()
+  }
+  const unionModalClose = async () => {
+    unionModal.onClose()
+    table?.resetRowSelection()
   }
 
   useEffect(() => {
@@ -86,6 +113,7 @@ export const WineView = () => {
         acceptedFileTypes={['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']}
         maxSizeMB={10}
       />
+      <UnionWinesModal isOpen={unionModal.isOpen} onClose={unionModalClose} form={form} onCreateOption={onCreateOption} onSubmit={handleSubmit} uniqueValues={unionModal.data?.uniqueValues} />
     </ContentLayout>
   )
 }

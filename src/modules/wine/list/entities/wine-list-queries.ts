@@ -1,4 +1,4 @@
-import { UpdateWineListParams, WineFilters, CreateWineRequest, ReviewFilters, IReviewDetail } from './types/types'
+import { UpdateWineListParams, WineFilters, CreateWineRequest, ReviewFilters, IReviewDetail, CreateMergeRequest } from './types/types'
 import { wineListService } from './wine-list-service'
 
 export const wineQueries = {
@@ -31,6 +31,11 @@ export const wineQueries = {
   delete: () => ({
     mutationKey: ['wines', 'delete'],
     mutationFn: (id: string) => wineListService.delete(id),
+  }),
+
+  merge: () => ({
+    mutationKey: ['wines', 'merge'],
+    mutationFn: (mergeWineData: CreateMergeRequest) => wineListService.merge(mergeWineData),
   }),
 
   import: () => ({
