@@ -34,6 +34,12 @@ export const FormCombobox: React.FC<FormComboboxProps> = ({ value, onChange, pla
   const [options, setOptions] = React.useState<IOption[]>(itemOptions || [])
   const [loading, setLoading] = React.useState(false)
 
+  React.useEffect(() => {
+    if (itemOptions && itemOptions.length > 0) {
+      setOptions(itemOptions)
+    }
+  }, [itemOptions])
+
   const getData = async (search?: string) => {
     if (disabled) return
 

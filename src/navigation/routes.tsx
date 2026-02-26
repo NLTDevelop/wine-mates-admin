@@ -15,13 +15,17 @@ import { AnalysisView } from '@/modules/chemical-analysis/list/ui'
 import { AnalysisDetailView } from '@/modules/chemical-analysis/detail/ui'
 import { UserPropositionsView } from '@/modules/wine/user-propositions/ui'
 import { CreateTasteFormView } from '@/modules/wine/create-wine/ui'
+import { AiPromtView } from '@/modules/ai-promts/ui'
 
 const usersRoutes = [
   { path: PATHS.USERS, element: <UsersView /> },
   { path: PATHS.USERS_DETAIL, element: <UsersDetailView /> },
 ]
 
-const featuresRoutes = [{ path: PATHS.FEATURES, element: <FeaturesView /> }]
+const featuresRoutes = [
+  { path: PATHS.FEATURES, element: <FeaturesView /> },
+  { path: PATHS.AI_PROMTS, element: <AiPromtView /> },
+]
 
 const winesRoutes = [
   { path: PATHS.WINE_CREATE, element: <WineManagementView /> },
