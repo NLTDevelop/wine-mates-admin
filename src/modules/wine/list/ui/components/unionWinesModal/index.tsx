@@ -89,6 +89,7 @@ export const UnionWinesModal: React.FC<UnionWinesModalProps> = ({ isOpen, onClos
               options={uniqueValues?.vintages || []}
               is_dynamic={true}
               onCreateOption={onCreateOption}
+              isNumber={true}
             />
             <NLTComplexComboboxFormFieldData
               form={form}

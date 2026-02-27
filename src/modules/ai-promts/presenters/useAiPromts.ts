@@ -10,17 +10,21 @@ import { IOption } from '@/UIKit/components/NLTFormCombobox'
 export const useAiPromts = () => {
   const { activeTab, setActiveTab } = usePromtStore()
   const { form, isScanner } = useAiPromtForm(activeTab)
-  const { onSubmit } = useUpdateAiPromtsForm()
+  const { onSubmit, isPending } = useUpdateAiPromtsForm()
 
   const promtQuery = useQuery<FeatureConfig>(promtQueries[activeTab].list())
 
   const promtQueryInit = useQuery<FeatureConfig>({ ...promtQueries[activeTab].reset(), enabled: false, queryKey: [activeTab, 'reset'] })
 
   useEffect(() => {
-    if (promtQuery.data) {
-      form.reset(promtQuery.data.config)
+    if (promtQuery.data && !isPending) {
+      const currentValues = form.getValues()
+      const newConfig = promtQuery.data.config
+      if (JSON.stringify(currentValues) !== JSON.stringify(newConfig)) {
+        form.reset(newConfig)
+      }
     }
-  }, [promtQuery.data, activeTab, form])
+  }, [promtQuery.data, activeTab, form,isPending])
 
   const handleReset = async () => {
     const result = await promtQueryInit.refetch()
