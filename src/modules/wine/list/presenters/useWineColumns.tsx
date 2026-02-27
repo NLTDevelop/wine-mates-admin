@@ -28,9 +28,11 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm, onUnion }: WineTab
         header: ({ table }) => {
           const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
           return isAnyRowSelected ? (
-            <Button className="h-6 absolute top-2 left-3" onClick={onUnion}>
-              {t('list.union_btn')}
-            </Button>
+            <div className="relative h-8">
+              <Button className="absolute top-1 left-2 h-6 z-10" onClick={onUnion}>
+                {t('list.union_btn')}
+              </Button>
+            </div>
           ) : (
             t('table.actions')
           )
@@ -144,16 +146,6 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm, onUnion }: WineTab
           return <span className={isAnyRowSelected ? 'opacity-0' : ''}> {t('table.images')}</span>
         },
         cell: ({ row }) => {
-          // const wine = row.original
-          // return (
-          //   <div className="mx-auto w-10 h-10 overflow-hidden">
-          //     {wine.image ? (
-          //       <img src={wine.image.smallUrl || wine.image.mediumUrl} alt={wine.image.name || 'Image'} className="w-full h-full object-cover rounded-lg" />
-          //     ) : (
-          //       null
-          //     )}
-          //   </div>
-          // )
           return <div>{row.original.image ? '+' : '-'}</div>
         },
         size: 120,

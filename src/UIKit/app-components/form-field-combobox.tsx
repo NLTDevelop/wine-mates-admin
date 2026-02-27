@@ -19,9 +19,10 @@ interface FormFieldComboboxProps {
   fetchOptions: () => Promise<IOption[]>
   options?: IOption[]
   error?: string
+  showX?:boolean
 }
 
-export const FormFieldCombobox: FC<FormFieldComboboxProps> = ({ form, formLabel, name, disabled, placeholder, searchLabel, fetchOptions, options, error }) => {
+export const FormFieldCombobox: FC<FormFieldComboboxProps> = ({ form, formLabel, name, disabled, placeholder, searchLabel, fetchOptions, options, error, showX }) => {
   return (
     <FormField
       control={form.control}
@@ -40,6 +41,7 @@ export const FormFieldCombobox: FC<FormFieldComboboxProps> = ({ form, formLabel,
               itemOptions={options}
               error={(form.formState.errors[name]?.message as string) || error}
               onBlur={field.onBlur}
+              showX={showX}
             />
           </FormControl>
         </FormItem>

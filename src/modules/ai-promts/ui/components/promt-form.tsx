@@ -56,6 +56,7 @@ export function PromtForm({ form, isScanner, onSubmit, isPending, fetchOptions, 
                 searchLabel={t('search')}
                 fetchOptions={fetchOptions}
                 options={modelOptions}
+                showX={false}
               />
 
               {!isScanner && (
@@ -73,10 +74,18 @@ export function PromtForm({ form, isScanner, onSubmit, isPending, fetchOptions, 
                             <InputWithTooltip
                               type="number"
                               step="0.1"
-                              placeholder="0.7"
+                              placeholder={t('entry_value')}
+                              min="0"
                               {...field}
-                              onChange={e => field.onChange(parseFloat(e.target.value))}
-                              value={field.value || ''}
+                              onChange={e => {
+                                const value = e.target.value
+                                if (value === '') {
+                                  field.onChange(undefined)
+                                } else {
+                                  field.onChange(parseFloat(value))
+                                }
+                              }}
+                              value={field.value ?? ''}
                               disabled={isPending}
                               error={error}
                             />
@@ -100,7 +109,7 @@ export function PromtForm({ form, isScanner, onSubmit, isPending, fetchOptions, 
                               type="number"
                               step="1"
                               min="1"
-                              placeholder="300"
+                              placeholder={t('entry_integer_value')}
                               {...field}
                               onChange={e => field.onChange(parseInt(e.target.value))}
                               value={typeof field.value === 'number' ? field.value : ''}

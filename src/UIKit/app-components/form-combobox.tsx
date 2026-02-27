@@ -25,9 +25,10 @@ interface FormComboboxProps {
   itemOptions?: IOption[]
   error?: string
   onBlur?: () => void
+  showX?: boolean
 }
 
-export const FormCombobox: React.FC<FormComboboxProps> = ({ value, onChange, placeholder, disabled, searchLabel, fetchOptions, itemOptions, error, onBlur }) => {
+export const FormCombobox: React.FC<FormComboboxProps> = ({ value, onChange, placeholder, disabled, searchLabel, fetchOptions, itemOptions, error, onBlur, showX = true }) => {
   const { t } = useTranslation('common')
   const [open, setOpen] = React.useState(false)
   const [searchTerm, setSearchTerm] = React.useState('')
@@ -80,7 +81,7 @@ export const FormCombobox: React.FC<FormComboboxProps> = ({ value, onChange, pla
     if (disabled) return
 
     if (value === optionValue) {
-      onChange('')
+      showX ? onChange('') : onChange(optionValue)
     } else {
       onChange(optionValue)
     }
@@ -106,9 +107,11 @@ export const FormCombobox: React.FC<FormComboboxProps> = ({ value, onChange, pla
             <div className="flex items-center gap-1 ml-2 flex-shrink-0">
               {value && !disabled ? (
                 <>
-                  <div className="rounded-sm hover:bg-accent transition-colors" onClick={handleClearSelection}>
-                    <X className="w-3 h-3 opacity-50 hover:opacity-100" />
-                  </div>
+                  {showX && (
+                    <div className="rounded-sm hover:bg-accent transition-colors" onClick={handleClearSelection}>
+                      <X className="w-3 h-3 opacity-50 hover:opacity-100" />
+                    </div>
+                  )}
                 </>
               ) : (
                 <>

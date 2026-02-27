@@ -22,9 +22,10 @@ interface IProps {
   disableClear?: boolean
   is_dynamic?: boolean
   onCreateOption?: (data: string, fieldName: string) => Promise<IOption | null>
+  isNumber?:boolean
 }
 
-export const NLTComplexComboboxFormFieldData: FC<IProps> = ({ form, formLabel = '', name, disabled, placeholder, searchLabel, options = [], disableClear, is_dynamic, onCreateOption }) => {
+export const NLTComplexComboboxFormFieldData: FC<IProps> = ({ form, formLabel = '', name, disabled, placeholder, searchLabel, options = [], disableClear, is_dynamic, onCreateOption, isNumber=false }) => {
   const getCurrentValue = (fieldValue: any) => {
     if (!fieldValue) return null
 
@@ -88,16 +89,9 @@ export const NLTComplexComboboxFormFieldData: FC<IProps> = ({ form, formLabel = 
                 onCreateOption={handleCreateOption}
                 name={name}
                 error={(form.formState.errors[name]?.message as string) || undefined}
+                isNumber={isNumber}
               />
             </FormControl>
-
-            {/* <div className="h-3 text-xs">
-              {error && (
-                <p className="text-red-600 pl-2">
-                  {error.message as string}
-                </p>
-              )}
-            </div> */}
           </FormItem>
         )
       }}

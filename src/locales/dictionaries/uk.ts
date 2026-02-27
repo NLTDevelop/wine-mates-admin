@@ -634,6 +634,8 @@ export const uk = {
     thresholds: 'Пороги пошуку',
     thresholds_qty: '5 фіксованих порогів',
     value: 'Значення',
+    entry_value: 'Введіть значення',
+    entry_integer_value: 'Введіть ціле значення',
     updated: 'Налаштування оновлено',
   },
 }

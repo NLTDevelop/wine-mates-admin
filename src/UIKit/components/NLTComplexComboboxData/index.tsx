@@ -28,6 +28,7 @@ interface NLTComboboxProps {
   onCreateOption?: (data: string, id: string) => Promise<IOption | null>
   name: string
   error?: string
+  isNumber?: boolean
 }
 export const NLTComplexComboboxData: React.FC<NLTComboboxProps> = ({
   value,
@@ -41,6 +42,7 @@ export const NLTComplexComboboxData: React.FC<NLTComboboxProps> = ({
   onCreateOption,
   name,
   error,
+  isNumber,
 }) => {
   const { t } = useTranslation('common')
   const [open, setOpen] = React.useState(false)
@@ -49,6 +51,13 @@ export const NLTComplexComboboxData: React.FC<NLTComboboxProps> = ({
   const [allOptions, setAllOptions] = React.useState<IOption[]>(initialOptions)
   const [isLoading, setIsLoading] = React.useState(false)
   const [popoverSide, setPopoverSide] = React.useState<'bottom' | 'top'>('bottom')
+  const [_, setValidationError] = React.useState<string | null>(null)
+
+  const validateNumericInput = (value: string): boolean => {
+    const isValid = /^\d+$/.test(value)
+    setValidationError(isValid ? null : t('validation.only_numbers'))
+    return isValid
+  }
 
   React.useEffect(() => {
     if (!searchTerm) {
@@ -56,7 +65,14 @@ export const NLTComplexComboboxData: React.FC<NLTComboboxProps> = ({
     } else {
       setOptions(allOptions.filter(opt => opt.label.toLowerCase().includes(searchTerm.toLowerCase())))
     }
-  }, [searchTerm, allOptions])
+
+    if (isNumber && searchTerm && allowAdd) {
+      validateNumericInput(searchTerm)
+    } else {
+      setValidationError(null)
+    }
+  }, [searchTerm, allOptions, isNumber, allowAdd])
+
 
   const handleSearchChange = (value: string) => {
     setSearchTerm(value)
@@ -84,6 +100,13 @@ export const NLTComplexComboboxData: React.FC<NLTComboboxProps> = ({
 
   const handleCreateOption = async () => {
     if (!onCreateOption) return
+
+    if (isNumber) {
+      const isValid = validateNumericInput(searchTerm)
+      if (!isValid) {
+        return 
+      }
+    }
 
     const created = await onCreateOption(searchTerm, name)
     if (!created) return
@@ -120,9 +143,12 @@ export const NLTComplexComboboxData: React.FC<NLTComboboxProps> = ({
           setPopoverSide('bottom')
         }
       }
+      setValidationError(null)
     }
     setOpen(newOpen)
   }
+
+   const isAddButtonDisabled = isNumber && searchTerm && !/^\d+$/.test(searchTerm)
 
   return (
     <div className="relative w-full">
@@ -171,7 +197,7 @@ export const NLTComplexComboboxData: React.FC<NLTComboboxProps> = ({
                   {t('found_nothing')}
                   {allowAdd && searchTerm && (
                     <div className="px-2 pt-2 m-auto">
-                      <Button variant="secondary" type="button" className="h-5 border text-sm py-3" onClick={handleCreateOption}>
+                      <Button variant="secondary" type="button" className="h-5 border text-sm py-3" onClick={handleCreateOption} disabled={!!isAddButtonDisabled}>
                         <Plus className="h-4 w-4 mr-1" />
                         {t('button.add')}
                       </Button>

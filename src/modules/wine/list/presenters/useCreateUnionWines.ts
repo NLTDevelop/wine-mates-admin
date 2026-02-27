@@ -19,7 +19,7 @@ export const useCreateUnionWines = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wines', 'list', store.filters] })
       toast({
-        title: t('wines_merged_successfully'),
+        title: t('merge.wines_merged_successfully'),
         variant: 'default',
       })
       navigate('/wines')

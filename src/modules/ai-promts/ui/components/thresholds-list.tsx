@@ -41,13 +41,23 @@ export const ThresholdsList = ({ form, disabled }: ThresholdsListProps) => {
                         <div className="relative">
                           <InputWithTooltip
                             type="number"
-                            step={threshold.name.includes('RATIO') ? '0.1' : '0.01'}
+                            step={threshold.name.includes('RATIO') ? '0.01' : '0.01'}
                             {...field}
-                            onChange={e => field.onChange(parseFloat(e.target.value))}
-                            value={field.value ?? ''}
+                            min="0"
+                              {...field}
+                              onChange={e => {
+                                const value = e.target.value
+                                if (value === '') {
+                                  field.onChange(undefined)
+                                } else {
+                                  field.onChange(parseFloat(value))
+                                }
+                              }}
+                              value={field.value ?? ''}
                             disabled={disabled}
                             className="text-center h-12 text-lg font-mono"
                             error={fieldState.error?.message}
+                            placeholder={t('entry_value')}
                           />
                         </div>
                       </FormControl>

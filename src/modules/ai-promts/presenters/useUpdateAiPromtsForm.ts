@@ -41,10 +41,18 @@ export const useUpdateAiPromtsForm = () => {
       return { prevData }
     },
 
-    onSuccess: () => {
+    onSuccess: data => {
       toast({ title: t('updated'), variant: 'default' })
 
-      queryClient.invalidateQueries({ queryKey: [activeTab, 'list'] })
+      queryClient.setQueryData<FeatureConfig>([activeTab, 'list'], old => {
+        if (!old) return data
+        return {
+          ...old,
+          config: data.config,
+        } as FeatureConfig
+      })
+
+      queryClient.invalidateQueries({ queryKey: [activeTab, 'list'], refetchType: 'none' })
     },
 
     onError: (_, __, context) => {
@@ -58,5 +66,5 @@ export const useUpdateAiPromtsForm = () => {
     await updateMutation.mutateAsync(formData)
   }
 
-  return { onSubmit }
+  return { onSubmit, isPending: updateMutation.isPending }
 }
