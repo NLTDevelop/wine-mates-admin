@@ -1,4 +1,4 @@
-import { ColumnDef, createColumnHelper, Table } from '@tanstack/react-table'
+import { ColumnDef, createColumnHelper } from '@tanstack/react-table'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Edit, Trash2 } from 'lucide-react'
 import { IWines } from '../entities/types/types'
@@ -21,7 +21,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
     () => [
       columnHelper.display({
         id: 'actions',
-        header: ({ table }) => {
+        header: () => {
           return t('table.actions')
         },
 
