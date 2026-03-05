@@ -15,28 +15,16 @@ interface WineTableProps {
   onUnion: () => void
 }
 
-const getIsMoreThanOneRowSelected = (table: Table<IWines>) => {
-  return (table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()) && table.getSelectedRowModel().rows.length > 1
-}
-
-export const useWineColumns = ({ onEdit, onDelete, onConfirm, onUnion }: WineTableProps) => {
+export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) => {
   const { t } = useTranslation('wines')
   return useMemo(
     () => [
       columnHelper.display({
         id: 'actions',
         header: ({ table }) => {
-          const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
-          return isAnyRowSelected ? (
-            <div className="relative h-8">
-              <Button className="absolute top-1 left-2 h-6 z-10" onClick={onUnion}>
-                {t('list.union_btn')}
-              </Button>
-            </div>
-          ) : (
-            t('table.actions')
-          )
+          return t('table.actions')
         },
+
         cell: ({ row }) => {
           const stopEvent = (e: React.MouseEvent) => {
             e.stopPropagation()
@@ -80,18 +68,16 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm, onUnion }: WineTab
         meta: { cellClassName: 'text-center' },
       }),
       columnHelper.accessor('name', {
-        header: ({ table }) => {
-          const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
-          return <span className={isAnyRowSelected ? 'opacity-0' : ''}> {t('table.winename')}</span>
+        header: () => {
+          return <span> {t('table.winename')}</span>
         },
         cell: info => info.getValue() || '-',
         size: 200,
         meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor('color', {
-        header: ({ table }) => {
-          const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
-          return <span className={isAnyRowSelected ? 'opacity-0' : ''}> {t('table.color')}</span>
+        header: () => {
+          return <span> {t('table.color')}</span>
         },
         cell: info => {
           const color = info.getValue()
@@ -101,27 +87,24 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm, onUnion }: WineTab
         meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor('producer', {
-        header: ({ table }) => {
-          const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
-          return <span className={isAnyRowSelected ? 'opacity-0' : ''}> {t('table.producertitle')}</span>
+        header: () => {
+          return <span> {t('table.producertitle')}</span>
         },
         cell: info => info.getValue() || '-',
         size: 150,
         meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor('grapeVariety', {
-        header: ({ table }) => {
-          const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
-          return <span className={isAnyRowSelected ? 'opacity-0' : ''}> {t('table.grapevariety')}</span>
+        header: () => {
+          return <span> {t('table.grapevariety')}</span>
         },
         cell: info => info.getValue() || '-',
         size: 150,
         meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor('type', {
-        header: ({ table }) => {
-          const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
-          return <span className={isAnyRowSelected ? 'opacity-0' : ''}> {t('table.type')}</span>
+        header: () => {
+          return <span> {t('table.type')}</span>
         },
         cell: info => {
           const type = info.getValue()
@@ -131,9 +114,8 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm, onUnion }: WineTab
         meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor('vintage', {
-        header: ({ table }) => {
-          const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
-          return <span className={isAnyRowSelected ? 'opacity-0' : ''}> {t('table.vintageconfig')}</span>
+        header: () => {
+          return <span> {t('table.vintageconfig')}</span>
         },
         cell: info => info.getValue() || '-',
         size: 140,
@@ -141,9 +123,8 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm, onUnion }: WineTab
       }),
       columnHelper.display({
         id: 'images',
-        header: ({ table }) => {
-          const isAnyRowSelected = getIsMoreThanOneRowSelected(table)
-          return <span className={isAnyRowSelected ? 'opacity-0' : ''}> {t('table.images')}</span>
+        header: () => {
+          return <span> {t('table.images')}</span>
         },
         cell: ({ row }) => {
           return <div>{row.original.image ? '+' : '-'}</div>

@@ -19,7 +19,7 @@ interface FormFieldComboboxProps {
   fetchOptions: () => Promise<IOption[]>
   options?: IOption[]
   error?: string
-  showX?:boolean
+  showX?: boolean
 }
 
 export const FormFieldCombobox: FC<FormFieldComboboxProps> = ({ form, formLabel, name, disabled, placeholder, searchLabel, fetchOptions, options, error, showX }) => {

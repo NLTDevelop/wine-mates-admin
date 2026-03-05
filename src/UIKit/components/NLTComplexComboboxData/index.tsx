@@ -73,7 +73,6 @@ export const NLTComplexComboboxData: React.FC<NLTComboboxProps> = ({
     }
   }, [searchTerm, allOptions, isNumber, allowAdd])
 
-
   const handleSearchChange = (value: string) => {
     setSearchTerm(value)
     setIsLoading(true)
@@ -104,7 +103,7 @@ export const NLTComplexComboboxData: React.FC<NLTComboboxProps> = ({
     if (isNumber) {
       const isValid = validateNumericInput(searchTerm)
       if (!isValid) {
-        return 
+        return
       }
     }
 
@@ -148,7 +147,7 @@ export const NLTComplexComboboxData: React.FC<NLTComboboxProps> = ({
     setOpen(newOpen)
   }
 
-   const isAddButtonDisabled = isNumber && searchTerm && !/^\d+$/.test(searchTerm)
+  const isAddButtonDisabled = isNumber && searchTerm && !/^\d+$/.test(searchTerm)
 
   return (
     <div className="relative w-full">

@@ -44,16 +44,16 @@ export const ThresholdsList = ({ form, disabled }: ThresholdsListProps) => {
                             step={threshold.name.includes('RATIO') ? '0.01' : '0.01'}
                             {...field}
                             min="0"
-                              {...field}
-                              onChange={e => {
-                                const value = e.target.value
-                                if (value === '') {
-                                  field.onChange(undefined)
-                                } else {
-                                  field.onChange(parseFloat(value))
-                                }
-                              }}
-                              value={field.value ?? ''}
+                            {...field}
+                            onChange={e => {
+                              const value = e.target.value
+                              if (value === '') {
+                                field.onChange(undefined)
+                              } else {
+                                field.onChange(parseFloat(value))
+                              }
+                            }}
+                            value={field.value ?? ''}
                             disabled={disabled}
                             className="text-center h-12 text-lg font-mono"
                             error={fieldState.error?.message}

@@ -68,12 +68,19 @@ export const WineView = () => {
 
   return (
     <ContentLayout title={t('list.wines_list')}>
-      <div className="text-end">
-        <Button className="sm:w-auto w-full" onClick={importWines.openModal}>
-          <File className="w-4 h-4 " />
+      <div className="flex justify-end items-center gap-2 mb-4 min-h-[40px]">
+        <Button onClick={importWines.openModal}>
+          <File className="w-4 h-4 mr-2" />
           {t('button.import')}
         </Button>
       </div>
+      {table?.getSelectedRowModel().rows.length > 1 && (
+        <div className="fixed **top-[217px] left-84** bottom-1 right-8 z-50">
+          <Button onClick={handleUnionClick} className="shadow-lg" size="xl">
+            {t('list.union_btn')} ({table.getSelectedRowModel().rows.length})
+          </Button>
+        </div>
+      )}
       <div className={cn('pb-2', !isLoading ? 'fade-in' : '')}>
         <NLTDataTable
           table={table}
