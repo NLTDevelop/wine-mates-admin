@@ -22,10 +22,22 @@ interface IProps {
   disableClear?: boolean
   is_dynamic?: boolean
   onCreateOption?: (data: string, fieldName: string) => Promise<IOption | null>
-  isNumber?:boolean
+  isNumber?: boolean
 }
 
-export const NLTComplexComboboxFormFieldData: FC<IProps> = ({ form, formLabel = '', name, disabled, placeholder, searchLabel, options = [], disableClear, is_dynamic, onCreateOption, isNumber=false }) => {
+export const NLTComplexComboboxFormFieldData: FC<IProps> = ({
+  form,
+  formLabel = '',
+  name,
+  disabled,
+  placeholder,
+  searchLabel,
+  options = [],
+  disableClear,
+  is_dynamic,
+  onCreateOption,
+  isNumber = false,
+}) => {
   const getCurrentValue = (fieldValue: any) => {
     if (!fieldValue) return null
 

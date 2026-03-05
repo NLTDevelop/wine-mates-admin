@@ -24,7 +24,7 @@ export const useAiPromts = () => {
         form.reset(newConfig)
       }
     }
-  }, [promtQuery.data, activeTab, form,isPending])
+  }, [promtQuery.data, activeTab, form, isPending])
 
   const handleReset = async () => {
     const result = await promtQueryInit.refetch()
