@@ -41,7 +41,7 @@ export const WineView = () => {
     }
   }
 
-  const columns = useWineColumns({ onEdit: wine => navigate(`/wines/${wine.id}?edit=true`), onDelete: deleteWine, onConfirm: confirmModal.open, onUnion: handleUnionClick })
+  const columns = useWineColumns({ onEdit: wine => navigate(`/wines/${wine.id}?edit=true`), onDelete: deleteWine, onConfirm: confirmModal.open })
   const { table } = useDataTable(wines ?? [], columns)
 
   const modalActionTitle = wineToConfirm.isConfirm ? t('list.cancel_action') : t('list.confirm_action')

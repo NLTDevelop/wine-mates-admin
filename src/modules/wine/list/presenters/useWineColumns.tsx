@@ -5,6 +5,12 @@ import { IWines } from '../entities/types/types'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@/UIKit/shadcn/ui/checkbox'
+import { useWineFilters } from './useWineFilters'
+import { useWineList } from './useWineList'
+import { SortableHeader } from '../ui/components/table-headers/sortable-header'
+import { FilterableHeader } from '../ui/components/table-headers/filterable-header'
+import { SortableFilterableHeader } from '../ui/components/table-headers/filterable-sortable-header'
+import { useRegionOptions } from '../../create-wine/presenters/useRegionOptions'
 
 const columnHelper = createColumnHelper<IWines>()
 
@@ -12,17 +18,42 @@ interface WineTableProps {
   onEdit: (wine: IWines) => void
   onDelete: (wineId: string, name: string) => void
   onConfirm: (wineId?: string) => void
-  onUnion: () => void
 }
 
 export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) => {
   const { t } = useTranslation('wines')
+
+  const { sortBy, handleSort, handleColumnFilter, filters } = useWineList()
+
+  const { getColorFilterOptions, getTypeFilterOptions, getVintageFilterOptions, getCountryFilterOptions } = useWineFilters()
+
+  const {
+    fetchOptions: fetchRegionOptions,
+    regions,
+    isLoading: regionsLoading,
+  } = useRegionOptions({
+    countryId: filters?.countryId,
+  })
+
+  const regionFilterOptions = useMemo(
+    () =>
+      regions.map(region => ({
+        label: region.name,
+        value: region.id,
+      })),
+    [regions]
+  )
+
   return useMemo(
     () => [
       columnHelper.display({
         id: 'actions',
         header: () => {
-          return t('table.actions')
+          return (
+            <div className="w-[50px] mx-auto">
+              <p>{t('table.actions')}</p>
+            </div>
+          )
         },
 
         cell: ({ row }) => {
@@ -64,21 +95,18 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
             </div>
           )
         },
-        size: 100,
+        size: 150,
         meta: { cellClassName: 'text-center' },
       }),
       columnHelper.accessor('name', {
-        header: () => {
-          return <span> {t('table.winename')}</span>
-        },
+        header: () => <SortableHeader column="name" label={t('table.winename')} sortBy={sortBy} onSort={handleSort} />,
         cell: info => info.getValue() || '-',
         size: 200,
         meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor('color', {
-        header: () => {
-          return <span> {t('table.color')}</span>
-        },
+        header: () => <FilterableHeader column="color" label={t('table.color')} onFilter={handleColumnFilter} filterOptions={getColorFilterOptions()} currentFilter={filters?.colorId} />,
+
         cell: info => {
           const color = info.getValue()
           return color?.name || '-'
@@ -87,25 +115,19 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor('producer', {
-        header: () => {
-          return <span> {t('table.producertitle')}</span>
-        },
+        header: () => <SortableHeader column="producer" label={t('table.producertitle')} sortBy={sortBy} onSort={handleSort} />,
         cell: info => info.getValue() || '-',
         size: 150,
         meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor('grapeVariety', {
-        header: () => {
-          return <span> {t('table.grapevariety')}</span>
-        },
+        header: () => <SortableHeader column="grapeVariety" label={t('table.grapevariety')} sortBy={sortBy} onSort={handleSort} />,
         cell: info => info.getValue() || '-',
         size: 150,
         meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor('type', {
-        header: () => {
-          return <span> {t('table.type')}</span>
-        },
+        header: () => <FilterableHeader column="type" label={t('table.type')} onFilter={handleColumnFilter} filterOptions={getTypeFilterOptions()} currentFilter={filters?.typeId} />,
         cell: info => {
           const type = info.getValue()
           return type?.name || '-'
@@ -114,10 +136,55 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         meta: { cellClassName: 'text-start' },
       }),
       columnHelper.accessor('vintage', {
-        header: () => {
-          return <span> {t('table.vintageconfig')}</span>
-        },
+        header: () => (
+          <SortableFilterableHeader
+            column="vintage"
+            label={t('table.vintageconfig')}
+            sortBy={sortBy}
+            onSort={handleSort}
+            onFilter={handleColumnFilter}
+            filterOptions={getVintageFilterOptions()}
+            currentFilter={filters?.vintage}
+          />
+        ),
         cell: info => info.getValue() || '-',
+        size: 140,
+        meta: { cellClassName: 'text-start' },
+      }),
+      columnHelper.accessor('country', {
+        header: () => (
+          <SortableFilterableHeader
+            column="country"
+            label={t('table.country')}
+            sortBy={sortBy}
+            onSort={handleSort}
+            onFilter={handleColumnFilter}
+            filterOptions={getCountryFilterOptions()}
+            currentFilter={filters?.countryId}
+          />
+        ),
+        cell: ({ row }) => {
+          return <div>{row.original.country?.name || '-'}</div>
+        },
+        size: 140,
+        meta: { cellClassName: 'text-start' },
+      }),
+      columnHelper.accessor('region', {
+        header: () => (
+          <SortableFilterableHeader
+            column="region"
+            label={t('table.region')}
+            sortBy={sortBy}
+            onSort={handleSort}
+            onFilter={handleColumnFilter}
+            filterOptions={regionFilterOptions}
+            currentFilter={filters?.regionId}
+            filterDisabled={!filters?.countryId || regionsLoading}
+          />
+        ),
+        cell: ({ row }) => {
+          return <div>{row.original.region?.name || '-'}</div>
+        },
         size: 140,
         meta: { cellClassName: 'text-start' },
       }),

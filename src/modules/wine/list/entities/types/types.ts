@@ -2,6 +2,7 @@ import { BaseWineColor } from '@/modules/wine/create/general/entities/types'
 import { WineFormData } from '@/modules/wine/create-wine/presenters/wine-form-schema'
 import { TasteCharacteristic, TopAroma, TopColor, TopFlavor } from './statistics-types'
 import { IBaseInfo } from '@/modules/chemical-analysis/detail/entities/chemical_types'
+import { SORT_FIELDS } from '@/constatnts/wine-sort-options'
 
 export interface WinesResponse {
   rows: IWines[]
@@ -13,6 +14,12 @@ export interface WineFilters {
   limit: number
   page: number
   search?: string
+  typeId?: number | null
+  colorId?: number | null
+  vintage?: number | null
+  countryId?: number | null
+  regionId?: number | null
+  sortBy?: string
 }
 
 export type ReviewFilters = WineFilters & { wineId: number | null }
@@ -163,3 +170,36 @@ export interface CreateMergeRequest {
   newWineData: CreateWineRequest
   wineIdsToMerge: number[]
 }
+
+export interface IWineFilters {
+  search: string
+  limit: number
+  page: number
+  typeId?: number | null
+  colorId?: number | null
+  vintage?: number | null
+  countryId?: number | null
+  regionId?: number | null
+  sortBy?: string
+}
+export interface FilterOption {
+  id: number
+  name: string
+  colorHex?: string
+}
+
+export interface RegionFilterOption extends FilterOption {
+  countryId: number
+}
+export interface WineFiltersData {
+  types: FilterOption[]
+  colors: FilterOption[]
+  countries: FilterOption[]
+  regions: RegionFilterOption
+  vintages: (number | null)[]
+}
+
+export type SortField = (typeof SORT_FIELDS)[keyof typeof SORT_FIELDS]
+export type SortDirection = 'asc' | 'desc'
+
+export type SortBy = `${SortField}_${SortDirection}`

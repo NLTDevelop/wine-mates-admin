@@ -38,6 +38,13 @@ export const wineQueries = {
     mutationFn: (mergeWineData: CreateMergeRequest) => wineListService.merge(mergeWineData),
   }),
 
+  filters: () => ({
+    queryKey: ['wine-filters', 'all'],
+    queryFn: () => wineListService.getFilterOptions(),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  }),
+
   import: () => ({
     mutationKey: ['wines', 'import'],
     mutationFn: (file: File) => wineListService.import(file),

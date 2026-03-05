@@ -1,7 +1,19 @@
 import { api } from '@/services'
 import { buildUrl } from '@/lib/utils'
 import { WINE_LIST_ENDPOINTS } from './wine-list-endpoints'
-import { ConfirmWineParams, CreateMergeRequest, CreateWineRequest, IReviewDetail, IWines, ReviewFilters, ReviewsResponse, UpdateWineListParams, WineFilters, WinesResponse } from './types/types'
+import {
+  ConfirmWineParams,
+  CreateMergeRequest,
+  CreateWineRequest,
+  IReviewDetail,
+  IWines,
+  ReviewFilters,
+  ReviewsResponse,
+  UpdateWineListParams,
+  WineFilters,
+  WineFiltersData,
+  WinesResponse,
+} from './types/types'
 import { WineFormData } from '../../create-wine/presenters/wine-form-schema'
 import { mapFormDataToUpdateRequestSimple } from '../../create-wine/presenters/useWineForm'
 
@@ -43,6 +55,8 @@ export const wineListService = {
   delete: (id: string): Promise<void> => api.delete(buildUrl(WINE_LIST_ENDPOINTS.DELETE, { id })).then(response => response.data),
 
   merge: (mergeData: CreateMergeRequest): Promise<IWines> => api.post(WINE_LIST_ENDPOINTS.MERGE, mergeData).then(response => response.data),
+
+  getFilterOptions: (): Promise<WineFiltersData> => api.get(WINE_LIST_ENDPOINTS.FILTER_OPTIONS).then(response => response.data),
 
   import: (file: File): Promise<void> => {
     const formData = new FormData()
