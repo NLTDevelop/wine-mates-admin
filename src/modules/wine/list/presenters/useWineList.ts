@@ -8,7 +8,8 @@ import { wineQueries } from '../entities/wine-list-queries'
 import { WineFormData } from '../../create-wine/presenters/wine-form-schema'
 import { useToast } from '@/hooks/shadcn/use-toast'
 import { useTranslation } from 'react-i18next'
-import { SORT_FIELDS } from '@/constatnts/wine-sort-options'
+
+import { SORT_FIELDS } from '@/constatnts/wine-filters'
 
 export const useWineList = () => {
   const { filters, setFilters, resetFilters } = useWineStore()
@@ -99,8 +100,14 @@ export const useWineList = () => {
 
   const handleColumnFilter = useCallback(
     (column: string, value: any) => {
+      let filterColumn = column
+      if (column === 'country') filterColumn = 'countryId'
+      else if (column === 'region') filterColumn = 'regionId'
+      else if (column === 'type') filterColumn = 'typeId'
+      else if (column === 'color') filterColumn = 'colorId'
+
       setFilters({
-        [column]: value,
+        [filterColumn]: value,
         page: 1,
       })
     },
@@ -108,17 +115,15 @@ export const useWineList = () => {
   )
 
   const clearColumnFilters = useCallback(() => {
-    console.log('Before clear:', filters)
-    setFilters({
-      typeId: null,
-      colorId: null,
-      vintage: null,
-      countryId: null,
-      regionId: null,
-      sortBy: undefined,
-      page: 1,
+    const filtersToClear = ['colorId', 'typeId', 'vintage', 'countryId', 'regionId']
+
+    filtersToClear.forEach(filter => {
+      handleColumnFilter(filter, null)
     })
-  }, [setFilters])
+
+    handleSort(undefined)
+    setFilters({ page: 1 })
+  }, [handleColumnFilter, handleSort, setFilters])
 
   const onChangePagination = useCallback(
     (page: number) => {

@@ -1,6 +1,7 @@
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/UIKit/shadcn/ui/dropdown-menu'
 import { ArrowUpDown, ArrowUp, ArrowDown, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface SortableHeaderProps {
   column: string
@@ -10,6 +11,7 @@ interface SortableHeaderProps {
 }
 
 export const SortableHeader = ({ column, label, sortBy, onSort }: SortableHeaderProps) => {
+  const { t } = useTranslation('wines')
   const isSorted = sortBy?.startsWith(column)
 
   const getIcon = () => {
@@ -25,21 +27,21 @@ export const SortableHeader = ({ column, label, sortBy, onSort }: SortableHeader
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className={`hover:bg-transparent p-0 font-medium ${isSorted ? 'text-primary' : ''}`}>
-          <span className="flex gap-2 text-sm items-center">
+        <Button variant="ghost" className={` hover:text-input/50 hover:bg-transparent focus:border-none active:bg-transparent active:border-none p-0 font-medium ${isSorted ? 'text-primary' : ''}`}>
+          <span className="flex gap-2 text-sm items-center ">
             {label}
             {getIcon()}
           </span>
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="start" className="w-48">
-        <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground flex items-center justify-between">
-          <span>Sorting</span>
+      <DropdownMenuContent align="start">
+        <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground flex gap-2 items-center justify-between">
+          <span>{t('sorting')}</span>
           {isSorted && (
-            <Button variant="ghost" size="sm" className="h-6 px-2 text-xs hover:bg-muted" onClick={handleClearSort}>
+            <Button variant="delete" size="sm" className="h-6 px-2 text-xs" onClick={handleClearSort}>
               <X className="h-3 w-3 mr-1" />
-              Clear
+              {t('clear')}
             </Button>
           )}
         </div>
@@ -47,9 +49,8 @@ export const SortableHeader = ({ column, label, sortBy, onSort }: SortableHeader
         <DropdownMenuItem onClick={() => onSort(column)} className="justify-between">
           <div className="flex items-center gap-2">
             {getIcon()}
-            <span>Sort by {label}</span>
+            <span>{t('sort_by')}</span>
           </div>
-          {isSorted && <span className="text-xs">{sortBy?.endsWith('_asc') ? '↑' : '↓'}</span>}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

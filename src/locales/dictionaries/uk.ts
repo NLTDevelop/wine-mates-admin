@@ -254,6 +254,13 @@ export const uk = {
     aroma: 'Показники аромату',
     taste: 'Показники смаку',
     creating_taste: 'Додавання вина в базу',
+    sorting: 'Сортування',
+    filtering: 'Фільтрування',
+    clear_all_filters: 'Скинути фільтри',
+    select_country: 'Спочатку виберіть країну, щоб відфільтрувати регіони',
+    no_regions: 'Немає доступних регіонів',
+    clear: 'Очистити',
+    sort_by: 'сортувати',
     modal: {
       delete_title: 'Видалити {{slug}}?',
       delete_action: 'Видалити',

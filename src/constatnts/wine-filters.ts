@@ -19,3 +19,11 @@ export const SORT_FIELDS: Record<string, string> = {
   type: 'type',
   color: 'color',
 } as const
+
+export const FILTER_COLUMN_MAP: Record<string, string> = {
+  country: 'countryId',
+  region: 'regionId',
+  type: 'typeId',
+  color: 'colorId',
+  vintage: 'vintage',
+}

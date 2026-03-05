@@ -16,10 +16,13 @@ interface IProps<T> {
   ToolBar?: React.ReactNode
   showColumnsSelector?: boolean
   onRowClick?: (row: any) => void
+  hasActiveFilters?: boolean
+  clearColumnFilters?: () => void
 }
 
-export function NLTDataTable<T>({ table, rowClassname, ToolBar, showColumnsSelector = false, onRowClick }: IProps<T>) {
+export function NLTDataTable<T>({ hasActiveFilters, clearColumnFilters, table, rowClassname, ToolBar, showColumnsSelector = false, onRowClick }: IProps<T>) {
   const { t } = useTranslation('common')
+  const { t: w } = useTranslation('wines')
 
   return (
     <div className="w-full">
@@ -47,7 +50,11 @@ export function NLTDataTable<T>({ table, rowClassname, ToolBar, showColumnsSelec
           )}
         </div>
       )}
-
+      <div className="text-end mb-3">
+        <Button variant="secondary" size="sm" onClick={clearColumnFilters} disabled={!hasActiveFilters} className={cn('transition-opacity', !hasActiveFilters && 'opacity-50 cursor-not-allowed')}>
+          {w('clear_all_filters')}
+        </Button>
+      </div>
       <div className="rounded-md border overflow-x-auto border-input">
         <Table className="min-w-max">
           <TableHeader>
