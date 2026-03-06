@@ -76,6 +76,7 @@ export const uk = {
     user_propositions: 'Користувацькі смаки і аромати',
     creating: 'Додати вино',
     settings: 'Налаштування',
+    faq: 'Питання та відповіді',
     ai_promts: 'AI налаштування',
   },
   autorization: {
