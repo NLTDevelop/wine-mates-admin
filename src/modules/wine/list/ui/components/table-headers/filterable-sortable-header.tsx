@@ -47,7 +47,7 @@ export const SortableFilterableHeader = ({ column, label, sortBy, onSort, onFilt
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className={` hover:text-input/50 hover:bg-transparent focus-visible:ring-transparent active:bg-transparent active:border-none p-0 font-medium ${isActive ? 'text-primary' : ''}`}
+          className={`focus-visible:ring-0 hover:text-input/50 hover:bg-transparent focus-visible:ring-transparent active:bg-transparent active:border-none p-0 font-medium ${isActive ? 'text-primary' : ''}`}
         >
           <span className="flex gap-2 text-sm items-center">
             {label}

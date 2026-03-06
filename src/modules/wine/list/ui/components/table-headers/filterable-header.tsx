@@ -24,7 +24,7 @@ export const FilterableHeader = ({ column, label, onFilter, filterOptions, curre
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className={` hover:text-input/50 hover:bg-transparent focus:border-none active:bg-transparent active:border-none p-0 font-medium ${isActive ? 'text-primary' : ''}`}>
+        <Button variant="ghost" className={`focus-visible:ring-0 hover:text-input/50 hover:bg-transparent focus:border-none active:bg-transparent active:border-none p-0 font-medium ${isActive ? 'text-primary' : ''}`}>
           <span className="flex gap-2 text-sm">
             {label}
             <Filter className={`h-4 w-4 ${isActive ? 'text-primary' : ''}`} />
