@@ -9,4 +9,5 @@ export const WINE_LIST_ENDPOINTS = {
   RATES: '/v1/admin/rates',
   RATE_DETAIL: '/v1/admin/rates/{id}',
   MERGE: '/v1/admin/wines/merge',
+  FILTER_OPTIONS: '/v1/admin/wines/filter-options',
 } as const

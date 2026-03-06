@@ -15,7 +15,7 @@ import { ConfirmModal } from '@/modals/confirmModal'
 import { ImportFileModal } from '@/modals/ImportFileModal'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { cn } from '@/lib/utils'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { UnionWinesModal } from '@/modules/wine/list/ui/components/unionWinesModal'
 import { IWines } from '../../entities/types/types'
 import { useWineSelection } from '../../presenters/useWineSelection'
@@ -26,11 +26,33 @@ export const WineView = () => {
   const { t: tc } = useTranslation('common')
   const navigate = useNavigate()
 
-  const { wines, filters, onChangeSearch, handleClearSearch, onChangePagination, deleteModal, searchValue, deleteWine, wineToConfirm, confirmModal, importWines, isLoading, totalCount } = useWineList()
+  const {
+    wines,
+    filters,
+    onChangeSearch,
+    handleClearSearch,
+    onChangePagination,
+    deleteModal,
+    searchValue,
+    deleteWine,
+    wineToConfirm,
+    confirmModal,
+    importWines,
+    isLoading,
+    totalCount,
+    columnFilters,
+    clearColumnFilters,
+    sortBy,
+  } = useWineList()
 
   const { getSelectionInfo } = useWineSelection()
 
   const { form, onCreateOption, onSubmit, unionModal } = useCreateUnionWinesForm()
+
+  const hasActiveFilters = useMemo(() => {
+    const hasColumnFilters = Object.values(columnFilters).some(value => value !== null && value !== undefined)
+    return hasColumnFilters || !!sortBy
+  }, [columnFilters, sortBy])
 
   const handleUnionClick = () => {
     if (table) {
@@ -41,7 +63,7 @@ export const WineView = () => {
     }
   }
 
-  const columns = useWineColumns({ onEdit: wine => navigate(`/wines/${wine.id}?edit=true`), onDelete: deleteWine, onConfirm: confirmModal.open, onUnion: handleUnionClick })
+  const columns = useWineColumns({ onEdit: wine => navigate(`/wines/${wine.id}?edit=true`), onDelete: deleteWine, onConfirm: confirmModal.open })
   const { table } = useDataTable(wines ?? [], columns)
 
   const modalActionTitle = wineToConfirm.isConfirm ? t('list.cancel_action') : t('list.confirm_action')
@@ -84,6 +106,8 @@ export const WineView = () => {
       <div className={cn('pb-2', !isLoading ? 'fade-in' : '')}>
         <NLTDataTable
           table={table}
+          hasActiveFilters={hasActiveFilters}
+          clearColumnFilters={clearColumnFilters}
           rowClassname="text-center cursor-pointer"
           ToolBar={<WinesFilters filterSearch={searchValue} onChangeFilterSearch={onChangeSearch} onClearSearch={handleClearSearch} />}
           onRowClick={handleRowClick}

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, UseQueryResult } from '@tanstack/react-query'
 import { useCallback, useState } from 'react'
 import { useDebounce } from '@/hooks/ui/useDebounce'
 
@@ -8,6 +8,8 @@ import { wineQueries } from '../entities/wine-list-queries'
 import { WineFormData } from '../../create-wine/presenters/wine-form-schema'
 import { useToast } from '@/hooks/shadcn/use-toast'
 import { useTranslation } from 'react-i18next'
+
+import { SORT_FIELDS } from '@/constatnts/wine-filters'
 
 export const useWineList = () => {
   const { filters, setFilters, resetFilters } = useWineStore()
@@ -22,7 +24,13 @@ export const useWineList = () => {
   const [wine, setWine] = useState<{ wineName: string; isConfirm: boolean }>({ wineName: '', isConfirm: false })
   const [importModal, setImportModal] = useState<{ isOpen: boolean }>({ isOpen: false })
 
-  const winesQuery: UseQueryResult<WinesResponse | undefined, Error> = useQuery(wineQueries.list(filters))
+  const winesQuery: UseQueryResult<WinesResponse | undefined, Error> = useQuery({
+    ...wineQueries.list(filters),
+    placeholderData: keepPreviousData,
+    staleTime: 2000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  })
   const updateWineMutation = useMutation(wineQueries.update())
   const deleteWineMutation = useMutation({
     ...wineQueries.delete(),
@@ -59,6 +67,63 @@ export const useWineList = () => {
     setSearchValue('')
     resetFilters()
   }, [resetFilters])
+
+  const handleSort = useCallback(
+    (column?: string) => {
+      if (!column) {
+        setFilters({
+          sortBy: undefined,
+          page: 1,
+        })
+        return
+      }
+      const baseField = SORT_FIELDS[column] || column
+      const currentSortBy = filters.sortBy || ''
+
+      const isCurrentColumn = currentSortBy === `${baseField}_asc` || currentSortBy === `${baseField}_desc`
+
+      if (isCurrentColumn) {
+        const newOrder = currentSortBy.endsWith('_asc') ? 'desc' : 'asc'
+        setFilters({
+          sortBy: `${baseField}_${newOrder}`,
+          page: 1,
+        })
+      } else {
+        setFilters({
+          sortBy: `${baseField}_asc`,
+          page: 1,
+        })
+      }
+    },
+    [setFilters, filters.sortBy]
+  )
+
+  const handleColumnFilter = useCallback(
+    (column: string, value: any) => {
+      let filterColumn = column
+      if (column === 'country') filterColumn = 'countryId'
+      else if (column === 'region') filterColumn = 'regionId'
+      else if (column === 'type') filterColumn = 'typeId'
+      else if (column === 'color') filterColumn = 'colorId'
+
+      setFilters({
+        [filterColumn]: value,
+        page: 1,
+      })
+    },
+    [setFilters]
+  )
+
+  const clearColumnFilters = useCallback(() => {
+    const filtersToClear = ['colorId', 'typeId', 'vintage', 'countryId', 'regionId']
+
+    filtersToClear.forEach(filter => {
+      handleColumnFilter(filter, null)
+    })
+
+    handleSort(undefined)
+    setFilters({ page: 1 })
+  }, [handleColumnFilter, handleSort, setFilters])
 
   const onChangePagination = useCallback(
     (page: number) => {
@@ -234,9 +299,23 @@ export const useWineList = () => {
     wines: winesQuery.data?.rows,
     totalCount: winesQuery.data?.count,
     isLoading: winesQuery.isLoading,
+    isFetching: winesQuery.isFetching,
     filters,
     searchValue,
     editingWine,
+
+    sortBy: filters.sortBy,
+    handleSort,
+    handleColumnFilter,
+    clearColumnFilters,
+
+    columnFilters: {
+      typeId: filters.typeId,
+      colorId: filters.colorId,
+      vintage: filters.vintage,
+      countryId: filters.countryId,
+      regionId: filters.regionId,
+    },
 
     onChangeSearch: handleSearchChange,
     handleClearSearch,

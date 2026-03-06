@@ -1,16 +1,12 @@
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
-import { IReview, IWines } from './types/types'
+import { IReview, IWineFilters, IWines } from './types/types'
 import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 
 interface WineState {
   wines: IWines[]
   searchResults: IWines[]
   currentWine: IWines | null
-  filters: {
-    search: string
-    limit: number
-    page: number
-  }
+  filters: IWineFilters
   setWines: (wines: IWines[]) => void
   setReviews: (reviews: IReview[]) => void
   setSearchResults: (results: IWines[]) => void
@@ -39,6 +35,13 @@ export const useWineStore = createStoreDevToolsWrapper<WineState>(
       search: '',
       limit: DEFAULT_PAGINATION_LIMIT,
       page: 1,
+      typeId: null,
+      colorId: null,
+      vintage: null,
+      countryId: null,
+      regionId: null,
+      sortBy: undefined,
+      sortOrder: 'asc',
     },
     reviewFilters: {
       search: '',
