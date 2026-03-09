@@ -77,6 +77,9 @@ export const uk = {
     creating: 'Додати вино',
     settings: 'Налаштування',
     ai_promts: 'AI налаштування',
+    events_list: 'Список подій',
+    events: 'Події',
+    map: 'Карта',
   },
   autorization: {
     login: 'Увійти',

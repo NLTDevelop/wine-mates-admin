@@ -16,6 +16,7 @@ interface GeneratorOptions {
   hasList?: boolean
   hasCreate?: boolean
   hasDetail?: boolean
+  title?:string
   additionalLinks?: Array<{
     titleKey: string
     title: string
@@ -24,7 +25,7 @@ interface GeneratorOptions {
 }
 
 export const generateLinks = (entityName: string, options: GeneratorOptions = {}): GeneratedLinks => {
-  const { hasList, hasCreate, hasDetail, additionalLinks } = options
+  const { hasList, hasCreate, hasDetail, additionalLinks, title } = options
   const baseUrl = `/${entityName}`
 
   const links: GeneratedLinks = {
@@ -38,7 +39,7 @@ export const generateLinks = (entityName: string, options: GeneratorOptions = {}
   if (hasList) {
     links.list = {
       titleKey: 'list',
-      title: 'list',
+      title: title || 'list',
       url: baseUrl,
     } as LinkItem
   }
