@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import { IQuestion, TopicCreate } from '../enteties/types'
+import { useFaqStore } from '../enteties/faq-store'
 
 interface UseCreateTopicProps {
   onCreateTopic: (topicData: TopicCreate) => void
@@ -11,7 +12,7 @@ interface useCreateTopicReturn {
   formData: TopicCreate
   canCreateTopic: boolean
   setIsExpanded: (expanded: boolean) => void
-  updateFormData: (field: 'topicName' | 'questions' | 'answer', value: string | IQuestion[]) => void
+  updateFormData: (field: 'topicName' | 'questions' , value: string | IQuestion[]) => void
   handleCreateTopic: () => void
   handleCancel: () => void
   expandForm: () => void
@@ -19,25 +20,29 @@ interface useCreateTopicReturn {
 
 export const useCreateTopic = ({ onCreateTopic }: UseCreateTopicProps): useCreateTopicReturn => {
   const [isExpanded, setIsExpanded] = useState(false)
+   const resetCurrentQuestions = useFaqStore(s => s.resetCurrentQuestions)
 
-  const initialData = { topicName: '', questions: [], answer: '' }
+  const initialData = { topicName: '', questions: [], }
   const [formData, setFormData] = useState<TopicCreate>(initialData)
 
-  const updateFormData = useCallback((field: 'topicName' | 'questions' | 'answer', value: string | IQuestion[]) => {
+  const updateFormData = useCallback((field: 'topicName' | 'questions' , value: string | IQuestion[]) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }, [])
 
   const handleCreateTopic = () => {
+    console.log("На збереження->",formData)
     if (canCreateTopic) {
       onCreateTopic(formData)
       setFormData(initialData)
       setIsExpanded(false)
+      resetCurrentQuestions()
     }
   }
 
   const handleCancel = () => {
     setFormData(initialData)
     setIsExpanded(false)
+    resetCurrentQuestions()
   }
 
   const expandForm = () => {

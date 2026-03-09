@@ -16,5 +16,10 @@ export type TopicRequest = ITopic[]
 export type TopicCreate = Omit<ITopic, 'id'>
 export type TopicUpdate = ITopic
 
+export interface UpdateTopicParams {
+  topicId: string
+  newTopic: TopicCreate
+}
+
 export type QuestionCreate = Omit<IQuestion, 'id'>
 export type QuestionUpdate = IQuestion

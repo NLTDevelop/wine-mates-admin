@@ -5,30 +5,30 @@ import { ContentLayout } from '@/layout/components/content-layout'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Plus } from 'lucide-react'
+import { CreateFaqSection } from './create-faq-section'
+import { useFaqTopics } from '../../presenters/useFaqTopics'
 
 export const FaqView = () => {
   const { t } = useTranslation('faq')
 
   const topics = useFaqStore(s => s.topics)
   const updateTopicsOrder = useFaqStore(s => s.updateTopicsOrder)
+  const editingTopicData = useFaqStore(s => s.editingTopicData)
+  const setEditingTopic = useFaqStore(s => s.setEditingTopic)
+  const setEditingTopicData = useFaqStore(s => s.setEditingTopicData)
+  const setNewItemData = useFaqStore(s => s.setNewItemData)
 
-  //   const { isExpanded, formData, canCreateTopic, updateFormData, handleCreateTopic, handleCancel, expandForm } = useCreateTopic({ onCreateTopic, isLoading })
   const handleReorderTopics = (reorderedTopics: TopicRequest) => {
     updateTopicsOrder(reorderedTopics)
   }
 
-  const isExpanded = false
+  const { handleAddTopic, isLoading } = useFaqTopics({ topics, editingTopicData, setEditingTopic, setEditingTopicData, setNewItemData })
 
   return (
     <ContentLayout title={t('faq')}>
-      {!isExpanded && (
-        <div className="text-end mb-4">
-          <Button /*onClick={expandForm}*/ className="w-full sm:w-auto ">
-            <Plus className="w-4 h-4" />
-            {t('button.create_new_topic')}
-          </Button>
-        </div>
-      )}
+      <div>
+        <CreateFaqSection onCreateTopic={handleAddTopic} isLoading={isLoading || handleReorderTopics} />
+      </div>
       <TopicsList onReorderTopics={handleReorderTopics} topics={topics} />
     </ContentLayout>
   )
