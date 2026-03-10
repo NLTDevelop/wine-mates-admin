@@ -14,7 +14,11 @@ export const SortableHeader = ({ column, label, sortBy, onSort }: SortableHeader
   const { t } = useTranslation('wines')
   const isSorted = sortBy?.startsWith(column)
 
-  const getIcon = () => {
+  const getIconHeader = () => {
+    if (!isSorted) return <ArrowUpDown className="h-4 w-4" />
+    return sortBy?.endsWith('_asc') ? <ArrowDown className="h-4 w-4 text-primary" /> : <ArrowUp className="h-4 w-4 text-primary" />
+  }
+  const getIconBtn = () => {
     if (!isSorted) return <ArrowUpDown className="h-4 w-4" />
     return sortBy?.endsWith('_asc') ? <ArrowUp className="h-4 w-4 text-primary" /> : <ArrowDown className="h-4 w-4 text-primary" />
   }
@@ -27,10 +31,13 @@ export const SortableHeader = ({ column, label, sortBy, onSort }: SortableHeader
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className={`focus-visible:ring-0 hover:text-input/50 hover:bg-transparent focus:border-none active:bg-transparent active:border-none p-0 font-medium ${isSorted ? 'text-primary' : ''}`}>
+        <Button
+          variant="ghost"
+          className={`focus-visible:ring-0 hover:text-input/50 hover:bg-transparent focus:border-none active:bg-transparent active:border-none p-0 font-medium ${isSorted ? 'text-primary' : ''}`}
+        >
           <span className="flex gap-2 text-sm items-center ">
             {label}
-            {getIcon()}
+            {getIconHeader()}
           </span>
         </Button>
       </DropdownMenuTrigger>
@@ -48,7 +55,7 @@ export const SortableHeader = ({ column, label, sortBy, onSort }: SortableHeader
 
         <DropdownMenuItem onClick={() => onSort(column)} className="justify-between">
           <div className="flex items-center gap-2">
-            {getIcon()}
+            {getIconBtn()}
             <span>{t('sort_by')}</span>
           </div>
         </DropdownMenuItem>
