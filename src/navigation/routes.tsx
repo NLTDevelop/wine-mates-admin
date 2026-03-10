@@ -16,6 +16,7 @@ import { AnalysisDetailView } from '@/modules/chemical-analysis/detail/ui'
 import { UserPropositionsView } from '@/modules/wine/user-propositions/ui'
 import { CreateTasteFormView } from '@/modules/wine/create-wine/ui'
 import { AiPromtView } from '@/modules/ai-promts/ui'
+import { mapRouters } from '@/modules/map/entities/map-routers'
 
 const usersRoutes = [
   { path: PATHS.USERS, element: <UsersView /> },
@@ -50,7 +51,7 @@ export const Router: FC = () => {
           <Layout />
         </PrivateRoutes>
       ),
-      children: [{ path: PATHS.HOME, element: <DashboardView />, index: true }, ...usersRoutes, ...featuresRoutes, ...winesRoutes, ...winesStats, ...winesAnalysis],
+      children: [{ path: PATHS.HOME, element: <DashboardView />, index: true }, ...usersRoutes, ...featuresRoutes, ...winesRoutes, ...winesStats, ...winesAnalysis, ...mapRouters],
     },
     {
       path: PATHS.LOGIN,
