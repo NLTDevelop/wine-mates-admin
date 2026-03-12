@@ -56,12 +56,25 @@ export function NLTDataTable<T>({ hasActiveFilters, clearColumnFilters, table, r
         </Button>
       </div>
       <div className="rounded-md border overflow-x-auto border-input">
-        <Table className="min-w-max">
+        <Table
+          className="min-w-full"
+          style={{
+            width: table.getTotalSize(),
+          }}
+        >
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
-                  <TableHead className={cn((header.column.columnDef.meta as ColumnMeta)?.cellClassName, '[&:not(:first-child)]:text-start bg-secondary text-border')} key={header.id}>
+                  <TableHead
+                    className={cn((header.column.columnDef.meta as ColumnMeta)?.cellClassName, '[&:not(:first-child)]:text-start bg-secondary text-border')}
+                    key={header.id}
+                    style={{
+                      width: header.getSize(),
+                      minWidth: header.column.columnDef.minSize,
+                      maxWidth: header.column.columnDef.maxSize,
+                    }}
+                  >
                     {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}

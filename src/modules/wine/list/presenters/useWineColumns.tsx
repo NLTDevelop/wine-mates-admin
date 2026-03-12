@@ -21,7 +21,7 @@ interface WineTableProps {
 }
 
 const COLUMN_WIDTHS = {
-  ACTIONS: 120,
+  ACTIONS: 50,
   NAME: 200,
   COLOR: 120,
   PRODUCER: 180,
@@ -55,11 +55,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
     () => [
       columnHelper.display({
         id: 'actions',
-        header: () => (
-          <div className="w-[50px] mx-auto">
-            <p>{t('table.actions')}</p>
-          </div>
-        ),
+        header: () => <p className="text-center">{t('table.actions')}</p>,
         cell: ({ row }) => {
           const stopEvent = (e: React.MouseEvent) => {
             e.stopPropagation()
@@ -77,7 +73,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
           }
 
           return (
-            <div className="flex items-center">
+            <div className="flex items-center justify-around">
               <div className="pt-1 pr-3" onClick={e => stopEvent(e)}>
                 <Checkbox checked={row.getIsSelected()} onCheckedChange={value => row.toggleSelected(!!value)} aria-label="Select row" className="h-5 w-5" />
               </div>
@@ -102,7 +98,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         minSize: COLUMN_WIDTHS.NAME,
         maxSize: COLUMN_WIDTHS.NAME,
         size: COLUMN_WIDTHS.NAME,
-        meta: { cellClassName: 'text-start' },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.NAME}px]` },
       }),
 
       columnHelper.accessor('color', {
@@ -114,7 +110,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         minSize: COLUMN_WIDTHS.COLOR,
         maxSize: COLUMN_WIDTHS.COLOR,
         size: COLUMN_WIDTHS.COLOR,
-        meta: { cellClassName: 'text-start' },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.COLOR}px]` },
       }),
 
       columnHelper.accessor('producer', {
@@ -123,16 +119,16 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         minSize: COLUMN_WIDTHS.PRODUCER,
         maxSize: COLUMN_WIDTHS.PRODUCER,
         size: COLUMN_WIDTHS.PRODUCER,
-        meta: { cellClassName: 'text-start' },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.PRODUCER}px]` },
       }),
 
       columnHelper.accessor('grapeVariety', {
-        header: () => <SortableHeader column="grapeVariety" label={t('table.grapevariety')} sortBy={sortBy} onSort={handleSort} />,
+        header: () => <SortableHeader column="grape_variety" label={t('table.grapevariety')} sortBy={sortBy} onSort={handleSort} />,
         cell: info => info.getValue() || '-',
         minSize: COLUMN_WIDTHS.GRAPE,
         maxSize: COLUMN_WIDTHS.GRAPE,
         size: COLUMN_WIDTHS.GRAPE,
-        meta: { cellClassName: 'text-start' },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.GRAPE}px]` },
       }),
 
       columnHelper.accessor('type', {
@@ -144,7 +140,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         minSize: COLUMN_WIDTHS.TYPE,
         maxSize: COLUMN_WIDTHS.TYPE,
         size: COLUMN_WIDTHS.TYPE,
-        meta: { cellClassName: 'text-start' },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.TYPE}px]` },
       }),
 
       columnHelper.accessor('vintage', {
@@ -163,7 +159,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         minSize: COLUMN_WIDTHS.VINTAGE,
         maxSize: COLUMN_WIDTHS.VINTAGE,
         size: COLUMN_WIDTHS.VINTAGE,
-        meta: { cellClassName: 'text-start' },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.VINTAGE}px]` },
       }),
 
       columnHelper.accessor('country', {
@@ -182,7 +178,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         minSize: COLUMN_WIDTHS.COUNTRY,
         maxSize: COLUMN_WIDTHS.COUNTRY,
         size: COLUMN_WIDTHS.COUNTRY,
-        meta: { cellClassName: 'text-start' },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.COUNTRY}px]` },
       }),
 
       columnHelper.accessor('region', {
@@ -202,7 +198,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         minSize: COLUMN_WIDTHS.REGION,
         maxSize: COLUMN_WIDTHS.REGION,
         size: COLUMN_WIDTHS.REGION,
-        meta: { cellClassName: 'text-start' },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.REGION}px]` },
       }),
 
       columnHelper.display({
@@ -212,7 +208,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         minSize: COLUMN_WIDTHS.IMAGES,
         maxSize: COLUMN_WIDTHS.IMAGES,
         size: COLUMN_WIDTHS.IMAGES,
-        meta: { cellClassName: 'text-center' },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.IMAGES}px]` },
       }),
     ],
     [
