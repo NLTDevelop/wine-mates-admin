@@ -662,6 +662,12 @@ export const uk = {
   },
   events: {
     tasting_type: 'Тип дегустації',
+    not_known_event: 'Невідома подія',
+    search: 'Пошук події',
+    event_list: 'Список подій',
+    event_delete: 'Видалення події',
+    cancel_title: 'Скасування події',
+    delete_description: 'Ви впевнені, що хочете видалити подію {{slug}}. Її повернення до списку після цієї дії буде неможливе.',
     tasting_types: {
       wine_set: 'Винні сети',
       comparative: 'Порівняльна дегустація',
@@ -673,6 +679,21 @@ export const uk = {
       daily: 'Щодня',
       weekly: 'Щотижня',
       monthly: 'Щомісяця',
+    },
+    table: {
+      actions: 'Дії',
+      theme: 'Тема',
+      restaurant_name: 'Назва закладу',
+      location_label: 'Локація',
+      event_date: 'Дата',
+      event_time: 'Час',
+      price: 'Вартість',
+      currency: 'Валюта',
+      speaker_name: 'Спікер',
+      language: 'Мова',
+      seats: 'Кількість місць',
+      type: 'Тип дегустації',
+      distance: 'Відстань',
     },
     online_event: 'Онлайн подія',
     active_event: 'Активна подія',
@@ -704,7 +725,7 @@ export const uk = {
     button: {
       delete: 'Видалити',
       edit: 'Редагувати',
-      go_map: 'На карту',
+      go_back: 'Назад',
     },
   },
 }

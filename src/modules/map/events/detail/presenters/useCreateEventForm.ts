@@ -5,9 +5,9 @@ import { useEventForm } from './useEventForm'
 export const useCreateEventForm = () => {
   const location = useLocation()
   const newEventLocation = location.state
-  
+
   const form = useEventForm({ locationData: newEventLocation })
-  const { createEvent, /*isCreating*/ } = useCreateEvent()
+  const { createEvent /*isCreating*/ } = useCreateEvent()
 
   const onSubmit = async (formData: any) => {
     console.log(formData)

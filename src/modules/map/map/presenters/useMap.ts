@@ -11,14 +11,14 @@ interface UseMapProps {
   setUserLocation: (value: ICoordinate | null) => void
   setMapCenter: (value: ICoordinate) => void
   isAddingMode: boolean
-  setSearchQuery: (value:string)=>void
-  setSearchResults:(events: MapEvent[]) => void
-  setIsSearching:(value: boolean) => void
-  events:MapEvent[]
-  setActiveEvent:(event: MapEvent | null) => void
+  setSearchQuery: (value: string) => void
+  setSearchResults: (events: MapEvent[]) => void
+  setIsSearching: (value: boolean) => void
+  events: MapEvent[]
+  setActiveEvent: (event: MapEvent | null) => void
 }
 
-export const useMap = ({setIsLocating, setUserLocation, setMapCenter, isAddingMode, setSearchQuery, setSearchResults, setIsSearching, events, setActiveEvent}:UseMapProps) => {
+export const useMap = ({ setIsLocating, setUserLocation, setMapCenter, isAddingMode, setSearchQuery, setSearchResults, setIsSearching, events, setActiveEvent }: UseMapProps) => {
   const mapRef = useRef<google.maps.Map | null>(null)
   const { toast } = useToast()
   const navigate = useNavigate()

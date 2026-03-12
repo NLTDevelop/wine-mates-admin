@@ -20,6 +20,18 @@ export const SORT_FIELDS: Record<string, string> = {
   color: 'color',
 } as const
 
+export const EVENT_SORT_FIELDS: Record<string, string> = {
+  theme: 'theme',
+  restaurantName: 'restaurantName',
+  locationLabel: 'locationLabel',
+  eventDate: 'eventDate',
+  eventTime: 'eventTime',
+  price: 'price',
+  speakerName: 'speakerName',
+  seats: 'seats',
+  distanceKm: 'distanceKm',
+} as const
+
 export const FILTER_COLUMN_MAP: Record<string, string> = {
   country: 'countryId',
   region: 'regionId',

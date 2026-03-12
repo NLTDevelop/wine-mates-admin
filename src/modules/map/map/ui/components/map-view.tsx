@@ -6,7 +6,6 @@ import { Card } from '@/UIKit/shadcn/ui/card'
 import { WarningModal } from '@/modals/warningModal'
 import { ActiveEvent, SearchInMap, ActionsMap } from '..'
 
-
 export const MapView = () => {
   const { t } = useTranslation('map')
   const { t: event } = useTranslation('events')

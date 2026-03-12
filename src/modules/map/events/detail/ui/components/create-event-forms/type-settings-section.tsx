@@ -30,10 +30,8 @@ export const TypeSettingsSection: React.FC<TypeSettingsSectionProps> = ({ form }
         control={form.control}
         name="tastingType"
         render={({ field }) => (
-          <FormItem >
-
-
-            <FormLabel className='mb-2'>{t('tasting_type')} *</FormLabel>
+          <FormItem>
+            <FormLabel className="mb-2">{t('tasting_type')} *</FormLabel>
             <FormControl>
               <div className="grid grid-cols-3 gap-2">
                 {TASTING_TYPES.map(type => (
@@ -44,7 +42,6 @@ export const TypeSettingsSection: React.FC<TypeSettingsSectionProps> = ({ form }
                 ))}
               </div>
             </FormControl>
-
           </FormItem>
         )}
       />
@@ -73,30 +70,29 @@ export const TypeSettingsSection: React.FC<TypeSettingsSectionProps> = ({ form }
             </FormItem>
           )}
         />
-
       </div>
-        <FormField
-          control={form.control}
-          name="isOnline"
-          render={({ field }) => (
-            <FormItem className="flex items-center space-x-2">
-              <FormControl>
-                <Switch className='mb-0' checked={field.value} onCheckedChange={field.onChange} />
-              </FormControl>
-              <FormLabel >{t('online_event')}</FormLabel>
-            </FormItem>
-          )}
-        />
+      <FormField
+        control={form.control}
+        name="isOnline"
+        render={({ field }) => (
+          <FormItem className="flex items-center space-x-2">
+            <FormControl>
+              <Switch className="mb-0" checked={field.value} onCheckedChange={field.onChange} />
+            </FormControl>
+            <FormLabel>{t('online_event')}</FormLabel>
+          </FormItem>
+        )}
+      />
 
       <FormField
         control={form.control}
         name="isActive"
         render={({ field }) => (
           <FormItem className="flex items-center space-x-2">
-            <FormControl >
-              <Switch className='mb-0'  checked={field.value} onCheckedChange={field.onChange} />
+            <FormControl>
+              <Switch className="mb-0" checked={field.value} onCheckedChange={field.onChange} />
             </FormControl>
-            <FormLabel >{t('active_event')}</FormLabel>
+            <FormLabel>{t('active_event')}</FormLabel>
           </FormItem>
         )}
       />

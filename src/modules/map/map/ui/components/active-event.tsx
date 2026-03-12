@@ -24,7 +24,11 @@ export const ActiveEvent = ({ activeEvent, setActiveEvent, handleEditEvent, hand
 
   if (!map) return null
   return (
-    <InfoWindow position={{ lat: activeEvent.latitude, lng: activeEvent.longitude }} onCloseClick={() => setActiveEvent(null)} options={{ headerContent: t(TASTING_TYPE_LABELS[activeEvent.tastingType])}}>
+    <InfoWindow
+      position={{ lat: activeEvent.latitude, lng: activeEvent.longitude }}
+      onCloseClick={() => setActiveEvent(null)}
+      options={{ headerContent: t(TASTING_TYPE_LABELS[activeEvent.tastingType]) }}
+    >
       <div style={{ minWidth: '320px' }} className="relative p-2">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">

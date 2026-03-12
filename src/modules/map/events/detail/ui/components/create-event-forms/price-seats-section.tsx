@@ -20,25 +20,27 @@ export const PriceSeatsSection: React.FC<PriceSeatsSectionProps> = ({ form }) =>
         control={form.control}
         name="price"
         render={({ field }) => {
-          return <FormItem>
-            <FormLabel>{t('price')} *</FormLabel>
-            <FormControl>
-              <InputWithTooltip
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder={t('price') + '...'}
-                {...field}
-                 onChange={e => {
-                  const value = e.target.value
-                  field.onChange(value === '' ? undefined : parseFloat(value))
-                }}
-                value={field.value === 0 ? undefined : field.value}
-                // disabled={isPending}
-                error={form.formState.errors.price?.message as string}
-              />
-            </FormControl>
-          </FormItem>
+          return (
+            <FormItem>
+              <FormLabel>{t('price')} *</FormLabel>
+              <FormControl>
+                <InputWithTooltip
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder={t('price') + '...'}
+                  {...field}
+                  onChange={e => {
+                    const value = e.target.value
+                    field.onChange(value === '' ? undefined : parseFloat(value))
+                  }}
+                  value={field.value === 0 ? undefined : field.value}
+                  // disabled={isPending}
+                  error={form.formState.errors.price?.message as string}
+                />
+              </FormControl>
+            </FormItem>
+          )
         }}
       />
 
@@ -88,7 +90,6 @@ export const PriceSeatsSection: React.FC<PriceSeatsSectionProps> = ({ form }) =>
                 // disabled={isPending}
                 error={form.formState.errors.seats?.message as string}
               />
-              {/* <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} /> */}
             </FormControl>
           </FormItem>
         )}

@@ -28,7 +28,7 @@ export const EventForm: React.FC<EventFormProps> = ({
   onSubmit,
   onCancel,
   isSubmitting = false,
-//   wines,
+  //   wines,
   hasChanges = true,
 }) => {
   const { t } = useTranslation('common')
@@ -61,7 +61,7 @@ export const EventForm: React.FC<EventFormProps> = ({
         <div className={`flex gap-4 md:flex-row flex-col ${mode !== 'create' ? 'justify-between' : 'justify-end'}`}>
           {mode === 'edit' && onCancel && (
             <Button type="button" variant="outline" onClick={handleCancel}>
-              {te('button.go_to_event')}
+              {te('button.go_back')}
             </Button>
           )}
 
@@ -71,13 +71,7 @@ export const EventForm: React.FC<EventFormProps> = ({
             </Button>
 
             <Button type="submit" className="min-w-32" disabled={isSubmitting || !canSubmit}>
-              {isSubmitting
-                ? mode === 'create'
-                  ? t('button.creating')
-                  : t('button.saving')
-                : mode === 'create'
-                ? t('button.create')
-                : t('button.save')}
+              {isSubmitting ? (mode === 'create' ? t('button.creating') : t('button.saving')) : mode === 'create' ? t('button.create') : t('button.save')}
             </Button>
           </div>
         </div>

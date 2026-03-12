@@ -23,7 +23,7 @@ interface MapState {
   setEvents: (events: MapEvent[]) => void
   setActiveEvent: (event: MapEvent | null) => void
   setEventToDelete: (event: MapEvent | null) => void
-  setSearchQuery: (value:string)=>void
+  setSearchQuery: (value: string) => void
   setSearchResults: (events: MapEvent[]) => void
 
   setIsDeleteModalOpen: (value: boolean) => void
@@ -46,7 +46,7 @@ export const useMapStore = createStoreDevToolsWrapper<MapState>(
     searchQuery: '',
 
     isDeleteModalOpen: false,
-    isLoading:false,
+    isLoading: false,
     isSearching: false,
     isLocating: false,
     isAddingMode: false,

@@ -35,11 +35,9 @@ export const LINKS = {
   analysis: generateLinks('analysis', { hasList: true, hasDetail: true }),
   events: generateLinks('events', {
     hasList: true,
-    title: "events_list",
+    title: 'events_list',
     hasDetail: true,
-    additionalLinks: [
-      { titleKey: 'map', title: 'map', url: PATHS.MAP },
-    ],
+    additionalLinks: [{ titleKey: 'map', title: 'map', url: PATHS.MAP }],
   }),
 }
 

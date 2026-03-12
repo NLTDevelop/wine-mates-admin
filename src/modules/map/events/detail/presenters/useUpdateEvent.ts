@@ -18,7 +18,7 @@ export const useUpdateEvent = () => {
   //   onSuccess: (updatedEvent: MapEvent) => {
   //     queryClient.invalidateQueries({ queryKey: ['events'] })
   //     queryClient.invalidateQueries({ queryKey: ['events', Number(id)] })
-      
+
   //     toast({
   //       title: t('event_updated'),
   //       description: t('event_updated_description'),

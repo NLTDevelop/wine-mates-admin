@@ -34,7 +34,7 @@ export const useEventForm = ({ initialData, locationData }: UseEventFormProps = 
       seats: formData?.seats,
 
       speakerName: formData?.speakerName || '',
-      language: formData?.language || Language.UA,
+      language: formData?.language || 'UA',
       phoneNumber: formData?.phoneNumber || '',
 
       tastingType: formData?.tastingType || 'wine_set',
@@ -71,7 +71,7 @@ const mapDataToFormData = (initialData?: Partial<MapEvent> | null, locationData?
       price: initialData.price,
       currency: initialData.currency,
       speakerName: initialData.speakerName,
-      language: (initialData.language as Language) || Language.UA,
+      language: (initialData.language as Language) || 'UA',
       seats: initialData.seats,
       phoneNumber: initialData.phoneNumber,
       tastingType: initialData.tastingType,

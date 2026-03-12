@@ -8,15 +8,15 @@ export const EditEventView = () => {
   const { t } = useTranslation('events')
   const { form, /*isSubmitting, isLoading,*/ onSubmit, event } = useEditEventForm()
 
-//   if (isLoading) {
-//     return (
-//       <ContentLayout title={t('loading_event')}>
-//         <div className="flex items-center justify-center h-64">
-//           <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
-//         </div>
-//       </ContentLayout>
-//     )
-//   }
+  //   if (isLoading) {
+  //     return (
+  //       <ContentLayout title={t('loading_event')}>
+  //         <div className="flex items-center justify-center h-64">
+  //           <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+  //         </div>
+  //       </ContentLayout>
+  //     )
+  //   }
 
   if (!event) {
     return (
@@ -35,8 +35,8 @@ export const EditEventView = () => {
           form={form}
           mode="edit"
           onSubmit={onSubmit}
-        //   isSubmitting={isSubmitting}
-        //   wines={WINES}
+          //   isSubmitting={isSubmitting}
+          //   wines={WINES}
           onCancel={() => window.history.back()}
         />
       </div>

@@ -6,10 +6,9 @@ import { Input } from '@/UIKit/shadcn/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/UIKit/shadcn/ui/select'
 import { LANGUAGES } from '../../../../entities/types'
 import { EventFormData } from '@/modules/map/events/detail/presenters/event-form-schema'
-import { InputMask } from '@react-input/mask'
 import { AlertCircle } from 'lucide-react'
 import { NLTTooltip } from '@/UIKit/components/NLTTooltip'
-
+import { IMaskInput } from 'react-imask'
 interface SpeakerContactSectionProps {
   form: UseFormReturn<EventFormData>
 }
@@ -61,22 +60,20 @@ export const SpeakerContactSection: React.FC<SpeakerContactSectionProps> = ({ fo
         name="phoneNumber"
         render={({ field }) => {
           const error = form.formState.errors.phoneNumber?.message as string
+          const maskValue = field.value ? field.value : ''
           return (
             <FormItem>
               <FormLabel>{t('phone')} *</FormLabel>
               <FormControl>
                 <div className="relative">
-                  <InputMask
-                    component="input"
-                    mask="+38 (___) ___-__-__"
-                    replacement={{ _: /\d/ }}
-                    value={field.value}
-                    onChange={field.onChange}
+                  <IMaskInput
+                    mask="+38 (000) 000-00-00"
+                    value={field.value || ''}
+                    onAccept={(value: any) => field.onChange(value)}
                     onBlur={field.onBlur}
-                    showMask={true}
-                    type="tel"
-                    placeholder={'+38 (___) ___-__-__'}
-                    className="h-11  border px-3 text-base shadow-sm transition-colors rounded-md input-focus  placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-background text-foreground border-input w-full"
+                    lazy={false}
+                    placeholder="+38 (___) ___-__-__"
+                    className="h-11 border px-3 text-base shadow-sm transition-colors rounded-md input-focus placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-background text-foreground border-input w-full"
                   />
                   {error && (
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2">

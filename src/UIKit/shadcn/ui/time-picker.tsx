@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { Clock } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select"
+import { Clock } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'
 
 interface TimePickerProps {
   value?: string
@@ -14,28 +14,28 @@ export function TimePicker({ value, onChange }: TimePickerProps) {
 
   return (
     <div className="flex gap-2">
-      <Select value={value?.split(':')[0]} onValueChange={(h) => onChange?.(`${h}:${value?.split(':')[1] || '00'}`)}>
+      <Select value={value?.split(':')[0]} onValueChange={h => onChange?.(`${h}:${value?.split(':')[1] || '00'}`)}>
         <SelectTrigger className="w-[110px]">
           <Clock className="mr-2 h-4 w-4" />
           <SelectValue placeholder="Год" />
         </SelectTrigger>
         <SelectContent>
-          {hours.map((hour) => (
+          {hours.map(hour => (
             <SelectItem key={hour} value={hour}>
               {hour}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
-      
+
       <span className="text-2xl">:</span>
-      
-      <Select value={value?.split(':')[1]} onValueChange={(m) => onChange?.(`${value?.split(':')[0] || '00'}:${m}`)}>
+
+      <Select value={value?.split(':')[1]} onValueChange={m => onChange?.(`${value?.split(':')[0] || '00'}:${m}`)}>
         <SelectTrigger className="w-[110px]">
           <SelectValue placeholder="Хв" />
         </SelectTrigger>
         <SelectContent>
-          {minutes.map((minute) => (
+          {minutes.map(minute => (
             <SelectItem key={minute} value={minute}>
               {minute}
             </SelectItem>

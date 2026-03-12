@@ -2,7 +2,7 @@ import { useEvents } from '../../events/presenters/useEvents'
 import { useMapStore } from '../../map/entities/map-store'
 import { useMap } from '../../map/presenters/useMap'
 
-export const useMapActions  = () => {
+export const useMapActions = () => {
   const {
     events,
     setEvents,

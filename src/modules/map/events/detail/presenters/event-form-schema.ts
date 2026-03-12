@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 export const createEventFormSchema = () => {
   return z.object({
+    id: z.number().optional().nullable(),
     locationLabel: z.string().min(1, "Обов'язкове поле"),
     latitude: z.number(),
     longitude: z.number(),

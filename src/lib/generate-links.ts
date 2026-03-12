@@ -16,7 +16,7 @@ interface GeneratorOptions {
   hasList?: boolean
   hasCreate?: boolean
   hasDetail?: boolean
-  title?:string
+  title?: string
   additionalLinks?: Array<{
     titleKey: string
     title: string

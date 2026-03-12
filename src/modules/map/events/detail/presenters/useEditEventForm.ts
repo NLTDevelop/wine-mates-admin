@@ -4,7 +4,6 @@ import { useEvent } from './useEvent'
 import { useUpdateEvent } from './useUpdateEvent'
 import { useEventForm } from './useEventForm'
 import { EventFormData } from './event-form-schema'
-import { Language } from '../../entities/types'
 
 export const useEditEventForm = () => {
   const location = useLocation()
@@ -33,7 +32,7 @@ export const useEditEventForm = () => {
         price: eventFromQuery.price,
         currency: eventFromQuery.currency,
         speakerName: eventFromQuery.speakerName,
-        language: (eventFromQuery.language as Language) || Language.UA,
+        language: eventFromQuery.language || 'UA',
         seats: eventFromQuery.seats,
         phoneNumber: eventFromQuery.phoneNumber,
         tastingType: eventFromQuery.tastingType,
