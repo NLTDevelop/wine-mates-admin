@@ -4,7 +4,7 @@ import { NLTDataTable } from '@/UIKit/components/NLTDataTable'
 import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
 import { ContentLayout } from '@/layout/components/content-layout'
 import { useNavigate } from 'react-router-dom'
-import { PATHS } from '@/navigation/paths'
+import { getWineDetailPath } from '@/navigation/paths'
 import { WinesFilters } from '..'
 import { useWineList } from '../../presenters/useWineList'
 import { useWineColumns } from '../../presenters/useWineColumns'
@@ -63,7 +63,7 @@ export const WineView = () => {
     }
   }
 
-  const columns = useWineColumns({ onEdit: wine => navigate(`/wines/${wine.id}?edit=true`), onDelete: deleteWine, onConfirm: confirmModal.open })
+  const columns = useWineColumns({ onEdit: wine => navigate(`${getWineDetailPath(wine.id)}?edit=true`), onDelete: deleteWine, onConfirm: confirmModal.open })
   const { table } = useDataTable(wines ?? [], columns)
 
   const modalActionTitle = wineToConfirm.isConfirm ? t('list.cancel_action') : t('list.confirm_action')
@@ -72,7 +72,7 @@ export const WineView = () => {
 
   const handleRowClick = (row: any) => {
     const wineId = row.original.id
-    navigate(PATHS.WINE_DETAIL.replace(':id', wineId))
+    navigate(getWineDetailPath(wineId))
   }
 
   const handleSubmit = async (data: any) => {

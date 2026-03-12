@@ -1,6 +1,7 @@
 import { useToast } from '@/hooks/shadcn/use-toast'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { LocateFixed, MousePointer } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface ActionsMapProps {
   getUserLocation: () => void
@@ -11,6 +12,7 @@ interface ActionsMapProps {
 
 export const ActionsMap = ({ getUserLocation, isLocating, setIsAddingMode, isAddingMode }: ActionsMapProps) => {
   const { toast } = useToast()
+  const { t } = useTranslation('map')
   return (
     <>
       <div className="flex gap-2 w-full">
@@ -23,7 +25,7 @@ export const ActionsMap = ({ getUserLocation, isLocating, setIsAddingMode, isAdd
             setIsAddingMode(!isAddingMode)
             if (!isAddingMode) {
               toast({
-                title: 'Клікніть на карті, щоб додати подію',
+                title: t('click_map'),
               })
             }
           }}
@@ -31,12 +33,12 @@ export const ActionsMap = ({ getUserLocation, isLocating, setIsAddingMode, isAdd
           variant={isAddingMode ? 'primary' : 'outline'}
         >
           <MousePointer className="h-4 w-4 mr-2" />
-          {isAddingMode ? 'Скасувати' : 'Додати подію на карті'}
+          {isAddingMode ? t('cancel') : t('add_event')}
         </Button>
       </div>
       {isAddingMode && (
         <div className="bg-blue-50 border border-blue-200 rounded-md p-2">
-          <p className="text-xs text-blue-700 text-center">👆 Клікніть на карті, щоб вказати місце проведення</p>
+          <p className="text-xs text-blue-700 text-center">{t('show_place')}</p>
         </div>
       )}
     </>

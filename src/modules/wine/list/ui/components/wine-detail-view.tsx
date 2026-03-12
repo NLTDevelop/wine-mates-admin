@@ -14,6 +14,7 @@ import { useReviews } from '../../presenters/useReviews'
 import { BarChart3, MessageSquare, Info } from 'lucide-react'
 import { ReviewsSection } from './detail/reviews-section'
 import { EditWineForm } from '@/modules/wine/create-wine/ui'
+import { getWineDetailPath, PATHS } from '@/navigation/paths'
 
 type TabType = 'details' | 'statistics' | 'reviews'
 
@@ -57,16 +58,16 @@ export const WineDetailView: React.FC = () => {
   const handleEditSuccess = () => {
     setIsEditing(false)
     refetch()
-    navigate(`/wines/${id}`, { replace: true })
+    navigate(getWineDetailPath(id), { replace: true })
   }
 
   const handleEditCancel = () => {
     setIsEditing(false)
-    navigate(`/wines/${id}`, { replace: true })
+    navigate(getWineDetailPath(id), { replace: true })
   }
 
   const handleVintageChange = (newWineId: string) => {
-    navigate(`/wines/${newWineId}`, { replace: true })
+    navigate(getWineDetailPath(newWineId), { replace: true })
     refetch()
   }
 

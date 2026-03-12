@@ -4,8 +4,8 @@ export type TastingType = (typeof TASTING_TYPES)[number]
 export const CURRENCIES = ['UAH', 'USD', 'EUR'] as const
 export type Currency = (typeof CURRENCIES)[number]
 
-export const LANGUAGES = ['UA', 'RU', 'EN', 'DE', 'FR'] as const
-export type Language = (typeof LANGUAGES)[number]
+export enum Language {  UA = 'UA',  EN = 'EN',  DE = 'DE',  FR = 'FR'}
+export const LANGUAGES = Object.values(Language) as [Language, ...Language[]]
 
 export const REPEAT_RULES = ['never', 'daily', 'weekly', 'monthly'] as const
 export type RepeatRule = (typeof REPEAT_RULES)[number]
@@ -31,7 +31,12 @@ export type MapEvent = {
   repeatRule: RepeatRule
   isActive: boolean
   isOnline: boolean
-  wineSet: number[] 
+  wineSet: number[]
+}
+
+export interface ICoordinate {
+  lat: number
+  lng: number
 }
 
 export type WineItem = {

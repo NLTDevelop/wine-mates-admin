@@ -16,7 +16,7 @@ import { AnalysisDetailView } from '@/modules/chemical-analysis/detail/ui'
 import { UserPropositionsView } from '@/modules/wine/user-propositions/ui'
 import { CreateTasteFormView } from '@/modules/wine/create-wine/ui'
 import { AiPromtView } from '@/modules/ai-promts/ui'
-import { mapRouters } from '@/modules/map/entities/map-routers'
+import { mapRouters } from '@/modules/map/general/entities/map-routers'
 
 const usersRoutes = [
   { path: PATHS.USERS, element: <UsersView /> },

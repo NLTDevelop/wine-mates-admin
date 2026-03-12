@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { MapEvent } from '@/modules/map/events/entities/types'
 import { Badge } from '@/UIKit/shadcn/ui/badge'
 import { Card } from '@/UIKit/shadcn/ui/card'
@@ -14,6 +15,7 @@ interface SearchInMapProps {
 }
 
 export const SearchInMap = ({ searchQuery, handleSearch, isSearching, searchResults, handleSelectSearchResult }: SearchInMapProps) => {
+  const { t } = useTranslation('map')
   return (
     <div className="relative">
       <SearchInput value={searchQuery} onChange={e => handleSearch(e.target.value)} />
@@ -35,7 +37,7 @@ export const SearchInMap = ({ searchQuery, handleSearch, isSearching, searchResu
         </Card>
       )}
 
-      {isSearching && searchResults.length === 0 && <Card className="absolute top-full left-0 right-0 mt-1 p-4 text-center text-gray-500 z-20">Нічого не знайдено</Card>}
+      {isSearching && searchResults.length === 0 && <Card className="absolute top-full left-0 right-0 mt-1 p-4 text-center text-gray-500 z-20">{t('not_found')}</Card>}
     </div>
   )
 }
