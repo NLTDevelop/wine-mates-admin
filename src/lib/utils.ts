@@ -169,15 +169,25 @@ export interface DisplayNames {
   nameEn: string
 }
 
-export const getDisplayNames = (translations: NameDictionary[]): DisplayNames => {
+export const getDisplayNames = (translations: NameDictionary[], field?: keyof NameDictionary): DisplayNames => {
   if (!translations || !Array.isArray(translations)) {
     return { nameUa: '', nameEn: '' }
   }
 
-  const nameUa = translations.find(t => t.language === 'uk')?.name || ''
-  const nameEn = translations.find(t => t.language === 'en')?.name || ''
+  const ukTranslation = translations.find(t => t.language === 'uk')
+  const enTranslation = translations.find(t => t.language === 'en')
 
-  return { nameUa, nameEn }
+  if (field && ukTranslation && enTranslation) {
+    return {
+      nameUa: (ukTranslation[field] as string) || '',
+      nameEn: (enTranslation[field] as string) || '',
+    }
+  }
+
+  return {
+    nameUa: ukTranslation?.name || '',
+    nameEn: enTranslation?.name || '',
+  }
 }
 
 export interface DisplayNameDescription extends DisplayNames {

@@ -15,4 +15,5 @@ export const PATHS = {
   ANALYSIS: '/analysis',
   ANALYSIS_DETAIL: '/analysis/:id',
   AI_PROMTS: '/features/ai-promts',
+  FAQ: '/faq',
 }
