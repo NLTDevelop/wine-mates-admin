@@ -1,1 +1,5 @@
 export * from './components/faq-view'
+export * from './components/create-topic-section'
+export * from './components/question-form'
+export * from './components/topic-form-field'
+export * from './components/question-list'

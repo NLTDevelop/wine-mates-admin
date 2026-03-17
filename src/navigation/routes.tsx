@@ -6,12 +6,12 @@ import { PrivateRoutes } from './privateRoutes'
 import { PublicRoutes } from './publicRoutes'
 import { DashboardView } from '@/modules/dashboard'
 import { AuthorizationView } from '@/modules/autorization'
-import { faq } from '@/modules/faq/enteties/faq-routes'
 import { winesAnalysis } from '@/modules/chemical-analysis/entities/analysis-routes'
 import { winesStats } from '@/modules/stats/entities/stats-routes'
 import { winesRoutes } from '@/modules/wine/wines-routes'
 import { featuresRoutes } from '@/modules/features/enteties/featutes-routes'
 import { usersRoutes } from '@/modules/users/entities/users-routes'
+import { faq } from '@/modules/faq/entities/faq-routes'
 
 export const Router: FC = () => {
   const routes = useRoutes([

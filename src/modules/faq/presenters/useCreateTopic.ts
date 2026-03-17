@@ -1,64 +1,66 @@
 import { useCallback, useState } from 'react'
-import { IQuestion, TopicCreate } from '../enteties/types'
-import { useFaqStore } from '../enteties/faq-store'
+import { createTranslations, getDisplayNames } from '@/lib/utils'
+import { CreateTopicParams, CreateTopicRequest } from '../entities/types/types'
+import { NameDictionary } from '@/modules/wine/create/general/entities/types'
 
 interface UseCreateTopicProps {
-  onCreateTopic: (topicData: TopicCreate) => void
+  onCreateGroup: (groupData: CreateTopicRequest) => void
   isLoading?: boolean
 }
 
-interface useCreateTopicReturn {
+interface UseCreateTopicsReturn {
   isExpanded: boolean
-  formData: TopicCreate
-  canCreateTopic: boolean
+  formData: Omit<CreateTopicParams, 'sortNumber' | 'questions'>
+  canCreateGroup: boolean
   setIsExpanded: (expanded: boolean) => void
-  updateFormData: (field: 'topicName' | 'questions' , value: string | IQuestion[]) => void
-  handleCreateTopic: () => void
+  updateFormData: (field: 'translations', value: string | NameDictionary[]) => void
+  handleCreateGroup: () => void
   handleCancel: () => void
   expandForm: () => void
 }
 
-export const useCreateTopic = ({ onCreateTopic }: UseCreateTopicProps): useCreateTopicReturn => {
+export const useCreateTopic = ({ onCreateGroup }: UseCreateTopicProps): UseCreateTopicsReturn => {
   const [isExpanded, setIsExpanded] = useState(false)
-   const resetCurrentQuestions = useFaqStore(s => s.resetCurrentQuestions)
 
-  const initialData = { topicName: '', questions: [], }
-  const [formData, setFormData] = useState<TopicCreate>(initialData)
+  const initialData = { translations: createTranslations('', '') }
+  const [formData, setFormData] = useState<Omit<CreateTopicParams, 'sortNumber' | 'questions'>>(initialData)
 
-  const updateFormData = useCallback((field: 'topicName' | 'questions' , value: string | IQuestion[]) => {
+  const updateFormData = useCallback((field: keyof CreateTopicParams, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }, [])
 
-  const handleCreateTopic = () => {
-    console.log("На збереження->",formData)
-    if (canCreateTopic) {
-      onCreateTopic(formData)
+  const handleCreateGroup = () => {
+    if (canCreateGroup) {
+      const groupDataForApi: CreateTopicRequest = {
+        translations: formData.translations || [],
+      }
+
+      onCreateGroup(groupDataForApi)
       setFormData(initialData)
       setIsExpanded(false)
-      resetCurrentQuestions()
     }
   }
 
   const handleCancel = () => {
     setFormData(initialData)
     setIsExpanded(false)
-    resetCurrentQuestions()
   }
 
   const expandForm = () => {
     setIsExpanded(true)
   }
 
-  const canCreateTopic = !!formData.topicName
+  const { nameUa, nameEn } = getDisplayNames(formData.translations || [])
+  const canCreateGroup = !!(nameUa && nameEn)
 
   return {
     isExpanded,
     formData,
-    canCreateTopic,
+    canCreateGroup,
 
     setIsExpanded,
     updateFormData,
-    handleCreateTopic,
+    handleCreateGroup,
     handleCancel,
     expandForm,
   }
