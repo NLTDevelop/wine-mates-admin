@@ -1,14 +1,12 @@
 import { keepPreviousData, useMutation, useQuery, UseQueryResult } from '@tanstack/react-query'
 import { useCallback, useState } from 'react'
 import { useDebounce } from '@/hooks/ui/useDebounce'
-
 import { Image, IWines, UpdateWineListParams, WineImage, WinesResponse } from '../entities/types/types'
 import { useWineStore } from '../entities/wine-list-store'
 import { wineQueries } from '../entities/wine-list-queries'
 import { WineFormData } from '../../create-wine/presenters/wine-form-schema'
 import { useToast } from '@/hooks/shadcn/use-toast'
 import { useTranslation } from 'react-i18next'
-
 import { SORT_FIELDS } from '@/constatnts/wine-filters'
 
 export const useWineList = () => {
@@ -28,8 +26,9 @@ export const useWineList = () => {
     ...wineQueries.list(filters),
     placeholderData: keepPreviousData,
     staleTime: 2000,
+    gcTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
   })
   const updateWineMutation = useMutation(wineQueries.update())
   const deleteWineMutation = useMutation({

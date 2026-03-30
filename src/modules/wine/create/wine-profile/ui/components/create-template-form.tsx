@@ -93,7 +93,7 @@ export const CreateTemplateForm = ({ editingProfileId, setEditingProfileId }: Cr
 
   return (
     <div className="flex gap-3">
-      <Card className="border-1 border-dashed p-0 w-1/2">
+      <Card className="border border-dashed p-0 w-1/2">
         <CardContent className="md:p-0 sm:p-0">
           <CardHeader className="px-0 py-1 border-none mb-3">
             <h3 className="text-lg font-medium flex items-center gap-2">
@@ -116,6 +116,7 @@ export const CreateTemplateForm = ({ editingProfileId, setEditingProfileId }: Cr
             handleCancel={handleCancelWithReset}
             canSaveProfile={canSaveProfile}
             isLoadingProfile={isLoadingProfile}
+            isEdit={!!editingProfileId}
           />
         </CardContent>
       </Card>

@@ -4,6 +4,7 @@ export interface CreateWineProfileRequest {
   selectedAromas: SelectedAroma[]
   selectedFlavors: SelectedFlavor[]
   selectedTasteCharacteristics: number[]
+  image: File
 }
 
 export interface UpdateWineProfileParams {
@@ -15,6 +16,17 @@ export interface NewWineProfile {
   selectedAromas: SelectedAroma[]
   selectedFlavors: SelectedFlavor[]
   selectedTasteCharacteristics: number[]
+  image: File
+}
+
+export interface ImageItem {
+  id: number
+  src: string
+  alt: string
+  smallUrl?: string
+  mediumUrl?: string
+  originalUrl?: string
+  originalName?: string
 }
 
 export interface SelectedAroma {
@@ -64,6 +76,7 @@ export interface IWineProfile {
   id: string
   type: IOption
   color: IOptionWithColor
+  image: File
 }
 export interface IWineProfileDetail {
   id: string
@@ -72,4 +85,5 @@ export interface IWineProfileDetail {
   selectedAromas: IAromaGroup[]
   selectedFlavors: IFlavorGroup[]
   selectedTasteCharacteristics: ITasteCharacteristics[]
+  image?: ImageItem | string
 }

@@ -1,5 +1,6 @@
+import { defaultImages } from '../enteties/profile-store'
 import { Group, Subgroup, IItem } from '../enteties/types/items-types'
-import { ISubgroup } from '../enteties/types/types'
+import { ImageItem, ISubgroup } from '../enteties/types/types'
 
 export const mapResultDataToGroups = <TItem extends IItem>(data: any[]): Group<Subgroup<TItem>>[] => {
   return data.map(group => {
@@ -92,3 +93,18 @@ export const mapGroupsForCreate = <TItem extends IItem>(groups: Group<Subgroup<T
       items: sub.items ?? [],
     })),
   }))
+
+export const mapServerImageToLocal = (serverImage: any): ImageItem | null => {
+  if (!serverImage) return null
+
+  if (serverImage.originalName) {
+    const matched = defaultImages.find(img => img.alt === serverImage.originalName)
+    if (matched) return matched
+  }
+
+  return {
+    id: Date.now(),
+    src: serverImage.smallUrl || serverImage.src || '',
+    alt: serverImage.originalName || serverImage.alt || 'Image',
+  }
+}
