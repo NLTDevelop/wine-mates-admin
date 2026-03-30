@@ -81,7 +81,7 @@ export const WineTypeForm: React.FC<WineTypeFormProps> = ({ formData, onFormData
       </div>
 
       <div className="flex gap-3 justify-end mt-4">
-        <Button size="sm" variant="ghost" className="border-1 hover:bg-muted-foreground hover:text-input sm:w-auto w-full" onClick={onCancel} disabled={isLoading}>
+        <Button size="sm" variant="ghost" className="border hover:bg-muted-foreground hover:text-input sm:w-auto w-full" onClick={onCancel} disabled={isLoading}>
           {tc('button.cancel')}
         </Button>
         <Button size="sm" onClick={onSave} disabled={!canSave} className="sm:w-auto w-full">

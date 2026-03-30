@@ -5,6 +5,7 @@ import { Palette } from 'lucide-react'
 import { CharacteristicItem, ItemResult } from '..'
 import { IOption, IOptionWithColor } from '../../enteties/types/types'
 import { Group, Subgroup, TasteLevelItem } from '../../enteties/types/items-types'
+import { useProfileStore } from '../../enteties/profile-store'
 
 interface ResultSectionProps {
   wineType: any
@@ -18,12 +19,13 @@ export const ResultSection = ({ wineType, wineColor, resultAromasDataGroups, res
   const { t } = useTranslation('wine_profile')
 
   const [openAccordionId, setOpenAccordionId] = useState<string | null>(null)
+  const { selectedImage } = useProfileStore()
 
   const handleToggleAccordion = (id: string) => {
     setOpenAccordionId(prevId => (prevId === id ? null : id))
   }
   return (
-    <Card className="border-1 border-dashed p-0 w-1/2">
+    <Card className="border border-dashed p-0 w-1/2">
       <CardContent className="md:p-0 sm:p-0">
         <CardHeader className="px-0 py-1 border-none mb-3">
           <h3 className="text-lg font-medium flex items-center gap-2">
@@ -31,12 +33,18 @@ export const ResultSection = ({ wineType, wineColor, resultAromasDataGroups, res
             {t('result')}
           </h3>
         </CardHeader>
-
-        <div className="space-y-4">
-          <div className="flex items-center justify-center gap-2 p-3 text-foreground font-bold text-xl">
+        <div className="flex">
+          {!!selectedImage && (
+            <div key={selectedImage.id} className="relative cursor-pointer group  w-20 py-4">
+              <img src={selectedImage?.src} alt={selectedImage?.alt} className="w-full h-40 object-cover rounded-lg shadow-md" />
+            </div>
+          )}
+          <div className="flex flex-1 items-start justify-center gap-2 p-3 text-foreground font-bold text-xl">
             {wineType && <span>{wineType}</span>}
             {wineType && wineColor && <span>- {wineColor}</span>}
           </div>
+        </div>
+        <div className="space-y-4">
           {resultAromasDataGroups.length > 0 && (
             <CharacteristicItem
               id="aroma_result"

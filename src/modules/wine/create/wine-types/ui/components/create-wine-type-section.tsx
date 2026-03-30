@@ -32,7 +32,7 @@ export const CreateWineTypeSection = ({ onCreateWineType, isLoading = false }: C
   }
 
   return (
-    <Card className="border-1 border-dashed p-0">
+    <Card className="border border-dashed p-0">
       <CardContent className="md:p-0 sm:p-0">
         <CardHeader className="px-0 py-1 border-none mb-3">
           <h3 className="text-lg font-medium flex items-center gap-2">
