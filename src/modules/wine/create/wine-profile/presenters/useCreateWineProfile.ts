@@ -20,13 +20,12 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
   const [isExpanded, setIsExpanded] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editingProfileId, setEditingProfileId] = useState<string | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [selectedType, setSelectedType] = useState('')
   const [selectedColor, setSelectedColor] = useState('')
 
   const { selectedImage, setSelectedImage, resetSelectedImage } = useProfileStore()
-  const { getImageFile, isLoading: isImageLoading } = useImageFile()
+  const { getImageFile } = useImageFile()
 
   const baseAromaGroups = useMemo(() => structuredClone(aromaGroups), [aromaGroups])
 
@@ -92,6 +91,7 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
             aromas: s.selectedItems.filter((id: number | string): id is number | string => id != null).map((id: number | string) => Number(id)),
           })),
       }))
+
       .filter(g => g.aromaSubgroups.length > 0)
 
     const selectedFlavors = flavors.groups
@@ -119,29 +119,27 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
       selectedTasteCharacteristics,
       image: imageFile,
     }
-  }, [aromas, flavors, characteristic, selectedType, selectedColor, selectedImage, getImageFile])
+  }, [aromas, flavors, characteristic, selectedType, selectedColor])
 
-  const resetForm = useCallback(
-    (_?: { type?: string; color?: string }) => {
-      setSelectedType('')
-      setSelectedColor('')
-      resetSelectedImage()
+  const resetForm = useCallback((_?: { type?: string; color?: string }) => {
+    setSelectedType('')
+    setSelectedColor('')
+    resetSelectedImage()
 
-      aromas.initializeFromData(mapProfileToGroups(aromaGroups, [], 'aroma'))
-      flavors.initializeFromData(mapProfileToGroups(flavorGroups, [], 'flavor'))
-      characteristic.reset()
+    aromas.initializeFromData(mapProfileToGroups(aromaGroups, [], 'aroma'))
+    flavors.initializeFromData(mapProfileToGroups(flavorGroups, [], 'flavor'))
+    characteristic.reset()
 
-      setIsEditing(false)
-      setEditingProfileId(null)
-    },
-    [aromaGroups, flavorGroups, resetSelectedImage]
-  )
+    setIsEditing(false)
+    setEditingProfileId(null)
+  }, [])
 
   const resetGroupsOnly = useCallback(() => {
     aromas.reset()
     flavors.reset()
     characteristic.reset()
-  }, [])
+    resetSelectedImage()
+  }, [flavorGroups])
 
   const expandForm = () => {
     aromas.initializeFromData(mapProfileToGroups(aromaGroups, [], 'aroma'))
@@ -150,7 +148,6 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
 
     setSelectedType('')
     setSelectedColor('')
-    resetSelectedImage()
 
     setIsExpanded(true)
     setIsEditing(false)
@@ -178,37 +175,21 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
     resetSelectedImage()
   }
 
-  const handleSaveProfile = useCallback(async () => {
-    setIsSubmitting(true)
-    try {
-      const payload = await buildProfileData()
+  const handleSaveProfile = async () => {
+    const payload = await buildProfileData()
 
-      if (isEditing && editingProfileId) {
-        const updatePayload: UpdateWineProfileParams = {
-          profileId: editingProfileId,
-          newProfile: {
-            selectedAromas: payload.selectedAromas,
-            selectedFlavors: payload.selectedFlavors,
-            selectedTasteCharacteristics: payload.selectedTasteCharacteristics,
-            image: payload.image,
-          },
-        }
-        onUpdateProfile(updatePayload)
-        closeEditMode()
-      } else {
-        onCreateProfile(payload)
-        resetForm({
-          type: types[0]?.id.toString() ?? '',
-          color: colors[0]?.id.toString() ?? '',
-        })
-        setIsExpanded(false)
-      }
-    } catch (error) {
-      console.error('Error saving profile:', error)
-    } finally {
-      setIsSubmitting(false)
+    if (isEditing && editingProfileId) {
+      onUpdateProfile({ profileId: editingProfileId, newProfile: payload })
+      closeEditMode()
+    } else {
+      onCreateProfile(payload)
+      resetForm({
+        type: types[0]?.id.toString() ?? '',
+        color: colors[0]?.id.toString() ?? '',
+      })
+      setIsExpanded(false)
     }
-  }, [buildProfileData, isEditing, editingProfileId, onUpdateProfile, onCreateProfile, resetForm, types, colors])
+  }
 
   const initializeDeletedFlagsFromProfile = (profile: IWineProfileDetail) => {
     const deletedAromaGroups: number[] = []
@@ -286,8 +267,6 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
   return {
     isExpanded,
     isEditing,
-    isSubmitting,
-    isImageLoading,
 
     selectedType,
     selectedColor,
