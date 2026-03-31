@@ -146,6 +146,14 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
     flavors.resetAll()
     characteristic.resetAll()
 
+    aromas.setDeletedGroups([])
+    aromas.setDeletedSubgroups([])
+
+    flavors.setDeletedGroups([])
+    flavors.setDeletedSubgroups([])
+
+    characteristic.setDeletedGroups([])
+
     setSelectedType('')
     setSelectedColor('')
 
