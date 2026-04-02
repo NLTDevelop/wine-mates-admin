@@ -85,7 +85,7 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
       .map(g => ({
         aromaGroupId: g.id,
         aromaSubgroups: g.subgroups
-          .filter((s: any) => !aromas.isSubgroupDeleted(g.id, s.id) && s.selectedItems.length > 0)
+          .filter((s: any) => !aromas.isSubgroupDeleted(g.id, s.id))
           .map((s: any) => ({
             aromaSubgroupId: s.id,
             aromas: s.selectedItems.filter((id: number | string): id is number | string => id != null).map((id: number | string) => Number(id)),
