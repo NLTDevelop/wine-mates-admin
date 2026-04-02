@@ -110,7 +110,7 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
     } catch (error) {
       imageFile = await getImageFile(defaultImages[0])
     }
-    console.log('selectedAromas', selectedAromas)
+
     return {
       typeId: Number(selectedType),
       colorId: Number(selectedColor),
