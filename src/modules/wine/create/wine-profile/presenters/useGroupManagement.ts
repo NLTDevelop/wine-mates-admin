@@ -62,6 +62,7 @@ export function useGroupManagement<TItem extends IItem, TSubgroup extends Subgro
   const [deletedSubgroups, setDeletedSubgroups] = useState<string[]>([])
 
   const deleteGroup = useCallback((groupId: number) => {
+    console.log("groupId->",groupId)
     setGroups(prev =>
       prev.map(group =>
         group.id === groupId

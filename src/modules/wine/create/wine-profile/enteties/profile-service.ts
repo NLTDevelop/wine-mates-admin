@@ -28,6 +28,9 @@ export const wineProfileService = {
       formData.append('image', image)
     }
 
+    for (const pair of formData.entries()) {
+  console.log(pair[0], pair[1]);
+}
     return api.post(WINE_PROFILE_ENDPOINTS.CREATE, formData).then(response => response.data)
   },
 
