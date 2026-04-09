@@ -8,7 +8,7 @@ const AppHeaderContent = () => {
   const { isMobile } = useSidebar()
 
   return (
-    <header className={cn('flex z-40 h-16 shrink-0 items-center justify-between gap-2 px-4 w-full md:bg-transparent bg-gray-100', !isMobile && 'absolute right-0 w-[80px]')}>
+    <header className={cn('flex z-40 h-16 shrink-0 items-center justify-between gap-2 px-4 w-full md:bg-transparent bg-gray-100', !isMobile && 'absolute right-0 w-20')}>
       <SidebarTrigger className="md:hidden" />
 
       <div className="flex-1 text-right">
@@ -25,7 +25,7 @@ export default function Layout() {
         <AppSidebar className="bg-background" side="left" />
         <div className="flex-1 flex flex-col min-w-0">
           <AppHeaderContent />
-          <div className="flex-1 !overflow-auto bg-gray-100">
+          <div className="flex-1 overflow-auto! bg-gray-100">
             <div className="sm:p-4 px-2 pt-0">
               <Outlet />
             </div>

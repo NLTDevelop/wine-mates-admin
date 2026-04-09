@@ -1,7 +1,0 @@
-export * from './basic-info-section'
-export * from './date-time-section'
-export * from './event-form'
-export * from './location-info'
-export * from './price-seats-section'
-export * from './speaker-contact-section'
-export * from './type-settings-section'

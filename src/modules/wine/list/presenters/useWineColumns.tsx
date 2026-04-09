@@ -21,7 +21,7 @@ interface WineTableProps {
 }
 
 const COLUMN_WIDTHS = {
-  ACTIONS: 50,
+  ACTIONS: 100,
   NAME: 200,
   COLOR: 120,
   PRODUCER: 180,
@@ -30,7 +30,7 @@ const COLUMN_WIDTHS = {
   VINTAGE: 100,
   COUNTRY: 140,
   REGION: 140,
-  IMAGES: 80,
+  IMAGES: 120,
 } as const
 
 export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) => {

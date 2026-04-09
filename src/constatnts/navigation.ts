@@ -37,7 +37,6 @@ export const LINKS = {
     hasList: true,
     title: 'events_list',
     hasDetail: true,
-    additionalLinks: [{ titleKey: 'map', title: 'map', url: PATHS.MAP }],
   }),
 }
 

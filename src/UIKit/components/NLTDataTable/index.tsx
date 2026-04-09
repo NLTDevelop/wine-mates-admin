@@ -57,7 +57,7 @@ export function NLTDataTable<T>({ hasActiveFilters, clearColumnFilters, table, r
       </div>
       <div className="rounded-md border overflow-x-auto border-input">
         <Table
-          className="min-w-full"
+          className="min-w-full table-fixed"
           style={{
             width: table.getTotalSize(),
           }}
