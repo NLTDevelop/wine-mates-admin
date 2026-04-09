@@ -20,6 +20,15 @@ export const SORT_FIELDS: Record<string, string> = {
   color: 'color',
 } as const
 
+export const EVENT_SORT_FIELDS: Record<string, string> = {
+  minPrice: 'minPrice',
+  maxPrice: 'maxPrice',
+  dateFrom: 'dateFrom',
+  dateTo: 'dateTo',
+  isActive: 'isActive',
+  country: 'countryId',
+} as const
+
 export const FILTER_COLUMN_MAP: Record<string, string> = {
   country: 'countryId',
   region: 'regionId',

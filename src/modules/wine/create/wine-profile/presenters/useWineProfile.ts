@@ -16,7 +16,6 @@ export const useWineProfile = () => {
   const store = useProfileStore()
 
   const formDataQuery = useQuery(wineProfileQueries.formData())
- 
 
   const types = useMemo(() => formDataQuery.data?.types ?? [], [formDataQuery.data])
   const colors = useMemo(() => formDataQuery.data?.colors ?? [], [formDataQuery.data])

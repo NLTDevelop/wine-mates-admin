@@ -7,9 +7,9 @@ import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@/UIKit/shadcn/ui/checkbox'
 import { useWineFilters } from './useWineFilters'
 import { useWineList } from './useWineList'
-import { SortableHeader } from '../ui/components/table-headers/sortable-header'
-import { FilterableHeader } from '../ui/components/table-headers/filterable-header'
-import { SortableFilterableHeader } from '../ui/components/table-headers/filterable-sortable-header'
+import { SortableHeader } from '../../../../UIKit/app-components/table-headers/sortable-header'
+import { FilterableHeader } from '../../../../UIKit/app-components/table-headers/filterable-header'
+import { SortableFilterableHeader } from '../../../../UIKit/app-components/table-headers/filterable-sortable-header'
 import { useRegionOptions } from '../../create-wine/presenters/useRegionOptions'
 
 const columnHelper = createColumnHelper<IWines>()
@@ -21,7 +21,7 @@ interface WineTableProps {
 }
 
 const COLUMN_WIDTHS = {
-  ACTIONS: 50,
+  ACTIONS: 100,
   NAME: 200,
   COLOR: 120,
   PRODUCER: 180,
@@ -30,7 +30,7 @@ const COLUMN_WIDTHS = {
   VINTAGE: 100,
   COUNTRY: 140,
   REGION: 140,
-  IMAGES: 80,
+  IMAGES: 120,
 } as const
 
 export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) => {

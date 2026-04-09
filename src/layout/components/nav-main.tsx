@@ -52,7 +52,7 @@ export function NavMain({
                     className={cn(
                       'h-10 relative transition-colors duration-300',
                       !isDashboard && ['hover:bg-primary hover:text-primary-foreground', isActive && 'bg-primary text-primary-foreground'],
-                      isDashboard && ['title-sidebar text-background', 'hover:!bg-transparent hover:!title-sidebar']
+                      isDashboard && ['title-sidebar text-background', 'hover:bg-transparent! hover:!title-sidebar']
                     )}
                   >
                     <Link to={item.url} onClick={handleLinkClick}>
@@ -67,7 +67,7 @@ export function NavMain({
                       className={cn(
                         'h-10 relative transition-colors duration-300  cursor-pointer',
                         !isDashboard && ['hover:bg-primary hover:text-primary-foreground', isActive && 'bg-primary text-primary-foreground'],
-                        isDashboard && ['title-sidebar', 'hover:!bg-transparent hover:!title-sidebar']
+                        isDashboard && ['title-sidebar', 'hover:bg-transparent! hover:!title-sidebar']
                       )}
                     >
                       {item.icon && <item.icon className={isActive ? 'text-primary-foreground' : 'text-input'} />}
