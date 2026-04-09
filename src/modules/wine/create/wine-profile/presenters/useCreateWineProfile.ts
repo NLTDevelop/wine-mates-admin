@@ -1,7 +1,9 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { CreateWineProfileRequest, ISubgroup, IWineProfileDetail, UpdateWineProfileParams } from '../enteties/types/types'
 import { useGroupManagement } from './useGroupManagement'
-import { mapProfileToGroups, mapResultDataToGroups } from './wineProfileAdapters'
+import { mapProfileToGroups, mapResultDataToGroups, mapServerImageToLocal } from './wineProfileAdapters'
+import { defaultImages, useProfileStore } from '../enteties/profile-store'
+import { useImageFile } from './useImageFile'
 
 interface UseCreateWineProfileProps {
   types: any[]
@@ -21,6 +23,9 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
 
   const [selectedType, setSelectedType] = useState('')
   const [selectedColor, setSelectedColor] = useState('')
+
+  const { selectedImage, setSelectedImage, resetSelectedImage } = useProfileStore()
+  const { getImageFile } = useImageFile()
 
   const baseAromaGroups = useMemo(() => structuredClone(aromaGroups), [aromaGroups])
 
@@ -74,13 +79,13 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
 
   const canSaveProfile = Boolean(selectedType && selectedColor)
 
-  const buildProfileData = useCallback((): CreateWineProfileRequest => {
+  const buildProfileData = useCallback(async (): Promise<CreateWineProfileRequest> => {
     const selectedAromas = aromas.groups
       .filter(g => !aromas.isGroupDeleted(g.id))
       .map(g => ({
         aromaGroupId: g.id,
         aromaSubgroups: g.subgroups
-          .filter((s: any) => !aromas.isSubgroupDeleted(g.id, s.id) && s.selectedItems.length > 0)
+          .filter((s: any) => !aromas.isSubgroupDeleted(g.id, s.id))
           .map((s: any) => ({
             aromaSubgroupId: s.id,
             aromas: s.selectedItems.filter((id: number | string): id is number | string => id != null).map((id: number | string) => Number(id)),
@@ -99,18 +104,27 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
 
     const selectedTasteCharacteristics = characteristic.groups.filter(ch => !characteristic.isGroupDeleted(ch.id)).map(ch => Number(ch.id))
 
+    let imageFile: File
+    try {
+      imageFile = await getImageFile(selectedImage)
+    } catch (error) {
+      imageFile = await getImageFile(defaultImages[0])
+    }
+
     return {
       typeId: Number(selectedType),
       colorId: Number(selectedColor),
       selectedAromas,
       selectedFlavors,
       selectedTasteCharacteristics,
+      image: imageFile,
     }
   }, [aromas, flavors, characteristic, selectedType, selectedColor])
 
   const resetForm = useCallback((_?: { type?: string; color?: string }) => {
     setSelectedType('')
     setSelectedColor('')
+    resetSelectedImage()
 
     aromas.initializeFromData(mapProfileToGroups(aromaGroups, [], 'aroma'))
     flavors.initializeFromData(mapProfileToGroups(flavorGroups, [], 'flavor'))
@@ -124,12 +138,21 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
     aromas.reset()
     flavors.reset()
     characteristic.reset()
+    resetSelectedImage()
   }, [flavorGroups])
 
   const expandForm = () => {
     aromas.initializeFromData(mapProfileToGroups(aromaGroups, [], 'aroma'))
     flavors.resetAll()
     characteristic.resetAll()
+
+    aromas.setDeletedGroups([])
+    aromas.setDeletedSubgroups([])
+
+    flavors.setDeletedGroups([])
+    flavors.setDeletedSubgroups([])
+
+    characteristic.setDeletedGroups([])
 
     setSelectedType('')
     setSelectedColor('')
@@ -142,6 +165,7 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
     aromas.initializeFromData(mapProfileToGroups(aromaGroups, [], 'aroma'))
     flavors.initializeFromData(mapProfileToGroups(flavorGroups, [], 'flavor'))
     characteristic.initializeFromData(mapProfileToGroups(tasteCharacteristics, [], 'characteristic'))
+    resetSelectedImage()
     if (isEditing) {
       setIsExpanded(false)
       setIsEditing(false)
@@ -156,10 +180,11 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
     setIsExpanded(false)
     setEditingProfileId(null)
     originalRef.current = null
+    resetSelectedImage()
   }
 
-  const handleSaveProfile = () => {
-    const payload = buildProfileData()
+  const handleSaveProfile = async () => {
+    const payload = await buildProfileData()
 
     if (isEditing && editingProfileId) {
       onUpdateProfile({ profileId: editingProfileId, newProfile: payload })
@@ -205,23 +230,6 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
       }
     })
 
-    // flavors.groups.forEach(group => {
-    //   const profileGroup = profile.selectedFlavors.find(g => g.id === group.id)
-
-    //   if (!profileGroup) {
-    //     deletedFlavorGroups.push(group.id)
-    //     return
-    //   }
-
-    //   const profileFlavorIds = new Set((profileGroup.flavors ?? []).map(f => f.id))
-
-    //   group.subgroups.forEach((item: any) => {
-    //     if (!profileFlavorIds.has(item.id)) {
-    //       deletedFlavorSubgroups.push(`${group.id}-${item.id}`)
-    //     }
-    //   })
-    // })
-
     const deletedCharacteristicGroups = characteristic.groups.filter(char => !profile.selectedTasteCharacteristics.some(selected => selected.id === char.id)).map(char => char.id)
 
     aromas.setDeletedGroups(deletedAromaGroups)
@@ -236,6 +244,17 @@ export const useCreateWineProfile = ({ types, colors, aromaGroups, flavorGroups,
   const initializeFormFromProfile = (profile: IWineProfileDetail) => {
     setSelectedType(profile.type?.id?.toString() ?? '')
     setSelectedColor(profile.color?.id?.toString() ?? '')
+
+    if (profile.image) {
+      const localImage = mapServerImageToLocal(profile.image)
+      if (localImage) {
+        setSelectedImage(localImage)
+      } else {
+        resetSelectedImage()
+      }
+    } else {
+      resetSelectedImage()
+    }
 
     aromas.initializeFromData(mapProfileToGroups(aromaGroups, profile.selectedAromas, 'aroma'))
     flavors.initializeFromData(mapProfileToGroups(flavorGroups, profile.selectedFlavors, 'flavor'))

@@ -26,7 +26,7 @@ export const PaletteItemActions = ({ cardTextColorClass, onEdit, showEditButton 
           className={cn(isHeader && cardTextColorClass, 'p-1.5 opacity-70 hover:opacity-100 flex-shrink-0 cursor-pointer')}
           title="Edit"
         >
-          <PenLine className="h-4 w-4" />
+          <PenLine className={cn('h-4 w-4', !cardTextColorClass && 'text-green-700')} />
         </div>
       )}
 
@@ -39,7 +39,7 @@ export const PaletteItemActions = ({ cardTextColorClass, onEdit, showEditButton 
         className={cn(isHeader && cardTextColorClass, 'p-1.5 opacity-70 hover:opacity-100 flex-shrink-0 cursor-pointer')}
         title="Delete"
       >
-        <Trash2 className="w-4.5 h-4.5" />
+        <Trash2 className={cn('w-4.5 h-4.5', !cardTextColorClass && 'text-red-600')} />
       </div>
     </div>
   )

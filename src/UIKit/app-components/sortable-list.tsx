@@ -8,9 +8,17 @@ interface SortableListProps<T> {
   strategy?: 'vertical' | 'grid'
   children: React.ReactNode
   getId?: (item: T, index: number) => string
+  contextId?: string
 }
 
-export const SortableList = <T,>({ items, onReorder, strategy = 'vertical', children, getId = (item: any, index: number) => item.id || `item-${index}` }: SortableListProps<T>) => {
+export const SortableList = <T,>({
+  items,
+  onReorder,
+  strategy = 'vertical',
+  children,
+  getId = (item: any, index: number) => item.id || `item-${index}`,
+  contextId = 'default-sortable-context',
+}: SortableListProps<T>) => {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -35,7 +43,7 @@ export const SortableList = <T,>({ items, onReorder, strategy = 'vertical', chil
   const sortableStrategy = strategy === 'grid' ? rectSortingStrategy : verticalListSortingStrategy
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+    <DndContext id={contextId} sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={items?.map((item, index) => getId(item, index))} strategy={sortableStrategy}>
         {children}
       </SortableContext>

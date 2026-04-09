@@ -23,6 +23,7 @@ export interface NameDictionary {
   id?: string
   name: string
   language: Language
+  [key: string]: string | undefined
 }
 
 export type ReorderEntityType = 'color' | 'flavors' | 'tastes' | 'taste-characteristics' | 'wine-types'

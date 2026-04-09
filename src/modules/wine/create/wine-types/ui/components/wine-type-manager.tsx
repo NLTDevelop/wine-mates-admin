@@ -100,7 +100,7 @@ export const WineTypeManager = () => {
                   <div
                     key={`${wineType.id}-${idx}`}
                     className={cn(
-                      'border-1 border-input rounded-md transition-all cursor-default',
+                      'border border-input rounded-md transition-all cursor-default',
                       isEditing && 'rounded-md bg-card text-card-foreground shadow-sm card-spacing box-border border-border transition-colors border-dashed p-0'
                     )}
                   >

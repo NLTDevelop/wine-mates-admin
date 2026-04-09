@@ -1,4 +1,4 @@
-import { BarChart3, Beaker, Cog, MapPinned, Users, Wine } from 'lucide-react'
+import { BarChart3, Beaker, Cog, HelpCircle, MapPinned, Users, Wine } from 'lucide-react'
 import { generateLinks } from '@/lib/generate-links'
 import { PATHS } from '@/navigation/paths'
 
@@ -38,6 +38,7 @@ export const LINKS = {
     title: 'events_list',
     hasDetail: true,
   }),
+  faq: generateLinks('faq'),
 }
 
 export const NAV_LINKS = [
@@ -48,4 +49,5 @@ export const NAV_LINKS = [
   { ...LINKS.stats.root, icon: BarChart3, isActive: false },
   { ...LINKS.analysis.root, icon: Beaker, isActive: false, items: [LINKS.analysis.list] as NavSubItem[] },
   { ...LINKS.events.root, icon: MapPinned, isActive: false, items: [LINKS.events.list, ...Object.values(LINKS.events.additional || {})] as NavSubItem[] },
+  { ...LINKS.faq.root, icon: HelpCircle, isActive: false },
 ]

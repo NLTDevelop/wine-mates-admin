@@ -19,6 +19,7 @@ export const PATHS = {
   EVENTS_NEW: '/events/new',
   EVENTS_DETAIL: '/events/:id',
   MAP: '/events/map',
+  FAQ: '/faq',
 }
 
 export const getWineDetailPath = (id?: number | string) => `/wines/${id}`

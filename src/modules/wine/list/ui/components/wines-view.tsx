@@ -90,7 +90,7 @@ export const WineView = () => {
 
   return (
     <ContentLayout title={t('list.wines_list')}>
-      <div className="flex justify-end items-center gap-2 mb-4 min-h-[40px]">
+      <div className="flex justify-end items-center gap-2 mb-4 min-h-10">
         <Button onClick={importWines.openModal}>
           <File className="w-4 h-4 mr-2" />
           {t('button.import')}
@@ -131,7 +131,7 @@ export const WineView = () => {
         onClose={confirmModal.close}
         onSubmit={!wineToConfirm.isConfirm ? confirmModal.confirm : confirmModal.reject}
       >
-        <div className="p-[1px]">
+        <div className="p-px">
           <p>{modalMessage}</p>
         </div>
       </ConfirmModal>

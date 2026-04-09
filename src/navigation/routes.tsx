@@ -1,9 +1,9 @@
+import Layout from '@/layout'
 import { FC } from 'react'
 import { Navigate, Outlet, useRoutes } from 'react-router-dom'
 import { PATHS } from './paths'
 import { PrivateRoutes } from './privateRoutes'
 import { PublicRoutes } from './publicRoutes'
-import Layout from '@/layout'
 import { DashboardView } from '@/modules/dashboard'
 import { AuthorizationView } from '@/modules/autorization'
 import { UsersDetailView, UsersView } from '@/modules/users/ui'
@@ -17,6 +17,7 @@ import { UserPropositionsView } from '@/modules/wine/user-propositions/ui'
 import { CreateTasteFormView } from '@/modules/wine/create-wine/ui'
 import { AiPromtView } from '@/modules/ai-promts/ui'
 import { eventRouters } from '@/modules/events/entities/event-routers'
+import { faq } from '@/modules/faq/entities/faq-routes'
 
 const usersRoutes = [
   { path: PATHS.USERS, element: <UsersView /> },
@@ -51,7 +52,7 @@ export const Router: FC = () => {
           <Layout />
         </PrivateRoutes>
       ),
-      children: [{ path: PATHS.HOME, element: <DashboardView />, index: true }, ...usersRoutes, ...featuresRoutes, ...winesRoutes, ...winesStats, ...winesAnalysis, ...eventRouters],
+      children: [{ path: PATHS.HOME, element: <DashboardView />, index: true }, ...usersRoutes, ...featuresRoutes, ...winesRoutes, ...winesStats, ...winesAnalysis, ...eventRouters, ...faq],
     },
     {
       path: PATHS.LOGIN,

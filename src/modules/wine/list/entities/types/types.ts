@@ -59,6 +59,7 @@ export interface IWines {
   averageExpertRating?: number
   totalReviews?: number
   statistics?: IStatistics
+  defaultImage?: WineImage
 }
 
 export interface CreateWineRequest {

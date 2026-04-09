@@ -4,6 +4,7 @@ import { ProfileSelects } from './profile-selects'
 import { useTranslation } from 'react-i18next'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { IOption, IOptionWithColor } from '../../enteties/types/types'
+import ImageGallery from './img-gallery'
 
 interface CreateTemplateSectionProps {
   handleSaveProfile: () => void
@@ -19,6 +20,7 @@ interface CreateTemplateSectionProps {
   handleCancel: () => void
   canSaveProfile: boolean
   isLoadingProfile: boolean
+  isEdit: boolean
 }
 
 export const CreateTemplateSection = ({
@@ -35,6 +37,7 @@ export const CreateTemplateSection = ({
   characteristic,
   setSelectedType,
   setSelectedColor,
+  isEdit,
 }: CreateTemplateSectionProps) => {
   const { t } = useTranslation('wine_profile')
   const { t: tc } = useTranslation('common')
@@ -47,6 +50,7 @@ export const CreateTemplateSection = ({
 
   return (
     <div className="space-y-4">
+      {!isEdit && <ImageGallery />}
       <ProfileSelects selectedType={selectedType} typeNames={types} setSelectedType={setSelectedType} selectedColor={selectedColor} colorNames={colors} setSelectedColor={setSelectedColor} />
 
       <CharacteristicItem id="aromas" label={t('aromas')} isOpen={openAccordionId === 'aromas'} onToggle={() => handleToggleAccordion('aromas')} header={<p>{t('aromas')}</p>}>

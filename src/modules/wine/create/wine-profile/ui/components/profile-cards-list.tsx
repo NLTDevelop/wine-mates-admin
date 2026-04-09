@@ -17,8 +17,8 @@ export const ProfileCardsList = ({ profiles, handleOpenDeleteModal, onEdit }: Pr
         const { textColorClass } = useContrastText(p?.color?.colorHex)
         return (
           <div key={`${p?.id}_${idx}`} className="relative">
-            <Card className="p-4 cursor-pointer border-2 hover:shadow-lg transition-shadow h-full" style={{ backgroundColor: p?.color?.colorHex }} onClick={() => onEdit(p.id)}>
-              <h3 className={cn(textColorClass, 'font-semibold text-lg break-words pr-8')}>
+            <Card className="p-2! cursor-pointer border-2 hover:shadow-lg transition-shadow h-full" style={{ backgroundColor: p?.color?.colorHex }} onClick={() => onEdit(p.id)}>
+              <h3 className={cn(textColorClass, 'font-semibold text-lg wrap-break-word pr-8')}>
                 {p?.type?.name}-{p?.color?.name}
               </h3>
               <div
@@ -29,7 +29,7 @@ export const ProfileCardsList = ({ profiles, handleOpenDeleteModal, onEdit }: Pr
                 }}
                 className={cn(
                   textColorClass,
-                  'absolute top-2 right-2 w-7.5 h-7.5 p-1.5 opacity-70 hover:opacity-100 flex-shrink-0 cursor-pointer hover:text-red-500 hover:bg-accent-foreground/20 rounded transition'
+                  'absolute top-2 right-2 w-7.5 h-7.5 p-1.5 opacity-70 hover:opacity-100 shrink-0 cursor-pointer hover:text-red-500 hover:bg-accent-foreground/20 rounded transition'
                 )}
                 title="Delete"
               >

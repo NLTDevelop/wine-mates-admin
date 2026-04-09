@@ -204,7 +204,19 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
       columnHelper.display({
         id: 'images',
         header: () => <span>{t('table.images')}</span>,
-        cell: ({ row }) => <div>{row.original.image ? '+' : '-'}</div>,
+        cell: ({ row }) => {
+          const wine = row.original
+
+          if (wine.image) {
+            return <img src={wine.image.smallUrl} alt={wine.image.name} className="w-8 h-12 object-cover" />
+          }
+
+          if (wine.defaultImage) {
+            return <img src={wine.defaultImage.smallUrl} alt="Default wine image" className="w-8 h-12 object-cover opacity-50" />
+          }
+
+          return <div className="w-8 h-12 bg-gray-100 flex items-center justify-center text-gray-400 text-xs">-</div>
+        },
         minSize: COLUMN_WIDTHS.IMAGES,
         maxSize: COLUMN_WIDTHS.IMAGES,
         size: COLUMN_WIDTHS.IMAGES,

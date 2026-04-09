@@ -43,6 +43,7 @@ export const useWineProfile = () => {
         id: `temp-${Date.now()}`,
         type: types.find(t => t.id === data.typeId)!,
         color: colors.find(c => c.id === data.colorId)!,
+        image: data.image,
       }
 
       queryClient.setQueryData<IWineProfile[]>(['profile', 'list'], old => (old ? [tempProfile, ...old] : [tempProfile]))
