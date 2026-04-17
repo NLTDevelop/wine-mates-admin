@@ -21,11 +21,10 @@ interface EventFormProps {
   onSubmit: (data: EventFormData) => Promise<void>
   onCancel?: () => void
   isSubmitting?: boolean
-  hasChanges?: boolean
   event?: IEvent
 }
 
-export const EventForm = ({ form, onSubmit, onCancel, isSubmitting = false, hasChanges = true, event }: EventFormProps) => {
+export const EventForm = ({ form, onSubmit, onCancel, isSubmitting = false, event }: EventFormProps) => {
   const { t } = useTranslation('common')
 
   const handleSubmit = (data: EventFormData) => {
@@ -52,7 +51,7 @@ export const EventForm = ({ form, onSubmit, onCancel, isSubmitting = false, hasC
               {t('button.cancel')}
             </Button>
 
-            <Button type="submit" className="min-w-32" disabled={isSubmitting || hasChanges}>
+            <Button type="submit" className="min-w-32" disabled={isSubmitting}>
               {isSubmitting ? t('button.saving') : t('button.save')}
             </Button>
           </div>

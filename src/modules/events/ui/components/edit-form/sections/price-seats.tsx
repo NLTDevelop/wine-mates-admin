@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { InputWithTooltip } from '@/UIKit/app-components/input-with-tooltip'
 import { EventFormData } from '@/modules/events/presenters/event-form-schema'
 import { CURRENCIES } from '@/modules/events/entities/types/constants'
+import { cn } from '@/lib/utils'
 
 interface PriceSeatsSectionProps {
   form: UseFormReturn<EventFormData>
@@ -12,6 +13,8 @@ interface PriceSeatsSectionProps {
 
 export const PriceSeatsSection = ({ form }: PriceSeatsSectionProps) => {
   const { t } = useTranslation('events')
+
+  const { errors } = form.formState
 
   return (
     <div className="grid grid-cols-3 gap-4">
@@ -50,7 +53,12 @@ export const PriceSeatsSection = ({ form }: PriceSeatsSectionProps) => {
             <FormLabel>{t('currency')} *</FormLabel>
             <Select onValueChange={field.onChange} value={field.value}>
               <FormControl>
-                <SelectTrigger className="h-11 border px-3 text-base shadow-sm transition-colors rounded-md input-focus placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-background text-foreground border-input w-full">
+                <SelectTrigger
+                  className={cn(
+                    errors.language ? 'border-red-500 ring-red-500' : '',
+                    'h-11 border px-3 text-base shadow-sm transition-colors rounded-md input-focus placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-background text-foreground border-input w-full'
+                  )}
+                >
                   <SelectValue placeholder={t('choose_option')} />
                 </SelectTrigger>
               </FormControl>
