@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Popover, PopoverTrigger, PopoverContent } from './popover'
 import { Button } from './button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './command'
-import { Check, ChevronsUpDown, X } from 'lucide-react'
+import { Check, ChevronsUpDown, X, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 
@@ -35,7 +35,7 @@ interface MultiSelectProps {
   placeholder?: string
   searchLabel?: string
   disabled?: boolean
-  fetchOptions: (search?: string) => Promise<MultiSelectOption[]>
+  fetchOptions: (search?: string, page?: number) => Promise<MultiSelectOption[] | { options: MultiSelectOption[]; hasMore: boolean; totalCount?: number }>
   itemOptions?: MultiSelectOption[]
   maxSelections?: number
   closeOnSelect?: boolean
@@ -44,6 +44,7 @@ interface MultiSelectProps {
   className?: string
   popoverClassName?: string
   showSelectAll?: boolean
+  enablePagination?: boolean
 }
 
 export const MultiSelect: React.FC<MultiSelectProps> = ({
@@ -61,6 +62,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   className,
   popoverClassName,
   showSelectAll = true,
+  enablePagination = false,
 }) => {
   const { t } = useTranslation('common')
   const [open, setOpen] = React.useState(false)
@@ -68,6 +70,10 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   const [options, setOptions] = React.useState<MultiSelectOption[]>([])
   const [loading, setLoading] = React.useState(false)
   const [_, setIsAnimating] = React.useState(false)
+  const [loadingMore, setLoadingMore] = React.useState(false)
+  const [page, setPage] = React.useState(1)
+  const [hasMore, setHasMore] = React.useState(false)
+  const [totalCount, setTotalCount] = React.useState<number | undefined>(undefined)
 
   const [politeMessage, setPoliteMessage] = React.useState('')
   const [assertiveMessage, setAssertiveMessage] = React.useState('')
@@ -106,7 +112,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
         try {
           const missingOptions = await fetchOptions()
 
-          const foundMissingOptions = missingOptions.filter(opt => {
+          const foundMissingOptions = (Array.isArray(missingOptions) ? missingOptions : missingOptions.options).filter(opt => {
             return missingValues.includes(opt.value)
           })
 
@@ -125,17 +131,32 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 
     updateSelectedOptions()
   }, [selectedValues, options, itemOptions, fetchOptions])
+
   React.useEffect(() => {
-    if (itemOptions?.length) {
+    if (itemOptions?.length && !enablePagination) {
       setOptions(itemOptions)
     }
-  }, [itemOptions])
+  }, [itemOptions, enablePagination])
 
-  const getData = async (search?: string) => {
+  const getData = async (search?: string, pageNum?: number) => {
     setLoading(true)
     try {
-      const fetchedOptions = await fetchOptions(search)
-      setOptions(fetchedOptions)
+      const result = await fetchOptions(search, pageNum)
+      let newOptions: MultiSelectOption[]
+      let newHasMore = false
+      let newTotalCount: number | undefined
+
+      if (Array.isArray(result)) {
+        newOptions = result
+      } else {
+        newOptions = result.options
+        newHasMore = result.hasMore
+        newTotalCount = result.totalCount
+      }
+
+      setOptions(newOptions)
+      setHasMore(newHasMore)
+      setTotalCount(newTotalCount)
     } catch (error) {
       console.error('Error loading options:', error)
     } finally {
@@ -143,11 +164,52 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     }
   }
 
-  const { debouncedWrapper } = useDebounce(getData, 1000)
+  const loadMore = async () => {
+    if (loadingMore || !hasMore) return
+    setLoadingMore(true)
+    try {
+      const nextPage = page + 1
+      const result = await fetchOptions(searchTerm, nextPage)
+      let newOptions: MultiSelectOption[]
+      let newHasMore = false
+      let newTotalCount: number | undefined
+
+      if (Array.isArray(result)) {
+        newOptions = result
+      } else {
+        newOptions = result.options
+        newHasMore = result.hasMore
+        newTotalCount = result.totalCount
+      }
+
+      setOptions(prev => [...prev, ...newOptions])
+      setPage(nextPage)
+      setHasMore(newHasMore)
+      setTotalCount(newTotalCount)
+    } catch (error) {
+      console.error('Error loading more options:', error)
+    } finally {
+      setLoadingMore(false)
+    }
+  }
+
+  const { debouncedWrapper } = useDebounce((search: string) => {
+    if (enablePagination) {
+      getData(search, 1)
+      setPage(1)
+    } else {
+      getData(search)
+    }
+  }, 1000)
 
   const handlePopoverOpen = async () => {
     if (!open) {
-      getData()
+      if (enablePagination) {
+        await getData(undefined, 1)
+        setPage(1)
+      } else {
+        await getData()
+      }
       setSearchTerm('')
     }
   }
@@ -423,7 +485,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
             animationDelay: `${animationConfig?.delay ?? 0}ms`,
           }}
         >
-          <Command shouldFilter={true} className="bg-[#fffbfb]">
+          <Command shouldFilter={!enablePagination} className="bg-[#fffbfb]">
             <div className="relative">
               <CommandInput placeholder={searchLabel ?? t('search')} value={searchTerm} onValueChange={handleSearchChange} />
               {searchTerm && (
@@ -463,44 +525,64 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                     <NLTProgress className="w-6 h-6 text-primary animate-spin" />
                   </div>
                 ) : (
-                  options.map(option => {
-                    const isSelected = selectedValues.includes(option.value)
-                    const isDisabled = option.disabled || (mode === 'multiple' && maxSelections && selectedValues.length >= maxSelections && !isSelected)
+                  <>
+                    {options.map(option => {
+                      const isSelected = selectedValues.includes(option.value)
+                      const isDisabled = option.disabled || (mode === 'multiple' && maxSelections && selectedValues.length >= maxSelections && !isSelected)
 
-                    const IconComponent = option.icon
+                      const IconComponent = option.icon
 
-                    return (
-                      <CommandItem
-                        key={option.value}
-                        value={option.value}
-                        onSelect={() => !isDisabled && toggleOption(option.value)}
-                        className={cn('cursor-pointer rounded-md transition-colors duration-200 px-2 py-1 flex items-center gap-2 hover:bg-accent/50', isDisabled && 'opacity-50 cursor-not-allowed')}
-                        disabled={isDisabled || false}
-                        style={{
-                          animationDuration: `${animationConfig?.duration ?? 300}ms`,
-                          animationDelay: `${animationConfig?.delay ?? 0}ms`,
-                        }}
-                      >
-                        <div
-                          className={cn(
-                            'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border transition-all duration-200',
-                            isSelected ? 'bg-primary border-primary text-primary-foreground scale-110' : 'border-border hover:border-primary/50',
-                            mode === 'single' && 'rounded-full'
-                          )}
+                      return (
+                        <CommandItem
+                          key={option.value}
+                          value={option.value}
+                          onSelect={() => !isDisabled && toggleOption(option.value)}
+                          className={cn('cursor-pointer rounded-md transition-colors duration-200 px-2 py-1 flex items-center gap-2 hover:bg-accent/50', isDisabled && 'opacity-50 cursor-not-allowed')}
+                          disabled={isDisabled || false}
+                          style={{
+                            animationDuration: `${animationConfig?.duration ?? 300}ms`,
+                            animationDelay: `${animationConfig?.delay ?? 0}ms`,
+                          }}
                         >
-                          {isSelected && (mode === 'single' ? <div className="h-2 w-2 rounded-full bg-primary-foreground animate-scaleIn" /> : <Check className="h-3 w-3 animate-scaleIn" />)}
-                        </div>
+                          <div
+                            className={cn(
+                              'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border transition-all duration-200',
+                              isSelected ? 'bg-primary border-primary text-primary-foreground scale-110' : 'border-border hover:border-primary/50',
+                              mode === 'single' && 'rounded-full'
+                            )}
+                          >
+                            {isSelected && (mode === 'single' ? <div className="h-2 w-2 rounded-full bg-primary-foreground animate-scaleIn" /> : <Check className="h-3 w-3 animate-scaleIn" />)}
+                          </div>
 
-                        {IconComponent && <IconComponent className="mr-2 h-4 w-4 transition-colors duration-200" />}
+                          {IconComponent && <IconComponent className="mr-2 h-4 w-4 transition-colors duration-200" />}
 
-                        <span className="transition-colors duration-200 min-w-0 truncate flex-1">{option.label}</span>
+                          <span className="transition-colors duration-200 min-w-0 truncate flex-1">{option.label}</span>
 
-                        {isDisabled && mode === 'multiple' && maxSelections && selectedValues.length >= maxSelections && !isSelected && (
-                          <span className="ml-auto text-xs text-muted-foreground transition-opacity duration-200">Max {maxSelections}</span>
-                        )}
-                      </CommandItem>
-                    )
-                  })
+                          {isDisabled && mode === 'multiple' && maxSelections && selectedValues.length >= maxSelections && !isSelected && (
+                            <span className="ml-auto text-xs text-muted-foreground transition-opacity duration-200">Max {maxSelections}</span>
+                          )}
+                        </CommandItem>
+                      )
+                    })}
+
+                    {enablePagination && hasMore && (
+                      <div className="p-2">
+                        <Button variant="outline" size="sm" onClick={loadMore} disabled={loadingMore} className="w-full h-8 text-xs">
+                          {loadingMore ? (
+                            <>
+                              <NLTProgress className="w-3 h-3 mr-2 animate-spin" />
+                              {t('loading')}
+                            </>
+                          ) : (
+                            <>
+                              <Plus className="h-3 w-3 mr-2" />
+                              {t('load_more')} {totalCount && `(${options.length}/${totalCount})`}
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    )}
+                  </>
                 )}
               </CommandGroup>
             </CommandList>

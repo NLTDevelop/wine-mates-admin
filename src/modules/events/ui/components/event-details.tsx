@@ -3,7 +3,7 @@ import { getEventDetails } from '../../presenters/event-details-config'
 import { Wine, Info } from 'lucide-react'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { Badge } from '@/UIKit/shadcn/ui/badge'
-import { IEvent } from '../../entities/types'
+import { IEvent } from '../../entities/types/IEvent'
 
 interface EventDetailsProps {
   event: IEvent

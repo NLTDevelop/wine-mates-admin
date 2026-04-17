@@ -50,7 +50,7 @@ export const FilterableHeader = ({ column, label, onFilter, filterOptions, curre
         </div>
         <div className="max-h-60 overflow-y-auto">
           {filterOptions.map((option, index) => (
-            <DropdownMenuItem key={index} onClick={() => onFilter(column, option.value)} className="flex items-center">
+            <DropdownMenuItem key={index} onClick={() => onFilter(column, option.value)} className="flex items-center cursor-pointer">
               {option.icon}
               <span>{option.label}</span>
               {currentFilter === option.value && <span className="ml-auto text-xs">✓</span>}

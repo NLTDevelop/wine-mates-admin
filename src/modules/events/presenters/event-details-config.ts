@@ -1,7 +1,7 @@
-import { IEvent } from '../entities/types'
 import { useTranslation } from 'react-i18next'
 import { format } from 'date-fns'
 import { Award, Calendar, CheckCircle, Clock, DollarSign, MapPin, Phone, Repeat, User } from 'lucide-react'
+import { IEvent } from '../entities/types/IEvent'
 
 export interface DetailItem {
   icon: any
@@ -61,11 +61,11 @@ export const getEventDetails = (event: IEvent): DetailItem[] => {
     })
   }
 
-  if (event.tastingType) {
+  if (event.eventType) {
     details.push({
       icon: Award,
       label: t('event_type'),
-      value: t(`event_types.${event.tastingType}`),
+      value: t(`event_types.${event.eventType}`),
     })
   }
 

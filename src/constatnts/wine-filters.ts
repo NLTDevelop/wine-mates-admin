@@ -21,12 +21,10 @@ export const SORT_FIELDS: Record<string, string> = {
 } as const
 
 export const EVENT_SORT_FIELDS: Record<string, string> = {
-  minPrice: 'minPrice',
-  maxPrice: 'maxPrice',
-  dateFrom: 'dateFrom',
-  dateTo: 'dateTo',
-  isActive: 'isActive',
-  country: 'countryId',
+  eventDate: 'eventDate',
+  priceUsd: 'priceUsd',
+  seats: 'seats',
+  createdAt: 'createdAt',
 } as const
 
 export const FILTER_COLUMN_MAP: Record<string, string> = {
