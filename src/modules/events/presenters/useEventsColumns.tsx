@@ -4,17 +4,18 @@ import { useTranslation } from 'react-i18next'
 import { useEventList } from './useEventList'
 import { useEventFilters } from './useEventFilters'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { Info, Trash2 } from 'lucide-react'
+import { Edit, Trash2 } from 'lucide-react'
 import { FilterableHeader } from '@/UIKit/app-components/table-headers/filterable-header'
-import { IEvent } from '../entities/types'
+import { IEvent } from '../entities/types/IEvent'
 import { DateFilterHeader } from '@/UIKit/app-components/table-headers/date-filter-header'
 import { RangeFilterHeader } from '@/UIKit/app-components/table-headers/range-filter-header'
 import { format } from 'date-fns'
+import { SortableHeader } from '@/UIKit/app-components/table-headers/sortable-header'
 
 const columnHelper = createColumnHelper<IEvent>()
 
 interface EventTableProps {
-  onDetail: (event: IEvent) => void
+  onEdit: (event: IEvent) => void
   onDelete: (eventId: number, name: string) => void
 }
 
@@ -36,12 +37,12 @@ const COLUMN_WIDTHS = {
   CREATED: 160,
 } as const
 
-export const useEventColumns = ({ onDetail, onDelete }: EventTableProps) => {
+export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
   const { t } = useTranslation('events')
 
-  const { handleColumnFilter, handleDateFilter, handlePriceFilter, filters } = useEventList()
+  const { handleColumnFilter, handleDateFilter, handlePriceFilter, handleSort, filters } = useEventList()
 
-  const { getIsActiveFilterOptions, getCountryFilterOptions } = useEventFilters()
+  const { getIsActiveFilterOptions, getCountryFilterOptions, getTypeFilterOptions, getRequiresConfirmationFilterOptions, getTastingTypeFilterOptions } = useEventFilters()
 
   return useMemo(
     () => [
@@ -56,7 +57,7 @@ export const useEventColumns = ({ onDetail, onDelete }: EventTableProps) => {
 
           const handleEditEvent = (e: React.MouseEvent) => {
             stopEvent(e)
-            onDetail(row.original)
+            onEdit(row.original)
           }
 
           const handleDeleteEvent = (e: React.MouseEvent) => {
@@ -67,7 +68,7 @@ export const useEventColumns = ({ onDetail, onDelete }: EventTableProps) => {
           return (
             <div className="flex items-center justify-around">
               <Button variant="ghost" size="sm" onClick={handleEditEvent} className="h-8 w-8 p-0">
-                <Info className="h-4 w-4 text-green-600" />
+                <Edit className="h-4 w-4 text-green-600" />
               </Button>
               <Button variant="ghost" size="sm" onClick={handleDeleteEvent} className="h-8 w-8 p-0 text-destructive">
                 <Trash2 className="h-4 w-4 text-red-700" />
@@ -114,11 +115,14 @@ export const useEventColumns = ({ onDetail, onDelete }: EventTableProps) => {
       columnHelper.accessor('eventDate', {
         header: () => (
           <DateFilterHeader
-            column="event_date"
+            column="eventDate"
             label={t('table.event_date')}
             onFilter={(_, val) => handleDateFilter(val.dateFrom, val.dateTo)}
             currentFrom={filters?.dateFrom}
             currentTo={filters?.dateTo}
+            onSort={handleSort}
+            sortBy={filters?.sortBy}
+            sortOrder={filters?.sortOrder}
           />
         ),
         cell: info => info.getValue() || '-',
@@ -142,14 +146,12 @@ export const useEventColumns = ({ onDetail, onDelete }: EventTableProps) => {
           <RangeFilterHeader
             column="priceUsd"
             label={t('table.price')}
-            onFilter={(_, val) =>
-              handlePriceFilter({
-                minPrice: val.min,
-                maxPrice: val.max,
-              })
-            }
+            onFilter={(_, val) => handlePriceFilter({ minPrice: val.min, maxPrice: val.max })}
             currentMin={filters?.minPrice}
             currentMax={filters?.maxPrice}
+            onSort={handleSort}
+            sortBy={filters?.sortBy}
+            sortOrder={filters?.sortOrder}
           />
         ),
         cell: info => info.getValue() || '-',
@@ -178,7 +180,7 @@ export const useEventColumns = ({ onDetail, onDelete }: EventTableProps) => {
       }),
 
       columnHelper.accessor('seats', {
-        header: t('table.seats'),
+        header: () => <SortableHeader column="seats" label={t('table.seats')} sortBy={filters?.sortBy} onSort={handleSort} />,
         cell: info => info.getValue() || '-',
         minSize: COLUMN_WIDTHS.SEATS,
         maxSize: COLUMN_WIDTHS.SEATS,
@@ -186,11 +188,24 @@ export const useEventColumns = ({ onDetail, onDelete }: EventTableProps) => {
         meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.SEATS}px]` },
       }),
 
-      columnHelper.accessor('tastingType', {
-        header: t('table.type'),
+      columnHelper.accessor('eventType', {
+        header: () => <FilterableHeader column="eventType" label={t('table.event_type')} onFilter={handleColumnFilter} filterOptions={getTypeFilterOptions()} currentFilter={filters?.eventType} />,
         cell: info => {
           const type = info.getValue()
           return t(`event_types.${type}`) || '-'
+        },
+        minSize: COLUMN_WIDTHS.TYPE,
+        maxSize: COLUMN_WIDTHS.TYPE,
+        size: COLUMN_WIDTHS.TYPE,
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.TYPE}px]` },
+      }),
+      columnHelper.accessor('tastingType', {
+        header: () => (
+          <FilterableHeader column="tastingType" label={t('table.tasting_type')} onFilter={handleColumnFilter} filterOptions={getTastingTypeFilterOptions()} currentFilter={filters?.tastingType} />
+        ),
+        cell: info => {
+          const type = info.getValue()
+          return t(`tasting_types.${type}`) || '-'
         },
         minSize: COLUMN_WIDTHS.TYPE,
         maxSize: COLUMN_WIDTHS.TYPE,
@@ -208,9 +223,27 @@ export const useEventColumns = ({ onDetail, onDelete }: EventTableProps) => {
         size: COLUMN_WIDTHS.TYPE,
         meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.ISACTIVE}px]` },
       }),
+      columnHelper.accessor('requiresConfirmation', {
+        header: () => (
+          <FilterableHeader
+            column="requiresConfirmation"
+            label={t('table.requiresConfirmation')}
+            onFilter={handleColumnFilter}
+            filterOptions={getRequiresConfirmationFilterOptions()}
+            currentFilter={filters?.requiresConfirmation}
+          />
+        ),
+        cell: info => {
+          return info.getValue() ? t('requires') : t('not_requires')
+        },
+        minSize: COLUMN_WIDTHS.TYPE,
+        maxSize: COLUMN_WIDTHS.TYPE,
+        size: COLUMN_WIDTHS.TYPE,
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.ISACTIVE}px]` },
+      }),
 
       columnHelper.accessor('createdAt', {
-        header: t('table.createdAt'),
+        header: () => <SortableHeader column="createdAt" label={t('table.createdAt')} sortBy={filters?.sortBy} onSort={handleSort} />,
         cell: info => {
           const dateString = info.getValue()
           return dateString ? format(new Date(dateString), 'dd.MM.yyyy') : '-'
@@ -230,6 +263,6 @@ export const useEventColumns = ({ onDetail, onDelete }: EventTableProps) => {
         meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.COUNTRY}px]` },
       }),
     ],
-    [onDetail, onDelete, t, handleColumnFilter, handleDateFilter, handlePriceFilter, filters, getIsActiveFilterOptions, getCountryFilterOptions]
+    [onEdit, onDelete, t, handleColumnFilter, handleDateFilter, handlePriceFilter, filters, getIsActiveFilterOptions, getCountryFilterOptions]
   ) as ColumnDef<IEvent>[]
 }

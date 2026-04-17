@@ -21,10 +21,11 @@ export const EventsView = () => {
 
   const hasActiveFilters = useMemo(() => {
     const hasColumnFilters = Object.values(columnFilters).some(value => value !== null && value !== undefined)
-    return hasColumnFilters
+    const hasSorting = filters.sortBy !== undefined && filters.sortBy !== ''
+    return hasColumnFilters || hasSorting
   }, [columnFilters])
 
-  const columns = useEventColumns({ onDetail: event => navigate(getEventDetailPath(event.id), { state: { event } }), onDelete: deleteEvent })
+  const columns = useEventColumns({ onEdit: event => navigate(`${getEventDetailPath(event.id)}?edit=true`), onDelete: deleteEvent })
   const { table } = useDataTable(events ?? [], columns)
 
   const handleRowClick = (row: any) => {

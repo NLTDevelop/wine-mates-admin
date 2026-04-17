@@ -1,6 +1,7 @@
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
-import { IEvent, IEventFilters } from './types'
+import { IEvent } from './types/IEvent'
+import { IEventFilters } from './types/filters.dto'
 
 interface EventState {
   events: IEvent[]
@@ -30,6 +31,10 @@ export const useEventStore = createStoreDevToolsWrapper<EventState>(
       dateFrom: null,
       isActive: null,
       countryId: null,
+      eventType: null,
+      requiresConfirmation: null,
+      sortBy: undefined,
+      sortOrder: 'asc',
     },
 
     setEvents: (events: IEvent[]) => set({ events }, false, 'event/setEvent'),
@@ -58,6 +63,17 @@ export const useEventStore = createStoreDevToolsWrapper<EventState>(
         },
         false,
         'event/resetFilters'
+      ),
+
+    updateEvent: (eventId: number, newEvent: IEvent) =>
+      set(
+        (state: EventState) => ({
+          events: state.events.map(e => (e.id === eventId ? newEvent : e)),
+          currentEvent: state.currentEvent?.id === eventId ? newEvent : state.currentEvent,
+          searchResults: state.searchResults.map(e => (e.id === eventId ? newEvent : e)),
+        }),
+        false,
+        'event/updateEvent'
       ),
   }),
 

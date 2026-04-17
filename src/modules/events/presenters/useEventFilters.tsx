@@ -36,11 +36,34 @@ export const useEventFilters = () => {
     }
   }
 
+  const getTypeFilterOptions = () => {
+    return [
+      { label: t('event_types.parties'), value: 'parties' },
+      { label: t('event_types.tastings'), value: 'tastings' },
+    ]
+  }
+
+  const getTastingTypeFilterOptions = () => {
+    return [
+      { label: t('tasting_types.regular'), value: 'regular' },
+      { label: t('tasting_types.blind'), value: 'blind' },
+    ]
+  }
+  const getRequiresConfirmationFilterOptions = () => {
+    return [
+      { label: t('requires'), value: true },
+      { label: t('not_requires'), value: false },
+    ]
+  }
+
   return {
     isLoading: isCountriesLoading,
     error: null,
     getIsActiveFilterOptions,
     getCountryFilterOptions,
     getFilterLabel,
+    getTypeFilterOptions,
+    getRequiresConfirmationFilterOptions,
+    getTastingTypeFilterOptions,
   }
 }

@@ -4,8 +4,9 @@ import { useDebounce } from '@/hooks/ui/useDebounce'
 import { useToast } from '@/hooks/shadcn/use-toast'
 import { useTranslation } from 'react-i18next'
 import { useEventStore } from '../entities/events-store'
-import { EventResponse } from '../entities/types'
+import { EventResponse } from '../entities/types/IEvent'
 import { eventQueries } from '../entities/event-queries'
+import { EVENT_SORT_FIELDS } from '@/constatnts/wine-filters'
 
 export const useEventList = () => {
   const { filters, setFilters, resetFilters } = useEventStore()
@@ -60,15 +61,57 @@ export const useEventList = () => {
     [setFilters]
   )
 
+  const handleSort = useCallback(
+    (column?: string) => {
+      if (!column) {
+        setFilters({
+          sortBy: undefined,
+          sortOrder: 'asc',
+          page: 1,
+        })
+        return
+      }
+
+      const baseField = EVENT_SORT_FIELDS[column] || column
+      const currentSortBy = filters.sortBy || ''
+      const currentSortOrder = filters.sortOrder || 'asc'
+
+      const isCurrentColumn = currentSortBy === baseField
+
+      if (isCurrentColumn) {
+        if (currentSortOrder === 'desc') {
+          setFilters({
+            sortBy: undefined,
+            sortOrder: 'asc',
+            page: 1,
+          })
+        } else {
+          setFilters({
+            sortBy: baseField,
+            sortOrder: 'desc',
+            page: 1,
+          })
+        }
+      } else {
+        setFilters({
+          sortBy: baseField,
+          sortOrder: 'asc',
+          page: 1,
+        })
+      }
+    },
+    [setFilters, filters.sortBy, filters.sortOrder]
+  )
+
   const clearColumnFilters = useCallback(() => {
-    const filtersToClear = ['minPrice', 'maxPrice', 'dateFrom', 'dateTo', 'isActive', 'countryId']
+    const filtersToClear = ['minPrice', 'maxPrice', 'dateFrom', 'dateTo', 'isActive', 'countryId', 'eventType', 'requiresConfirmation']
 
     filtersToClear.forEach(filter => {
       handleColumnFilter(filter, null)
     })
-
+    handleSort(undefined)
     setFilters({ page: 1 })
-  }, [handleColumnFilter, setFilters])
+  }, [handleColumnFilter, setFilters, handleSort])
 
   const onChangePagination = useCallback(
     (page: number) => {
@@ -142,6 +185,7 @@ export const useEventList = () => {
     clearColumnFilters,
     handleDateFilter,
     handlePriceFilter,
+    handleSort,
 
     columnFilters: {
       maxPrice: filters.maxPrice,
@@ -150,6 +194,8 @@ export const useEventList = () => {
       dateTo: filters.dateTo,
       isActive: filters.isActive,
       country: filters.countryId,
+      eventType: filters.eventType,
+      requiresConfirmation: filters.requiresConfirmation,
     },
 
     onChangeSearch: handleSearchChange,

@@ -43,7 +43,7 @@ export const SortableHeader = ({ column, label, sortBy, onSort }: SortableHeader
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="start">
-        <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground flex gap-2 items-center justify-between">
+        <div className="py-1.5 text-sm font-semibold text-muted-foreground flex gap-2 items-center justify-between">
           <span>{t('sorting')}</span>
           {isSorted && (
             <Button variant="delete" size="sm" className="h-6 px-2 text-xs" onClick={handleClearSort}>
@@ -53,8 +53,8 @@ export const SortableHeader = ({ column, label, sortBy, onSort }: SortableHeader
           )}
         </div>
 
-        <DropdownMenuItem onClick={() => onSort(column)} className="justify-between">
-          <div className="flex items-center gap-2">
+        <DropdownMenuItem onClick={() => onSort(column)} className="bg-input cursor-pointer">
+          <div className="mx-auto flex items-center gap-2 text-foreground">
             {getIconBtn()}
             <span>{t('sort_by')}</span>
           </div>

@@ -1,5 +1,6 @@
 import { eventsService } from './events-service'
-import { IEventFilters } from './types'
+import { IEventFilters } from './types/filters.dto'
+import { UpdateEventParams } from './types/update-event.dto'
 
 export const eventQueries = {
   list: (filters: IEventFilters) => ({
@@ -11,6 +12,11 @@ export const eventQueries = {
     queryKey: ['events', 'detail', eventId],
     queryFn: () => eventsService.detail(eventId),
     enabled: !!eventId,
+  }),
+
+  update: () => ({
+    mutationKey: ['events', 'update'],
+    mutationFn: ({ id, data }: UpdateEventParams) => eventsService.update({ id, data }),
   }),
 
   delete: () => ({

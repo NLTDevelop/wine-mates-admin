@@ -57,7 +57,7 @@ export const SortableFilterableHeader = ({ column, label, sortBy, onSort, onFilt
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="start" className="w-64">
-        <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground flex items-center justify-between">
+        <div className="py-1.5 text-sm font-semibold text-muted-foreground flex items-center justify-between">
           <span>{t('sorting')}</span>
           {isSorted && (
             <Button variant="delete" size="sm" className="h-6 px-2 text-xs" onClick={handleClearSort}>
@@ -67,7 +67,7 @@ export const SortableFilterableHeader = ({ column, label, sortBy, onSort, onFilt
           )}
         </div>
 
-        <DropdownMenuItem onClick={() => onSort(column)} className="bg-input">
+        <DropdownMenuItem onClick={() => onSort(column)} className="bg-input cursor-pointer">
           <div className="mx-auto flex items-center gap-2 text-foreground">
             {getSortIcon()}
             <span>{t('sort_by')}</span>
@@ -86,7 +86,7 @@ export const SortableFilterableHeader = ({ column, label, sortBy, onSort, onFilt
           )}
         </div>
         {filterDisabled ? (
-          <div className="px-2 py-3 text-sm text-muted-foreground flex items-center gap-2">
+          <div className="py-3 text-sm text-muted-foreground flex items-center gap-2">
             <Info className="h-4 w-4" />
             <span>{t('select_country')}</span>
           </div>
