@@ -8,6 +8,7 @@ import { NLTTooltip } from '@/UIKit/components/NLTTooltip'
 import { IMaskInput } from 'react-imask'
 import { EventFormData } from '@/modules/events/presenters/event-form-schema'
 import { AVAILABLE_LANGUAGES } from '@/constatnts/avialable-languages'
+import { cn } from '@/lib/utils'
 
 interface SpeakerContactSectionProps {
   form: UseFormReturn<EventFormData>
@@ -15,6 +16,8 @@ interface SpeakerContactSectionProps {
 
 export const SpeakerContactSection = ({ form }: SpeakerContactSectionProps) => {
   const { t } = useTranslation('events')
+
+  const { errors } = form.formState
 
   return (
     <div className="grid grid-cols-3 gap-4">
@@ -39,7 +42,7 @@ export const SpeakerContactSection = ({ form }: SpeakerContactSectionProps) => {
             <FormLabel>{t('language')} *</FormLabel>
             <Select onValueChange={field.onChange} value={field.value}>
               <FormControl>
-                <SelectTrigger className="w-full h-11 bg-background">
+                <SelectTrigger className={cn(errors.language ? 'border-red-500 ring-red-500' : '', 'w-full h-11 bg-background')}>
                   <SelectValue placeholder={t('choose_option')} />
                 </SelectTrigger>
               </FormControl>

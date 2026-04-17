@@ -52,7 +52,7 @@ export const EventDetails = ({ event }: EventDetailsProps) => {
           <div className="mt-6 pt-4 border-t">
             <div className="flex items-center gap-2 mb-3">
               <Wine className="h-4 w-4 text-gray-400" />
-              <span className="text-sm font-medium">{t('tasting_types.wine_set')}</span>
+              <span className="text-sm font-medium">{t('wine_set')}</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {event.wineSet
