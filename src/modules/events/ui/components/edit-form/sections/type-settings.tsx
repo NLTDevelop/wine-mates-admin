@@ -57,7 +57,7 @@ export const TypeSettingsSection = ({ form }: TypeSettingsSectionProps) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t('repeat_rule')}</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select key={field.value} onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="h-11 bg-background">
                     <SelectValue placeholder={t('choose_option')} />
@@ -80,7 +80,7 @@ export const TypeSettingsSection = ({ form }: TypeSettingsSectionProps) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t('participation_condition')}</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value || ''}>
+              <Select key={field.value} onValueChange={field.onChange} value={field.value || ''}>
                 <FormControl>
                   <SelectTrigger className="h-11 bg-background">
                     <SelectValue placeholder={t('choose_option')} />

@@ -9,7 +9,7 @@ import { getEventDetailPath } from '@/navigation/paths'
 import { ContentLayout } from '@/layout/components/content-layout'
 import { NLTDataTable } from '@/UIKit/components/NLTDataTable'
 import { SearchInput } from '@/UIKit/shadcn/ui/input-search'
-import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
+import { EVENT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
 import { WarningModal } from '@/modals/warningModal'
 
@@ -50,7 +50,7 @@ export const EventsView = () => {
         />
       </div>
 
-      {totalCount && totalCount > DEFAULT_PAGINATION_LIMIT ? <NLTTablePagination limit={filters.limit} page={filters.page} totalRows={totalCount || 1} setPage={onChangePagination} /> : null}
+      {totalCount && totalCount > EVENT_PAGINATION_LIMIT ? <NLTTablePagination limit={filters.limit} page={filters.page} totalRows={totalCount || 1} setPage={onChangePagination} /> : null}
       <WarningModal
         title={t('event_delete')}
         actionTitle={t('button.delete')}

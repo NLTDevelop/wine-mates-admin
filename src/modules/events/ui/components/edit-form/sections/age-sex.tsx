@@ -42,7 +42,7 @@ export const AgeSexSection = ({ form }: AgeSexSectionProps) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>{t('sex')}</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select key={field.value} onValueChange={field.onChange} value={field.value}>
               <FormControl>
                 <SelectTrigger className="h-11 bg-background">
                   <SelectValue placeholder={t('choose_option')} />
@@ -50,8 +50,8 @@ export const AgeSexSection = ({ form }: AgeSexSectionProps) => {
               </FormControl>
               <SelectContent>
                 <SelectItem value="all">{t('all_gender')}</SelectItem>
-                <SelectItem value="male">{t('male')}</SelectItem>
-                <SelectItem value="female">{t('female')}</SelectItem>
+                <SelectItem value="men">{t('male')}</SelectItem>
+                <SelectItem value="women">{t('female')}</SelectItem>
               </SelectContent>
             </Select>
           </FormItem>

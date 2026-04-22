@@ -37,25 +37,27 @@ export const SpeakerContactSection = ({ form }: SpeakerContactSectionProps) => {
       <FormField
         control={form.control}
         name="language"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>{t('language')} *</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value}>
-              <FormControl>
-                <SelectTrigger className={cn(errors.language ? 'border-red-500 ring-red-500' : '', 'w-full h-11 bg-background')}>
-                  <SelectValue placeholder={t('choose_option')} />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {AVAILABLE_LANGUAGES.map(lang => (
-                  <SelectItem key={lang.code} value={lang.name}>
-                    {lang.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </FormItem>
-        )}
+        render={({ field }) => {
+          return (
+            <FormItem>
+              <FormLabel>{t('language')} *</FormLabel>
+              <Select key={field.value} onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger className={cn(errors.language ? 'border-red-500 ring-red-500' : '', 'w-full h-11 bg-background')}>
+                    <SelectValue placeholder={t('choose_option')} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {AVAILABLE_LANGUAGES.map(lang => (
+                    <SelectItem key={lang.code} value={lang.code}>
+                      {lang.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormItem>
+          )
+        }}
       />
 
       <FormField

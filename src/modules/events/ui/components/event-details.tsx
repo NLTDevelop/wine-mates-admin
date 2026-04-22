@@ -23,7 +23,9 @@ export const EventDetails = ({ event }: EventDetailsProps) => {
             <h1 className="text-xl font-bold">{event.theme}</h1>
             <p className="text-sm text-gray-500">{event.restaurantName}</p>
           </div>
-          <Badge variant={event.isActive ? 'default' : 'secondary'} className={cn(!event.isActive && "text-input")}>{event.isActive ? t('active_event') : t('inactive')}</Badge>
+          <Badge variant={event.isActive ? 'default' : 'secondary'} className={cn(!event.isActive && 'text-input')}>
+            {event.isActive ? t('active_event') : t('inactive')}
+          </Badge>
         </div>
 
         <div className="grid md:grid-cols-2 gap-x-6 gap-y-3">
