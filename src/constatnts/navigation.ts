@@ -15,6 +15,7 @@ export interface NavItem extends NavSubItem {
 }
 
 export const DEFAULT_PAGINATION_LIMIT = 30
+export const EVENT_PAGINATION_LIMIT = 15
 export const MAX_SYMBOLS_INPUT_REGULAR = 200
 export const MAX_SYMBOLS_INPUT_LARGE = 3000
 

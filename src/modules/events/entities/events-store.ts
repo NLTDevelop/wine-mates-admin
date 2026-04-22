@@ -1,4 +1,4 @@
-import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
+import { EVENT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 import { IEvent } from './types/IEvent'
 import { IEventFilters } from './types/filters.dto'
@@ -23,7 +23,7 @@ export const useEventStore = createStoreDevToolsWrapper<EventState>(
 
     filters: {
       search: '',
-      limit: DEFAULT_PAGINATION_LIMIT,
+      limit: EVENT_PAGINATION_LIMIT,
       page: 1,
       maxPrice: null,
       minPrice: null,
@@ -57,7 +57,7 @@ export const useEventStore = createStoreDevToolsWrapper<EventState>(
         {
           filters: {
             search: '',
-            limit: DEFAULT_PAGINATION_LIMIT,
+            limit: EVENT_PAGINATION_LIMIT,
             page: 1,
           },
         },

@@ -4,7 +4,7 @@ export type TastingType = (typeof TASTING_TYPES)[number]
 export const CURRENCIES = ['UAH', 'USD', 'EUR'] as const
 export type Currency = (typeof CURRENCIES)[number]
 
-export const SEX = ['all', 'man', 'women'] as const
+export const SEX = ['all', 'men', 'women'] as const
 export type Sex = (typeof SEX)[number]
 
 export const LANGUAGES = ['en', 'uk', 'fr', 'pl', 'de', 'es', 'it'] as const
