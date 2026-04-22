@@ -88,7 +88,7 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
         minSize: COLUMN_WIDTHS.THEME,
         maxSize: COLUMN_WIDTHS.THEME,
         size: COLUMN_WIDTHS.THEME,
-        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.THEME}px]` },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.THEME}px] break-words` },
       }),
 
       columnHelper.accessor('restaurantName', {
@@ -100,7 +100,7 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
         minSize: COLUMN_WIDTHS.RESTAURANT,
         maxSize: COLUMN_WIDTHS.RESTAURANT,
         size: COLUMN_WIDTHS.RESTAURANT,
-        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.RESTAURANT}px]` },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.RESTAURANT}px] break-words` },
       }),
 
       columnHelper.accessor('locationLabel', {
@@ -109,7 +109,7 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
         minSize: COLUMN_WIDTHS.LOCATION,
         maxSize: COLUMN_WIDTHS.LOCATION,
         size: COLUMN_WIDTHS.LOCATION,
-        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.LOCATION}px]` },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.LOCATION}px] break-words` },
       }),
 
       columnHelper.accessor('eventDate', {
@@ -167,7 +167,7 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
         minSize: COLUMN_WIDTHS.SPEAKER,
         maxSize: COLUMN_WIDTHS.SPEAKER,
         size: COLUMN_WIDTHS.SPEAKER,
-        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.SPEAKER}px]` },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.SPEAKER}px] break-words` },
       }),
 
       columnHelper.accessor('language', {

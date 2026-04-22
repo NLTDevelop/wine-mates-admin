@@ -98,7 +98,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         minSize: COLUMN_WIDTHS.NAME,
         maxSize: COLUMN_WIDTHS.NAME,
         size: COLUMN_WIDTHS.NAME,
-        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.NAME}px]` },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.NAME}px] break-words` },
       }),
 
       columnHelper.accessor('color', {
@@ -119,7 +119,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         minSize: COLUMN_WIDTHS.PRODUCER,
         maxSize: COLUMN_WIDTHS.PRODUCER,
         size: COLUMN_WIDTHS.PRODUCER,
-        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.PRODUCER}px]` },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.PRODUCER}px] break-words` },
       }),
 
       columnHelper.accessor('grapeVariety', {
@@ -128,7 +128,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         minSize: COLUMN_WIDTHS.GRAPE,
         maxSize: COLUMN_WIDTHS.GRAPE,
         size: COLUMN_WIDTHS.GRAPE,
-        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.GRAPE}px]` },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.GRAPE}px] break-words`},
       }),
 
       columnHelper.accessor('type', {
@@ -178,7 +178,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         minSize: COLUMN_WIDTHS.COUNTRY,
         maxSize: COLUMN_WIDTHS.COUNTRY,
         size: COLUMN_WIDTHS.COUNTRY,
-        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.COUNTRY}px]` },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.COUNTRY}px] break-words` },
       }),
 
       columnHelper.accessor('region', {
@@ -198,7 +198,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         minSize: COLUMN_WIDTHS.REGION,
         maxSize: COLUMN_WIDTHS.REGION,
         size: COLUMN_WIDTHS.REGION,
-        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.REGION}px]` },
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.REGION}px] break-words` },
       }),
 
       columnHelper.display({
