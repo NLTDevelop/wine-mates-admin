@@ -27,7 +27,7 @@ export const useEditEventForm = () => {
   const event = eventResponse?.data
 
   const form = useForm<EventFormData>({
-    resolver: zodResolver(eventFormSchema) as any,
+    resolver: zodResolver(eventFormSchema()) as any,
     defaultValues: {
       theme: '',
       description: '',
