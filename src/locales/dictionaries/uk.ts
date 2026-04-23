@@ -483,6 +483,7 @@ export const uk = {
     restaurant_name_require: "Назва закладу обов'язкове поле",
     date_require: "Дата обов'язкове поле",
     time_require: "Час обов'язкове поле",
+    min_age: 'Вікова категорія 18+',
     min_seats_require: "Кількість місць обов'язкове поле",
     language_require: "Мова обов'язкове поле",
     phoneNumber_require: "Номер телефону обов'язкове поле",

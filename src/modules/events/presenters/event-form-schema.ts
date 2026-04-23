@@ -36,7 +36,7 @@ export const eventFormSchema = z.object({
   language: z.string().min(1, i18n.t('messages:language_require')),
   phoneNumber: z.string().min(1, i18n.t('messages:phoneNumber_require')).optional(),
 
-  age: z.number().optional().nullable(),
+  age: z.number().min(18, i18n.t('messages:min_age')).optional().nullable(),
   sex: z.enum(SEX).default('all'),
 
   eventType: z.enum(EVENT_TYPE),
