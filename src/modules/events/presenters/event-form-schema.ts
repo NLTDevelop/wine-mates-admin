@@ -3,9 +3,9 @@ import { z } from 'zod'
 import { EVENT_TYPE, PARTICIPATION_CONDITION, REPEAT_RULES, SEX } from '../entities/types/constants'
 
 export const eventFormSchema = z.object({
-  theme: z.string().min(1, i18n.t('messages:theme_require')),
+  theme: z.string().trim().min(1, i18n.t('messages:theme_require')),
   description: z.string().optional().default(''),
-  restaurantName: z.string().min(1, i18n.t('messages:restaurant_name_require')),
+  restaurantName: z.string().trim().min(1, i18n.t('messages:restaurant_name_require')),
 
   eventDate: z.string().min(1, i18n.t('messages:date_require')),
   eventTime: z.string().min(1, i18n.t('messages:time_require')),
