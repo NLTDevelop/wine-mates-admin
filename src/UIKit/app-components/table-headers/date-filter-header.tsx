@@ -43,7 +43,7 @@ export const DateFilterHeader = ({ column, label, onFilter, currentFrom, current
   const getSortIcon = () => {
     if (!hasSort) return null
     if (!isSorted) return <ArrowUpDown className="h-4 w-4" />
-    return sortOrder === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />
+    return sortOrder === 'asc' ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />
   }
 
   const getIcon = () => {

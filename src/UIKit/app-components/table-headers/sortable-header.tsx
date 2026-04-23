@@ -7,20 +7,21 @@ interface SortableHeaderProps {
   column: string
   label: string
   sortBy?: string
+  sortOrder?: string
   onSort: (column?: string) => void
 }
 
-export const SortableHeader = ({ column, label, sortBy, onSort }: SortableHeaderProps) => {
+export const SortableHeader = ({ column, label, sortBy, onSort, sortOrder }: SortableHeaderProps) => {
   const { t } = useTranslation('wines')
   const isSorted = sortBy?.startsWith(column)
 
   const getIconHeader = () => {
     if (!isSorted) return <ArrowUpDown className="h-4 w-4" />
-    return sortBy?.endsWith('_asc') ? <ArrowDown className="h-4 w-4 text-primary" /> : <ArrowUp className="h-4 w-4 text-primary" />
+    return sortBy?.endsWith('_asc') || sortOrder === 'asc' ? <ArrowDown className="h-4 w-4 text-primary" /> : <ArrowUp className="h-4 w-4 text-primary" />
   }
   const getIconBtn = () => {
     if (!isSorted) return <ArrowUpDown className="h-4 w-4" />
-    return sortBy?.endsWith('_asc') ? <ArrowUp className="h-4 w-4 text-primary" /> : <ArrowDown className="h-4 w-4 text-primary" />
+    return sortBy?.endsWith('_asc') || sortOrder === 'asc' ? <ArrowDown className="h-4 w-4 text-primary" /> : <ArrowUp className="h-4 w-4 text-primary" />
   }
 
   const handleClearSort = (e: React.MouseEvent) => {

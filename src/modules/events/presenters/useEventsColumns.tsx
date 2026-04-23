@@ -180,7 +180,7 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
       }),
 
       columnHelper.accessor('seats', {
-        header: () => <SortableHeader column="seats" label={t('table.seats')} sortBy={filters?.sortBy} onSort={handleSort} />,
+        header: () => <SortableHeader column="seats" label={t('table.seats')} sortOrder={filters?.sortOrder} sortBy={filters?.sortBy} onSort={handleSort} />,
         cell: info => info.getValue() || '-',
         minSize: COLUMN_WIDTHS.SEATS,
         maxSize: COLUMN_WIDTHS.SEATS,
@@ -243,7 +243,7 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
       }),
 
       columnHelper.accessor('createdAt', {
-        header: () => <SortableHeader column="createdAt" label={t('table.createdAt')} sortBy={filters?.sortBy} onSort={handleSort} />,
+        header: () => <SortableHeader column="createdAt" label={t('table.createdAt')} sortOrder={filters?.sortOrder} sortBy={filters?.sortBy} onSort={handleSort} />,
         cell: info => {
           const dateString = info.getValue()
           return dateString ? format(new Date(dateString), 'dd.MM.yyyy') : '-'

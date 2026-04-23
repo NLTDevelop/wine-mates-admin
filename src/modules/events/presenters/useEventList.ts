@@ -104,7 +104,7 @@ export const useEventList = () => {
   )
 
   const clearColumnFilters = useCallback(() => {
-    const filtersToClear = ['minPrice', 'maxPrice', 'dateFrom', 'dateTo', 'isActive', 'countryId', 'eventType', 'requiresConfirmation']
+    const filtersToClear = ['minPrice', 'maxPrice', 'dateFrom', 'dateTo', 'isActive', 'countryId', 'eventType', 'requiresConfirmation', 'tastingType']
 
     filtersToClear.forEach(filter => {
       handleColumnFilter(filter, null)
@@ -195,6 +195,8 @@ export const useEventList = () => {
       isActive: filters.isActive,
       country: filters.countryId,
       eventType: filters.eventType,
+      tastingType: filters.tastingType,
+      createdAt: filters.createdAt,
       requiresConfirmation: filters.requiresConfirmation,
     },
 

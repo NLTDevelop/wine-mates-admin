@@ -128,7 +128,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
         minSize: COLUMN_WIDTHS.GRAPE,
         maxSize: COLUMN_WIDTHS.GRAPE,
         size: COLUMN_WIDTHS.GRAPE,
-        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.GRAPE}px] break-words`},
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.GRAPE}px] break-words` },
       }),
 
       columnHelper.accessor('type', {

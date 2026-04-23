@@ -33,10 +33,10 @@ export const PriceSeatsSection = ({ form }: PriceSeatsSectionProps) => {
                   placeholder={t('price') + '...'}
                   {...field}
                   onChange={e => {
-                    const value = e.target.value
-                    field.onChange(value === '' ? undefined : parseFloat(value))
+                    const value = e.target.value === '' ? null : parseFloat(e.target.value)
+                    field.onChange(value)
                   }}
-                  value={field.value === null || field.value === undefined || field.value === '0' ? '' : field.value}
+                  value={field.value === null || field.value === undefined ? '' : field.value}
                   error={form.formState.errors.price?.message as string}
                 />
               </FormControl>
@@ -90,9 +90,13 @@ export const PriceSeatsSection = ({ form }: PriceSeatsSectionProps) => {
                 {...field}
                 onChange={e => {
                   const value = e.target.value
-                  field.onChange(value === '' ? null : parseInt(value, 10))
+                  if (value === '') {
+                    field.onChange(undefined)
+                  } else {
+                    field.onChange(parseInt(value, 10))
+                  }
                 }}
-                value={field.value === null || field.value === undefined ? '' : field.value}
+                value={field.value === undefined ? '' : field.value}
                 error={form.formState.errors.seats?.message as string}
               />
             </FormControl>

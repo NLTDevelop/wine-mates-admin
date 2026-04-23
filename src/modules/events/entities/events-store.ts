@@ -32,6 +32,8 @@ export const useEventStore = createStoreDevToolsWrapper<EventState>(
       isActive: null,
       countryId: null,
       eventType: null,
+      tastingType: null,
+      createdAt: null,
       requiresConfirmation: null,
       sortBy: undefined,
       sortOrder: 'asc',

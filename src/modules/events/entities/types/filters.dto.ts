@@ -12,6 +12,7 @@ export interface IEventFilters {
   countryId?: number | null
   eventType?: EventType | null
   tastingType?: TastingType | null
+  createdAt?: string | null
   requiresConfirmation?: boolean | null
   sortBy?: string
   sortOrder?: 'asc' | 'desc'

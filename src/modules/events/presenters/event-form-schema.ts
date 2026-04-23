@@ -10,13 +10,31 @@ export const eventFormSchema = z.object({
   eventDate: z.string().min(1, i18n.t('messages:date_require')),
   eventTime: z.string().min(1, i18n.t('messages:time_require')),
 
-  price: z.string().optional().nullable(),
+  price: z
+    .number()
+    .optional()
+    .nullable()
+    .refine(
+      val => {
+        if (val === null || val === undefined) return true
+        const isValid = val >= 0 && val <= 9999.99
+        return isValid
+      },
+      {
+        message: i18n.t('messages:price_invalid'),
+      }
+    ),
   currency: z.string().default('UAH'),
-  seats: z.number().min(1, i18n.t('messages:min_seats_require')),
+  seats: z
+    .number()
+    .optional()
+    .refine(val => val !== undefined && val >= 1, {
+      message: i18n.t('messages:min_seats_require'),
+    }),
 
   speakerName: z.string().optional().default(''),
-  language: z.string().min(1, 'Language is required'),
-  phoneNumber: z.string().min(1, 'Phone number is required').optional(),
+  language: z.string().min(1, i18n.t('messages:language_require')),
+  phoneNumber: z.string().min(1, i18n.t('messages:phoneNumber_require')).optional(),
 
   age: z.number().optional().nullable(),
   sex: z.enum(SEX).default('all'),

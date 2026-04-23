@@ -19,9 +19,10 @@ interface SortableFilterableHeaderProps {
   filterOptions: FilterOption[]
   currentFilter?: any
   filterDisabled?: boolean
+  sortOrder?: string
 }
 
-export const SortableFilterableHeader = ({ column, label, sortBy, onSort, onFilter, filterOptions, currentFilter, filterDisabled = false }: SortableFilterableHeaderProps) => {
+export const SortableFilterableHeader = ({ column, label, sortBy, onSort, onFilter, filterOptions, currentFilter, sortOrder, filterDisabled = false }: SortableFilterableHeaderProps) => {
   const { t } = useTranslation('wines')
   const isSorted = sortBy?.startsWith(column)
   const isFiltered = currentFilter !== undefined && currentFilter !== null && currentFilter !== ''
@@ -29,7 +30,7 @@ export const SortableFilterableHeader = ({ column, label, sortBy, onSort, onFilt
 
   const getSortIcon = () => {
     if (!isSorted) return <ArrowUpDown className="h-4 w-4" />
-    return sortBy?.endsWith('_asc') ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />
+    return sortBy?.endsWith('_asc') || sortOrder === 'asc' ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />
   }
 
   const getIcon = () => {
