@@ -18,8 +18,10 @@ export const useUpdateAiPromtsForm = () => {
       } else {
         if (activeTab === 'snacks') {
           return promtQueries.snacks.update(params as OpenAIUpdateConfig).queryFn() as Promise<OpenAIFeatureConfig>
-        } else {
+        } else if (activeTab === 'tasting_note') {
           return promtQueries.tasting_note.update(params as OpenAIUpdateConfig).queryFn() as Promise<OpenAIFeatureConfig>
+        } else {
+          return promtQueries.blind_tasting_note.update(params as OpenAIUpdateConfig).queryFn() as Promise<OpenAIFeatureConfig>
         }
       }
     },

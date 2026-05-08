@@ -657,6 +657,7 @@ export const uk = {
     max_tokens: 'Макс. кількість токенів',
     snacks: 'Закуски',
     tasting: 'Смакові вподобання',
+    blind_tasting: 'Сліпа дигустація',
     scanner: 'Сканер',
     thresholds: 'Пороги пошуку',
     thresholds_qty: '5 фіксованих порогів',

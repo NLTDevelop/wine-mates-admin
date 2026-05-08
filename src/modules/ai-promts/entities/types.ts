@@ -1,5 +1,5 @@
 type AIProvider = 'openai' | 'gemini'
-export type FeatureType = 'snacks' | 'tasting_note' | 'scanner'
+export type FeatureType = 'snacks' | 'tasting_note' | 'scanner' | 'blind_tasting_note'
 
 interface Threshold {
   name: string
@@ -16,7 +16,7 @@ interface BaseConfig {
 
 export interface OpenAIFeatureConfig extends BaseConfig {
   aiProvider: 'openai'
-  featureType: 'snacks' | 'tasting_note'
+  featureType: 'snacks' | 'tasting_note' | 'blind_tasting_note'
   config: {
     systemPrompt: string
     model: string
@@ -46,7 +46,7 @@ interface BaseUpdateConfig {
 
 export interface OpenAIUpdateConfig extends BaseUpdateConfig {
   aiProvider?: 'openai'
-  featureType?: 'snacks' | 'tasting_note'
+  featureType?: 'snacks' | 'tasting_note' | 'blind_tasting_note'
   config?: {
     systemPrompt?: string
     model?: string

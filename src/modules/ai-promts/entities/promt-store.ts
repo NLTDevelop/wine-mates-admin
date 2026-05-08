@@ -6,11 +6,13 @@ interface PromtState {
   accordionState: {
     snacks: string
     tasting_note: string
+    blind_tasting_note: string
     scanner: string
   }
 
   snacks?: OpenAIFeatureConfig
   tasting_note?: OpenAIFeatureConfig
+  blind_tasting_note?: OpenAIFeatureConfig
   scanner?: GeminiFeatureConfig
   isLoading: boolean
 
@@ -18,13 +20,14 @@ interface PromtState {
   setAccordionState: (tab: FeatureType, value: string) => void
   setSnacks: (snacks?: OpenAIFeatureConfig) => void
   setTasting: (tasting_note?: OpenAIFeatureConfig) => void
+  setBlindTasting: (blind_tasting_note?: OpenAIFeatureConfig) => void
   setScanner: (scanner?: GeminiFeatureConfig) => void
   setIsLoading: (isLoading: boolean) => void
 }
 
 export const usePromtStore = create<PromtState>(set => ({
   activeTab: 'scanner',
-  accordionState: { snacks: '', tasting_note: '', scanner: '' },
+  accordionState: { snacks: '', tasting_note: '', blind_tasting_note: '', scanner: '' },
   data: undefined,
   isLoading: false,
 
@@ -43,6 +46,7 @@ export const usePromtStore = create<PromtState>(set => ({
   setSnacks: snacks => set({ snacks }),
 
   setTasting: tasting_note => set({ tasting_note }),
+  setBlindTasting: blind_tasting_note => set({ blind_tasting_note }),
   setScanner: scanner => set({ scanner }),
 
   setIsLoading: isLoading => set({ isLoading }),
