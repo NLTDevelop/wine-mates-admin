@@ -30,6 +30,20 @@ export const promtQueries = {
       queryFn: () => promtService.tasting_note.reset(),
     }),
   },
+  blind_tasting_note: {
+    list: () => ({
+      queryKey: ['blind_tasting_note', 'list'],
+      queryFn: () => promtService.blind_tasting_note.list(),
+    }),
+    update: (params: OpenAIUpdateConfig) => ({
+      queryKey: ['blind_tasting_note', 'update'],
+      queryFn: () => promtService.blind_tasting_note.update(params),
+    }),
+    reset: () => ({
+      queryKey: ['blind_tasting_note', 'reset'],
+      queryFn: () => promtService.blind_tasting_note.reset(),
+    }),
+  },
   scanner: {
     list: () => ({
       queryKey: ['scanner', 'list'],
