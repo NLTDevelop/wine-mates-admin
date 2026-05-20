@@ -23,4 +23,9 @@ export const eventQueries = {
     mutationKey: ['events', 'delete'],
     mutationFn: (id: number) => eventsService.delete(id),
   }),
+
+  currency: () => ({
+    queryKey: ['currency', 'list'],
+    queryFn: () => eventsService.currency_list(),
+  }),
 }

@@ -66,7 +66,6 @@ export const useEventList = () => {
       if (!column) {
         setFilters({
           sortBy: undefined,
-          sortOrder: 'asc',
           page: 1,
         })
         return
@@ -74,37 +73,27 @@ export const useEventList = () => {
 
       const baseField = EVENT_SORT_FIELDS[column] || column
       const currentSortBy = filters.sortBy || ''
-      const currentSortOrder = filters.sortOrder || 'asc'
 
-      const isCurrentColumn = currentSortBy === baseField
+      const isCurrentColumn = currentSortBy === `${baseField}_asc` || currentSortBy === `${baseField}_desc`
 
       if (isCurrentColumn) {
-        if (currentSortOrder === 'desc') {
-          setFilters({
-            sortBy: undefined,
-            sortOrder: 'asc',
-            page: 1,
-          })
-        } else {
-          setFilters({
-            sortBy: baseField,
-            sortOrder: 'desc',
-            page: 1,
-          })
-        }
+        const newOrder = currentSortBy.endsWith('_asc') ? 'desc' : 'asc'
+        setFilters({
+          sortBy: `${baseField}_${newOrder}`,
+          page: 1,
+        })
       } else {
         setFilters({
-          sortBy: baseField,
-          sortOrder: 'asc',
+          sortBy: `${baseField}_asc`,
           page: 1,
         })
       }
     },
-    [setFilters, filters.sortBy, filters.sortOrder]
+    [setFilters, filters.sortBy]
   )
 
   const clearColumnFilters = useCallback(() => {
-    const filtersToClear = ['minPrice', 'maxPrice', 'dateFrom', 'dateTo', 'isActive', 'countryId', 'eventType', 'requiresConfirmation', 'tastingType']
+    const filtersToClear = ['theme', 'minPrice', 'maxPrice', 'dateFrom', 'dateTo', 'isActive', 'countryId', 'eventType', 'requiresConfirmation', 'tastingType', 'currency', 'language']
 
     filtersToClear.forEach(filter => {
       handleColumnFilter(filter, null)
@@ -185,6 +174,7 @@ export const useEventList = () => {
     clearColumnFilters,
     handleDateFilter,
     handlePriceFilter,
+    sortBy: filters.sortBy,
     handleSort,
 
     columnFilters: {
@@ -194,9 +184,10 @@ export const useEventList = () => {
       dateTo: filters.dateTo,
       isActive: filters.isActive,
       country: filters.countryId,
+      language: filters.language,
+      currency: filters.currency,
       eventType: filters.eventType,
       tastingType: filters.tastingType,
-      createdAt: filters.createdAt,
       requiresConfirmation: filters.requiresConfirmation,
     },
 

@@ -4,7 +4,7 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/UIKi
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/UIKit/shadcn/ui/select'
 import { InputWithTooltip } from '@/UIKit/app-components/input-with-tooltip'
 import { EventFormData } from '@/modules/events/presenters/event-form-schema'
-import { CURRENCIES } from '@/modules/events/entities/types/constants'
+// import { CURRENCIES } from '@/modules/events/entities/types/constants'
 import { cn } from '@/lib/utils'
 
 interface PriceSeatsSectionProps {
@@ -62,13 +62,13 @@ export const PriceSeatsSection = ({ form }: PriceSeatsSectionProps) => {
                   <SelectValue placeholder={t('choose_option')} />
                 </SelectTrigger>
               </FormControl>
-              <SelectContent>
+              {/* <SelectContent>
                 {CURRENCIES.map(currency => (
                   <SelectItem key={currency} value={currency}>
                     {currency}
                   </SelectItem>
                 ))}
-              </SelectContent>
+              </SelectContent> */}
             </Select>
             <FormMessage />
           </FormItem>

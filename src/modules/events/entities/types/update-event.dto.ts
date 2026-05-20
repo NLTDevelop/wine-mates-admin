@@ -8,22 +8,27 @@ export interface UpdateEventParams {
 
 export interface EventFormData {
   theme?: string
+  description?: string
   restaurantName?: string
-  eventDate?: string
-  eventTime?: string
-  priceUsd?: string
+  locationLabel?: string
+  eventStartDate?: string
+  eventStartTime?: string
+  eventEndDate?: string
+  eventEndTime?: string
+  participationCondition?: ParticipationCondition
+  price?: number
   currency?: string
   speakerName?: string
   language?: Language
   seats?: number
   phoneNumber?: string
-  age?: number
+  minAge?: number
+  maxAge?: number
   sex?: Sex
   eventType?: EventType
-  isActive?: boolean
+  tastingType?: TastingType
   requiresConfirmation?: boolean
   repeatRule?: RepeatRule
+  isActive?: boolean
   wineSet?: IWineSet[]
-  tastingType?: TastingType
-  participationCondition?: ParticipationCondition
 }

@@ -1,10 +1,12 @@
 import { useTranslation } from 'react-i18next'
 import { getEventDetails } from '../../presenters/event-details-config'
-import { Wine, Info } from 'lucide-react'
+import { Wine, Info, CircleDollarSign, CreditCard, Users } from 'lucide-react'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { Badge } from '@/UIKit/shadcn/ui/badge'
 import { IEvent } from '../../entities/types/IEvent'
 import { cn } from '@/lib/utils'
+import { Avatar, AvatarImage } from '@radix-ui/react-avatar'
+import { AvatarFallback } from '@/UIKit/shadcn/ui/avatar'
 
 interface EventDetailsProps {
   event: IEvent
@@ -46,6 +48,55 @@ export const EventDetails = ({ event }: EventDetailsProps) => {
               <div>
                 <p className="text-sm text-gray-500">{t('description')}</p>
                 <p className="text-sm mt-1">{event.description}</p>
+              </div>
+            </div>
+          </div>
+        )}
+        {event.participants && event.participants.length > 0 && (
+          <div className="mt-6 pt-4 border-t">
+            <div className="flex gap-3">
+              <Users className="h-4 w-4 text-gray-400 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-sm text-gray-500">{t('participants')}</p>
+                <div className="mt-2 space-y-2">
+                  {event.participants.map(participant => (
+                    <div key={participant.id} className="flex items-center gap-3">
+                      {participant.avatar ? (
+                        <img src={participant.avatar.smallUrl} alt={`${participant.firstName} ${participant.lastName}`} className="w-8 h-8 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                          <span className="text-sm text-gray-500 font-medium">
+                            {participant.firstName?.[0]}
+                            {participant.lastName?.[0]}
+                          </span>
+                        </div>
+                      )}
+                      <span className="text-sm">
+                        {participant.firstName} {participant.lastName}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {event.paymentMethods && event.paymentMethods.length > 0 && (
+          <div className="mt-6 pt-4 border-t">
+            <div className="flex gap-3">
+              <CreditCard className="h-4 w-4 text-gray-400 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-sm text-gray-500">{t('payment_methods')}</p>
+                <div className="mt-2 space-y-3">
+                  {event.paymentMethods.map(method => (
+                    <div key={method.id} className="text-sm">
+                      <p className="font-medium">{method.name}</p>
+                      {method.description && <p className="text-gray-600 mt-0.5">{method.description}</p>}
+                      {method.paymentDetails && <p className="text-gray-500 text-xs mt-1">{method.paymentDetails}</p>}
+                      {method.qrCode && <img src={method.qrCode.smallUrl} alt={method.name} className="mt-2 w-24 h-24 object-contain" />}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

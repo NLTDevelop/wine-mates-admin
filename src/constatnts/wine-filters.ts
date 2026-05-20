@@ -21,9 +21,12 @@ export const SORT_FIELDS: Record<string, string> = {
 } as const
 
 export const EVENT_SORT_FIELDS: Record<string, string> = {
-  eventDate: 'eventDate',
-  priceUsd: 'priceUsd',
+  date: 'date',
+  theme: 'theme',
+  restaurant: 'restaurant',
+  location: 'location',
   seats: 'seats',
+  price: 'price',
   createdAt: 'createdAt',
 } as const
 

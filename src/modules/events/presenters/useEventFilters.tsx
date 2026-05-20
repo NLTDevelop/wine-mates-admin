@@ -1,9 +1,12 @@
+import { AVAILABLE_LANGUAGES } from '@/constatnts/avialable-languages'
 import { useCountryOptions } from '@/modules/wine/create-wine/presenters/useCountryOptions'
 import { useTranslation } from 'react-i18next'
+import { useCurrencyOptions } from './useCurrencyOptions'
 
 export const useEventFilters = () => {
   const { t } = useTranslation('events')
   const { countries, isLoading: isCountriesLoading } = useCountryOptions({})
+  const { currencies, isLoading: isCurrencyLoading } = useCurrencyOptions()
 
   const getIsActiveFilterOptions = () => {
     return [
@@ -18,6 +21,21 @@ export const useEventFilters = () => {
     return countries.map(country => ({
       label: country.name,
       value: country.id,
+    }))
+  }
+  const getCurrencyFilterOptions = () => {
+    if (!currencies || currencies.length === 0) return []
+
+    return currencies.map(currency => ({
+      label: currency,
+      value: currency,
+    }))
+  }
+
+  const getLanguageFilterOptions = () => {
+    return AVAILABLE_LANGUAGES.map(language => ({
+      label: language.name,
+      value: language.code,
     }))
   }
 
@@ -65,5 +83,7 @@ export const useEventFilters = () => {
     getTypeFilterOptions,
     getRequiresConfirmationFilterOptions,
     getTastingTypeFilterOptions,
+    getLanguageFilterOptions,
+    getCurrencyFilterOptions,
   }
 }

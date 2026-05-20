@@ -1,7 +1,11 @@
+import { BaseWineColor } from '@/modules/wine/create/general/entities/types'
+
 export interface IWineSetResponse {
   id: number
   sortOrder: number
-  wine: Wine
+  avgUserRating: number
+  avgExpertRating: number
+  wine: IWine
 }
 export interface IWineSet {
   wineId: number
@@ -13,8 +17,10 @@ export interface IWine {
   name: string
   producer: string
   vintage: number
-  image: IWineImg
+  image: WineImage
   vintages: IWineVintages[]
+  type: IType
+  color: BaseWineColor
 }
 
 interface WineImage {
@@ -23,20 +29,13 @@ interface WineImage {
   originalUrl: string
 }
 
-interface Wine {
-  id: number
-  name: string
-  producer: string
-  vintage: number | null
-  image: WineImage | null
-}
-
-interface IWineImg {
-  smallUrl: string
-  mediumUrl: string
-}
-
 interface IWineVintages {
   wineId: number
   vintage: number
+}
+
+interface IType {
+  id: number
+  isSparkling: boolean
+  name: string
 }

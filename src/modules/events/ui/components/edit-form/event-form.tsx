@@ -36,10 +36,10 @@ export const EventForm = ({ form, onSubmit, onCancel, isSubmitting = false, even
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <BasicInfoSection form={form} />
         <DescriptionSection form={form} />
-        <DateTimeSection form={form} />
+        {/* <DateTimeSection form={form} /> */}
         <PriceSeatsSection form={form} />
         <SpeakerContactSection form={form} />
-        <AgeSexSection form={form} />
+        {/* <AgeSexSection form={form} /> */}
         <TypeSettingsSection form={form} />
         <RequiresConfirmationSection form={form} />
         <WineSetSection form={form} event={event} />

@@ -1,8 +1,8 @@
 export const TASTING_TYPES = ['regular', 'blind'] as const
 export type TastingType = (typeof TASTING_TYPES)[number]
 
-export const CURRENCIES = ['UAH', 'USD', 'EUR'] as const
-export type Currency = (typeof CURRENCIES)[number]
+// export const CURRENCIES = ['UAH', 'USD', 'EUR'] as const
+// export type Currency = (typeof CURRENCIES)[number]
 
 export const SEX = ['all', 'men', 'women'] as const
 export type Sex = (typeof SEX)[number]

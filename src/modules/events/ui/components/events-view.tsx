@@ -21,6 +21,7 @@ export const EventsView = () => {
 
   const hasActiveFilters = useMemo(() => {
     const hasColumnFilters = Object.values(columnFilters).some(value => value !== null && value !== undefined)
+    console.log(Object.values(columnFilters), columnFilters)
     const hasSorting = filters.sortBy !== undefined && filters.sortBy !== ''
     return hasColumnFilters || hasSorting
   }, [columnFilters])

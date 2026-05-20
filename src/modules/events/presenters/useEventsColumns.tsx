@@ -9,7 +9,7 @@ import { FilterableHeader } from '@/UIKit/app-components/table-headers/filterabl
 import { IEvent } from '../entities/types/IEvent'
 import { DateFilterHeader } from '@/UIKit/app-components/table-headers/date-filter-header'
 import { RangeFilterHeader } from '@/UIKit/app-components/table-headers/range-filter-header'
-import { format } from 'date-fns'
+import { format, parse } from 'date-fns'
 import { SortableHeader } from '@/UIKit/app-components/table-headers/sortable-header'
 
 const columnHelper = createColumnHelper<IEvent>()
@@ -24,8 +24,8 @@ const COLUMN_WIDTHS = {
   THEME: 260,
   RESTAURANT: 180,
   LOCATION: 300,
-  DATE: 150,
-  TIME: 120,
+  DATE: 175,
+  TIME: 150,
   PRICE: 160,
   CURRENCY: 100,
   SPEAKER: 180,
@@ -40,9 +40,17 @@ const COLUMN_WIDTHS = {
 export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
   const { t } = useTranslation('events')
 
-  const { handleColumnFilter, handleDateFilter, handlePriceFilter, handleSort, filters } = useEventList()
+  const { handleColumnFilter, handleDateFilter, handlePriceFilter, handleSort, filters, sortBy } = useEventList()
 
-  const { getIsActiveFilterOptions, getCountryFilterOptions, getTypeFilterOptions, getRequiresConfirmationFilterOptions, getTastingTypeFilterOptions } = useEventFilters()
+  const {
+    getIsActiveFilterOptions,
+    getCountryFilterOptions,
+    getTypeFilterOptions,
+    getRequiresConfirmationFilterOptions,
+    getTastingTypeFilterOptions,
+    getLanguageFilterOptions,
+    getCurrencyFilterOptions,
+  } = useEventFilters()
 
   return useMemo(
     () => [
@@ -83,7 +91,7 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
       }),
 
       columnHelper.accessor('theme', {
-        header: t('table.theme'),
+        header: () => <SortableHeader column="theme" label={t('table.theme')} sortBy={sortBy} onSort={handleSort} />,
         cell: info => info.getValue() || '-',
         minSize: COLUMN_WIDTHS.THEME,
         maxSize: COLUMN_WIDTHS.THEME,
@@ -92,7 +100,7 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
       }),
 
       columnHelper.accessor('restaurantName', {
-        header: t('table.restaurant_name'),
+        header: () => <SortableHeader column="restaurant" label={t('table.restaurant_name')} sortBy={sortBy} onSort={handleSort} />,
         cell: info => {
           const restaurantName = info.getValue()
           return restaurantName || '-'
@@ -104,7 +112,7 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
       }),
 
       columnHelper.accessor('locationLabel', {
-        header: t('table.location_label'),
+        header: () => <SortableHeader column="location" label={t('table.location_label')} sortBy={sortBy} onSort={handleSort} />,
         cell: info => info.getValue() || '-',
         minSize: COLUMN_WIDTHS.LOCATION,
         maxSize: COLUMN_WIDTHS.LOCATION,
@@ -121,11 +129,14 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
             currentFrom={filters?.dateFrom}
             currentTo={filters?.dateTo}
             onSort={handleSort}
-            sortBy={filters?.sortBy}
-            sortOrder={filters?.sortOrder}
+            sortBy={filters.sortBy}
           />
         ),
-        cell: info => info.getValue() || '-',
+        cell: info => {
+          const dateStart = parse(info.row.original.eventStartDate, 'yyyy-MM-dd', new Date())
+          const dateEnd = parse(info.row.original.eventEndDate, 'yyyy-MM-dd', new Date())
+          return `${format(dateStart, 'dd.MM.yy')} - ${format(dateEnd, 'dd.MM.yy')}` || '-'
+        },
         minSize: COLUMN_WIDTHS.DATE,
         maxSize: COLUMN_WIDTHS.DATE,
         size: COLUMN_WIDTHS.DATE,
@@ -134,7 +145,11 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
 
       columnHelper.accessor('eventTime', {
         header: t('table.event_time'),
-        cell: info => info.getValue() || '-',
+        cell: info => {
+          const timeStart = parse(info.row.original.eventStartTime, 'HH:mm:ss', new Date())
+          const timeEnd = parse(info.row.original.eventEndTime, 'HH:mm:ss', new Date())
+          return `${format(timeStart, 'HH:mm')} - ${format(timeEnd, 'HH:mm')}` || '-'
+        },
         minSize: COLUMN_WIDTHS.TIME,
         maxSize: COLUMN_WIDTHS.TIME,
         size: COLUMN_WIDTHS.TIME,
@@ -144,14 +159,13 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
       columnHelper.accessor('priceUsd', {
         header: () => (
           <RangeFilterHeader
-            column="priceUsd"
+            column="price"
             label={t('table.price')}
             onFilter={(_, val) => handlePriceFilter({ minPrice: val.min, maxPrice: val.max })}
             currentMin={filters?.minPrice}
             currentMax={filters?.maxPrice}
             onSort={handleSort}
-            sortBy={filters?.sortBy}
-            sortOrder={filters?.sortOrder}
+            sortBy={sortBy}
           />
         ),
         cell: info => info.getValue() || '-',
@@ -159,6 +173,15 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
         maxSize: COLUMN_WIDTHS.PRICE,
         size: COLUMN_WIDTHS.PRICE,
         meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.PRICE}px]` },
+      }),
+
+      columnHelper.accessor('currency', {
+        header: () => <FilterableHeader column="currency" label={t('table.currency')} onFilter={handleColumnFilter} filterOptions={getCurrencyFilterOptions()} currentFilter={filters?.currency} />,
+        cell: info => info.getValue() || '-',
+        minSize: COLUMN_WIDTHS.CURRENCY,
+        maxSize: COLUMN_WIDTHS.CURRENCY,
+        size: COLUMN_WIDTHS.CURRENCY,
+        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.CURRENCY}px]` },
       }),
 
       columnHelper.accessor('speakerName', {
@@ -171,7 +194,7 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
       }),
 
       columnHelper.accessor('language', {
-        header: t('table.language'),
+        header: () => <FilterableHeader column="language" label={t('table.language')} onFilter={handleColumnFilter} filterOptions={getLanguageFilterOptions()} currentFilter={filters?.language} />,
         cell: info => info.getValue() || '-',
         minSize: COLUMN_WIDTHS.LANGUAGE,
         maxSize: COLUMN_WIDTHS.LANGUAGE,
@@ -180,8 +203,8 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
       }),
 
       columnHelper.accessor('seats', {
-        header: () => <SortableHeader column="seats" label={t('table.seats')} sortOrder={filters?.sortOrder} sortBy={filters?.sortBy} onSort={handleSort} />,
-        cell: info => info.getValue() || '-',
+        header: () => <SortableHeader column="seats" label={t('table.seats')} sortBy={filters?.sortBy} onSort={handleSort} />,
+        cell: info => `${info.row.original.seats.total} (${t('left_place', { count: info.row.original.seats.left })})` || '-',
         minSize: COLUMN_WIDTHS.SEATS,
         maxSize: COLUMN_WIDTHS.SEATS,
         size: COLUMN_WIDTHS.SEATS,
@@ -243,7 +266,7 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
       }),
 
       columnHelper.accessor('createdAt', {
-        header: () => <SortableHeader column="createdAt" label={t('table.createdAt')} sortOrder={filters?.sortOrder} sortBy={filters?.sortBy} onSort={handleSort} />,
+        header: () => <SortableHeader column="createdAt" label={t('table.createdAt')} /*sortOrder={filters?.sortOrder}*/ sortBy={filters?.sortBy} onSort={handleSort} />,
         cell: info => {
           const dateString = info.getValue()
           return dateString ? format(new Date(dateString), 'dd.MM.yyyy') : '-'

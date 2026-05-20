@@ -9,32 +9,81 @@ export interface EventResponse {
 }
 
 export interface IEvent {
-  id: number
-  theme: string
-  restaurantName: string
-  locationLabel: string
-  latitude?: number
-  longitude?: number
-  eventDate: string
-  eventTime: string
-  priceUsd: string
-  price: string
-  currency: string
-  speakerName: string
-  language: Language
-  seats: number
-  eventType?: EventType
-  tastingType?: TastingType
-  isActive: boolean
-  createdAt?: string
   country: LocationWine
-  phoneNumber?: string
+  createdAt?: string
+  currency: string
   description?: string
-  wineSet?: IWineSetResponse[]
+  eventEndDate: string
+  eventEndTime: string
+  eventStartDate: string
+  eventStartTime: string
+  eventDate?: string
+  eventTime?: string
+  eventType?: EventType
+  id: number
+  isActive: boolean
+  isTastingStarted: boolean
   requiresConfirmation?: boolean
-  repeatRule?: RepeatRule
-  sex?: Sex
-  age?: number
-  updatedAt?: string
+  language: Language
+  latitude?: number
+  locationLabel: string
+  longitude?: number
+  maxAge?: number
+  minAge?: number
+  participants: IParticipant[]
   participationCondition?: ParticipationCondition
+  phoneNumber?: string
+  price: string
+  priceUsd: string
+  repetitionNumber: number
+  restaurantName: string
+  seats: ISeats
+  sex?: Sex
+  speakerName: string
+  status: string
+  tastingType?: TastingType
+  repeatRule?: RepeatRule
+  theme: string
+  userId: string
+
+  paymentMethods?: IPaymentMethod[]
+  contacts?: IContact[]
+  wineSet?: IWineSetResponse[]
+}
+
+export interface IParticipant {
+  id: number
+  firstName: string
+  lastName: string
+  avatar: IImg | null
+}
+
+interface IImg {
+  smallUrl: string
+  mediumUrl: string
+  originalUrl: string
+}
+export interface ISeats {
+  total: number
+  left: number
+}
+
+export interface IPaymentMethod {
+  id: number
+  name: string
+  paymentDetails: string
+  description: string
+  isVisible: boolean
+  qrCode: IImg | null
+}
+
+export interface IContact {
+  id: number
+  name: string
+  value: string
+  isVisible: boolean
+}
+
+export interface ICurrencyResponse {
+  list: string[]
 }
