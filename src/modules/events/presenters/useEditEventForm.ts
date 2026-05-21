@@ -13,6 +13,21 @@ import { IWineSetResponse } from '../entities/types/wine-set.dto'
 import { PATHS } from '@/navigation/paths'
 import { useEventStore } from '../entities/events-store'
 import { getRepeatRuleFromPreset } from '../ui/components/edit-form/sections'
+import { format } from 'date-fns'
+import { fromZonedTime } from 'date-fns-tz'
+
+const convertToUTC = (date: string, time: string): { date: string; time: string } => {
+  if (!date || !time) return { date, time }
+  const timeZone = 'Europe/Kiev'
+  const localDateTime = new Date(`${date}T${time}`)
+
+  const utcDate = fromZonedTime(localDateTime, timeZone)
+
+  return {
+    date: format(utcDate, 'yyyy-MM-dd'),
+    time: format(utcDate, 'HH:mm:ss'),
+  }
+}
 
 export const useEditEventForm = () => {
   const { id } = useParams<{ id: string }>()
@@ -105,14 +120,16 @@ export const useEditEventForm = () => {
 
   const updateMutation = useMutation({
     mutationFn: (data: EventFormData) => {
+      const startUTC = convertToUTC(data.eventStartDate, data.eventStartTime)
+      const endUTC = convertToUTC(data.eventEndDate, data.eventEndTime)
       const updateData = {
         theme: data.theme,
         description: data.description,
         restaurantName: data.restaurantName,
-        eventStartDate: data.eventStartDate,
-        eventEndDate: data.eventEndDate,
-        eventStartTime: data.eventStartTime?.split(':').slice(0, 2).join(':') || '',
-        eventEndTime: data.eventEndTime?.split(':').slice(0, 2).join(':') || '',
+        eventStartDate: startUTC.date,
+        eventStartTime: startUTC.time,
+        eventEndDate: endUTC.date,
+        eventEndTime: endUTC.time,
         price: data.price ? data.price : undefined,
         currency: data.currency,
         seats: data.seats,
