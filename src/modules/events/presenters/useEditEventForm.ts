@@ -8,9 +8,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { EventFormData, eventFormSchema } from './event-form-schema'
 import { eventQueries } from '../entities/event-queries'
 import { eventsService } from '../entities/events-service'
-import { Language } from '../entities/types/constants'
+import { Language, RepeatRuleConfig } from '../entities/types/constants'
 import { IWineSetResponse } from '../entities/types/wine-set.dto'
 import { PATHS } from '@/navigation/paths'
+import { useEventStore } from '../entities/events-store'
+import { getRepeatRuleFromPreset } from '../ui/components/edit-form/sections'
 
 export const useEditEventForm = () => {
   const { id } = useParams<{ id: string }>()
@@ -18,6 +20,7 @@ export const useEditEventForm = () => {
   const { toast } = useToast()
   const { t } = useTranslation('events')
   const queryClient = useQueryClient()
+  const { clearTempRepeatRule, setTempRepeatRule } = useEventStore()
 
   const { data: eventResponse, isLoading } = useQuery({
     ...eventQueries.detail(id!),
@@ -32,19 +35,23 @@ export const useEditEventForm = () => {
       theme: '',
       description: '',
       restaurantName: '',
-      eventDate: '',
-      eventTime: '',
+      eventStartDate: '',
+      eventEndDate: '',
+      eventStartTime: '',
+      eventEndTime: '',
       price: undefined,
-      currency: 'UAH',
+      currency: '',
       speakerName: '',
       language: '',
       seats: undefined,
       phoneNumber: '',
-      age: null,
+      minAge: null,
+      maxAge: null,
       sex: 'all',
       eventType: 'parties',
+      tastingType: undefined,
       requiresConfirmation: false,
-      repeatRule: 'never',
+      repeatRule: null,
       isActive: false,
       wineSet: [],
     },
@@ -58,23 +65,37 @@ export const useEditEventForm = () => {
           sortOrder: item.sortOrder,
         })) || []
 
+      let repeatRuleValue = null
+      if (event.repeatRule) {
+        if (typeof event.repeatRule === 'object') {
+          repeatRuleValue = event.repeatRule as RepeatRuleConfig
+          setTempRepeatRule(repeatRuleValue)
+        } else if (typeof event.repeatRule === 'string' && event.repeatRule !== 'never') {
+          repeatRuleValue = getRepeatRuleFromPreset(event.repeatRule)
+        }
+      }
+
       form.reset({
         theme: event.theme || '',
         description: event.description || '',
         restaurantName: event.restaurantName || '',
-        eventDate: event.eventDate?.split('T')[0] || '',
-        eventTime: event.eventTime || '',
+        eventStartDate: event.eventStartDate?.split('T')[0] || '',
+        eventEndDate: event.eventEndDate?.split('T')[0] || '',
+        eventStartTime: event.eventStartTime || '',
+        eventEndTime: event.eventEndTime || '',
         price: event.price ? Number(event.price) : null,
-        currency: event.currency || 'UAH',
+        currency: event.currency || '',
         speakerName: event.speakerName || '',
         language: event.language || '',
-        seats: event.seats || 1,
+        seats: event.seats.total || 1,
         phoneNumber: event.phoneNumber || '',
-        age: (event as any).age ?? null,
+        minAge: (event as any).minAge ?? null,
+        maxAge: (event as any).maxAge ?? null,
         sex: event.sex || 'all',
         eventType: event.eventType || 'parties',
+        tastingType: event.tastingType || 'regular',
         requiresConfirmation: event.requiresConfirmation || false,
-        repeatRule: event.repeatRule || 'never',
+        repeatRule: repeatRuleValue,
         participationCondition: event.participationCondition || undefined,
         isActive: event.isActive || false,
         wineSet: wineSetFormatted,
@@ -88,19 +109,23 @@ export const useEditEventForm = () => {
         theme: data.theme,
         description: data.description,
         restaurantName: data.restaurantName,
-        eventDate: data.eventDate,
-        eventTime: data.eventTime?.split(':').slice(0, 2).join(':') || '',
+        eventStartDate: data.eventStartDate,
+        eventEndDate: data.eventEndDate,
+        eventStartTime: data.eventStartTime?.split(':').slice(0, 2).join(':') || '',
+        eventEndTime: data.eventEndTime?.split(':').slice(0, 2).join(':') || '',
         price: data.price ? data.price : undefined,
         currency: data.currency,
         seats: data.seats,
         speakerName: data.speakerName,
         language: data.language as Language,
         phoneNumber: data.phoneNumber,
-        age: data.age ?? undefined,
+        minAge: data.minAge ?? undefined,
+        maxAge: data.maxAge ?? undefined,
         sex: data.sex,
         eventType: data.eventType,
+        tastingType: data.tastingType,
         requiresConfirmation: data.requiresConfirmation,
-        repeatRule: data.repeatRule,
+        repeatRule: data.repeatRule || null,
         participationCondition: data.participationCondition || undefined,
         isActive: data.isActive,
         wineSet: data.wineSet,
@@ -110,15 +135,15 @@ export const useEditEventForm = () => {
     },
     onSuccess: () => {
       toast({ title: t('event_updated'), variant: 'default' })
-      queryClient.invalidateQueries({ queryKey: ['events', 'detail', id] })
-      queryClient.removeQueries({ queryKey: ['events'] })
       queryClient.invalidateQueries({ queryKey: ['events', 'list'] })
+      queryClient.removeQueries({ queryKey: ['events'] })
       navigate(PATHS.EVENTS_LIST)
     },
   })
 
   const onSubmit = async (data: EventFormData) => {
     await updateMutation.mutateAsync(data)
+    clearTempRepeatRule()
   }
 
   const resetForm = () => {
@@ -129,23 +154,37 @@ export const useEditEventForm = () => {
           sortOrder: item.sortOrder,
         })) || []
 
+      let repeatRuleValue = null
+      if (event.repeatRule) {
+        if (typeof event.repeatRule === 'object') {
+          repeatRuleValue = event.repeatRule as RepeatRuleConfig
+          setTempRepeatRule(repeatRuleValue)
+        } else if (typeof event.repeatRule === 'string' && event.repeatRule !== 'never') {
+          repeatRuleValue = getRepeatRuleFromPreset(event.repeatRule)
+        }
+      }
+
       form.reset({
         theme: event.theme || '',
         description: event.description || '',
         restaurantName: event.restaurantName || '',
-        eventDate: event.eventDate?.split('T')[0] || '',
-        eventTime: event.eventTime || '',
+        eventStartDate: event.eventStartDate?.split('T')[0] || '',
+        eventEndDate: event.eventEndDate?.split('T')[0] || '',
+        eventStartTime: event.eventStartTime || '',
+        eventEndTime: event.eventEndTime || '',
         price: event.price ? Number(event.price) : null,
-        currency: event.currency || 'UAH',
+        currency: event.currency || '',
         speakerName: event.speakerName || '',
         language: event.language || '',
-        seats: event.seats || 1,
+        seats: event.seats.total || 1,
         phoneNumber: event.phoneNumber || '',
-        age: (event as any).age ?? null,
+        minAge: (event as any).minAge ?? null,
+        maxAge: (event as any).maxAge ?? null,
         sex: event.sex || 'all',
         eventType: event.eventType || 'parties',
+        tastingType: event.tastingType || 'regular',
         requiresConfirmation: event.requiresConfirmation || false,
-        repeatRule: event.repeatRule || 'never',
+        repeatRule: repeatRuleValue,
         participationCondition: event.participationCondition || undefined,
         isActive: event.isActive || false,
         wineSet: wineSetFormatted,

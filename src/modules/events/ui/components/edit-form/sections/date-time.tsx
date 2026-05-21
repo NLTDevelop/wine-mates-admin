@@ -1,7 +1,6 @@
 import { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/UIKit/shadcn/ui/form'
-import { InputWithTooltip } from '@/UIKit/app-components/input-with-tooltip'
 import { EventFormData } from '@/modules/events/presenters/event-form-schema'
 import { DatePicker } from '@/UIKit/app-components/date-picker'
 
@@ -13,23 +12,60 @@ export const DateTimeSection = ({ form }: DateTimeSectionProps) => {
   const { t } = useTranslation('events')
 
   return (
-    <div className="space-y-4">
+    <div className="grid grid-cols-3 gap-4">
+      <FormField
+        control={form.control}
+        name="eventStartDate"
+        render={({ field }) => (
+          <FormItem className="flex flex-col">
+            <FormLabel>{t('start_date')} *</FormLabel>
+            <FormControl>
+              <DatePicker
+                value={field.value || ''}
+                onChange={field.onChange}
+                placeholder={t('start_date')}
+                minDate={new Date()}
+                maxDate={new Date('2100-12-31')}
+                error={form.formState.errors.eventStartDate?.message as string}
+                isCompact
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="eventEndDate"
+        render={({ field }) => (
+          <FormItem className="flex flex-col">
+            <FormLabel>{t('end_date')} *</FormLabel>
+            <FormControl>
+              <DatePicker
+                value={field.value || ''}
+                onChange={field.onChange}
+                placeholder={t('end_date')}
+                minDate={new Date()}
+                maxDate={new Date('2100-12-31')}
+                error={form.formState.errors.eventEndDate?.message as string}
+                isCompact
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
       <div className="grid grid-cols-2 gap-4">
         <FormField
           control={form.control}
-          name="eventDate"
+          name="eventStartTime"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="whitespace-nowrap w-16">{t('date')} *</FormLabel>
+            <FormItem>
+              <FormLabel>{t('start_time')} *</FormLabel>
               <FormControl>
-                <DatePicker
-                  value={field.value || ''}
-                  onChange={field.onChange}
-                  placeholder={t('date.select_date')}
-                  minDate={new Date()}
-                  maxDate={new Date('2100-12-31')}
-                  error={form.formState.errors.eventDate?.message as string}
-                />
+                <input type="time" value={field.value || ''} onChange={field.onChange} className="w-full rounded-xl border border-border h-11 px-3 text-sm focus:outline-none bg-background" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -38,12 +74,12 @@ export const DateTimeSection = ({ form }: DateTimeSectionProps) => {
 
         <FormField
           control={form.control}
-          name="eventTime"
+          name="eventEndTime"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="whitespace-nowrap w-16">{t('time')} *</FormLabel>
+            <FormItem>
+              <FormLabel>{t('end_time')} *</FormLabel>
               <FormControl>
-                <InputWithTooltip type="time" {...field} value={field.value || ''} className="w-full" error={form.formState.errors.eventTime?.message as string} />
+                <input type="time" value={field.value || ''} onChange={field.onChange} className="w-full rounded-xl border border-border h-11 px-3 text-sm focus:outline-none  bg-background" />
               </FormControl>
               <FormMessage />
             </FormItem>

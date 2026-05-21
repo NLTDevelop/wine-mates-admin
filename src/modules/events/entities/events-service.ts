@@ -1,7 +1,7 @@
 import { api } from '@/services'
 import { buildUrl } from '@/lib/utils'
 import { EVENT_ENDPOINTS } from './event-endpoints'
-import { EventResponse, IEvent } from './types/IEvent'
+import { EventResponse, ICurrencyResponse, IEvent } from './types/IEvent'
 import { IEventFilters } from './types/filters.dto'
 import { UpdateEventParams } from './types/update-event.dto'
 import { WineSearchParams, WineSearchResponse } from './types/wine-search.dto'
@@ -16,4 +16,6 @@ export const eventsService = {
   update: ({ id, data }: UpdateEventParams) => api.patch(buildUrl(EVENT_ENDPOINTS.UPDATE, { id }), data).then(response => response.data),
 
   search: async (params: WineSearchParams): Promise<WineSearchResponse> => api.get(EVENT_ENDPOINTS.SEARCH_WINE_SET, { params }).then(response => response.data),
+
+  currency_list: async (): Promise<ICurrencyResponse> => api.get(EVENT_ENDPOINTS.CURRENCY.LIST).then(response => response.data),
 }

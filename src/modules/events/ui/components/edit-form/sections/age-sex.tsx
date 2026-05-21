@@ -13,23 +13,44 @@ export const AgeSexSection = ({ form }: AgeSexSectionProps) => {
   const { t } = useTranslation('events')
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-3 gap-4">
       <FormField
         control={form.control}
-        name="age"
+        name="minAge"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>{t('age')}</FormLabel>
+            <FormLabel>{t('min_age') + '*'}</FormLabel>
             <FormControl>
               <InputWithTooltip
                 type="number"
                 min="0"
                 max="120"
-                placeholder={t('age')}
+                placeholder={t('min_age')}
                 {...field}
                 onChange={e => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
                 value={field.value || ''}
-                error={form.formState.errors.age?.message as string}
+                error={form.formState.errors.minAge?.message as string}
+              />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="maxAge"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>{t('max_age')}</FormLabel>
+            <FormControl>
+              <InputWithTooltip
+                type="number"
+                min="0"
+                max="120"
+                placeholder={t('max_age') + '*'}
+                {...field}
+                onChange={e => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                value={field.value || ''}
+                error={form.formState.errors.maxAge?.message as string}
               />
             </FormControl>
           </FormItem>

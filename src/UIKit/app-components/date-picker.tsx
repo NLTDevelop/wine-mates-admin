@@ -16,9 +16,10 @@ interface DatePickerProps {
   minDate?: Date
   maxDate?: Date
   error?: string
+  isCompact?: boolean
 }
 
-export const DatePicker = ({ value, onChange, placeholder, disabled, minDate, maxDate, error }: DatePickerProps) => {
+export const DatePicker = ({ value, onChange, placeholder, disabled, minDate, maxDate, error, isCompact }: DatePickerProps) => {
   const { t } = useTranslation('common')
   const [open, setOpen] = useState(false)
 
@@ -52,7 +53,11 @@ export const DatePicker = ({ value, onChange, placeholder, disabled, minDate, ma
             {value ? format(new Date(value), 'dd.MM.yyyy') : <span>{placeholder || t('date.select_date')}</span>}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0 shadow-lg rounded border bg-popover" align="start">
+        <PopoverContent
+          style={isCompact ? ({ '--cell-size': '1.625rem' } as React.CSSProperties) : undefined}
+          className={cn('w-[var(--radix-popover-trigger-width)] p-0 shadow-lg rounded border bg-popover', isCompact && 'w-auto')}
+          align="start"
+        >
           <Calendar
             mode="single"
             selected={selectedDate}

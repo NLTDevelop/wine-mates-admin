@@ -31,7 +31,7 @@ export const WineSetSection: React.FC<WineSetSectionProps> = ({ form, event }) =
 
     return event.wineSet.map((item: any) => ({
       value: item.wine.id.toString(),
-      label: `${item.wine.name} ${item.wine.vintage ? `(${item.wine.vintage})` : ''}`,
+      label: `${item.wine.name} ${item.wine.vintage ? `${item.wine.grapeVariety} ${item.wine.vintage}` : ''}`,
     }))
   }, [event])
 

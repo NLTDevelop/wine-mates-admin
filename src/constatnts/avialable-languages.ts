@@ -1,6 +1,7 @@
 import { Language } from '@/modules/wine/create/general/entities/types'
 
 export const AVAILABLE_LANGUAGES: { code: Language; name: string }[] = [
+  { code: 'ua', name: 'українська' },
   { code: 'uk', name: 'українська' },
   { code: 'en', name: 'english' },
   { code: 'fr', name: 'français' },

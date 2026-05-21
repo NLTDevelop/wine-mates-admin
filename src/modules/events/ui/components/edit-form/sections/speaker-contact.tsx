@@ -48,7 +48,7 @@ export const SpeakerContactSection = ({ form }: SpeakerContactSectionProps) => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {AVAILABLE_LANGUAGES.map(lang => (
+                  {AVAILABLE_LANGUAGES.filter((lang, index, self) => index === self.findIndex(l => l.name === lang.name)).map(lang => (
                     <SelectItem key={lang.code} value={lang.code}>
                       {lang.name}
                     </SelectItem>
@@ -67,7 +67,7 @@ export const SpeakerContactSection = ({ form }: SpeakerContactSectionProps) => {
           const error = form.formState.errors.phoneNumber?.message as string
           return (
             <FormItem>
-              <FormLabel>{t('phone')}</FormLabel>
+              <FormLabel>{t('phone') + '*'}</FormLabel>
               <FormControl>
                 <div className="relative">
                   <IMaskInput
