@@ -49,7 +49,7 @@ export const getRepeatRuleFromPreset = (preset: string): RepeatRuleConfig | null
   }
 }
 
-const getPresetFromRepeatRule = (rule?: RepeatRuleConfig | null): string => {
+const getPresetRepeatRule = (rule?: RepeatRuleConfig | null): string => {
   if (!rule) return 'never'
   if (rule.frequency === 'day' && rule.interval === 1 && rule.endCondition.type === 'never') return 'daily'
   if (rule.frequency === 'week' && rule.interval === 1 && !rule.weekDays?.length && rule.endCondition.type === 'never') return 'weekly'
@@ -71,12 +71,12 @@ export const TypeSettingsSection = ({ form }: TypeSettingsSectionProps) => {
   const [isCustomDialogOpen, setIsCustomDialogOpen] = useState(false)
   const [selectedPreset, setSelectedPreset] = useState<string>(() => {
     const currentRepeatRule = tempRepeatRule || form.watch('repeatRule')
-    return getPresetFromRepeatRule(currentRepeatRule)
+    return getPresetRepeatRule(currentRepeatRule)
   })
 
   useEffect(() => {
     if (tempRepeatRule) {
-      const preset = getPresetFromRepeatRule(tempRepeatRule)
+      const preset = getPresetRepeatRule(tempRepeatRule)
       setSelectedPreset(preset)
       form.setValue('repeatRule', tempRepeatRule)
     }
@@ -86,7 +86,7 @@ export const TypeSettingsSection = ({ form }: TypeSettingsSectionProps) => {
     const subscription = form.watch((value, { name }) => {
       if (name === 'repeatRule') {
         const rule = value.repeatRule
-        const preset = getPresetFromRepeatRule(rule === undefined ? null : (rule as RepeatRuleConfig | null))
+        const preset = getPresetRepeatRule(rule === undefined ? null : (rule as RepeatRuleConfig | null))
         setSelectedPreset(preset)
       }
     })
@@ -96,7 +96,7 @@ export const TypeSettingsSection = ({ form }: TypeSettingsSectionProps) => {
   useEffect(() => {
     const rule = form.getValues('repeatRule')
     if (rule) {
-      const preset = getPresetFromRepeatRule(rule)
+      const preset = getPresetRepeatRule(rule)
       if (preset !== selectedPreset) {
         setSelectedPreset(preset)
       }
