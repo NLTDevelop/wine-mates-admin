@@ -1,6 +1,19 @@
 import i18n from 'i18next'
 import { z } from 'zod'
-import { EVENT_TYPE, PARTICIPATION_CONDITION, REPEAT_RULES, SEX, TASTING_TYPES } from '../entities/types/constants'
+import { EVENT_TYPE, FREQUENCY, PARTICIPATION_CONDITION, SEX, TASTING_TYPES } from '../entities/types/constants'
+
+const repeatRuleConfigSchema = () =>
+  z
+    .object({
+      frequency: z.enum(FREQUENCY),
+      interval: z.number().min(1).max(365),
+      weekDays: z.array(z.number().min(0).max(6)).optional(),
+      endCondition: z.object({
+        type: z.enum(['never', 'count', 'date']),
+        value: z.union([z.number(), z.string()]).optional(),
+      }),
+    })
+    .nullable()
 
 export const eventFormSchema = () =>
   z.object({
@@ -28,17 +41,11 @@ export const eventFormSchema = () =>
         }
       ),
     currency: z.string().default('UAH'),
-    seats_total: z
+    seats: z
       .number()
       .optional()
       .refine(val => val !== undefined && val >= 1, {
         message: i18n.t('messages:min_seats_require'),
-      }),
-    seats_left: z
-      .number()
-      .optional()
-      .refine(val => val !== undefined && val >= 1, {
-        message: i18n.t('messages:min_left_require'),
       }),
 
     speakerName: z.string().optional().default(''),
@@ -52,7 +59,7 @@ export const eventFormSchema = () =>
     eventType: z.enum(EVENT_TYPE),
     tastingType: z.enum(TASTING_TYPES),
     requiresConfirmation: z.boolean().default(false),
-    repeatRule: z.enum(REPEAT_RULES).default('never'),
+    repeatRule: repeatRuleConfigSchema(),
     participationCondition: z
       .union([z.enum(PARTICIPATION_CONDITION), z.null(), z.undefined(), z.literal('')])
       .optional()

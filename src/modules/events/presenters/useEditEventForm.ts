@@ -8,9 +8,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { EventFormData, eventFormSchema } from './event-form-schema'
 import { eventQueries } from '../entities/event-queries'
 import { eventsService } from '../entities/events-service'
-import { Language } from '../entities/types/constants'
+import { Language, RepeatRuleConfig } from '../entities/types/constants'
 import { IWineSetResponse } from '../entities/types/wine-set.dto'
 import { PATHS } from '@/navigation/paths'
+import { useEventStore } from '../entities/events-store'
+import { getRepeatRuleFromPreset } from '../ui/components/edit-form/sections'
 
 export const useEditEventForm = () => {
   const { id } = useParams<{ id: string }>()
@@ -18,6 +20,7 @@ export const useEditEventForm = () => {
   const { toast } = useToast()
   const { t } = useTranslation('events')
   const queryClient = useQueryClient()
+  const { clearTempRepeatRule, setTempRepeatRule } = useEventStore()
 
   const { data: eventResponse, isLoading } = useQuery({
     ...eventQueries.detail(id!),
@@ -37,7 +40,7 @@ export const useEditEventForm = () => {
       eventStartTime: '',
       eventEndTime: '',
       price: undefined,
-      currency: 'UAH',
+      currency: '',
       speakerName: '',
       language: '',
       seats: undefined,
@@ -48,7 +51,7 @@ export const useEditEventForm = () => {
       eventType: 'parties',
       tastingType: undefined,
       requiresConfirmation: false,
-      repeatRule: 'never',
+      repeatRule: null,
       isActive: false,
       wineSet: [],
     },
@@ -62,6 +65,16 @@ export const useEditEventForm = () => {
           sortOrder: item.sortOrder,
         })) || []
 
+      let repeatRuleValue = null
+      if (event.repeatRule) {
+        if (typeof event.repeatRule === 'object') {
+          repeatRuleValue = event.repeatRule as RepeatRuleConfig
+          setTempRepeatRule(repeatRuleValue)
+        } else if (typeof event.repeatRule === 'string' && event.repeatRule !== 'never') {
+          repeatRuleValue = getRepeatRuleFromPreset(event.repeatRule)
+        }
+      }
+
       form.reset({
         theme: event.theme || '',
         description: event.description || '',
@@ -71,7 +84,7 @@ export const useEditEventForm = () => {
         eventStartTime: event.eventStartTime || '',
         eventEndTime: event.eventEndTime || '',
         price: event.price ? Number(event.price) : null,
-        currency: event.currency || 'UAH',
+        currency: event.currency || '',
         speakerName: event.speakerName || '',
         language: event.language || '',
         seats: event.seats.total || 1,
@@ -82,7 +95,7 @@ export const useEditEventForm = () => {
         eventType: event.eventType || 'parties',
         tastingType: event.tastingType || 'regular',
         requiresConfirmation: event.requiresConfirmation || false,
-        repeatRule: event.repeatRule || 'never',
+        repeatRule: repeatRuleValue,
         participationCondition: event.participationCondition || undefined,
         isActive: event.isActive || false,
         wineSet: wineSetFormatted,
@@ -102,8 +115,7 @@ export const useEditEventForm = () => {
         eventEndTime: data.eventEndTime?.split(':').slice(0, 2).join(':') || '',
         price: data.price ? data.price : undefined,
         currency: data.currency,
-        seats_total: data.seats.total,
-        seats_left: data.seats.left,
+        seats: data.seats,
         speakerName: data.speakerName,
         language: data.language as Language,
         phoneNumber: data.phoneNumber,
@@ -111,8 +123,9 @@ export const useEditEventForm = () => {
         maxAge: data.maxAge ?? undefined,
         sex: data.sex,
         eventType: data.eventType,
+        tastingType: data.tastingType,
         requiresConfirmation: data.requiresConfirmation,
-        repeatRule: data.repeatRule,
+        repeatRule: data.repeatRule || null,
         participationCondition: data.participationCondition || undefined,
         isActive: data.isActive,
         wineSet: data.wineSet,
@@ -122,15 +135,15 @@ export const useEditEventForm = () => {
     },
     onSuccess: () => {
       toast({ title: t('event_updated'), variant: 'default' })
-      queryClient.invalidateQueries({ queryKey: ['events', 'detail', id] })
-      queryClient.removeQueries({ queryKey: ['events'] })
       queryClient.invalidateQueries({ queryKey: ['events', 'list'] })
+      queryClient.removeQueries({ queryKey: ['events'] })
       navigate(PATHS.EVENTS_LIST)
     },
   })
 
   const onSubmit = async (data: EventFormData) => {
     await updateMutation.mutateAsync(data)
+    clearTempRepeatRule()
   }
 
   const resetForm = () => {
@@ -141,6 +154,16 @@ export const useEditEventForm = () => {
           sortOrder: item.sortOrder,
         })) || []
 
+      let repeatRuleValue = null
+      if (event.repeatRule) {
+        if (typeof event.repeatRule === 'object') {
+          repeatRuleValue = event.repeatRule as RepeatRuleConfig
+          setTempRepeatRule(repeatRuleValue)
+        } else if (typeof event.repeatRule === 'string' && event.repeatRule !== 'never') {
+          repeatRuleValue = getRepeatRuleFromPreset(event.repeatRule)
+        }
+      }
+
       form.reset({
         theme: event.theme || '',
         description: event.description || '',
@@ -150,7 +173,7 @@ export const useEditEventForm = () => {
         eventStartTime: event.eventStartTime || '',
         eventEndTime: event.eventEndTime || '',
         price: event.price ? Number(event.price) : null,
-        currency: event.currency || 'UAH',
+        currency: event.currency || '',
         speakerName: event.speakerName || '',
         language: event.language || '',
         seats: event.seats.total || 1,
@@ -161,7 +184,7 @@ export const useEditEventForm = () => {
         eventType: event.eventType || 'parties',
         tastingType: event.tastingType || 'regular',
         requiresConfirmation: event.requiresConfirmation || false,
-        repeatRule: event.repeatRule || 'never',
+        repeatRule: repeatRuleValue,
         participationCondition: event.participationCondition || undefined,
         isActive: event.isActive || false,
         wineSet: wineSetFormatted,

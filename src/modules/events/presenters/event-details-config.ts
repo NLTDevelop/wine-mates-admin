@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { format, parse } from 'date-fns'
-import { Award, Cake, Calendar, CheckCircle, ClipboardCheck, Clock, DollarSign, Hourglass, ListChecks, MapPin, Phone, PhoneCall, Repeat, User, UserCheck } from 'lucide-react'
+import { Award, Calendar, CheckCircle, ClipboardCheck, Clock, DollarSign, MapPin, Phone, Repeat, User } from 'lucide-react'
 import { IEvent } from '../entities/types/IEvent'
 
 export interface DetailItem {

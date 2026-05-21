@@ -1,5 +1,5 @@
 import { LocationWine } from '@/modules/wine/list/entities/types/types'
-import { EventType, Language, ParticipationCondition, RepeatRule, Sex, TastingType } from './constants'
+import { EventType, Language, ParticipationCondition, RepeatPreset, Sex, TastingType } from './constants'
 import { IWineSetResponse } from './wine-set.dto'
 
 export interface EventResponse {
@@ -42,7 +42,7 @@ export interface IEvent {
   speakerName: string
   status: string
   tastingType?: TastingType
-  repeatRule?: RepeatRule
+  repeatRule?: RepeatPreset
   theme: string
   userId: string
 

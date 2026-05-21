@@ -1,12 +1,10 @@
 import { useTranslation } from 'react-i18next'
 import { getEventDetails } from '../../presenters/event-details-config'
-import { Wine, Info, CircleDollarSign, CreditCard, Users } from 'lucide-react'
+import { Wine, Info, CreditCard, Users } from 'lucide-react'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { Badge } from '@/UIKit/shadcn/ui/badge'
 import { IEvent } from '../../entities/types/IEvent'
 import { cn } from '@/lib/utils'
-import { Avatar, AvatarImage } from '@radix-ui/react-avatar'
-import { AvatarFallback } from '@/UIKit/shadcn/ui/avatar'
 
 interface EventDetailsProps {
   event: IEvent

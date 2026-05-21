@@ -6,7 +6,7 @@ import { useCurrencyOptions } from './useCurrencyOptions'
 export const useEventFilters = () => {
   const { t } = useTranslation('events')
   const { countries, isLoading: isCountriesLoading } = useCountryOptions({})
-  const { currencies, isLoading: isCurrencyLoading } = useCurrencyOptions()
+  const { currencies } = useCurrencyOptions()
 
   const getIsActiveFilterOptions = () => {
     return [

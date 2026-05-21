@@ -4,7 +4,6 @@ import { Badge } from '@/UIKit/shadcn/ui/badge'
 import { IWines } from '../../../entities/types/types'
 import { useTranslation } from 'react-i18next'
 import { useContrastText } from '@/hooks/ui/useContrastText'
-// import { WineRate } from './wine-rate'
 
 interface WineDetailHeaderProps {
   wine: IWines

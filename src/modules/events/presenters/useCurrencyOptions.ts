@@ -18,6 +18,6 @@ export const useCurrencyOptions = () => {
   return {
     fetchOptions,
     isLoading,
-    currencies: currencies?.list,
+    currencies: currencies?.list || [],
   }
 }

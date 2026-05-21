@@ -2,17 +2,21 @@ import { EVENT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
 import { IEvent } from './types/IEvent'
 import { IEventFilters } from './types/filters.dto'
+import { RepeatRuleConfig } from './types/constants'
 
 interface EventState {
   events: IEvent[]
   searchResults: IEvent[]
   currentEvent: IEvent | null
   filters: IEventFilters
+  tempRepeatRule: RepeatRuleConfig | null
   setEvents: (events: IEvent[]) => void
   setSearchResults: (results: IEvent[]) => void
   setCurrentEvent: (event: IEvent | null) => void
   setFilters: (filters: Partial<EventState['filters']>) => void
   resetFilters: () => void
+  setTempRepeatRule: (rule: RepeatRuleConfig | null) => void
+  clearTempRepeatRule: () => void
 }
 
 export const useEventStore = createStoreDevToolsWrapper<EventState>(
@@ -20,6 +24,7 @@ export const useEventStore = createStoreDevToolsWrapper<EventState>(
     events: [],
     searchResults: [],
     currentEvent: null,
+    tempRepeatRule: null,
 
     filters: {
       search: '',
@@ -82,6 +87,10 @@ export const useEventStore = createStoreDevToolsWrapper<EventState>(
         false,
         'event/updateEvent'
       ),
+
+    setTempRepeatRule: (rule: RepeatRuleConfig | null) => set({ tempRepeatRule: rule }, false, 'event/setTempRepeatRule'),
+
+    clearTempRepeatRule: () => set({ tempRepeatRule: null }, false, 'event/clearTempRepeatRule'),
   }),
 
   'WineStore'

@@ -17,7 +17,7 @@ export interface FiltersParams {
   include?: string[]
 }
 
-export type Language = 'en' | 'uk' | 'fr' | 'pl' | 'de' | 'es' | 'it'
+export type Language = 'en' | 'uk' | 'fr' | 'pl' | 'de' | 'es' | 'it' | 'ua'
 
 export interface NameDictionary {
   id?: string

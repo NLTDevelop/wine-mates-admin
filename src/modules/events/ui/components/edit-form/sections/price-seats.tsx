@@ -4,8 +4,8 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/UIKi
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/UIKit/shadcn/ui/select'
 import { InputWithTooltip } from '@/UIKit/app-components/input-with-tooltip'
 import { EventFormData } from '@/modules/events/presenters/event-form-schema'
-// import { CURRENCIES } from '@/modules/events/entities/types/constants'
 import { cn } from '@/lib/utils'
+import { useCurrencyOptions } from '@/modules/events/presenters/useCurrencyOptions'
 
 interface PriceSeatsSectionProps {
   form: UseFormReturn<EventFormData>
@@ -13,8 +13,11 @@ interface PriceSeatsSectionProps {
 
 export const PriceSeatsSection = ({ form }: PriceSeatsSectionProps) => {
   const { t } = useTranslation('events')
+  const { currencies, isLoading } = useCurrencyOptions()
 
   const { errors } = form.formState
+
+  const currencyValue = form.watch('currency')
 
   return (
     <div className="grid grid-cols-3 gap-4">
@@ -46,33 +49,37 @@ export const PriceSeatsSection = ({ form }: PriceSeatsSectionProps) => {
       />
 
       <FormField
+        key={currencyValue}
         control={form.control}
         name="currency"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>{t('currency')} *</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value}>
-              <FormControl>
-                <SelectTrigger
-                  className={cn(
-                    errors.language ? 'border-red-500 ring-red-500' : '',
-                    'h-11 border px-3 text-base shadow-sm transition-colors rounded-md input-focus placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-background text-foreground border-input w-full'
-                  )}
-                >
-                  <SelectValue placeholder={t('choose_option')} />
-                </SelectTrigger>
-              </FormControl>
-              {/* <SelectContent>
-                {CURRENCIES.map(currency => (
-                  <SelectItem key={currency} value={currency}>
-                    {currency}
-                  </SelectItem>
-                ))}
-              </SelectContent> */}
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
+        render={({ field }) => {
+          return (
+            <FormItem>
+              <FormLabel>{t('currency')} *</FormLabel>
+              <Select onValueChange={field.onChange} value={currencyValue || undefined}>
+                <FormControl>
+                  <SelectTrigger
+                    disabled={isLoading}
+                    className={cn(
+                      errors.language ? 'border-red-500 ring-red-500' : '',
+                      'h-11 border px-3 text-base shadow-sm transition-colors rounded-md input-focus placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-background text-foreground border-input w-full'
+                    )}
+                  >
+                    <SelectValue placeholder={t('choose_option')} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {currencies?.map(currency => (
+                    <SelectItem key={currency} value={currency}>
+                      {currency}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )
+        }}
       />
 
       <FormField
