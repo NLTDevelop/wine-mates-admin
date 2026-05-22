@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useEventDetails } from '../../presenters/useEventDetails'
-import { useEditEventForm } from '../../presenters/useEditEventForm'
 import { ContentLayout } from '@/layout/components/content-layout'
 import { PATHS } from '@/navigation/paths'
 import { EventDetails } from './event-details'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { SkeletonWinePalette } from '@/modules/wine/create/general/ui/components/skeleton-wine-palette'
 import { EventForm } from './edit-form/event-form'
+import { useEditEventForm } from '../../presenters/useEditEventForm'
 
 export const EventDetailView = () => {
   const { t } = useTranslation('events')
