@@ -74,20 +74,19 @@ export const TypeSettingsSection = ({ form }: TypeSettingsSectionProps) => {
     return getPresetRepeatRule(currentRepeatRule)
   })
 
-  useEffect(() => {
-    if (tempRepeatRule) {
-      const preset = getPresetRepeatRule(tempRepeatRule)
-      setSelectedPreset(preset)
+useEffect(() => {
+  if (tempRepeatRule === null && form.getValues('repeatRule') !== null) {
+    return
+  }
+  
+  if (tempRepeatRule) {
+    const preset = getPresetRepeatRule(tempRepeatRule)
+    setSelectedPreset(preset)
+    form.setValue('repeatRule', tempRepeatRule)
+  }
+}, [tempRepeatRule, form])
 
-      const currentValues = form.getValues()
-      form.reset({
-        ...currentValues,
-        repeatRule: tempRepeatRule,
-      })
-    }
-  }, [tempRepeatRule, form])
-
-  useEffect(() => {
+useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name === 'repeatRule') {
         const rule = value.repeatRule
