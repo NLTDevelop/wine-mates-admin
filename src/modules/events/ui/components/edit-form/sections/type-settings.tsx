@@ -75,16 +75,40 @@ export const TypeSettingsSection = ({ form }: TypeSettingsSectionProps) => {
   })
 
 useEffect(() => {
+  console.log('🟢 tempRepeatRule in TypeSettingsSection:', tempRepeatRule)
+  console.log('🟢 Current form repeatRule before update:', form.getValues('repeatRule'))
+  
   if (tempRepeatRule === null && form.getValues('repeatRule') !== null) {
+    console.log('🟢 Ignoring null because form already has repeatRule')
     return
   }
   
   if (tempRepeatRule) {
     const preset = getPresetRepeatRule(tempRepeatRule)
+    console.log('🟢 Setting preset to:', preset)
     setSelectedPreset(preset)
-    form.setValue('repeatRule', tempRepeatRule)
+    
+    console.log('🟢 Setting form repeatRule to:', tempRepeatRule)
+    form.setValue('repeatRule', tempRepeatRule, { 
+      shouldDirty: true,
+      shouldValidate: true 
+    })
+
+    setTimeout(() => {
+      console.log('🟢 After setValue, form repeatRule is:', form.getValues('repeatRule'))
+    }, 0)
   }
 }, [tempRepeatRule, form])
+
+useEffect(() => {
+  const subscription = form.watch((value, { name }) => {
+    if (name === 'repeatRule') {
+      console.log('🟡 FORM WATCH: repeatRule changed to:', value.repeatRule)
+    }
+  })
+  return () => subscription.unsubscribe()
+}, [form])
+
 
 useEffect(() => {
     const subscription = form.watch((value, { name }) => {
@@ -146,6 +170,8 @@ useEffect(() => {
     }
     return t('repeat_rules.custom')
   }
+
+  console.log(selectedPreset)
 
   return (
     <div className="space-y-4">
