@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Wine, PartyPopper, Settings, Calendar } from 'lucide-react'
 import { EventFormData } from '@/modules/events/presenters/event-form-schema'
 import { PARTICIPATION_CONDITION, RepeatRuleConfig } from '@/modules/events/entities/types/constants'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/UIKit/shadcn/ui/dialog'
 import { CustomRepeatSettings } from './custom-settings-modal'
 import { useEventStore } from '@/modules/events/entities/events-store'
@@ -69,71 +69,28 @@ export const TypeSettingsSection = ({ form }: TypeSettingsSectionProps) => {
   const { getTastingTypeFilterOptions } = useEventFilters()
 
   const [isCustomDialogOpen, setIsCustomDialogOpen] = useState(false)
-  const [selectedPreset, setSelectedPreset] = useState<string>(() => {
-    const currentRepeatRule = tempRepeatRule || form.watch('repeatRule')
-    return getPresetRepeatRule(currentRepeatRule)
-  })
+  // const [selectedPreset, setSelectedPreset] = useState<string>(() => {
+  //   const currentRepeatRule = tempRepeatRule || form.watch('repeatRule')
+  //   return getPresetRepeatRule(currentRepeatRule)
+  // })
 
-useEffect(() => {
-  console.log('🟢 tempRepeatRule in TypeSettingsSection:', tempRepeatRule)
-  console.log('🟢 Current form repeatRule before update:', form.getValues('repeatRule'))
-  
-  if (tempRepeatRule === null && form.getValues('repeatRule') !== null) {
-    console.log('🟢 Ignoring null because form already has repeatRule')
-    return
-  }
-  
-  if (tempRepeatRule) {
-    const preset = getPresetRepeatRule(tempRepeatRule)
-    console.log('🟢 Setting preset to:', preset)
-    setSelectedPreset(preset)
-    
-    console.log('🟢 Setting form repeatRule to:', tempRepeatRule)
-    form.setValue('repeatRule', tempRepeatRule, { 
-      shouldDirty: true,
-      shouldValidate: true 
-    })
-
-    setTimeout(() => {
-      console.log('🟢 After setValue, form repeatRule is:', form.getValues('repeatRule'))
-    }, 0)
-  }
-}, [tempRepeatRule, form])
-
-useEffect(() => {
-  const subscription = form.watch((value, { name }) => {
-    if (name === 'repeatRule') {
-      console.log('🟡 FORM WATCH: repeatRule changed to:', value.repeatRule)
-    }
-  })
-  return () => subscription.unsubscribe()
-}, [form])
-
-
-useEffect(() => {
-    const subscription = form.watch((value, { name }) => {
-      if (name === 'repeatRule') {
-        const rule = value.repeatRule
-        const preset = getPresetRepeatRule(rule === undefined ? null : (rule as RepeatRuleConfig | null))
-        setSelectedPreset(preset)
-      }
-    })
-    return () => subscription.unsubscribe()
-  }, [form])
+  const selectedPreset = useMemo(() => {
+    const rule = tempRepeatRule || form.watch('repeatRule')
+    return getPresetRepeatRule(rule)
+  }, [tempRepeatRule, form.watch('repeatRule')])
 
   useEffect(() => {
-    const rule = form.getValues('repeatRule')
-    if (rule) {
-      const preset = getPresetRepeatRule(rule)
-      if (preset !== selectedPreset) {
-        setSelectedPreset(preset)
-      }
+    if (tempRepeatRule === null && form.getValues('repeatRule') !== null) return
+
+    if (tempRepeatRule) {
+      form.setValue('repeatRule', tempRepeatRule, {
+        shouldDirty: true,
+        shouldValidate: true,
+      })
     }
-  }, [form.getValues('repeatRule')])
+  }, [tempRepeatRule, form])
 
   const handlePresetChange = (preset: string) => {
-    setSelectedPreset(preset)
-
     if (preset === 'never') {
       form.setValue('repeatRule', null)
       clearTempRepeatRule()
@@ -148,7 +105,6 @@ useEffect(() => {
 
   const handleCustomRepeatRule = (rule: RepeatRuleConfig) => {
     form.setValue('repeatRule', rule)
-    setSelectedPreset('custom')
     setIsCustomDialogOpen(false)
   }
 

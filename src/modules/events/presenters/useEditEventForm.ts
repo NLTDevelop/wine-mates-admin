@@ -209,6 +209,8 @@ export const useEditEventForm = () => {
     }
   }
 
+  const initialRepeatRule = event?.repeatRule ? (typeof event.repeatRule === 'object' ? event.repeatRule : getRepeatRuleFromPreset(event.repeatRule)) : null
+
   return {
     form,
     event,
@@ -216,5 +218,6 @@ export const useEditEventForm = () => {
     isSubmitting: updateMutation.isPending,
     onSubmit,
     resetForm,
+    initialRepeatRule,
   }
 }
