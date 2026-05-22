@@ -74,14 +74,14 @@ export const TypeSettingsSection = ({ form }: TypeSettingsSectionProps) => {
     return getPresetRepeatRule(currentRepeatRule)
   })
 
-
   useEffect(() => {
+    console.log(tempRepeatRule)
     if (tempRepeatRule) {
       const preset = getPresetRepeatRule(tempRepeatRule)
       setSelectedPreset(preset)
       form.setValue('repeatRule', tempRepeatRule)
     }
-  }, [tempRepeatRule, form])
+  }, [ tempRepeatRule])
 
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
@@ -121,7 +121,6 @@ export const TypeSettingsSection = ({ form }: TypeSettingsSectionProps) => {
 
   const handleCustomRepeatRule = (rule: RepeatRuleConfig) => {
     form.setValue('repeatRule', rule)
-     setTempRepeatRule(rule)
     setSelectedPreset('custom')
     setIsCustomDialogOpen(false)
   }

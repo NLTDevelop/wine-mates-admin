@@ -35,7 +35,7 @@ export const useEditEventForm = () => {
   const { toast } = useToast()
   const { t } = useTranslation('events')
   const queryClient = useQueryClient()
-  const { clearTempRepeatRule, setTempRepeatRule } = useEventStore()
+  const { clearTempRepeatRule, setTempRepeatRule, tempRepeatRule } = useEventStore()
 
   const { data: eventResponse, isLoading } = useQuery({
     ...eventQueries.detail(id!),
@@ -84,10 +84,10 @@ export const useEditEventForm = () => {
       if (event.repeatRule) {
         if (typeof event.repeatRule === 'object') {
           repeatRuleValue = event.repeatRule as RepeatRuleConfig
+          console.log('tempRepeatRule update 1->', repeatRuleValue)
           setTempRepeatRule(repeatRuleValue)
         } else if (typeof event.repeatRule === 'string' && event.repeatRule !== 'never') {
           repeatRuleValue = getRepeatRuleFromPreset(event.repeatRule)
-          setTempRepeatRule(repeatRuleValue)
         }
       }
 
@@ -117,7 +117,7 @@ export const useEditEventForm = () => {
         wineSet: wineSetFormatted,
       })
     }
-  }, [event, form])
+  }, [event, form, setTempRepeatRule])
 
   const updateMutation = useMutation({
     mutationFn: (data: EventFormData) => {
@@ -176,6 +176,7 @@ export const useEditEventForm = () => {
       if (event.repeatRule) {
         if (typeof event.repeatRule === 'object') {
           repeatRuleValue = event.repeatRule as RepeatRuleConfig
+          console.log('tempRepeatRule reset 2->', repeatRuleValue)
           setTempRepeatRule(repeatRuleValue)
         } else if (typeof event.repeatRule === 'string' && event.repeatRule !== 'never') {
           repeatRuleValue = getRepeatRuleFromPreset(event.repeatRule)
