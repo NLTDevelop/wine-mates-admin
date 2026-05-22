@@ -74,24 +74,18 @@ export const TypeSettingsSection = ({ form }: TypeSettingsSectionProps) => {
     return getPresetRepeatRule(currentRepeatRule)
   })
 
-  // useEffect(() => {
-  //   console.log(tempRepeatRule)
-  //   if (tempRepeatRule) {
-  //     const preset = getPresetRepeatRule(tempRepeatRule)
-  //     setSelectedPreset(preset)
-  //     form.setValue('repeatRule', tempRepeatRule)
-  //   }
-  // }, [ tempRepeatRule])
   useEffect(() => {
-  if (tempRepeatRule) {
-    const preset = getPresetRepeatRule(tempRepeatRule)
-    setSelectedPreset(preset)
-    const currentRule = form.getValues('repeatRule')
-    if (JSON.stringify(currentRule) !== JSON.stringify(tempRepeatRule)) {
-      form.setValue('repeatRule', tempRepeatRule)
+    if (tempRepeatRule) {
+      const preset = getPresetRepeatRule(tempRepeatRule)
+      setSelectedPreset(preset)
+
+      const currentValues = form.getValues()
+      form.reset({
+        ...currentValues,
+        repeatRule: tempRepeatRule,
+      })
     }
-  }
-}, [tempRepeatRule, form])
+  }, [tempRepeatRule, form])
 
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {

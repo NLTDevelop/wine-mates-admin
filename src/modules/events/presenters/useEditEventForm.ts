@@ -84,7 +84,6 @@ export const useEditEventForm = () => {
       if (event.repeatRule) {
         if (typeof event.repeatRule === 'object') {
           repeatRuleValue = event.repeatRule as RepeatRuleConfig
-          console.log('tempRepeatRule update 1->', repeatRuleValue)
           setTempRepeatRule(repeatRuleValue)
         } else if (typeof event.repeatRule === 'string' && event.repeatRule !== 'never') {
           repeatRuleValue = getRepeatRuleFromPreset(event.repeatRule)
@@ -176,7 +175,6 @@ export const useEditEventForm = () => {
       if (event.repeatRule) {
         if (typeof event.repeatRule === 'object') {
           repeatRuleValue = event.repeatRule as RepeatRuleConfig
-          console.log('tempRepeatRule reset 2->', repeatRuleValue)
           setTempRepeatRule(repeatRuleValue)
         } else if (typeof event.repeatRule === 'string' && event.repeatRule !== 'never') {
           repeatRuleValue = getRepeatRuleFromPreset(event.repeatRule)
