@@ -87,6 +87,7 @@ export const useEditEventForm = () => {
           setTempRepeatRule(repeatRuleValue)
         } else if (typeof event.repeatRule === 'string' && event.repeatRule !== 'never') {
           repeatRuleValue = getRepeatRuleFromPreset(event.repeatRule)
+          setTempRepeatRule(repeatRuleValue)
         }
       }
 
