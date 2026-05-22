@@ -69,10 +69,6 @@ export const TypeSettingsSection = ({ form }: TypeSettingsSectionProps) => {
   const { getTastingTypeFilterOptions } = useEventFilters()
 
   const [isCustomDialogOpen, setIsCustomDialogOpen] = useState(false)
-  // const [selectedPreset, setSelectedPreset] = useState<string>(() => {
-  //   const currentRepeatRule = tempRepeatRule || form.watch('repeatRule')
-  //   return getPresetRepeatRule(currentRepeatRule)
-  // })
 
   const selectedPreset = useMemo(() => {
     const rule = tempRepeatRule || form.watch('repeatRule')
@@ -126,8 +122,6 @@ export const TypeSettingsSection = ({ form }: TypeSettingsSectionProps) => {
     }
     return t('repeat_rules.custom')
   }
-
-  console.log(selectedPreset)
 
   return (
     <div className="space-y-4">
