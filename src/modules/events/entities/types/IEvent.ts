@@ -17,7 +17,7 @@ export interface IEvent {
   eventEndTime: string
   eventStartDate: string
   eventStartTime: string
-  eventDate?: string
+  date?: string
   eventTime?: string
   eventType?: EventType
   id: number

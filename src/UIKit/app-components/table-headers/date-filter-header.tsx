@@ -37,13 +37,13 @@ export const DateFilterHeader = ({ column, label, onFilter, currentFrom, current
   const isFilterActive = !!(currentFrom || currentTo)
   const hasFilter = !!onFilter
   const hasSort = !!onSort
-  const isSorted = sortBy === column
+  const isSorted = sortBy?.startsWith(column)
   const isActive = (hasFilter && isFilterActive) || (hasSort && isSorted)
 
   const getSortIcon = () => {
     if (!hasSort) return null
     if (!isSorted) return <ArrowUpDown className="h-4 w-4" />
-    return sortOrder === 'asc' ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />
+    return sortBy?.endsWith('_asc') || sortOrder === 'asc' ? <ArrowDown className="h-4 w-4" /> : <ArrowUp className="h-4 w-4" />
   }
 
   const getIcon = () => {

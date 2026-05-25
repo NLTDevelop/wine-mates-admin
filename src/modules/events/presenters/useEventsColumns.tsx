@@ -120,10 +120,10 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
         meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.LOCATION}px] break-words` },
       }),
 
-      columnHelper.accessor('eventDate', {
+      columnHelper.accessor('date', {
         header: () => (
           <DateFilterHeader
-            column="eventDate"
+            column="date"
             label={t('table.event_date')}
             onFilter={(_, val) => handleDateFilter(val.dateFrom, val.dateTo)}
             currentFrom={filters?.dateFrom}

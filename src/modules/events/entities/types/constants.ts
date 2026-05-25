@@ -29,5 +29,11 @@ export interface RepeatRuleConfig {
 export const REPEAT_PRESETS = ['never', 'daily', 'weekly', 'monthly'] as const
 export type RepeatPreset = (typeof REPEAT_PRESETS)[number]
 
+export type RepeatRuleDisplay = RepeatPreset | RepeatRuleConfig
+
+export const isRepeatPreset = (value: any): value is RepeatPreset => {
+  return REPEAT_PRESETS.includes(value)
+}
+
 export const PARTICIPATION_CONDITION = ['fixed_price', 'split_bill', 'free', 'charity', 'host', 'guest'] as const
 export type ParticipationCondition = (typeof PARTICIPATION_CONDITION)[number]
