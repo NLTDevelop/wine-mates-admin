@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { format, parse } from 'date-fns'
 import { Award, Calendar, CheckCircle, ClipboardCheck, Clock, DollarSign, MapPin, Phone, Repeat, User } from 'lucide-react'
 import { IEvent } from '../entities/types/IEvent'
+import { getRepeatRuleDisplayText } from './repeat-rule-utils'
 
 export interface DetailItem {
   icon: any
@@ -50,7 +51,7 @@ export const getEventDetails = (event: IEvent): DetailItem[] => {
     details.push({
       icon: Repeat,
       label: t('repeat_rule'),
-      value: t(`repeat_rules.${event.repeatRule}`),
+      value: getRepeatRuleDisplayText(event.repeatRule, t),
     })
   }
 

@@ -33,7 +33,7 @@ export const useEventFilters = () => {
   }
 
   const getLanguageFilterOptions = () => {
-    return AVAILABLE_LANGUAGES.map(language => ({
+    return AVAILABLE_LANGUAGES.filter((lang, index, self) => index === self.findIndex(l => l.name === lang.name)).map(language => ({
       label: language.name,
       value: language.code,
     }))
