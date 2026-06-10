@@ -133,9 +133,20 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
           />
         ),
         cell: info => {
-          const dateStart = parse(info.row.original.eventStartDate, 'yyyy-MM-dd', new Date())
-          const dateEnd = parse(info.row.original.eventEndDate, 'yyyy-MM-dd', new Date())
-          return `${format(dateStart, 'dd.MM.yy')} - ${format(dateEnd, 'dd.MM.yy')}` || '-'
+          const { eventStartDate, eventEndDate } = info.row.original
+
+          if (!eventStartDate || !eventEndDate) return '-'
+
+          try {
+            const dateStart = parse(eventStartDate, 'yyyy-MM-dd', new Date())
+            const dateEnd = parse(eventEndDate, 'yyyy-MM-dd', new Date())
+
+            if (isNaN(dateStart.getTime()) || isNaN(dateEnd.getTime())) return '-'
+
+            return `${format(dateStart, 'dd.MM.yy')} - ${format(dateEnd, 'dd.MM.yy')}`
+          } catch {
+            return '-'
+          }
         },
         minSize: COLUMN_WIDTHS.DATE,
         maxSize: COLUMN_WIDTHS.DATE,
@@ -146,9 +157,20 @@ export const useEventColumns = ({ onEdit, onDelete }: EventTableProps) => {
       columnHelper.accessor('eventTime', {
         header: t('table.event_time'),
         cell: info => {
-          const timeStart = parse(info.row.original.eventStartTime, 'HH:mm:ss', new Date())
-          const timeEnd = parse(info.row.original.eventEndTime, 'HH:mm:ss', new Date())
-          return `${format(timeStart, 'HH:mm')} - ${format(timeEnd, 'HH:mm')}` || '-'
+          const { eventStartTime, eventEndTime } = info.row.original
+
+          if (!eventStartTime || !eventEndTime) return '-'
+
+          try {
+            const timeStart = parse(eventStartTime, 'HH:mm:ss', new Date())
+            const timeEnd = parse(eventEndTime, 'HH:mm:ss', new Date())
+
+            if (isNaN(timeStart.getTime()) || isNaN(timeEnd.getTime())) return '-'
+
+            return `${format(timeStart, 'HH:mm')} - ${format(timeEnd, 'HH:mm')}`
+          } catch {
+            return '-'
+          }
         },
         minSize: COLUMN_WIDTHS.TIME,
         maxSize: COLUMN_WIDTHS.TIME,

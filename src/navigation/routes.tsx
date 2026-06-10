@@ -18,6 +18,7 @@ import { CreateTasteFormView } from '@/modules/wine/create-wine/ui'
 import { AiPromtView } from '@/modules/ai-promts/ui'
 import { eventRouters } from '@/modules/events/entities/event-routers'
 import { faq } from '@/modules/faq/entities/faq-routes'
+import { CuisineView } from '@/modules/snack-cuisine/ui'
 
 const usersRoutes = [
   { path: PATHS.USERS, element: <UsersView /> },
@@ -27,6 +28,7 @@ const usersRoutes = [
 const featuresRoutes = [
   { path: PATHS.FEATURES, element: <FeaturesView /> },
   { path: PATHS.AI_PROMTS, element: <AiPromtView /> },
+  { path: PATHS.CUISINE, element: <CuisineView /> },
 ]
 
 const winesRoutes = [
