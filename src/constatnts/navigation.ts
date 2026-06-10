@@ -22,7 +22,15 @@ export const MAX_SYMBOLS_INPUT_LARGE = 3000
 export const LINKS = {
   dashboard: { titleKey: 'title', url: '/' },
   users: generateLinks('users', { hasList: true, hasDetail: true }),
-  features: generateLinks('features', { hasList: true, hasCreate: true, hasDetail: true, additionalLinks: [{ titleKey: 'ai_promts', title: 'ai_promts', url: PATHS.AI_PROMTS }] }),
+  features: generateLinks('features', {
+    hasList: true,
+    hasCreate: true,
+    hasDetail: true,
+    additionalLinks: [
+      { titleKey: 'ai_promts', title: 'ai_promts', url: PATHS.AI_PROMTS },
+      { titleKey: 'cuisine', title: 'cuisine', url: PATHS.CUISINE },
+    ],
+  }),
   wines: generateLinks('wines', {
     hasList: true,
     hasDetail: true,

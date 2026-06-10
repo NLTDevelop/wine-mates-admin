@@ -15,6 +15,7 @@ export const PATHS = {
   ANALYSIS: '/analysis',
   ANALYSIS_DETAIL: '/analysis/:id',
   AI_PROMTS: '/features/ai-promts',
+  CUISINE: '/features/cuisine',
   EVENTS_LIST: '/events',
   EVENTS_NEW: '/events/new',
   EVENTS_DETAIL: '/events/:id',

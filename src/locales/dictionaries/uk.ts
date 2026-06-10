@@ -82,6 +82,7 @@ export const uk = {
     settings: 'Налаштування',
     faq: 'Питання та відповіді',
     ai_promts: 'AI налаштування',
+    cuisine: 'Кухні світу',
     events_list: 'Список подій',
     events: 'Події',
     map: 'Карта',
@@ -849,5 +850,14 @@ export const uk = {
       delete_action: 'Видалити',
       delete_description: "{{slug}} '{{name}}' буде остаточно видалено з каталогу. Усі пов'язані з ним дані будуть втрачені.",
     },
+  },
+  cuisine: {
+    word_cuisines: 'Вибір кухонь світу',
+    chose_cuisine_title: 'Кухні світу',
+    chose_cuisine_desc: 'Оберіть одну або декілька кухонь зі списку',
+    search_cuisine: 'Пошук',
+    choosing_cuisines: 'Обрані кухні ({{count}})',
+    empty_list: 'Список порожній',
+    info: 'Оберіть кухні ліворуч та натисніть "Зберегти"',
   },
 }
