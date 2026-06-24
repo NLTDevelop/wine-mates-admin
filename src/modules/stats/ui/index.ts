@@ -1,0 +1,6 @@
+export * from './components/activity-of-assessors'
+export * from './components/common-stats-card'
+export * from './components/distribution_by_age_groups'
+export * from './components/selects'
+export * from './components/stats-view'
+export * from './components/table-stats'
