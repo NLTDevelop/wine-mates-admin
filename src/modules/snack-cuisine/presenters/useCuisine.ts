@@ -106,7 +106,7 @@ export const useCuisine = () => {
     (reorderedCuisines: Country[]) => {
       const reorderItems: ReorderItem[] = reorderedCuisines.map((item, index) => ({
         id: item.id,
-        sortNumber: index,
+        sortNumber: index + 1,
       }))
 
       reorderMutation.mutate(reorderItems, {
@@ -144,3 +144,4 @@ export const useCuisine = () => {
     handleReorder,
   }
 }
+
