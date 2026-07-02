@@ -9,7 +9,9 @@ export interface CreateCuisineRequest {
 }
 
 export const cuisineService = {
-  list: (): Promise<Country[]> => api.get(CUISINE_ENDPOINTS.LIST).then(response => response.data),
+  cuisine_list: (): Promise<Country[]> => api.get(CUISINE_ENDPOINTS.CUISINE_LIST).then(response => response.data),
+
+  result_list: (): Promise<Country[]> => api.get(CUISINE_ENDPOINTS.RESULT_LIST).then(response => response.data),
 
   create: (params: CreateCuisineRequest): Promise<Country[]> => api.post(CUISINE_ENDPOINTS.CREATE, params).then(response => response.data),
 

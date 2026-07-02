@@ -3,9 +3,14 @@ import { CreateCuisineRequest, cuisineService } from './cuisine-service'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 export const cuisineQueries = {
-  list: () => ({
+  result_list: () => ({
+    queryKey: ['result', 'list'],
+    queryFn: () => cuisineService.result_list(),
+  }),
+
+  cuisine_list: () => ({
     queryKey: ['cuisine', 'list'],
-    queryFn: () => cuisineService.list(),
+    queryFn: () => cuisineService.cuisine_list(),
   }),
 
   useCreate: () => {
@@ -30,3 +35,4 @@ export const cuisineQueries = {
     })
   },
 }
+

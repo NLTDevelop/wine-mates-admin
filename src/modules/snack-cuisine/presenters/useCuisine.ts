@@ -1,147 +1,138 @@
 import { useQuery } from '@tanstack/react-query'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { cuisineQueries } from '../enteties/cuisine-queries'
+import { useState, useEffect, useMemo } from 'react'
 import { Country } from '@/modules/wine/create-wine/entities/types/location-types'
-import { useCountryOptions } from '@/modules/wine/create-wine/presenters/useCountryOptions'
-import { ReorderItem } from '@/modules/wine/create/general/entities/types'
+import { cuisineQueries } from '../enteties/cuisine-queries'
 
 export const useCuisine = () => {
-  const [searchValue, setSearchValue] = useState<string>('')
+  const [searchValue, setSearchValue] = useState('')
+  const [selectedIds, setSelectedIds] = useState<number[]>([])
+  const [isReordering, setIsReordering] = useState(false)
+  const [isUpdating, setIsUpdating] = useState(false)
 
-  const [currentSelectedIds, setCurrentSelectedIds] = useState<number[]>([])
+  const { data: allCuisines = [], isLoading: isLoadingCuisines } = useQuery({
+    ...cuisineQueries.cuisine_list(),
+  })
 
-  const [originalSelectedIds, setOriginalSelectedIds] = useState<number[]>([])
-
-  const { countries: allCuisines, isLoading: isAllCuisinesLoading } = useCountryOptions({})
-
-  const savedCuisinesQuery = useQuery({ ...cuisineQueries.list() })
+  const {
+    data: savedCuisines = [],
+    isLoading: isLoadingSaved,
+    refetch: refetchSaved,
+  } = useQuery({
+    ...cuisineQueries.result_list(),
+  })
 
   const createMutation = cuisineQueries.useCreate()
   const reorderMutation = cuisineQueries.useReorder()
 
-  const filteredCuisines = useMemo(() => {
-    if (!searchValue.trim()) {
-      return allCuisines
+  useEffect(() => {
+    if (savedCuisines.length > 0) {
+      setSelectedIds(savedCuisines.map(c => c.id))
+    } else {
+      setSelectedIds([])
     }
-    return allCuisines.filter(cuisine => cuisine.name.toLowerCase().includes(searchValue.toLowerCase()))
+  }, [savedCuisines])
+
+  const filteredCuisines = useMemo(() => {
+    if (!searchValue.trim()) return allCuisines
+    const searchLower = searchValue.toLowerCase().trim()
+    return allCuisines.filter(cuisine => cuisine.name.toLowerCase().includes(searchLower) || cuisine.code?.toLowerCase().includes(searchLower))
   }, [allCuisines, searchValue])
 
-  useEffect(() => {
-    if (savedCuisinesQuery.data) {
-      const savedIds = savedCuisinesQuery.data.map((c: Country) => c.id)
-      setOriginalSelectedIds(savedIds)
-      setCurrentSelectedIds(savedIds)
-    }
-  }, [savedCuisinesQuery.data])
+  const selectedCount = selectedIds.length
+  const isSaving = createMutation.isPending
+  const isLoading = isLoadingSaved || isLoadingCuisines
 
   const hasChanges = useMemo(() => {
-    if (originalSelectedIds.length !== currentSelectedIds.length) return true
+    if (isUpdating) return false
+    
+    const savedIds = savedCuisines.map(c => c.id).sort()
+    const currentIds = [...selectedIds].sort()
+    return JSON.stringify(savedIds) !== JSON.stringify(currentIds)
+  }, [savedCuisines, selectedIds, isUpdating])
 
-    const sortedOriginal = [...originalSelectedIds].sort((a, b) => a - b)
-    const sortedCurrent = [...currentSelectedIds].sort((a, b) => a - b)
-
-    return JSON.stringify(sortedOriginal) !== JSON.stringify(sortedCurrent)
-  }, [originalSelectedIds, currentSelectedIds])
-
-  const handleClearSearch = useCallback(() => {
-    setSearchValue('')
-  }, [])
-
-  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value)
-  }, [])
-
-  const handleCheckboxChange = (id: number, checked: boolean) => {
-    setCurrentSelectedIds(prev => {
-      if (checked) {
-        return [...prev, id]
-      } else {
-        return prev.filter(item => item !== id)
-      }
-    })
   }
 
-  const handleSave = useCallback(() => {
-    createMutation.mutate(
-      { countryIds: currentSelectedIds },
-      {
-        onSuccess: () => {
-          setOriginalSelectedIds([...currentSelectedIds])
-        },
-      }
-    )
-  }, [currentSelectedIds, createMutation])
+  const handleClearSearch = () => {
+    setSearchValue('')
+  }
 
-  const handleRemove = useCallback(
-    (id: number) => {
-      const newIds = currentSelectedIds.filter(savedId => savedId !== id)
-      setCurrentSelectedIds(newIds)
+  const handleCheckboxChange = (id: number, checked: boolean) => {
+    setSelectedIds(prev => (checked ? [...prev, id] : prev.filter(itemId => itemId !== id)))
+  }
 
-      createMutation.mutate(
-        { countryIds: newIds },
-        {
-          onSuccess: () => {
-            setOriginalSelectedIds([...newIds])
-          },
-        }
-      )
-    },
-    [currentSelectedIds, createMutation]
-  )
+  const handleSave = async () => {
+    if (selectedIds.length === 0) return
 
-  const handleClearAll = useCallback(() => {
-    setCurrentSelectedIds([])
+    setIsUpdating(true)
+    try {
+      await createMutation.mutateAsync({ countryIds: selectedIds })
+      await refetchSaved()
+    } finally {
+      setIsUpdating(false)
+    }
+  }
 
-    createMutation.mutate(
-      { countryIds: [] },
-      {
-        onSuccess: () => {
-          setOriginalSelectedIds([])
-        },
-      }
-    )
-  }, [createMutation])
+  const handleRemove = async (id: number) => {
+    setIsUpdating(true)
+    try {
+      const updatedIds = selectedIds.filter(itemId => itemId !== id)
+      setSelectedIds(updatedIds)
+      
+      await createMutation.mutateAsync({ countryIds: updatedIds })
+      await refetchSaved()
+    } finally {
+      setIsUpdating(false)
+    }
+  }
 
-  const handleReorder = useCallback(
-    (reorderedCuisines: Country[]) => {
-      const reorderItems: ReorderItem[] = reorderedCuisines.map((item, index) => ({
+  const handleClearAll = async () => {
+    setIsUpdating(true)
+    try {
+      await createMutation.mutateAsync({ countryIds: [] })
+      setSelectedIds([])
+      await refetchSaved()
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
+  const handleReorder = async (reorderedCuisines: Country[]) => {
+    setIsReordering(true)
+    try {
+      const reorderData = reorderedCuisines.map((item, index) => ({
         id: item.id,
         sortNumber: index + 1,
       }))
 
-      reorderMutation.mutate(reorderItems, {
-        onSuccess: () => {
-          const reorderedIds = reorderedCuisines.map(c => c.id)
-          setOriginalSelectedIds(reorderedIds)
-          setCurrentSelectedIds(reorderedIds)
-        },
-      })
-    },
-    [reorderMutation]
-  )
-
-  const selectedCount = currentSelectedIds.length
-  const savedCuisines = savedCuisinesQuery.data ?? []
-  const isLoading = savedCuisinesQuery.isLoading || isAllCuisinesLoading
-  const isSaving = createMutation.isPending
+      await reorderMutation.mutateAsync(reorderData)
+      await refetchSaved()
+    } catch (error) {
+      // Обработка ошибки
+    } finally {
+      setIsReordering(false)
+    }
+  }
 
   return {
-    searchValue,
-    selectedIds: currentSelectedIds,
-    savedCuisines,
     filteredCuisines,
+    searchValue,
+    selectedIds,
     selectedCount,
-    hasChanges,
-    isLoading,
     isSaving,
-    isReordering: reorderMutation.isPending,
+    isLoading,
+    hasChanges,
+    handleSave,
     handleClearSearch,
     handleSearchChange,
     handleCheckboxChange,
-    handleSave,
+
+    savedCuisines,
+    isLoadingSaved,
+    isReordering,
     handleRemove,
     handleClearAll,
     handleReorder,
   }
 }
-
