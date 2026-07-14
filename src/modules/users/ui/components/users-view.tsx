@@ -55,7 +55,7 @@ export const UsersView = () => {
         onClose={modal.close}
         onSubmit={!userToConfirm.isConfirm ? modal.confirm : modal.reject}
       >
-        <div className="p-[1px]">
+        <div className="p-px">
           <p>{modalMessage}</p>
         </div>
       </ConfirmModal>
