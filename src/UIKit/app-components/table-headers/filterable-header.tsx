@@ -1,6 +1,6 @@
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/UIKit/shadcn/ui/dropdown-menu'
-import { Filter, X } from 'lucide-react'
+import { Filter, Info, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 interface FilterOption {
@@ -15,9 +15,10 @@ interface FilterableHeaderProps {
   onFilter: (column: string, value: any) => void
   filterOptions: FilterOption[]
   currentFilter?: any
+  filterDisabled?: boolean
 }
 
-export const FilterableHeader = ({ column, label, onFilter, filterOptions, currentFilter }: FilterableHeaderProps) => {
+export const FilterableHeader = ({ column, label, onFilter, filterOptions, currentFilter, filterDisabled = false }: FilterableHeaderProps) => {
   const { t } = useTranslation('wines')
   const isActive = currentFilter !== undefined && currentFilter !== null && currentFilter !== ''
 
@@ -48,15 +49,22 @@ export const FilterableHeader = ({ column, label, onFilter, filterOptions, curre
             </>
           )}
         </div>
-        <div className="max-h-60 overflow-y-auto">
-          {filterOptions.map((option, index) => (
-            <DropdownMenuItem key={index} onClick={() => onFilter(column, option.value)} className="flex items-center cursor-pointer">
-              {option.icon}
-              <span>{option.label}</span>
-              {currentFilter === option.value && <span className="ml-auto text-xs">✓</span>}
-            </DropdownMenuItem>
-          ))}
-        </div>
+        {filterDisabled ? (
+          <div className="py-3 text-sm text-muted-foreground flex items-center gap-2">
+            <Info className="h-4 w-4" />
+            <span>{t('select_country')}</span>
+          </div>
+        ) : (
+          <div className="max-h-60 overflow-y-auto">
+            {filterOptions.map((option, index) => (
+              <DropdownMenuItem key={index} onClick={() => onFilter(column, option.value)} className="flex items-center cursor-pointer">
+                {option.icon}
+                <span>{option.label}</span>
+                {currentFilter === option.value && <span className="ml-auto text-xs">✓</span>}
+              </DropdownMenuItem>
+            ))}
+          </div>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   )

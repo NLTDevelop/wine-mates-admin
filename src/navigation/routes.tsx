@@ -19,6 +19,8 @@ import { AiPromtView } from '@/modules/ai-promts/ui'
 import { eventRouters } from '@/modules/events/entities/event-routers'
 import { faq } from '@/modules/faq/entities/faq-routes'
 import { CuisineView } from '@/modules/snack-cuisine/ui'
+import { WineriesListView } from '@/modules/winery/list/ui'
+import { WineryDetailView } from '@/modules/winery/details/ui'
 
 const usersRoutes = [
   { path: PATHS.USERS, element: <UsersView /> },
@@ -38,6 +40,12 @@ const winesRoutes = [
   { path: PATHS.WINE_USER_PROPOSITIONS, element: <UserPropositionsView /> },
   { path: PATHS.WINE_CREATING, element: <CreateTasteFormView /> },
 ]
+
+const wineriesRoutes = [
+  { path: PATHS.WINERIES_LIST, element: <WineriesListView /> },
+  { path: PATHS.WINERY_DETAIL, element: <WineryDetailView /> },
+]
+
 const winesStats = [{ path: PATHS.STATS, element: <StatsView /> }]
 
 const winesAnalysis = [
@@ -54,7 +62,7 @@ export const Router: FC = () => {
           <Layout />
         </PrivateRoutes>
       ),
-      children: [{ path: PATHS.HOME, element: <DashboardView />, index: true }, ...usersRoutes, ...featuresRoutes, ...winesRoutes, ...winesStats, ...winesAnalysis, ...eventRouters, ...faq],
+      children: [{ path: PATHS.HOME, element: <DashboardView />, index: true }, ...usersRoutes, ...featuresRoutes, ...winesRoutes,...wineriesRoutes, ...winesStats, ...winesAnalysis, ...eventRouters, ...faq],
     },
     {
       path: PATHS.LOGIN,
