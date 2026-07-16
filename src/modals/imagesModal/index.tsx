@@ -1,46 +1,84 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Dialog, DialogContent, DialogTrigger } from '@/UIKit/shadcn/ui/dialog'
+import { Dialog, DialogContent } from '@/UIKit/shadcn/ui/dialog'
 import { DialogTitle } from '@radix-ui/react-dialog'
+import { Button } from '@/UIKit/shadcn/ui/button'
 
-interface Image {
+interface ModalImage {
   url: string
-  thumbnailUrl?: string
   alt?: string
 }
 
 interface ImageModalProps {
-  images: Image[]
-  trigger: React.ReactNode
+  images: ModalImage[]
   initialIndex?: number
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
-export const ImageModal: React.FC<ImageModalProps> = ({ images, trigger, initialIndex = 0 }) => {
+export const ImageModal: React.FC<ImageModalProps> = ({ images, initialIndex = 0, open, onOpenChange }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(initialIndex)
 
-  const nextImage = () => setCurrentImageIndex(prev => (prev + 1) % images.length)
-  const prevImage = () => setCurrentImageIndex(prev => (prev - 1 + images.length) % images.length)
+  useEffect(() => {
+    if (open) {
+      setCurrentImageIndex(initialIndex)
+    }
+  }, [open, initialIndex])
+
+  const nextImage = (e?: React.MouseEvent) => {
+    e?.stopPropagation()
+    setCurrentImageIndex(prev => (prev + 1) % images.length)
+  }
+
+  const prevImage = (e?: React.MouseEvent) => {
+    e?.stopPropagation()
+    setCurrentImageIndex(prev => (prev - 1 + images.length) % images.length)
+  }
+
+  useEffect(() => {
+    if (!open || images.length <= 1) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') nextImage()
+      if (e.key === 'ArrowLeft') prevImage()
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [open, images.length])
+
+  if (images.length === 0) return null
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        className="max-w-[95vw] md:max-w-4xl p-0 border-none bg-transparent shadow-none flex items-center justify-center [&>button]:text-white [&>button]:hover:text-white/80"
+        aria-describedby={undefined}
+      >
+        <DialogTitle className="sr-only"></DialogTitle>
 
-      <DialogContent className="max-w-4xl px-0" aria-describedby={undefined}>
-        <DialogTitle />
-        <div className="relative">
-          <img src={images[currentImageIndex].url} alt={images[currentImageIndex].alt || 'Image'} className="w-full h-auto max-h-[70vh] object-contain" />
+        <div className="relative flex items-center justify-center w-full max-h-[85vh] overflow-hidden select-none outline-hidden group/modal">
+          <img src={images[currentImageIndex]?.url} alt={images[currentImageIndex]?.alt || 'Image'} className="max-w-full max-h-[85vh] object-contain rounded-md" />
 
           {images.length > 1 && (
             <>
-              <div onClick={prevImage} className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100">
+              <Button
+                variant="ghost"
+                onClick={prevImage}
+                className="absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 p-0 bg-black/50 hover:bg-black/80 text-white rounded-full transition-opacity opacity-0 group-hover/modal:opacity-100 z-50 cursor-pointer"
+              >
                 <ChevronLeft className="w-6 h-6" />
-              </div>
+              </Button>
 
-              <div onClick={nextImage} className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100">
+              <Button
+                variant="ghost"
+                onClick={nextImage}
+                className="absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 p-0 bg-black/50 hover:bg-black/80 text-white rounded-full transition-opacity opacity-0 group-hover/modal:opacity-100 z-50 cursor-pointer"
+              >
                 <ChevronRight className="w-6 h-6" />
-              </div>
+              </Button>
 
-              <div className="absolute top-2 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-sm">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 bg-black/60 text-white text-xs font-semibold rounded-full z-50 select-none">
                 {currentImageIndex + 1} / {images.length}
               </div>
             </>

@@ -1,5 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, UseQueryResult } from '@tanstack/react-query'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDebounce } from '@/hooks/ui/useDebounce'
 import { Image, IWines, UpdateWineListParams, WineImage, WinesResponse } from '../entities/types/types'
 import { useWineStore } from '../entities/wine-list-store'
@@ -8,9 +8,10 @@ import { WineFormData } from '../../create-wine/presenters/wine-form-schema'
 import { useToast } from '@/hooks/shadcn/use-toast'
 import { useTranslation } from 'react-i18next'
 import { SORT_FIELDS } from '@/constatnts/wine-filters'
+import { wineryQueries } from '@/modules/winery/details/entities/winery-queries'
 
-export const useWineList = () => {
-  const { filters, setFilters, resetFilters } = useWineStore()
+export const useWineList = (initialWineryId?: string | null, context: 'default' | 'winery' | 'withoutWinery' = 'default') => {
+  const { filters, wineryFilters, winesWithoutWineryFilters, setWineryFilters, setWinesWithoutWineryFilters, resetWineryFilters, resetWinesWithoutWineryFilters, resetFilters } = useWineStore()
   const { toast } = useToast()
   const { t } = useTranslation('wines')
 
@@ -21,15 +22,71 @@ export const useWineList = () => {
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; wineId: string | null; wineName: string }>({ isOpen: false, wineId: null, wineName: '' })
   const [wine, setWine] = useState<{ wineName: string; isConfirm: boolean }>({ wineName: '', isConfirm: false })
   const [importModal, setImportModal] = useState<{ isOpen: boolean }>({ isOpen: false })
+  const [isInitialized, setIsInitialized] = useState(false)
+
+  const currentFilters = useMemo(() => {
+    switch (context) {
+      case 'winery':
+        return wineryFilters
+      case 'withoutWinery':
+        return winesWithoutWineryFilters
+      default:
+        return filters
+    }
+  }, [context, filters, wineryFilters, winesWithoutWineryFilters])
+
+  const setCurrentFilters = useMemo(() => {
+    switch (context) {
+      case 'winery':
+        return setWineryFilters
+      case 'withoutWinery':
+        return setWinesWithoutWineryFilters
+      default:
+        return useWineStore.getState().setFilters
+    }
+  }, [context, setWineryFilters, setWinesWithoutWineryFilters])
+
+  const resetCurrentFilters = useCallback(() => {
+    switch (context) {
+      case 'winery':
+        return resetWineryFilters()
+      case 'withoutWinery':
+        return resetWinesWithoutWineryFilters()
+      default:
+        return resetFilters()
+    }
+  }, [context, resetWineryFilters, resetWinesWithoutWineryFilters, resetFilters])
+
+  useEffect(() => {
+    if (initialWineryId && context === 'winery' && !isInitialized) {
+      setCurrentFilters({
+        wineryId: initialWineryId,
+        page: 1,
+      })
+      setIsInitialized(true)
+    }
+  }, [initialWineryId, context, setCurrentFilters, isInitialized])
+
+  const wineryIdForQuery = useMemo(() => {
+    if (context === 'winery') {
+      return currentFilters.wineryId || null
+    }
+    if (context === 'withoutWinery') {
+      return 'empty' 
+    }
+    return null
+  }, [context, currentFilters.wineryId])
 
   const winesQuery: UseQueryResult<WinesResponse | undefined, Error> = useQuery({
-    ...wineQueries.list(filters),
+    ...wineQueries.list({ ...currentFilters, wineryId: wineryIdForQuery }),
     placeholderData: keepPreviousData,
     staleTime: 2000,
     gcTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
     refetchOnMount: true,
+    enabled: context === 'winery' ? !!currentFilters.wineryId : context === 'withoutWinery' ? false : true,
   })
+
   const updateWineMutation = useMutation(wineQueries.update())
   const deleteWineMutation = useMutation({
     ...wineQueries.delete(),
@@ -42,9 +99,11 @@ export const useWineList = () => {
   })
   const confirmWineMutation = useMutation(wineQueries.confirmWine())
   const importWinesMutation = useMutation(wineQueries.import())
+  const addWinesToWineryMutation = useMutation(wineryQueries.addWine())
+  const deleteWineFromWineryMutation = useMutation(wineryQueries.deleteWine())
 
   const { debouncedWrapper } = useDebounce((searchValue: string) => {
-    setFilters({ search: searchValue, page: 1 })
+    setCurrentFilters({ search: searchValue, page: 1 })
   }, 500)
 
   const findWineById = useCallback(
@@ -64,37 +123,37 @@ export const useWineList = () => {
 
   const handleClearSearch = useCallback(() => {
     setSearchValue('')
-    resetFilters()
-  }, [resetFilters])
+    resetCurrentFilters()
+  }, [resetCurrentFilters])
 
   const handleSort = useCallback(
     (column?: string) => {
       if (!column) {
-        setFilters({
+        setCurrentFilters({
           sortBy: undefined,
           page: 1,
         })
         return
       }
       const baseField = SORT_FIELDS[column] || column
-      const currentSortBy = filters.sortBy || ''
+      const currentSortBy = currentFilters.sortBy || ''
 
       const isCurrentColumn = currentSortBy === `${baseField}_asc` || currentSortBy === `${baseField}_desc`
 
       if (isCurrentColumn) {
         const newOrder = currentSortBy.endsWith('_asc') ? 'desc' : 'asc'
-        setFilters({
+        setCurrentFilters({
           sortBy: `${baseField}_${newOrder}`,
           page: 1,
         })
       } else {
-        setFilters({
+        setCurrentFilters({
           sortBy: `${baseField}_asc`,
           page: 1,
         })
       }
     },
-    [setFilters, filters.sortBy]
+    [setCurrentFilters, currentFilters.sortBy]
   )
 
   const handleColumnFilter = useCallback(
@@ -105,12 +164,12 @@ export const useWineList = () => {
       else if (column === 'type') filterColumn = 'typeId'
       else if (column === 'color') filterColumn = 'colorId'
 
-      setFilters({
+      setCurrentFilters({
         [filterColumn]: value,
         page: 1,
       })
     },
-    [setFilters]
+    [setCurrentFilters]
   )
 
   const clearColumnFilters = useCallback(() => {
@@ -121,14 +180,14 @@ export const useWineList = () => {
     })
 
     handleSort(undefined)
-    setFilters({ page: 1 })
-  }, [handleColumnFilter, handleSort, setFilters])
+    setCurrentFilters({ page: 1 })
+  }, [handleColumnFilter, handleSort, setCurrentFilters])
 
   const onChangePagination = useCallback(
     (page: number) => {
-      setFilters({ page })
+      setCurrentFilters({ page })
     },
-    [setFilters]
+    [setCurrentFilters]
   )
 
   const startEditing = useCallback((wine: IWines) => {
@@ -197,6 +256,24 @@ export const useWineList = () => {
     [deleteWineMutation, winesQuery]
   )
 
+  const deleteWineFromWinery = useCallback(
+    async (wineId: string) => {
+      await deleteWineFromWineryMutation.mutateAsync({ id: wineId })
+      winesQuery.refetch()
+      closeDeleteModal()
+    },
+    [deleteWineMutation, winesQuery]
+  )
+
+  const addWineInWinery = useCallback(
+    async (wineryId: string, wineIds: number[]) => {
+      await addWinesToWineryMutation.mutateAsync({ id: wineryId, body: wineIds })
+      winesQuery.refetch()
+      closeDeleteModal()
+    },
+    [addWinesToWineryMutation, winesQuery]
+  )
+
   const openDeleteModal = useCallback((wineId: string, wineName: string = '') => {
     setDeleteModal({
       isOpen: true,
@@ -242,6 +319,19 @@ export const useWineList = () => {
       await deleteWine(deleteModal.wineId)
     }
   }, [deleteModal.wineId, deleteWine])
+
+  const addWineToWinery = useCallback(
+    async (wineryId: string, wineIds: number[]) => {
+      await addWineInWinery(wineryId, wineIds)
+    },
+    [addWineInWinery]
+  )
+
+  const confirmDeleteWineFromWinery = useCallback(async () => {
+    if (deleteModal.wineId) {
+      await deleteWineFromWinery(deleteModal.wineId)
+    }
+  }, [deleteModal.wineId, deleteWineFromWinery])
 
   const confirmWine = useCallback(
     async (userId: string, isConfirmed: boolean) => {
@@ -294,26 +384,31 @@ export const useWineList = () => {
     [importWinesMutation, winesQuery, closeImportModal, t]
   )
 
+  const refetch = useCallback(() => {
+    return winesQuery.refetch()
+  }, [winesQuery])
+
   return {
     wines: winesQuery.data?.rows,
     totalCount: winesQuery.data?.count,
     isLoading: winesQuery.isLoading,
     isFetching: winesQuery.isFetching,
-    filters,
+    refetch,
+    filters: currentFilters,
     searchValue,
     editingWine,
 
-    sortBy: filters.sortBy,
+    sortBy: currentFilters.sortBy,
     handleSort,
     handleColumnFilter,
     clearColumnFilters,
 
     columnFilters: {
-      typeId: filters.typeId,
-      colorId: filters.colorId,
-      vintage: filters.vintage,
-      countryId: filters.countryId,
-      regionId: filters.regionId,
+      typeId: currentFilters.typeId,
+      colorId: currentFilters.colorId,
+      vintage: currentFilters.vintage,
+      countryId: currentFilters.countryId,
+      regionId: currentFilters.regionId,
     },
 
     onChangeSearch: handleSearchChange,
@@ -343,6 +438,7 @@ export const useWineList = () => {
       ...deleteModal,
       onClose: closeDeleteModal,
       onSubmit: confirmDeleteWine,
+      onSubmitFromWinery: confirmDeleteWineFromWinery,
     },
 
     importWines: {
@@ -352,5 +448,8 @@ export const useWineList = () => {
       isImporting: importWinesMutation.isPending,
       isOpen: importModal.isOpen,
     },
+
+    addWineToWinery,
+    isInitialized,
   }
 }

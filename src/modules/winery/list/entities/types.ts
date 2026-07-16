@@ -28,10 +28,7 @@ export interface IWinery {
   status?:WineriesType
 }
 
-export interface ConfirmWineryParams {
-  id: string | number
-  status: WineriesType
-}
+
 
 
 

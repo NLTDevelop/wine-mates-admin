@@ -21,7 +21,7 @@ export const WineDetailHeader: React.FC<WineDetailHeaderProps> = ({ wine }) => {
         {wine.image ? (
           <img src={wine.image.smallUrl || wine.image.mediumUrl} alt={wine.image.name || 'Image'} className="w-full h-full object-cover rounded-lg" />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-muted to-primary flex items-center justify-center rounded-lg"></div>
+          <div className="w-full h-full bg-linear-to-br from-muted to-primary flex items-center justify-center rounded-lg"></div>
         )}
       </div>
 

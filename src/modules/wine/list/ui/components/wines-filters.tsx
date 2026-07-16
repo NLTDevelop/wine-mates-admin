@@ -1,3 +1,5 @@
+import { cn } from '@/lib/utils'
+import { Button } from '@/UIKit/shadcn/ui/button'
 import { SearchInput } from '@/UIKit/shadcn/ui/input-search'
 import { useTranslation } from 'react-i18next'
 
@@ -5,10 +7,14 @@ export const WinesFilters = ({
   filterSearch,
   onChangeFilterSearch,
   onClearSearch,
+  hasActiveFilters,
+  clearColumnFilters,
 }: {
   filterSearch: string
   onChangeFilterSearch: (value: React.ChangeEvent<HTMLInputElement>) => void
   onClearSearch: () => void
+  hasActiveFilters?: boolean
+  clearColumnFilters?: () => void
 }) => {
   const { t } = useTranslation('wines')
 
@@ -17,8 +23,24 @@ export const WinesFilters = ({
   }
 
   return (
-    <div className="flex-1 items-center space-x-2">
-      <SearchInput value={filterSearch} onChange={onChangeFilterSearch} handleClear={handleClear} placeholder={t('search_wine')} className="w-full" />
+    <div className="flex items-center space-x-2 w-full">
+      <div className="flex-1">
+        <SearchInput value={filterSearch} onChange={onChangeFilterSearch} handleClear={handleClear} placeholder={t('search_wine')} className="w-full" />
+      </div>
+
+      <div className="shrink-0">
+        {clearColumnFilters && (
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={clearColumnFilters}
+            disabled={!hasActiveFilters}
+            className={cn('transition-opacity h-11 whitespace-nowrap', !hasActiveFilters && 'opacity-50 cursor-not-allowed')}
+          >
+            {t('clear_all_filters')}
+          </Button>
+        )}
+      </div>
     </div>
   )
 }

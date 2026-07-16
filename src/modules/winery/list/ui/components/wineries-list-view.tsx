@@ -6,34 +6,31 @@ import { NLTTablePagination } from '@/UIKit/components/NLTTablePagination'
 import { TabsContent, TabsList, TabsTrigger } from '@/UIKit/shadcn/ui/tabs'
 import { Tabs } from '@radix-ui/react-tabs'
 import { useTranslation } from 'react-i18next'
-import { WineriesType, WINERY_STATUS } from '../../entities/types'
+import { WineriesType } from '../../entities/types'
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { useMemo } from 'react'
-import { ConfirmModal } from '@/modals/confirmModal'
 import { SearchInput } from '@/UIKit/shadcn/ui/input-search'
 import { useWineriesList } from '../../presenters/useWinariesList'
 import { useWineriesColumns } from '../../presenters/useWineriesColumns'
 import { useNavigate } from 'react-router-dom'
-import {  getWineryDetailPath } from '@/navigation/paths'
+import { getWineryDetailPath } from '@/navigation/paths'
 
 export const WineriesListView = () => {
   const { t } = useTranslation('winery')
   const navigate = useNavigate()
 
   const presenter = useWineriesList()
-  const columns = useWineriesColumns({ onConfirm: presenter.confirmModal.confirm, onEdit: winery => navigate(`${getWineryDetailPath(winery.id)}?edit=true`) })
+  const columns = useWineriesColumns({ onEdit: winery => navigate(`${getWineryDetailPath(winery.id)}?edit=true`) })
   const { table } = useDataTable(presenter.wineries ?? [], columns)
 
   const hasActiveFilters = useMemo(() => {
     return Object.values(presenter.columnFilters).some(value => value !== null && value !== undefined)
   }, [presenter.columnFilters])
 
-  const modalActionTitle = presenter.wineryToConfirm.status === WINERY_STATUS.APPROVED ? t('cancel_action') : t('confirm_action')
-
-  const modalMessage =
-    presenter.wineryToConfirm.status === WINERY_STATUS.APPROVED
-      ? t('cancel_actions', { slug: presenter.wineryToConfirm.wineryName })
-      : t('confirm_actions', { slug: presenter.wineryToConfirm.wineryName })
+  const handleRowClick = (row: any) => {
+    const wineId = row.original.id
+    navigate(getWineryDetailPath(wineId))
+  }
 
   return (
     <ContentLayout title={t('wineries')}>
@@ -42,7 +39,7 @@ export const WineriesListView = () => {
           <TabsList className="grid w-full md:w-auto sm:grid-cols-3 grid-cols-1  my-6">
             <TabsTrigger value="approved">{t('types.approved')}</TabsTrigger>
             <TabsTrigger value="rejected">{t('types.rejected')}</TabsTrigger>
-            <TabsTrigger value="pending">{t('types.waiting')}</TabsTrigger>
+            <TabsTrigger value="pending">{t('types.pending')}</TabsTrigger>
           </TabsList>
           <TabsContent value={presenter.activeTab} className="space-y-6">
             <NLTDataTable
@@ -50,6 +47,7 @@ export const WineriesListView = () => {
               rowClassname="text-center cursor-pointer"
               hasActiveFilters={hasActiveFilters}
               clearColumnFilters={presenter.clearColumnFilters}
+              onRowClick={handleRowClick}
               ToolBar={
                 <div className="flex-1 items-center space-x-2">
                   <SearchInput value={presenter.searchValue} onChange={presenter.onChangeSearch} handleClear={presenter.handleClearSearch} placeholder={t('search_winery')} className="w-full" />
@@ -63,18 +61,6 @@ export const WineriesListView = () => {
       {presenter.totalCount && presenter.totalCount > DEFAULT_PAGINATION_LIMIT ? (
         <NLTTablePagination limit={presenter.filters.limit} page={presenter.filters.page} totalRows={presenter.totalCount || 1} setPage={presenter.onChangePagination} />
       ) : null}
-      <ConfirmModal
-        title={t('confirm_title')}
-        actionTitle={modalActionTitle}
-        variant="submit"
-        isOpen={presenter.confirmModal.isOpen}
-        onClose={presenter.confirmModal.close}
-        onSubmit={presenter.wineryToConfirm.status !== WINERY_STATUS.APPROVED ? presenter.confirmModal.confirm : presenter.confirmModal.reject}
-      >
-        <div className="p-px">
-          <p>{modalMessage}</p>
-        </div>
-      </ConfirmModal>
     </ContentLayout>
   )
 }
