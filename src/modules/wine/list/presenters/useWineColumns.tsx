@@ -15,9 +15,10 @@ import { useRegionOptions } from '../../create-wine/presenters/useRegionOptions'
 const columnHelper = createColumnHelper<IWines>()
 
 interface WineTableProps {
-  onEdit: (wine: IWines) => void
-  onDelete: (wineId: string, name: string) => void
-  onConfirm: (wineId?: string) => void
+  onEdit?: (wine: IWines) => void
+  onDelete?: (wineId: string, name: string) => void
+  onConfirm?: (wineId?: string) => void
+  isUnionAvailable?: boolean
 }
 
 const COLUMN_WIDTHS = {
@@ -33,7 +34,7 @@ const COLUMN_WIDTHS = {
   IMAGES: 120,
 } as const
 
-export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) => {
+export const useWineColumns = ({ onEdit, onDelete, onConfirm, isUnionAvailable = true }: WineTableProps) => {
   const { t } = useTranslation('wines')
 
   const { sortBy, handleSort, handleColumnFilter, filters } = useWineList()
@@ -64,22 +65,26 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm }: WineTableProps) 
 
           const handleEditWine = (e: React.MouseEvent) => {
             stopEvent(e)
-            onEdit(row.original)
+            onEdit?.(row.original)
           }
 
           const handleDeleteWine = (e: React.MouseEvent) => {
             stopEvent(e)
-            row.original.id && onDelete(row.original.id, row.original.name || t('not_known_wine'))
+            row.original.id && onDelete?.(row.original.id, row.original.name || t('not_known_wine'))
           }
 
           return (
             <div className="flex items-center justify-around">
-              <div className="pt-1 pr-3" onClick={e => stopEvent(e)}>
-                <Checkbox checked={row.getIsSelected()} onCheckedChange={value => row.toggleSelected(!!value)} aria-label="Select row" className="h-5 w-5" />
-              </div>
-              <Button variant="ghost" size="sm" onClick={handleEditWine} className="h-8 w-8 p-0">
-                <Edit className="h-4 w-4 text-muted-foreground" />
-              </Button>
+              {isUnionAvailable && (
+                <div className="pt-1 pr-3" onClick={e => stopEvent(e)}>
+                  <Checkbox checked={row.getIsSelected()} onCheckedChange={value => row.toggleSelected(!!value)} aria-label="Select row" className="h-5 w-5" />
+                </div>
+              )}
+              {onEdit && (
+                <Button variant="ghost" size="sm" onClick={handleEditWine} className="h-8 w-8 p-0">
+                  <Edit className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              )}
               <Button variant="ghost" size="sm" onClick={handleDeleteWine} className="h-8 w-8 p-0 text-destructive">
                 <Trash2 className="h-4 w-4 text-red-700" />
               </Button>

@@ -1,6 +1,7 @@
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
-import { IWinery, WineriesType, WineryFilters } from './types'
+import { IWinery, WineriesType, WineryFilters } from '../../list/entities/types'
+
 
 interface WineryState {
   wineries: IWinery[]

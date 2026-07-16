@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Play, Pause, Search } from 'lucide-react'
 import { Button } from '@/UIKit/shadcn/ui/button'
-
-interface Image {
-  url: string
-  thumbnailUrl?: string
-  alt?: string
-}
+import { WineImage } from '@/modules/wine/list/entities/types/types'
 
 interface ImageSliderProps {
-  images: Image[]
+  images: WineImage[]
   autoPlayInterval?: number
   showControls?: boolean
   className?: string
   showIndicators?: boolean
+  onZoom?: (url: string) => void
 }
 
-export const ImageSlider: React.FC<ImageSliderProps> = ({ images, autoPlayInterval = 4000, showControls = true, className = '', showIndicators = true }) => {
+export const ImageSlider: React.FC<ImageSliderProps> = ({ images, autoPlayInterval = 4000, showControls = true, className = '', showIndicators = true, onZoom }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
 
@@ -52,21 +48,45 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({ images, autoPlayInterv
     setCurrentImageIndex(index)
   }
 
-  if (images.length === 0) {
-    return <div className={`w-full h-full bg-gradient-to-br from-muted to-primary flex items-center justify-center rounded-lg ${className}`}></div>
+  const handleZoomClick = (e: React.MouseEvent, url: string) => {
+    e.stopPropagation()
+    setIsAutoPlaying(false)
+    if (onZoom) {
+      onZoom(url)
+    }
   }
+
+  if (images.length === 0) {
+    return <div className={`w-full h-full bg-linear-to-br from-muted to-primary flex items-center justify-center rounded-lg ${className}`} />
+  }
+
+  const currentImage = images[currentImageIndex]
+  const previewUrl = currentImage.mediumUrl || currentImage.smallUrl || currentImage.originalUrl
 
   return (
     <div className={`relative overflow-hidden group ${className}`}>
-      <img
-        src={images[currentImageIndex].thumbnailUrl || images[currentImageIndex].url}
-        alt={images[currentImageIndex].alt || 'Image'}
-        className="w-full h-full object-cover transition-transform hover:scale-102 rounded-lg"
-      />
+      <img src={previewUrl} alt={currentImage.originalName || 'image'} className="w-full h-full object-cover rounded-lg" />
+
+      {onZoom && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={e => handleZoomClick(e, currentImage.originalUrl)}
+          className="absolute top-2 left-2 h-8 w-8 p-0 bg-black/60 hover:bg-black/80 text-white rounded-full transition-colors z-10"
+          title="Збільшити"
+        >
+          <Search className="w-4 h-4" />
+        </Button>
+      )}
 
       {hasMultipleImages && showControls && (
         <>
-          <Button variant="ghost" size="sm" onClick={toggleAutoPlay} className="absolute top-2 right-2 h-7 w-7 p-0 bg-white bg-opacity-80 hover:bg-opacity-100">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleAutoPlay}
+            className="absolute top-2 right-2 h-8 w-8 p-0 bg-black/60 hover:bg-black/80 text-white rounded-full opacity-0 group-hover:opacity-100 transition-colors z-10"
+          >
             {isAutoPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
           </Button>
 
@@ -74,26 +94,36 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({ images, autoPlayInterv
             variant="ghost"
             size="sm"
             onClick={prevImage}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute left-2 bottom-2 h-8 w-8 p-0 bg-black/60 hover:bg-black/80 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
           >
-            <ChevronLeft className="w-6 h-6" />
+            <ChevronLeft className="w-5 h-5" />
           </Button>
 
           <Button
             variant="ghost"
             size="sm"
             onClick={nextImage}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute right-2 bottom-2 h-8 w-8 p-0 bg-black/60 hover:bg-black/80 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
           >
-            <ChevronRight className="w-6 h-6" />
+            <ChevronRight className="w-5 h-5" />
           </Button>
 
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
-            {showIndicators &&
-              images.map((_, index) => (
-                <button key={index} onClick={goToImage(index)} className={`w-2 h-2 rounded-full transition-colors ${index === currentImageIndex ? 'bg-white' : 'bg-white bg-opacity-50'}`} />
-              ))}
-          </div>
+          {showIndicators &&
+            (images.length <= 5 ? (
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 z-10 h-6">
+                {images.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={goToImage(index)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentImageIndex ? 'bg-white scale-110 w-4' : 'bg-white/50 hover:bg-white/80'}`}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-2.5 py-0.5 bg-black/60 text-white text-xs font-medium rounded-full z-10 select-none">
+                {currentImageIndex + 1} / {images.length}
+              </div>
+            ))}
         </>
       )}
     </div>

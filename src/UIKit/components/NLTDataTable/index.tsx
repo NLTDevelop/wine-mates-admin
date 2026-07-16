@@ -51,9 +51,11 @@ export function NLTDataTable<T>({ hasActiveFilters, clearColumnFilters, table, r
         </div>
       )}
       <div className="text-end mb-3">
-        <Button variant="secondary" size="sm" onClick={clearColumnFilters} disabled={!hasActiveFilters} className={cn('transition-opacity', !hasActiveFilters && 'opacity-50 cursor-not-allowed')}>
-          {w('clear_all_filters')}
-        </Button>
+        {clearColumnFilters && (
+          <Button variant="secondary" size="sm" onClick={clearColumnFilters} disabled={!hasActiveFilters} className={cn('transition-opacity', !hasActiveFilters && 'opacity-50 cursor-not-allowed')}>
+            {w('clear_all_filters')}
+          </Button>
+        )}
       </div>
       <div className="rounded-md border overflow-x-auto border-input">
         <Table
