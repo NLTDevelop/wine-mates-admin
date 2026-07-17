@@ -63,30 +63,30 @@ export const WineryDetailView: React.FC = () => {
   }
 
   return (
-    <ContentLayout title={t('winery_detail')} btn={<WineryDetailActions onBack={handleBack} onConfirm={handleConfirm} onReject={handleReject} wineryStatus={winery.application.status} />} isGoBack>
-      <div className={cn('mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-6xl', !isLoading ? 'fade-in' : '')}>
-        <div className="space-y-6">
-          <Card className="p-6">
-            <WineryDetailHeader winery={winery} />
-          </Card>
-
-          <div className="flex justify-center space-x-1 mb-6"></div>
-          <WineOfWinery wineryId={id!} />
+    <>
+      <ContentLayout title={t('winery_detail')} btn={<WineryDetailActions onBack={handleBack} onConfirm={handleConfirm} onReject={handleReject} wineryStatus={winery.application.status} />} isGoBack>
+        <div className={cn('mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-6xl', !isLoading ? 'fade-in' : '')}>
+          <div className="space-y-6">
+            <Card className="p-6">
+              <WineryDetailHeader winery={winery} />
+            </Card>
+          </div>
         </div>
-      </div>
-      <ConfirmModal
-        title={t('modal.confirm_title')}
-        actionTitle={modalActionTitle}
-        variant="submit"
-        isOpen={confirmModal.isOpen}
-        onClose={confirmModal.close}
-        onSubmit={handleConfirmAction}
-        showRejectionReason={wineryToConfirm.status === WINERY_STATUS.APPROVED}
-      >
-        <div className="p-px">
-          <p>{modalMessage}</p>
-        </div>
-      </ConfirmModal>
-    </ContentLayout>
+        <ConfirmModal
+          title={t('modal.confirm_title')}
+          actionTitle={modalActionTitle}
+          variant="submit"
+          isOpen={confirmModal.isOpen}
+          onClose={confirmModal.close}
+          onSubmit={handleConfirmAction}
+          showRejectionReason={wineryToConfirm.status === WINERY_STATUS.APPROVED}
+        >
+          <div className="p-px">
+            <p>{modalMessage}</p>
+          </div>
+        </ConfirmModal>
+      </ContentLayout>
+      <WineOfWinery />
+    </>
   )
 }

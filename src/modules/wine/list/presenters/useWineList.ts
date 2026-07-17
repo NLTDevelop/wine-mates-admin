@@ -8,7 +8,6 @@ import { WineFormData } from '../../create-wine/presenters/wine-form-schema'
 import { useToast } from '@/hooks/shadcn/use-toast'
 import { useTranslation } from 'react-i18next'
 import { SORT_FIELDS } from '@/constatnts/wine-filters'
-import { wineryQueries } from '@/modules/winery/details/entities/winery-queries'
 
 export const useWineList = (initialWineryId?: string | null, context: 'default' | 'winery' | 'withoutWinery' = 'default') => {
   const { filters, wineryFilters, winesWithoutWineryFilters, setWineryFilters, setWinesWithoutWineryFilters, resetWineryFilters, resetWinesWithoutWineryFilters, resetFilters } = useWineStore()
@@ -67,24 +66,13 @@ export const useWineList = (initialWineryId?: string | null, context: 'default' 
     }
   }, [initialWineryId, context, setCurrentFilters, isInitialized])
 
-  const wineryIdForQuery = useMemo(() => {
-    if (context === 'winery') {
-      return currentFilters.wineryId || null
-    }
-    if (context === 'withoutWinery') {
-      return 'empty' 
-    }
-    return null
-  }, [context, currentFilters.wineryId])
-
   const winesQuery: UseQueryResult<WinesResponse | undefined, Error> = useQuery({
-    ...wineQueries.list({ ...currentFilters, wineryId: wineryIdForQuery }),
+    ...wineQueries.list(currentFilters),
     placeholderData: keepPreviousData,
     staleTime: 2000,
     gcTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
     refetchOnMount: true,
-    enabled: context === 'winery' ? !!currentFilters.wineryId : context === 'withoutWinery' ? false : true,
   })
 
   const updateWineMutation = useMutation(wineQueries.update())
@@ -99,8 +87,6 @@ export const useWineList = (initialWineryId?: string | null, context: 'default' 
   })
   const confirmWineMutation = useMutation(wineQueries.confirmWine())
   const importWinesMutation = useMutation(wineQueries.import())
-  const addWinesToWineryMutation = useMutation(wineryQueries.addWine())
-  const deleteWineFromWineryMutation = useMutation(wineryQueries.deleteWine())
 
   const { debouncedWrapper } = useDebounce((searchValue: string) => {
     setCurrentFilters({ search: searchValue, page: 1 })
@@ -256,24 +242,6 @@ export const useWineList = (initialWineryId?: string | null, context: 'default' 
     [deleteWineMutation, winesQuery]
   )
 
-  const deleteWineFromWinery = useCallback(
-    async (wineId: string) => {
-      await deleteWineFromWineryMutation.mutateAsync({ id: wineId })
-      winesQuery.refetch()
-      closeDeleteModal()
-    },
-    [deleteWineMutation, winesQuery]
-  )
-
-  const addWineInWinery = useCallback(
-    async (wineryId: string, wineIds: number[]) => {
-      await addWinesToWineryMutation.mutateAsync({ id: wineryId, body: wineIds })
-      winesQuery.refetch()
-      closeDeleteModal()
-    },
-    [addWinesToWineryMutation, winesQuery]
-  )
-
   const openDeleteModal = useCallback((wineId: string, wineName: string = '') => {
     setDeleteModal({
       isOpen: true,
@@ -319,19 +287,6 @@ export const useWineList = (initialWineryId?: string | null, context: 'default' 
       await deleteWine(deleteModal.wineId)
     }
   }, [deleteModal.wineId, deleteWine])
-
-  const addWineToWinery = useCallback(
-    async (wineryId: string, wineIds: number[]) => {
-      await addWineInWinery(wineryId, wineIds)
-    },
-    [addWineInWinery]
-  )
-
-  const confirmDeleteWineFromWinery = useCallback(async () => {
-    if (deleteModal.wineId) {
-      await deleteWineFromWinery(deleteModal.wineId)
-    }
-  }, [deleteModal.wineId, deleteWineFromWinery])
 
   const confirmWine = useCallback(
     async (userId: string, isConfirmed: boolean) => {
@@ -438,7 +393,6 @@ export const useWineList = (initialWineryId?: string | null, context: 'default' 
       ...deleteModal,
       onClose: closeDeleteModal,
       onSubmit: confirmDeleteWine,
-      onSubmitFromWinery: confirmDeleteWineFromWinery,
     },
 
     importWines: {
@@ -448,8 +402,6 @@ export const useWineList = (initialWineryId?: string | null, context: 'default' 
       isImporting: importWinesMutation.isPending,
       isOpen: importModal.isOpen,
     },
-
-    addWineToWinery,
     isInitialized,
   }
 }

@@ -15,7 +15,6 @@ export interface WineFilters {
   page: number
   search?: string
   typeId?: number | null
-  wineryId?: number | string | null
   colorId?: number | null
   vintage?: number | null
   countryId?: number | null

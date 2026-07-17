@@ -1,53 +1,35 @@
 import { DEFAULT_PAGINATION_LIMIT } from '@/constatnts/navigation'
 import { createStoreDevToolsWrapper } from '@/stores/create-store-devtools-wrapper'
-import { IWinery, WineriesType, WineryFilters } from '../../list/entities/types'
+import { IWinery } from '../../list/entities/types'
+import { ListWineFilters } from './types'
 
-
-interface WineryState {
-  wineries: IWinery[]
-  activeTab: WineriesType
+interface WineListOfWineryState {
   searchResults: IWinery[]
-  currentWinery: IWinery | null
-  filters: WineryFilters
-  setWineries: (wineries: IWinery[]) => void
-  setActiveTab: (tab: WineriesType) => void
+  filters: ListWineFilters
   setSearchResults: (results: IWinery[]) => void
-  setCurrentWinery: (winery: IWinery | null) => void
-  setFilters: (filters: Partial<WineryState['filters']>) => void
+  setFilters: (filters: Partial<WineListOfWineryState['filters']>) => void
   resetFilters: () => void
 }
 
-export const useWineryStore = createStoreDevToolsWrapper<WineryState>(
+export const useWineListOfWineryStore = createStoreDevToolsWrapper<WineListOfWineryState>(
   set => ({
-    wineries: [],
-    activeTab: 'approved',
     searchResults: [],
-    currentWinery: null,
 
     filters: {
       search: '',
       limit: DEFAULT_PAGINATION_LIMIT,
       page: 1,
-      countryId: null,
-      regionId: null,
-      status: 'approved',
     },
 
-    setWineries: (wineries: IWinery[]) => set({ wineries }, false, 'winery/setWineries'),
+    setSearchResults: (results: IWinery[]) => set({ searchResults: results }, false, 'wineListOfWinery/setSearchResults'),
 
-    setActiveTab: tab => set(() => ({ activeTab: tab, page: 1 })),
-
-    setSearchResults: (results: IWinery[]) => set({ searchResults: results }, false, 'winery/setSearchResults'),
-
-    setCurrentWinery: (winery: IWinery | null) => set({ currentWinery: winery }, false, 'winery/setCurrentWinery'),
-
-    setFilters: (newFilters: Partial<WineryState['filters']>) =>
+    setFilters: (newFilters: Partial<WineListOfWineryState['filters']>) =>
       set(
-        (state: WineryState) => ({
+        (state: WineListOfWineryState) => ({
           filters: { ...state.filters, ...newFilters },
         }),
         false,
-        'winery/setFilters'
+        'wineListOfWinery/setFilters'
       ),
 
     resetFilters: () =>
@@ -60,9 +42,9 @@ export const useWineryStore = createStoreDevToolsWrapper<WineryState>(
           },
         },
         false,
-        'winery/resetFilters'
+        'wineListOfWinery/resetFilters'
       ),
   }),
 
-  'WineryStore'
+  'WineListOfWineryStore'
 )

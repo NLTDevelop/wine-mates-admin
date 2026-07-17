@@ -1,4 +1,4 @@
-import { AddWineToWineryParams, ConfirmWineryParams } from './types'
+import { AddWineToWineryParams, ConfirmWineryParams, ListWineFilters } from './types'
 import { wineryService } from './winery-service'
 
 export const wineryQueries = {
@@ -11,6 +11,12 @@ export const wineryQueries = {
   confirm: () => ({
     mutationKey: ['winery', 'confirmWinery'],
     mutationFn: ({ id, body }: ConfirmWineryParams) => wineryService.confirm({ id, body }),
+  }),
+
+  listWine: (filters : ListWineFilters) => ({
+    queryKey: ['winery', 'listWine', filters],
+    queryFn: () => wineryService.list_wine( filters),
+    enabled: !!filters,
   }),
 
   addWine: () => ({

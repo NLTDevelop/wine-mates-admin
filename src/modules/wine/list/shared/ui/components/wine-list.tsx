@@ -17,9 +17,10 @@ interface WineListProps {
   renderModals?: () => React.ReactNode
   isRowClickAvailable?: boolean
   isTitleAvailable?: boolean
+  isClearFilterBtnAvailable?: boolean
 }
 
-export const WineList = ({ renderActions, renderModals, isRowClickAvailable = true, isTitleAvailable = true, table }: WineListProps) => {
+export const WineList = ({ renderActions, renderModals, isRowClickAvailable = true, isTitleAvailable = true, table, isClearFilterBtnAvailable = true }: WineListProps) => {
   const { t } = useTranslation('wines')
   const navigate = useNavigate()
 
@@ -53,6 +54,7 @@ export const WineList = ({ renderActions, renderModals, isRowClickAvailable = tr
               onClearSearch={handleClearSearch}
               hasActiveFilters={hasActiveFilters}
               clearColumnFilters={clearColumnFilters}
+              isClearFilterBtnAvailable={isClearFilterBtnAvailable}
             />
           }
           onRowClick={isRowClickAvailable ? handleRowClick : undefined}
