@@ -58,7 +58,11 @@ export const ImageModal: React.FC<ImageModalProps> = ({ images, initialIndex = 0
         <DialogTitle className="sr-only"></DialogTitle>
 
         <div className="relative flex items-center justify-center w-full max-h-[85vh] overflow-hidden select-none outline-hidden group/modal">
-          <img src={images[currentImageIndex]?.url} alt={images[currentImageIndex]?.alt || 'Image'} className="max-w-full max-h-[85vh] object-contain rounded-md" />
+          <img
+            src={images[currentImageIndex]?.url}
+            alt={images[currentImageIndex]?.alt || 'Image'}
+            className="max-w-full max-h-[85vh] object-contain rounded-md min-w-[320px] min-h-50 image-render-pixelated"
+          />
 
           {images.length > 1 && (
             <>

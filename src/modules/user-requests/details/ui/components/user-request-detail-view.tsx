@@ -1,128 +1,107 @@
-
 import { useTranslation } from 'react-i18next'
-
-import { Wine, Info, CreditCard, Users } from 'lucide-react'
-import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
+import { ArrowLeft, Loader2 } from 'lucide-react'
+import { Card } from '@/UIKit/shadcn/ui/card'
 import { Badge } from '@/UIKit/shadcn/ui/badge'
 import { cn } from '@/lib/utils'
 import { useUserRequest } from '../../presenters/useUserRequest'
-
-
+import { ContentLayout } from '@/layout/components/content-layout'
+import { Button } from '@/UIKit/shadcn/ui/button'
+import { format } from 'date-fns'
+import { userRequestStatusVariant } from '@/modules/user-requests/list/presenters/useUserRequestsColumns'
+import { Separator } from '@/UIKit/shadcn/ui/separator'
+import { AnswerForm } from './answer-form'
+import { FileList } from './file-list'
+import { useNavigate } from 'react-router-dom'
+import { PATHS } from '@/navigation/paths'
 
 export const UserRequestDetailView = () => {
-  const { t } = useTranslation('events')
+  const { t } = useTranslation('user_requests')
+  const navigate = useNavigate()
 
   const userRequestDetails = useUserRequest()
 
-  console.log(userRequestDetails?.userRequest?.data)
+  const lastName = userRequestDetails?.userRequest?.user?.lastName || ''
+  const firstName = userRequestDetails?.userRequest?.user?.firstName || ''
+  const fullName = `${lastName} ` + firstName
+  const displayName = fullName || t('table.anonymous')
+
+  if (userRequestDetails.isLoading) {
+     return (
+      <ContentLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+        </div>
+      </ContentLayout>
+    )
+  }
+
+  if (!userRequestDetails.userRequest) {
+    return (
+      <div className="container mx-auto px-4 py-6 max-w-4xl">
+        <div className="text-center py-12">
+          <h2 className="text-2xl font-bold text-foreground mb-4">{t('no_wine')}</h2>
+          <Button onClick={() => navigate(PATHS.USER_REQUESTS)}>{t('go_list')}</Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div></div>
-    // <Card>
-    //   <CardContent className="p-6">
-    //     <div className="flex justify-between items-start mb-6">
-    //       <div>
-    //         <h1 className="text-xl font-bold">{event.theme}</h1>
-    //         <p className="text-sm text-gray-500">{event.restaurantName}</p>
-    //       </div>
-    //       <Badge variant={event.isActive ? 'default' : 'secondary'} className={cn(!event.isActive && 'text-input')}>
-    //         {event.isActive ? t('active_event') : t('inactive')}
-    //       </Badge>
-    //     </div>
+    <ContentLayout
+      title={t('user_request_detail', {name:displayName})}
+      btn={
+        <Button variant="outline" onClick={userRequestDetails.handleBack} className="flex items-center gap-2 hover:bg-transparent">
+          <ArrowLeft size={16} />
+          {t('button.go_list')}
+        </Button>
+      }
+      isGoBack
+    >
+      <div className={cn('mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-6xl', !userRequestDetails.isLoading ? 'fade-in' : '')}>
+        <Card className="p-6 relative">
+          <div className="absolute top-3 right-3">
+            <Badge className={`font-semibold cursor-default hover:bg-transparent ${userRequestDetails?.userRequest?.status && userRequestStatusVariant[userRequestDetails?.userRequest.status]}`}>
+              {t(`statuses.${userRequestDetails?.userRequest?.status?.toLowerCase()}`)}
+            </Badge>
+          </div>
+          <div className="w-full space-y-2">
+            <div className="grid grid-cols-[1fr_3fr]">
+              <p>{t('table.createdAt')}:</p>
+              <p>{userRequestDetails?.userRequest?.createdAt && format(new Date(userRequestDetails?.userRequest?.createdAt), 'dd.MM.yyyy')}</p>
+            </div>
+            <div className="grid grid-cols-[1fr_3fr]">
+              <p>{t('table.username')}:</p>
+              <p>{displayName}</p>
+            </div>
+            <div className="grid grid-cols-[1fr_3fr]">
+              <p>{t('table.subject')}:</p>
+              <p>{userRequestDetails?.userRequest?.subject}</p>
+            </div>
+          </div>
 
-    //     <div className="grid md:grid-cols-2 gap-x-6 gap-y-3">
-    //       {details.map((detail, idx) => (
-    //         <div key={idx} className="flex items-center gap-3">
-    //           <detail.icon className="h-4 w-4 text-gray-400" />
-    //           <div className="flex-1">
-    //             <span className="text-sm text-gray-500">{detail.label}:</span> <span className="text-sm font-medium">{detail.value}</span>
-    //           </div>
-    //         </div>
-    //       ))}
-    //     </div>
-
-    //     {event.description && (
-    //       <div className="mt-6 pt-4 border-t">
-    //         <div className="flex gap-3">
-    //           <Info className="h-4 w-4 text-gray-400 mt-0.5" />
-    //           <div>
-    //             <p className="text-sm text-gray-500">{t('description')}</p>
-    //             <p className="text-sm mt-1">{event.description}</p>
-    //           </div>
-    //         </div>
-    //       </div>
-    //     )}
-    //     {event.participants && event.participants.length > 0 && (
-    //       <div className="mt-6 pt-4 border-t">
-    //         <div className="flex gap-3">
-    //           <Users className="h-4 w-4 text-gray-400 mt-0.5" />
-    //           <div className="flex-1">
-    //             <p className="text-sm text-gray-500">{t('participants')}</p>
-    //             <div className="mt-2 space-y-2">
-    //               {event.participants.map(participant => (
-    //                 <div key={participant.id} className="flex items-center gap-3">
-    //                   {participant.avatar ? (
-    //                     <img src={participant.avatar.smallUrl} alt={`${participant.firstName} ${participant.lastName}`} className="w-8 h-8 rounded-full object-cover" />
-    //                   ) : (
-    //                     <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-    //                       <span className="text-sm text-gray-500 font-medium">
-    //                         {participant.firstName?.[0]}
-    //                         {participant.lastName?.[0]}
-    //                       </span>
-    //                     </div>
-    //                   )}
-    //                   <span className="text-sm">
-    //                     {participant.firstName} {participant.lastName}
-    //                   </span>
-    //                 </div>
-    //               ))}
-    //             </div>
-    //           </div>
-    //         </div>
-    //       </div>
-    //     )}
-    //     {event.paymentMethods && event.paymentMethods.length > 0 && (
-    //       <div className="mt-6 pt-4 border-t">
-    //         <div className="flex gap-3">
-    //           <CreditCard className="h-4 w-4 text-gray-400 mt-0.5" />
-    //           <div className="flex-1">
-    //             <p className="text-sm text-gray-500">{t('payment_methods')}</p>
-    //             <div className="mt-2 space-y-3">
-    //               {event.paymentMethods.map(method => (
-    //                 <div key={method.id} className="text-sm">
-    //                   <p className="font-medium">{method.name}</p>
-    //                   {method.description && <p className="text-gray-600 mt-0.5">{method.description}</p>}
-    //                   {method.paymentDetails && <p className="text-gray-500 text-xs mt-1">{method.paymentDetails}</p>}
-    //                   {method.qrCode && <img src={method.qrCode.smallUrl} alt={method.name} className="mt-2 w-24 h-24 object-contain" />}
-    //                 </div>
-    //               ))}
-    //             </div>
-    //           </div>
-    //         </div>
-    //       </div>
-    //     )}
-
-    //     {event.wineSet && event.wineSet.length > 0 && (
-    //       <div className="mt-6 pt-4 border-t">
-    //         <div className="flex items-center gap-2 mb-3">
-    //           <Wine className="h-4 w-4 text-gray-400" />
-    //           <span className="text-sm font-medium">{t('wine_set')}</span>
-    //         </div>
-    //         <div className="flex flex-wrap gap-2">
-    //           {event.wineSet
-    //             .sort((a, b) => a.sortOrder - b.sortOrder)
-    //             .map(wineSet => (
-    //               <div key={wineSet.id} className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full text-sm">
-    //                 {wineSet.wine.image?.smallUrl && <img src={wineSet.wine.image.smallUrl} alt="" className="w-5 h-5 rounded-full object-cover" />}
-    //                 <span>{wineSet.wine.name}</span>
-    //                 {wineSet.wine.vintage && <span className="text-gray-400">•</span>}
-    //                 <span className="text-gray-500 text-xs">{wineSet.wine.vintage}</span>
-    //               </div>
-    //             ))}
-    //         </div>
-    //       </div>
-    //     )}
-    //   </CardContent>
-    // </Card>
+          <Separator className="my-6" />
+          <h3 className="text-lg font-semibold mb-3">{t('info')}</h3>
+          <div className="w-full space-y-2">
+            <div className="grid grid-cols-[1fr_3fr]">
+              <p>{t('table.description')}:</p>
+              <p>{userRequestDetails?.userRequest?.description}</p>
+            </div>
+            <div className="grid grid-cols-[1fr_3fr]">
+              <p>{t('added_files')}:</p>
+              <FileList />
+            </div>
+          </div>
+          <Separator className="my-6" />
+          <div className="mt-6 bg-white/70 p-2 rounded">
+            <h3 className="text-lg font-semibold mb-4">{t('answer_form.title')}</h3>
+             <AnswerForm 
+              initialStatus={userRequestDetails.userRequest?.status}
+              initialComment={userRequestDetails.userRequest?.adminComment}
+              isLoading={userRequestDetails.isLoading}
+            />
+          </div>
+        </Card>
+      </div>
+    </ContentLayout>
   )
 }

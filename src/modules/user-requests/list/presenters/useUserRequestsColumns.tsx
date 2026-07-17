@@ -49,9 +49,9 @@ export const useUserRequestsColumns = ({ onDelete }: { onDelete?: (requestId: nu
 
   const statusFilterOptions = () => {
     return [
-      { label: t(USER_REQUESTS_STATUS.OPEN), value: t(USER_REQUESTS_STATUS.OPEN) },
-      { label: t(USER_REQUESTS_STATUS.IN_PROGRESS), value: t(USER_REQUESTS_STATUS.IN_PROGRESS) },
-      { label: t(USER_REQUESTS_STATUS.CLOSED), value: t(USER_REQUESTS_STATUS.CLOSED) },
+      { label: t(`statuses.${USER_REQUESTS_STATUS.OPEN.toLowerCase()}`), value: t(`statuses.${USER_REQUESTS_STATUS.OPEN.toLowerCase()}`) },
+      { label: t(`statuses.${USER_REQUESTS_STATUS.IN_PROGRESS.toLowerCase()}`), value: t(`statuses.${USER_REQUESTS_STATUS.IN_PROGRESS.toLowerCase()}`) },
+      { label: t(`statuses.${USER_REQUESTS_STATUS.CLOSED.toLowerCase()}`), value: t(`statuses.${USER_REQUESTS_STATUS.CLOSED.toLowerCase()}`) },
     ]
   }
 

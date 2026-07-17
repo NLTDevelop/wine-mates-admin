@@ -903,16 +903,32 @@ export const uk = {
   },
   user_requests: {
     user_requests: 'Список звернень від користувачів',
+    user_request_detail: 'Звернення від користувача {{name}}',
     search_user_request: 'Пошук звернення',
     request_delete: 'Видалення звернення',
     request_deleted: 'Звернення видалено',
+    info: 'Зміст звернення',
+    no_files: 'Файли відсутні',
+    added_files: 'Прикріплені матеріали',
+    not_found_request: 'Звернення не знайдено',
+    sended_request: 'Статус звернення змінено',
+    error_request: 'Помилка зміни статусу звернення',
     delete_description: 'Ви впевнені, що хочете видалити звернення "{{slug}}". Його повернення до списку після цієї дії буде неможливе.',
+    answer_form: {
+      title: 'Відповісти на звернення',
+      comment_label: 'Коментар адміністратора',
+      comment_placeholder: 'Введіть коментар...',
+      status_label: 'Статус',
+      status_placeholder: 'Оберіть статус',
+      
+    },
     table: {
       subject: 'Тема',
       actions: 'Дія',
       description: 'Опис',
       createdAt: 'Дата створення',
       username: 'Хто подав запит',
+      anonymous: 'Анонімний користувач',
       email: 'Email',
       status: 'Статус',
       closedAt: 'Дата закртиття',
@@ -921,6 +937,10 @@ export const uk = {
     },
     button: {
       delete: 'Видалити',
+      send: 'Відправити',
+      sending: 'Відправка...',
+      reset: 'Очистити',
+      go_list: "Назад до списку"
     },
     statuses: {
       open: 'Нова',
