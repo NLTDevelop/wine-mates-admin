@@ -7,42 +7,69 @@ import { cn } from '@/lib/utils'
 import { SkeletonWineDetail } from '@/modules/wine/list/ui'
 import { useWineryDetail } from '../../presenters/useWineryDetail'
 import { ConfirmModal } from '@/modals/confirmModal'
-import { WINERY_STATUS } from '@/modules/winery/list/entities/types'
-import { useCallback } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { WineryDetailActions } from './winery-detail-actions'
 import { WineryDetailHeader } from './winery-detail-header'
 import { WineOfWinery } from './wine-of-winery'
+
+type ModalAction = 'confirm' | 'reject' | null
 
 export const WineryDetailView: React.FC = () => {
   const { t } = useTranslation('winery')
   const { id } = useParams<{ id: string }>()
 
+  const [modalAction, setModalAction] = useState<ModalAction>(null)
+
   const { winery, isLoading, handleBack, confirmWinery, rejectWinery, confirmModal, wineryToConfirm } = useWineryDetail(id!)
 
-  const modalActionTitle = wineryToConfirm.status === WINERY_STATUS.APPROVED ? t('modal.cancel_action') : t('modal.confirm_action')
+  const modalConfig = useMemo(() => {
+    if (!wineryToConfirm || !modalAction) {
+      return {
+        actionTitle: '',
+        message: '',
+        showRejectionReason: false,
+        isRejectionRequired: false,
+      }
+    }
 
-  const modalMessage =
-    wineryToConfirm.status === WINERY_STATUS.APPROVED ? t('modal.cancel_actions', { slug: wineryToConfirm.wineryName }) : t('modal.confirm_actions', { slug: wineryToConfirm.wineryName })
+    if (modalAction === 'confirm') {
+      return {
+        actionTitle: t('modal.confirm_action'),
+        message: t('modal.confirm_actions', { slug: wineryToConfirm.wineryName }),
+        showRejectionReason: false,
+        isRejectionRequired: false,
+      }
+    }
+
+    return {
+      actionTitle: t('modal.cancel_action'),
+      message: t('modal.cancel_actions', { slug: wineryToConfirm.wineryName }),
+      showRejectionReason: true,
+      isRejectionRequired: true,
+    }
+  }, [wineryToConfirm, modalAction, t])
 
   const handleConfirm = useCallback(() => {
+    setModalAction('confirm')
     confirmModal.open(id!)
   }, [confirmModal, id])
 
   const handleReject = useCallback(() => {
+    setModalAction('reject')
     confirmModal.open(id!)
   }, [confirmModal, id])
 
   const handleConfirmAction = useCallback(
     (rejectionReason?: string) => {
-      if (!wineryToConfirm) return
+      if (!wineryToConfirm || !modalAction) return
 
-      const isApproved = wineryToConfirm?.status === WINERY_STATUS.APPROVED
-
-      if (isApproved) {
-        rejectWinery(rejectionReason)
-      } else {
+      if (modalAction === 'confirm') {
         confirmWinery()
+      } else if (modalAction === 'reject') {
+        rejectWinery(rejectionReason)
       }
+
+      setModalAction(null)
     },
     [wineryToConfirm.status, confirmWinery, rejectWinery]
   )
@@ -76,15 +103,15 @@ export const WineryDetailView: React.FC = () => {
       </div>
       <ConfirmModal
         title={t('modal.confirm_title')}
-        actionTitle={modalActionTitle}
+        actionTitle={modalConfig.actionTitle}
         variant="submit"
         isOpen={confirmModal.isOpen}
         onClose={confirmModal.close}
         onSubmit={handleConfirmAction}
-        showRejectionReason={wineryToConfirm.status === WINERY_STATUS.APPROVED}
+        showRejectionReason={modalConfig.showRejectionReason}
       >
         <div className="p-px">
-          <p>{modalMessage}</p>
+          <p>{modalConfig.message}</p>
         </div>
       </ConfirmModal>
     </ContentLayout>
