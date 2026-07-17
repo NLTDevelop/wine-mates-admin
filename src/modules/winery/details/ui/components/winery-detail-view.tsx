@@ -17,18 +17,35 @@ export const WineryDetailView: React.FC = () => {
   const { t } = useTranslation('winery')
   const { id } = useParams<{ id: string }>()
 
-  const { winery, isLoading, handleBack, confirmOrRejectWinery, confirmModal, wineryToConfirm } = useWineryDetail(id!)
-  // const { wines } = useWineryWines(id!)
+  const { winery, isLoading, handleBack, confirmWinery, rejectWinery, confirmModal, wineryToConfirm } = useWineryDetail(id!)
 
   const modalActionTitle = wineryToConfirm.status === WINERY_STATUS.APPROVED ? t('modal.cancel_action') : t('modal.confirm_action')
 
   const modalMessage =
     wineryToConfirm.status === WINERY_STATUS.APPROVED ? t('modal.cancel_actions', { slug: wineryToConfirm.wineryName }) : t('modal.confirm_actions', { slug: wineryToConfirm.wineryName })
 
-  const handleConfirmAction = useCallback((rejectionReason?: string) => {
-    const isConfirmed = wineryToConfirm.status !== WINERY_STATUS.APPROVED
-    confirmOrRejectWinery(isConfirmed, rejectionReason) 
-  }, [wineryToConfirm.status, confirmOrRejectWinery])
+  const handleConfirm = useCallback(() => {
+    confirmModal.open(id!)
+  }, [confirmModal, id])
+
+  const handleReject = useCallback(() => {
+    confirmModal.open(id!)
+  }, [confirmModal, id])
+
+  const handleConfirmAction = useCallback(
+    (rejectionReason?: string) => {
+      if (!wineryToConfirm) return
+
+      const isApproved = wineryToConfirm?.status === WINERY_STATUS.APPROVED
+
+      if (isApproved) {
+        rejectWinery(rejectionReason)
+      } else {
+        confirmWinery()
+      }
+    },
+    [wineryToConfirm.status, confirmWinery, rejectWinery]
+  )
 
   if (isLoading) {
     return <SkeletonWineDetail />
@@ -46,7 +63,7 @@ export const WineryDetailView: React.FC = () => {
   }
 
   return (
-    <ContentLayout title={t('winery_detail')} btn={<WineryDetailActions onBack={handleBack} onConfirm={() => confirmModal.open(id)} wineryStatus={winery.application.status} />} isGoBack>
+    <ContentLayout title={t('winery_detail')} btn={<WineryDetailActions onBack={handleBack} onConfirm={handleConfirm} onReject={handleReject} wineryStatus={winery.application.status} />} isGoBack>
       <div className={cn('mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-6xl', !isLoading ? 'fade-in' : '')}>
         <div className="space-y-6">
           <Card className="p-6">
@@ -54,7 +71,7 @@ export const WineryDetailView: React.FC = () => {
           </Card>
 
           <div className="flex justify-center space-x-1 mb-6"></div>
-          <WineOfWinery wineryId={id!}/>
+          <WineOfWinery wineryId={id!} />
         </div>
       </div>
       <ConfirmModal

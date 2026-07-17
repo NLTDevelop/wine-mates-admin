@@ -6,11 +6,12 @@ import { WineriesType, WINERY_STATUS } from '@/modules/winery/list/entities/type
 
 interface WineryDetailActionsProps {
   onBack: () => void
-   onConfirm: () => void
+  onConfirm: () => void
+  onReject: () => void
   wineryStatus: WineriesType
 }
 
-export const WineryDetailActions: React.FC<WineryDetailActionsProps> = ({ onBack, onConfirm, wineryStatus }) => {
+export const WineryDetailActions: React.FC<WineryDetailActionsProps> = ({ onBack, onConfirm, onReject, wineryStatus }) => {
   const { t } = useTranslation('winery')
 
   return (
@@ -20,15 +21,28 @@ export const WineryDetailActions: React.FC<WineryDetailActionsProps> = ({ onBack
         {t('button.go_list')}
       </Button>
 
-      {wineryStatus !== WINERY_STATUS.APPROVED ? (
+      {wineryStatus === WINERY_STATUS.REJECTED && (
         <Button onClick={onConfirm} className="flex items-center gap-2 w-full sm:w-auto">
           <CheckCircle size={16} />
           {t('button.confirm')}
         </Button>
-      ) : (
-        <Button variant="delete" onClick={onConfirm} className="flex items-center gap-2 w-full sm:w-auto">
+      )}
+      {wineryStatus === WINERY_STATUS.APPROVED && (
+        <Button onClick={onReject} className="flex items-center gap-2 w-full sm:w-auto">
+          <CheckCircle size={16} />
           {t('button.reject')}
         </Button>
+      )}
+      {wineryStatus === WINERY_STATUS.PENDING && (
+        <div className="flex items-center gap-3">
+          <Button onClick={onReject} className="flex items-center gap-2 w-full sm:w-auto">
+            <CheckCircle size={16} />
+            {t('button.reject')}
+          </Button>
+          <Button variant="delete" onClick={onConfirm} className="flex items-center gap-2 w-full sm:w-auto">
+            {t('button.confirm')}
+          </Button>
+        </div>
       )}
     </div>
   )
