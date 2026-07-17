@@ -20,7 +20,8 @@ export const WineOfWinery = ({ wineryId }: { wineryId: string }) => {
 
   const { wines, handleClearSearch, deleteModal, deleteWine, addWineToWinery, refetch, isInitialized } = useWineList(wineryId, 'winery')
 
-  const { wines: winesWithoutWinery, handleClearSearch: clearSearchWithoutWinery, refetch: refetchWithoutWinery } = useWineList(null, 'withoutWinery')
+  // const { wines: winesWithoutWinery, handleClearSearch: clearSearchWithoutWinery, refetch: refetchWithoutWinery } = useWineList(null, 'withoutWinery')
+  const { wines: winesWithoutWinery, handleClearSearch: clearSearchWithoutWinery, refetch: refetchWithoutWinery } = useWineListWithoutWinery(null, 'withoutWinery')
 
   const wineOptions = useMemo(() => {
     return (winesWithoutWinery || []).map(wine => ({

@@ -8,7 +8,7 @@ export const wineryService = {
 
   confirm: ({ id, body }: ConfirmWineryParams) => api.patch(buildUrl(WINERY_ENDPOINTS.CONFIRM, { wineryId: id }), body),
 
-  add_wine: ({ id, body }: AddWineToWineryParams) => api.patch(buildUrl(WINERY_ENDPOINTS.ADD_WINE, { wineryId: id }), body),
+  add_wine: (body: AddWineToWineryParams) => api.patch(WINERY_ENDPOINTS.ADD_WINE, body),
 
-  delete_wine: ({ id }: { id: string }) => api.patch(buildUrl(WINERY_ENDPOINTS.DELETE_WINE, { wineryId: id })),
+  delete_wine: (body: AddWineToWineryParams) => api.delete(WINERY_ENDPOINTS.DELETE_WINE, { data: body }),
 }

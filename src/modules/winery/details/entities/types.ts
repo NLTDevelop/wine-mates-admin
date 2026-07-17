@@ -45,8 +45,8 @@ export interface ConfirmWineryParams {
 }
 
 export interface AddWineToWineryParams {
-  id: string | number
-  body: number[]
+  wineryId: string | number
+  wineIds: number[]
 }
 
 export interface IConfirmWineryBody {

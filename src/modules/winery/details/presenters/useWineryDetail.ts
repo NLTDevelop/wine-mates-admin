@@ -65,21 +65,6 @@ export const useWineryDetail = (wineryId: string) => {
     setSelectedWineryId(null)
   }, [])
 
-  // const confirmOrRejectWinery = useCallback(
-  //   async (isConfirmed: boolean, rejectionReason?: string) => {
-
-  //     if (!selectedWineryId) return
-  //     const requestBodyConfirm: IConfirmWineryBody = {
-  //       status: !isConfirmed ? WINERY_STATUS.REJECTED : WINERY_STATUS.APPROVED,
-  //       rejectionReason: isConfirmed ? undefined  : rejectionReason,
-  //     }
-
-  //     await confirmWineryMutation.mutateAsync({ id: parseInt(selectedWineryId), body: requestBodyConfirm })
-  //     wineryQuery.refetch()
-  //     closeConfirmModal()
-  //   },
-  //   [selectedWineryId, confirmWineryMutation, wineryQuery]
-  // )
 
     const confirmWinery = useCallback(
     async () => {

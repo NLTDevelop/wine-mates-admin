@@ -15,11 +15,11 @@ export const wineryQueries = {
 
   addWine: () => ({
     mutationKey: ['winery', 'addWine'],
-    mutationFn: ({ id, body }: AddWineToWineryParams) => wineryService.add_wine({ id, body }),
+    mutationFn: (body : AddWineToWineryParams) => wineryService.add_wine( body),
   }),
 
   deleteWine: () => ({
     mutationKey: ['winery', 'deleteWine'],
-    mutationFn: ({ id }: { id: string }) => wineryService.delete_wine({ id }),
+    mutationFn: (body : AddWineToWineryParams) => wineryService.delete_wine(body),
   }),
 }
