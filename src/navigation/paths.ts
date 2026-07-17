@@ -23,8 +23,11 @@ export const PATHS = {
   EVENTS_DETAIL: '/events/:id',
   MAP: '/events/map',
   FAQ: '/faq',
+  USER_REQUESTS: '/user_requests',
+  USER_REQUEST_DETAILS: '/user_requests/:id',
 }
 
 export const getWineDetailPath = (id?: number | string) => `/wines/${id}`
 export const getWineryDetailPath = (id?: number | string) => `/winery/${id}`
+export const getUserRequestDetailPath = (id?: number | string) => `/user_requests/${id}`
 export const getEventDetailPath = (id?: number | string) => `/events/${id}`

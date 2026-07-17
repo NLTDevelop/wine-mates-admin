@@ -36,7 +36,7 @@ export const useFeatureColumns = ({ onToggle, isUpdating }: UseFeatureColumnsPro
             </div>
           )
         },
-        meta: { cellClassName: 'text-center w-1/6' },
+        meta: { cellClassName: 'w-1/6' },
       }),
 
       columnHelper.display({

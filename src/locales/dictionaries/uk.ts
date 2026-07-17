@@ -90,6 +90,7 @@ export const uk = {
     events_list: 'Список подій',
     events: 'Події',
     map: 'Карта',
+    user_requests: 'Звернення користувачів',
   },
   autorization: {
     login: 'Увійти',
@@ -899,5 +900,32 @@ export const uk = {
       cancel_actions: 'Ви дійсно хочете відхилити підтвердження виноробні {{slug}}? Зверніть увагу, що ця дія може вплинути на відображення її даних у системі.',
     },
     search_winery: 'Пошук виноробні',
+  },
+  user_requests: {
+    user_requests: 'Список звернень від користувачів',
+    search_user_request: 'Пошук звернення',
+    request_delete: 'Видалення звернення',
+    request_deleted: 'Звернення видалено',
+    delete_description: 'Ви впевнені, що хочете видалити звернення "{{slug}}". Його повернення до списку після цієї дії буде неможливе.',
+    table: {
+      subject: 'Тема',
+      actions: 'Дія',
+      description: 'Опис',
+      createdAt: 'Дата створення',
+      username: 'Хто подав запит',
+      email: 'Email',
+      status: 'Статус',
+      closedAt: 'Дата закртиття',
+      file: 'Файл',
+      adminComment: 'Коментар адміністратора',
+    },
+    button: {
+      delete: 'Видалити',
+    },
+    statuses: {
+      open: 'Нова',
+      in_progress: 'На розгляді',
+      closed: 'Вирішено',
+    },
   },
 }

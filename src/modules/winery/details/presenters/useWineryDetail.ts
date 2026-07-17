@@ -65,20 +65,58 @@ export const useWineryDetail = (wineryId: string) => {
     setSelectedWineryId(null)
   }, [])
 
-  const confirmOrRejectWinery = useCallback(
-    async (isConfirmed: boolean, rejectionReason?: string) => {
+  // const confirmOrRejectWinery = useCallback(
+  //   async (isConfirmed: boolean, rejectionReason?: string) => {
 
+  //     if (!selectedWineryId) return
+  //     const requestBodyConfirm: IConfirmWineryBody = {
+  //       status: !isConfirmed ? WINERY_STATUS.REJECTED : WINERY_STATUS.APPROVED,
+  //       rejectionReason: isConfirmed ? undefined  : rejectionReason,
+  //     }
+
+  //     await confirmWineryMutation.mutateAsync({ id: parseInt(selectedWineryId), body: requestBodyConfirm })
+  //     wineryQuery.refetch()
+  //     closeConfirmModal()
+  //   },
+  //   [selectedWineryId, confirmWineryMutation, wineryQuery]
+  // )
+
+    const confirmWinery = useCallback(
+    async () => {
       if (!selectedWineryId) return
-      const requestBodyConfirm: IConfirmWineryBody = {
-        status: !isConfirmed ? WINERY_STATUS.REJECTED : WINERY_STATUS.APPROVED,
-        rejectionReason: isConfirmed ? undefined  : rejectionReason,
+      
+      const requestBody: IConfirmWineryBody = {
+        status: WINERY_STATUS.APPROVED,
+        rejectionReason: undefined,
       }
 
-      await confirmWineryMutation.mutateAsync({ id: parseInt(selectedWineryId), body: requestBodyConfirm })
+      await confirmWineryMutation.mutateAsync({ 
+        id: parseInt(selectedWineryId), 
+        body: requestBody 
+      })
       wineryQuery.refetch()
       closeConfirmModal()
     },
-    [selectedWineryId, confirmWineryMutation, wineryQuery]
+    [selectedWineryId, confirmWineryMutation, wineryQuery, closeConfirmModal]
+  )
+
+  const rejectWinery = useCallback(
+    async (rejectionReason?: string) => {
+      if (!selectedWineryId) return
+      
+      const requestBody: IConfirmWineryBody = {
+        status: WINERY_STATUS.REJECTED,
+        rejectionReason: rejectionReason || '',
+      }
+
+      await confirmWineryMutation.mutateAsync({ 
+        id: parseInt(selectedWineryId), 
+        body: requestBody 
+      })
+      wineryQuery.refetch()
+      closeConfirmModal()
+    },
+    [selectedWineryId, confirmWineryMutation, wineryQuery, closeConfirmModal]
   )
 
   const handleBack= () => navigate(PATHS.WINERIES_LIST)
@@ -87,7 +125,8 @@ export const useWineryDetail = (wineryId: string) => {
     winery,
     isLoading: wineryQuery.isLoading,
     isFetching: wineryQuery.isFetching,
-    confirmOrRejectWinery,
+    confirmWinery,
+    rejectWinery,
     wineryToConfirm,
     confirmModal: {
       isOpen: isConfirmModalOpen,

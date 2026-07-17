@@ -27,6 +27,7 @@ interface GeneratorOptions {
 export const generateLinks = (entityName: string, options: GeneratorOptions = {}): GeneratedLinks => {
   const { hasList, hasCreate, hasDetail, additionalLinks, title } = options
   const baseUrl = `/${entityName}`
+  
 
   const links: GeneratedLinks = {
     root: {
