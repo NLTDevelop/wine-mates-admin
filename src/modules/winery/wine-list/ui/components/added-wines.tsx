@@ -6,7 +6,6 @@ import { useAddWinesStore } from '../../entities/wine-list-store'
 import { useTranslation } from 'react-i18next'
 import { useAddWineToWinery } from '../../presenters/useAddWineToWinery'
 
-
 export const AddedWines = () => {
   const { t } = useTranslation('winery')
   const { selectedWines, setSelectedWines } = useAddWinesStore()
@@ -35,12 +34,9 @@ export const AddedWines = () => {
             ))}
           </div>
 
-          <Button 
-                onClick={handleAddWines}
-                disabled={isAdding || !selectedWines?.length}
-              >
-                {isAdding ? t('button.adding') : t('button.add_wines')}
-              </Button>
+          <Button onClick={handleAddWines} disabled={isAdding || !selectedWines?.length}>
+            {isAdding ? t('button.adding') : t('button.add_wines')}
+          </Button>
         </div>
       </div>
     </div>
@@ -60,7 +56,7 @@ export const AddedWineItem = ({ wine, onRemove }: AddedWineItemProps) => {
   return (
     <div className="group relative flex flex-col justify-between rounded-lg border border-border/50 bg-muted/40 p-3 pr-8 text-sm transition-all hover:bg-muted/70 animate-in fade-in zoom-in-95 duration-200">
       <div className="space-y-1">
-        <p className="font-semibold leading-tight text-foreground">{wine.name}</p>
+        <p className="font-semibold max-w-80 leading-tight text-foreground">{wine.name}</p>
         <p className="text-xs text-muted-foreground">{wine.producer}</p>
       </div>
 
