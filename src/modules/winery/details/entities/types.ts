@@ -1,6 +1,6 @@
 import { WineImage } from '@/modules/wine/list/entities/types/types'
 import { WineriesType } from '../../list/entities/types'
-import { IAvatar, IFile } from '@/modules/users/entities/IUser'
+import { IAvatar } from '@/modules/users/entities/IUser'
 
 export interface IWineryDetail {
   id: number
@@ -44,11 +44,6 @@ export interface ConfirmWineryParams {
   body: IConfirmWineryBody
 }
 
-export interface AddWineToWineryParams {
-  wineryId: string | number
-  wineIds: number[]
-}
-
 export interface IConfirmWineryBody {
   status: WineriesType
   rejectionReason?: string
@@ -60,16 +55,4 @@ export interface ListWineFilters {
   search?: string
 }
 
-export interface WineListOfWineryResponse {
-  count: number
-  rows: WineOfWinery[]
-}
 
-export interface WineOfWinery {
-  id: string
-  name?: string
-  producer?: string
-  vintage?: string
-  grapeVariety?: string
-  image?: IFile
-}

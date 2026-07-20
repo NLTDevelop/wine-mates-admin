@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Card } from '@/UIKit/shadcn/ui/card'
 import { Button } from '@/UIKit/shadcn/ui/button'
@@ -11,13 +11,17 @@ import { WINERY_STATUS } from '@/modules/winery/list/entities/types'
 import { useCallback } from 'react'
 import { WineryDetailActions } from './winery-detail-actions'
 import { WineryDetailHeader } from './winery-detail-header'
-import { WineOfWinery } from './wine-of-winery'
+import { WineOfWinery } from '../../../wine-list/ui/components/wine-of-winery'
+import { getWineryDetailAddWinePath } from '@/navigation/paths'
+import { useAddWinesStore } from '@/modules/winery/wine-list/entities/wine-list-store'
 
 export const WineryDetailView: React.FC = () => {
   const { t } = useTranslation('winery')
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
 
   const { winery, isLoading, handleBack, confirmWinery, rejectWinery, confirmModal, wineryToConfirm } = useWineryDetail(id!)
+  const { setSelectedWines } = useAddWinesStore()
 
   const modalActionTitle = wineryToConfirm.status === WINERY_STATUS.APPROVED ? t('modal.cancel_action') : t('modal.confirm_action')
 
@@ -47,6 +51,11 @@ export const WineryDetailView: React.FC = () => {
     [wineryToConfirm.status, confirmWinery, rejectWinery]
   )
 
+  const handleGoBack = () => {
+    handleBack()
+    setSelectedWines([])
+  }
+
   if (isLoading) {
     return <SkeletonWineDetail />
   }
@@ -64,7 +73,7 @@ export const WineryDetailView: React.FC = () => {
 
   return (
     <>
-      <ContentLayout title={t('winery_detail')} btn={<WineryDetailActions onBack={handleBack} onConfirm={handleConfirm} onReject={handleReject} wineryStatus={winery.application.status} />} isGoBack>
+      <ContentLayout title={t('winery_detail')} btn={<WineryDetailActions onBack={handleGoBack} onConfirm={handleConfirm} onReject={handleReject} wineryStatus={winery.application.status} />} isGoBack>
         <div className={cn('mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-6xl', !isLoading ? 'fade-in' : '')}>
           <div className="space-y-6">
             <Card className="p-6">
@@ -86,6 +95,9 @@ export const WineryDetailView: React.FC = () => {
           </div>
         </ConfirmModal>
       </ContentLayout>
+      <div className={cn('flex justify-end items-center gap-2 min-h-10')}>
+        <Button onClick={() => navigate(getWineryDetailAddWinePath(id))}>{t('button.add_wines')}</Button>
+      </div>
       <WineOfWinery />
     </>
   )

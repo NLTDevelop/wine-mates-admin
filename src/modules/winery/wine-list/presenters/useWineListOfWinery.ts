@@ -1,15 +1,15 @@
 import { keepPreviousData, useMutation, useQuery, UseQueryResult } from '@tanstack/react-query'
 import { useCallback, useState } from 'react'
 import { useDebounce } from '@/hooks/ui/useDebounce'
-import { useWineListOfWineryStore } from '../entities/winery-store'
-import { AddWineToWineryParams, WineListOfWineryResponse } from '../entities/types'
-import { wineryQueries } from '../entities/winery-queries'
 import { useToast } from '@/hooks/shadcn/use-toast'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
+import { DeleteWineFromWineryParams, WineListOfWineryResponse } from '../entities/types'
+import { wineryWineListQueries } from '../entities/wine-list-queries'
+import { useAddWinesStore } from '../entities/wine-list-store'
 
 export const useWineListOfWinery = () => {
-  const { filters, setFilters, resetFilters } = useWineListOfWineryStore()
+  const { filters, setFilters, resetFilters } = useAddWinesStore()
   const { toast } = useToast()
   const { t } = useTranslation('winery')
   const { id } = useParams<{ id: string }>()
@@ -18,7 +18,7 @@ export const useWineListOfWinery = () => {
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; wineId: string | null; wineName: string }>({ isOpen: false, wineId: null, wineName: '' })
 
   const wineListOfWineryQuery: UseQueryResult<WineListOfWineryResponse | undefined, Error> = useQuery({
-    ...wineryQueries.listWine(filters),
+    ...wineryWineListQueries.listWine(parseInt(id!), filters),
     placeholderData: keepPreviousData,
     staleTime: 2000,
     gcTime: 5 * 60 * 1000,
@@ -26,7 +26,7 @@ export const useWineListOfWinery = () => {
     refetchOnMount: true,
   })
   const deleteWineMutation = useMutation({
-    ...wineryQueries.deleteWine(),
+    ...wineryWineListQueries.deleteWine(),
     onSuccess: () => {
       toast({ title: t('wine_deleted'), variant: 'default' })
     },
@@ -59,7 +59,7 @@ export const useWineListOfWinery = () => {
   const deleteWine = useCallback(
     async (wineId: number) => {
       if (!id) return
-      const reqBody: AddWineToWineryParams = {
+      const reqBody: DeleteWineFromWineryParams = {
         wineryId: id,
         wineIds: [wineId],
       }

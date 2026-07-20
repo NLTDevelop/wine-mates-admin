@@ -30,5 +30,6 @@ export const PATHS = {
 
 export const getWineDetailPath = (id?: number | string) => `/wines/${id}`
 export const getWineryDetailPath = (id?: number | string) => `/winery/${id}`
+export const getWineryDetailAddWinePath = (id?: number | string) => `/winery/${id}/add-wine`
 export const getUserRequestDetailPath = (id?: number | string) => `/user_requests/${id}`
 export const getEventDetailPath = (id?: number | string) => `/events/${id}`
