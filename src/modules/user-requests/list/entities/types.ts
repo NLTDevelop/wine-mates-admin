@@ -1,4 +1,4 @@
-import { IAvatar, IFile } from '@/modules/users/entities/IUser'
+import { IAvatar } from '@/modules/users/entities/IUser'
 
 export interface UserRequestsResponse {
   rows: IUserRequest[]
@@ -25,7 +25,7 @@ export interface IUserRequest {
   closedAt: string
   createdAt: string
   user: IUserOfUserRequest
-  file: IFile
+  file: UserRequestFile
   userId?: number
 }
 
@@ -35,4 +35,16 @@ export interface IUserOfUserRequest {
   firstName: string
   lastName: string
   email: string
+}
+
+export interface UserRequestFile {
+  id: number
+  size: number
+  mimetype: string
+  name: string
+  originalName: string
+  smallUrl: string
+  mediumUrl: string
+  originalUrl: string
+  createdAt: string
 }

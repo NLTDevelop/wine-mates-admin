@@ -1,4 +1,4 @@
-import { IUserRequest, UserRequestType } from '../../list/entities/types'
+import {  UserRequestType } from '../../list/entities/types'
 
 export interface UpdateRequestParams {
   id: string
@@ -10,8 +10,4 @@ export interface IBodyUserRequest {
   adminComment: string
 }
 
-export interface UserRequestDetailResponse {
-  userRequest: {
-    data: IUserRequest
-  }
-}
+

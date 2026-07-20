@@ -5,6 +5,7 @@ export const userRequestsQueries = {
   list: (filters: UserRequestFilters | null) => ({
     queryKey: ['user-requests', 'list', filters],
     queryFn: () => userRequestListService.list(filters),
+    staleTime: 0,
   }),
 
   delete: () => ({

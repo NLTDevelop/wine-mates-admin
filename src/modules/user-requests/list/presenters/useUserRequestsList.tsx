@@ -21,7 +21,7 @@ export const useUserRequestsList = () => {
     placeholderData: keepPreviousData,
     staleTime: 2000,
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
   })
 
     const deleteRequestMutation = useMutation({
