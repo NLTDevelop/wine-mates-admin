@@ -7,9 +7,16 @@ import { userRequestsQueries } from '../entities/user-requests-queries'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '@/hooks/shadcn/use-toast'
 
+const reqBodyStatuses = {
+  Нова: 'OPEN',
+  'На розгляді': 'IN_PROGRESS',
+  Вирішено: 'CLOSED',
+}
+type ValueStatus = 'Нова' | 'На розгляді' | 'Вирішено' 
+
 export const useUserRequestsList = () => {
-   const { t } = useTranslation('user_requests')
-   const { toast } = useToast()
+  const { t } = useTranslation('user_requests')
+  const { toast } = useToast()
 
   const { filters, setFilters, resetFilters } = useUserRequestsStore()
 
@@ -24,7 +31,7 @@ export const useUserRequestsList = () => {
     refetchOnMount: true,
   })
 
-    const deleteRequestMutation = useMutation({
+  const deleteRequestMutation = useMutation({
     ...userRequestsQueries.delete(),
     onSuccess: () => {
       toast({
@@ -52,9 +59,9 @@ export const useUserRequestsList = () => {
   }, [resetFilters])
 
   const handleColumnFilter = useCallback(
-    (column: string, value: any) => {
+    (column: string, value: ValueStatus | null) => {
       setFilters({
-        [column]: value,
+        [column]: !value ? null : reqBodyStatuses[value],
         page: 1,
       })
     },
@@ -77,7 +84,7 @@ export const useUserRequestsList = () => {
     [setFilters]
   )
 
-    const deleteRequest = useCallback(
+  const deleteRequest = useCallback(
     async (requestId: string) => {
       await deleteRequestMutation.mutateAsync(requestId)
       userRequestsQuery.refetch()
@@ -102,7 +109,7 @@ export const useUserRequestsList = () => {
     })
   }, [])
 
-   const confirmDeleteRequest = useCallback(async () => {
+  const confirmDeleteRequest = useCallback(async () => {
     if (deleteModal.requestId) {
       await deleteRequest(deleteModal.requestId.toString())
     }
@@ -127,7 +134,7 @@ export const useUserRequestsList = () => {
     handleClearSearch,
     onChangePagination,
 
-     deleteRequest: openDeleteModal,
+    deleteRequest: openDeleteModal,
     isDeleting: deleteRequestMutation.isPending,
 
     deleteModal: {

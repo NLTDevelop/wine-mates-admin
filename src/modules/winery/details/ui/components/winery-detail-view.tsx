@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Card } from '@/UIKit/shadcn/ui/card'
 import { Button } from '@/UIKit/shadcn/ui/button'
@@ -10,17 +10,22 @@ import { ConfirmModal } from '@/modals/confirmModal'
 import { useCallback, useMemo, useState } from 'react'
 import { WineryDetailActions } from './winery-detail-actions'
 import { WineryDetailHeader } from './winery-detail-header'
-import { WineOfWinery } from './wine-of-winery'
+import { WineOfWinery } from '../../../wine-list/ui/components/wine-of-winery'
+import { getWineryDetailAddWinePath } from '@/navigation/paths'
+import { useAddWinesStore } from '@/modules/winery/wine-list/entities/wine-list-store'
+import { WINERY_STATUS } from '@/modules/winery/list/entities/types'
 
 type ModalAction = 'confirm' | 'reject' | null
 
 export const WineryDetailView: React.FC = () => {
   const { t } = useTranslation('winery')
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
 
   const [modalAction, setModalAction] = useState<ModalAction>(null)
 
   const { winery, isLoading, handleBack, confirmWinery, rejectWinery, confirmModal, wineryToConfirm } = useWineryDetail(id!)
+  const { setSelectedWines } = useAddWinesStore()
 
   const modalConfig = useMemo(() => {
     if (!wineryToConfirm || !modalAction) {
@@ -74,6 +79,11 @@ export const WineryDetailView: React.FC = () => {
     [wineryToConfirm.status, confirmWinery, rejectWinery]
   )
 
+  const handleGoBack = () => {
+    handleBack()
+    setSelectedWines([])
+  }
+
   if (isLoading) {
     return <SkeletonWineDetail />
   }
@@ -90,30 +100,35 @@ export const WineryDetailView: React.FC = () => {
   }
 
   return (
-    <ContentLayout title={t('winery_detail')} btn={<WineryDetailActions onBack={handleBack} onConfirm={handleConfirm} onReject={handleReject} wineryStatus={winery.application.status} />} isGoBack>
-      <div className={cn('mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-6xl', !isLoading ? 'fade-in' : '')}>
-        <div className="space-y-6">
-          <Card className="p-6">
-            <WineryDetailHeader winery={winery} />
-          </Card>
-
-          <div className="flex justify-center space-x-1 mb-6"></div>
-          <WineOfWinery wineryId={id!} />
+    <>
+      <ContentLayout title={t('winery_detail')} btn={<WineryDetailActions onBack={handleGoBack} onConfirm={handleConfirm} onReject={handleReject} wineryStatus={winery.application.status} />} isGoBack>
+        <div className={cn('mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-6xl', !isLoading ? 'fade-in' : '')}>
+          <div className="space-y-6">
+            <Card className="p-6">
+              <WineryDetailHeader winery={winery} />
+            </Card>
+          </div>
         </div>
-      </div>
-      <ConfirmModal
-        title={t('modal.confirm_title')}
-        actionTitle={modalConfig.actionTitle}
-        variant="submit"
-        isOpen={confirmModal.isOpen}
-        onClose={confirmModal.close}
-        onSubmit={handleConfirmAction}
-        showRejectionReason={modalConfig.showRejectionReason}
-      >
-        <div className="p-px">
-          <p>{modalConfig.message}</p>
-        </div>
-      </ConfirmModal>
-    </ContentLayout>
+        {winery.application.status !== WINERY_STATUS.REJECTED && (
+          <div className={cn('flex justify-end items-center gap-2 min-h-10')}>
+            <Button onClick={() => navigate(getWineryDetailAddWinePath(id))}>{t('button.add_wines')}</Button>
+          </div>
+        )}
+        <ConfirmModal
+          title={t('modal.confirm_title')}
+          actionTitle={modalConfig.actionTitle}
+          variant="submit"
+          isOpen={confirmModal.isOpen}
+          onClose={confirmModal.close}
+          onSubmit={handleConfirmAction}
+          showRejectionReason={modalConfig.showRejectionReason}
+        >
+          <div className="p-px">
+            <p>{modalConfig.message}</p>
+          </div>
+        </ConfirmModal>
+      </ContentLayout>
+      <WineOfWinery />
+    </>
   )
 }

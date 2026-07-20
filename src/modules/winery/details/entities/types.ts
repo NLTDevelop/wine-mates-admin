@@ -44,13 +44,15 @@ export interface ConfirmWineryParams {
   body: IConfirmWineryBody
 }
 
-export interface AddWineToWineryParams {
-  id: string | number
-  body: number[]
-}
-
 export interface IConfirmWineryBody {
   status: WineriesType
   rejectionReason?: string
 }
+
+export interface ListWineFilters {
+  limit: number
+  page: number
+  search?: string
+}
+
 

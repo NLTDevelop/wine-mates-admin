@@ -9,12 +9,14 @@ export const WinesFilters = ({
   onClearSearch,
   hasActiveFilters,
   clearColumnFilters,
+  isClearFilterBtnAvailable
 }: {
   filterSearch: string
   onChangeFilterSearch: (value: React.ChangeEvent<HTMLInputElement>) => void
   onClearSearch: () => void
   hasActiveFilters?: boolean
   clearColumnFilters?: () => void
+  isClearFilterBtnAvailable?:boolean
 }) => {
   const { t } = useTranslation('wines')
 
@@ -29,7 +31,7 @@ export const WinesFilters = ({
       </div>
 
       <div className="shrink-0">
-        {clearColumnFilters && (
+        {isClearFilterBtnAvailable && (
           <Button
             variant="secondary"
             size="sm"

@@ -1,24 +1,32 @@
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Edit, Trash2 } from 'lucide-react'
-import { IWines } from '../entities/types/types'
+import { IWineFilters, IWines } from '../entities/types/types'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@/UIKit/shadcn/ui/checkbox'
 import { useWineFilters } from './useWineFilters'
-import { useWineList } from './useWineList'
 import { SortableHeader } from '../../../../UIKit/app-components/table-headers/sortable-header'
 import { FilterableHeader } from '../../../../UIKit/app-components/table-headers/filterable-header'
 import { SortableFilterableHeader } from '../../../../UIKit/app-components/table-headers/filterable-sortable-header'
 import { useRegionOptions } from '../../create-wine/presenters/useRegionOptions'
+import { WineListEmptyWineryFilters } from '@/modules/winery/wine-list/entities/types'
 
 const columnHelper = createColumnHelper<IWines>()
 
+export interface IFilterParams {
+  sortBy?: string | undefined
+  handleSort?: (column?: string | undefined) => void
+  handleColumnFilter: (column: string, value: any) => void
+  filters: IWineFilters | WineListEmptyWineryFilters
+}
 interface WineTableProps {
   onEdit?: (wine: IWines) => void
   onDelete?: (wineId: string, name: string) => void
   onConfirm?: (wineId?: string) => void
   isUnionAvailable?: boolean
+  isSortAvailable?: boolean
+  filterParams: IFilterParams
 }
 
 const COLUMN_WIDTHS = {
@@ -34,10 +42,10 @@ const COLUMN_WIDTHS = {
   IMAGES: 120,
 } as const
 
-export const useWineColumns = ({ onEdit, onDelete, onConfirm, isUnionAvailable = true }: WineTableProps) => {
+export const useWineColumns = ({ onEdit, onDelete, onConfirm, isUnionAvailable = true, isSortAvailable = true, filterParams }: WineTableProps) => {
   const { t } = useTranslation('wines')
 
-  const { sortBy, handleSort, handleColumnFilter, filters } = useWineList()
+  const { sortBy, handleSort, handleColumnFilter, filters } = filterParams
 
   const { getColorFilterOptions, getTypeFilterOptions, getVintageFilterOptions, getCountryFilterOptions } = useWineFilters()
 
@@ -85,9 +93,9 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm, isUnionAvailable =
                   <Edit className="h-4 w-4 text-muted-foreground" />
                 </Button>
               )}
-              <Button variant="ghost" size="sm" onClick={handleDeleteWine} className="h-8 w-8 p-0 text-destructive">
+             { onDelete && <Button variant="ghost" size="sm" onClick={handleDeleteWine} className="h-8 w-8 p-0 text-destructive">
                 <Trash2 className="h-4 w-4 text-red-700" />
-              </Button>
+              </Button>}
             </div>
           )
         },
@@ -98,7 +106,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm, isUnionAvailable =
       }),
 
       columnHelper.accessor('name', {
-        header: () => <SortableHeader column="name" label={t('table.winename')} sortBy={sortBy} onSort={handleSort} />,
+        header: () => (isSortAvailable ? <SortableHeader column="name" label={t('table.winename')} sortBy={sortBy} onSort={handleSort!} /> : t('table.winename')),
         cell: info => info.getValue() || '-',
         minSize: COLUMN_WIDTHS.NAME,
         maxSize: COLUMN_WIDTHS.NAME,
@@ -119,7 +127,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm, isUnionAvailable =
       }),
 
       columnHelper.accessor('producer', {
-        header: () => <SortableHeader column="producer" label={t('table.producertitle')} sortBy={sortBy} onSort={handleSort} />,
+        header: () => (isSortAvailable ? <SortableHeader column="producer" label={t('table.producertitle')} sortBy={sortBy} onSort={handleSort!} /> : t('table.producertitle')),
         cell: info => info.getValue() || '-',
         minSize: COLUMN_WIDTHS.PRODUCER,
         maxSize: COLUMN_WIDTHS.PRODUCER,
@@ -128,7 +136,7 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm, isUnionAvailable =
       }),
 
       columnHelper.accessor('grapeVariety', {
-        header: () => <SortableHeader column="grape_variety" label={t('table.grapevariety')} sortBy={sortBy} onSort={handleSort} />,
+        header: () => (isSortAvailable ? <SortableHeader column="grape_variety" label={t('table.grapevariety')} sortBy={sortBy} onSort={handleSort!} /> : t('table.grapevariety')),
         cell: info => info.getValue() || '-',
         minSize: COLUMN_WIDTHS.GRAPE,
         maxSize: COLUMN_WIDTHS.GRAPE,
@@ -149,17 +157,20 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm, isUnionAvailable =
       }),
 
       columnHelper.accessor('vintage', {
-        header: () => (
-          <SortableFilterableHeader
-            column="vintage"
-            label={t('table.vintageconfig')}
-            sortBy={sortBy}
-            onSort={handleSort}
-            onFilter={handleColumnFilter}
-            filterOptions={getVintageFilterOptions()}
-            currentFilter={filters?.vintage}
-          />
-        ),
+        header: () =>
+          isSortAvailable ? (
+            <SortableFilterableHeader
+              column="vintage"
+              label={t('table.vintageconfig')}
+              sortBy={sortBy}
+              onSort={handleSort!}
+              onFilter={handleColumnFilter}
+              filterOptions={getVintageFilterOptions()}
+              currentFilter={filters?.vintage}
+            />
+          ) : (
+            <FilterableHeader column="vintage" label={t('table.vintageconfig')} onFilter={handleColumnFilter} filterOptions={getVintageFilterOptions()} currentFilter={filters?.vintage} />
+          ),
         cell: info => info.getValue() || '-',
         minSize: COLUMN_WIDTHS.VINTAGE,
         maxSize: COLUMN_WIDTHS.VINTAGE,
@@ -168,17 +179,20 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm, isUnionAvailable =
       }),
 
       columnHelper.accessor('country', {
-        header: () => (
-          <SortableFilterableHeader
-            column="country"
-            label={t('table.country')}
-            sortBy={sortBy}
-            onSort={handleSort}
-            onFilter={handleColumnFilter}
-            filterOptions={getCountryFilterOptions()}
-            currentFilter={filters?.countryId}
-          />
-        ),
+        header: () =>
+          isSortAvailable ? (
+            <SortableFilterableHeader
+              column="country"
+              label={t('table.country')}
+              sortBy={sortBy}
+              onSort={handleSort!}
+              onFilter={handleColumnFilter}
+              filterOptions={getCountryFilterOptions()}
+              currentFilter={filters?.countryId}
+            />
+          ) : (
+            <FilterableHeader column="country" label={t('table.country')} onFilter={handleColumnFilter} filterOptions={getCountryFilterOptions()} currentFilter={filters?.countryId} />
+          ),
         cell: ({ row }) => row.original.country?.name || '-',
         minSize: COLUMN_WIDTHS.COUNTRY,
         maxSize: COLUMN_WIDTHS.COUNTRY,
@@ -187,18 +201,28 @@ export const useWineColumns = ({ onEdit, onDelete, onConfirm, isUnionAvailable =
       }),
 
       columnHelper.accessor('region', {
-        header: () => (
-          <SortableFilterableHeader
-            column="region"
-            label={t('table.region')}
-            sortBy={sortBy}
-            onSort={handleSort}
-            onFilter={handleColumnFilter}
-            filterOptions={regionFilterOptions}
-            currentFilter={filters?.regionId}
-            filterDisabled={!filters?.countryId || regionsLoading}
-          />
-        ),
+        header: () =>
+          isSortAvailable ? (
+            <SortableFilterableHeader
+              column="region"
+              label={t('table.region')}
+              sortBy={sortBy}
+              onSort={handleSort!}
+              onFilter={handleColumnFilter}
+              filterOptions={regionFilterOptions}
+              currentFilter={filters?.regionId}
+              filterDisabled={!filters?.countryId || regionsLoading}
+            />
+          ) : (
+            <FilterableHeader
+              column="region"
+              label={t('table.region')}
+              onFilter={handleColumnFilter}
+              filterOptions={regionFilterOptions}
+              currentFilter={filters?.regionId}
+              filterDisabled={!filters?.countryId || regionsLoading}
+            />
+          ),
         cell: ({ row }) => row.original.region?.name || '-',
         minSize: COLUMN_WIDTHS.REGION,
         maxSize: COLUMN_WIDTHS.REGION,

@@ -7,19 +7,13 @@ interface WineState {
   searchResults: IWines[]
   currentWine: IWines | null
   filters: IWineFilters
-  wineryFilters: IWineFilters 
-  winesWithoutWineryFilters: IWineFilters
   setWines: (wines: IWines[]) => void
   setReviews: (reviews: IReview[]) => void
   setSearchResults: (results: IWines[]) => void
   setCurrentWine: (wine: IWines | null) => void
   setFilters: (filters: Partial<WineState['filters']>) => void
-  setWineryFilters: (filters: Partial<IWineFilters>) => void 
-  setWinesWithoutWineryFilters: (filters: Partial<IWineFilters>) => void
   setReviewFilters: (filters: Partial<WineState['reviewFilters']>) => void
   resetFilters: () => void
-  resetWineryFilters: () => void 
-  resetWinesWithoutWineryFilters: () => void 
   updateWine: (wineId: string, newWine: IWines) => void
   reviews: IReview[]
   reviewFilters: {
@@ -48,33 +42,6 @@ export const useWineStore = createStoreDevToolsWrapper<WineState>(
       regionId: null,
       sortBy: undefined,
       sortOrder: 'asc',
-      wineryId: null
-    },
-    wineryFilters: {
-      search: '',
-      limit: DEFAULT_PAGINATION_LIMIT,
-      page: 1,
-      typeId: null,
-      colorId: null,
-      vintage: null,
-      countryId: null,
-      regionId: null,
-      sortBy: undefined,
-      sortOrder: 'asc',
-      wineryId: null 
-    },
-     winesWithoutWineryFilters: {
-      search: '',
-      limit: DEFAULT_PAGINATION_LIMIT,
-      page: 1,
-      typeId: null,
-      colorId: null,
-      vintage: null,
-      countryId: null,
-      regionId: null,
-      sortBy: undefined,
-      sortOrder: 'asc',
-      wineryId: "empty" 
     },
     reviewFilters: {
       search: '',
@@ -98,25 +65,6 @@ export const useWineStore = createStoreDevToolsWrapper<WineState>(
         'wine/setFilters'
       ),
 
-       setWineryFilters: (newFilters: Partial<IWineFilters>) =>
-      set(
-        (state: WineState) => ({
-          wineryFilters: { ...state.wineryFilters, ...newFilters },
-        }),
-        false,
-        'wine/setWineryFilters'
-      ),
-      
-    setWinesWithoutWineryFilters: (newFilters: Partial<IWineFilters>) =>
-      set(
-        (state: WineState) => ({
-          winesWithoutWineryFilters: { ...state.winesWithoutWineryFilters, ...newFilters },
-        }),
-        false,
-        'wine/setWinesWithoutWineryFilters'
-      ),
-
-
     setReviewFilters: (newFilters: Partial<WineState['reviewFilters']>) =>
       set(
         (state: WineState) => ({
@@ -138,49 +86,6 @@ export const useWineStore = createStoreDevToolsWrapper<WineState>(
         false,
         'wine/resetFilters'
       ),
-
-          resetWineryFilters: () =>
-      set(
-        {
-          wineryFilters: {
-            search: '',
-            limit: DEFAULT_PAGINATION_LIMIT,
-            page: 1,
-            typeId: null,
-            colorId: null,
-            vintage: null,
-            countryId: null,
-            regionId: null,
-            sortBy: undefined,
-            sortOrder: 'asc',
-            wineryId: null,
-          },
-        },
-        false,
-        'wine/resetWineryFilters'
-      ),
-      
-    resetWinesWithoutWineryFilters: () =>
-      set(
-        {
-          winesWithoutWineryFilters: {
-            search: '',
-            limit: DEFAULT_PAGINATION_LIMIT,
-            page: 1,
-            typeId: null,
-            colorId: null,
-            vintage: null,
-            countryId: null,
-            regionId: null,
-            sortBy: undefined,
-            sortOrder: 'asc',
-            wineryId: null,
-          },
-        },
-        false,
-        'wine/resetWinesWithoutWineryFilters'
-      ),
-
     updateWine: (wineId: string, newWine: IWines) =>
       set(
         (state: WineState) => ({

@@ -89,7 +89,7 @@ export function NLTDataTable<T>({ hasActiveFilters, clearColumnFilters, table, r
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className={cn(rowClassname, 'border-input', onRowClick ? 'cursor-pointer hover:bg-muted/50' : 'cursor-default')}
+                  className={cn(rowClassname, 'border-input', onRowClick ? 'cursor-pointer hover:bg-muted/50' : 'cursor-default!')}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
                 >
                   {row.getVisibleCells().map(cell => (

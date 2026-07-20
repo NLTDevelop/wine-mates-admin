@@ -1,10 +1,18 @@
 import React from 'react'
-import { ColumnFiltersState, SortingState, VisibilityState, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
+import { ColumnFiltersState, OnChangeFn, RowSelectionState, SortingState, VisibilityState, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table'
 
-export const useDataTable = (data: any, columns: any) => {
+interface UseDataTableProps {
+  rowSelection?: RowSelectionState
+  onRowSelectionChange?: OnChangeFn<RowSelectionState>
+}
+
+export const useDataTable = (data: any, columns: any, options?: UseDataTableProps) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>(
+    options?.rowSelection || {}
+  )
 
   const table = useReactTable({
     data,
@@ -16,6 +24,7 @@ export const useDataTable = (data: any, columns: any) => {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: options?.onRowSelectionChange || setRowSelection,
     enableRowSelection: true,
     manualPagination: true,
     manualSorting: true,
@@ -24,6 +33,7 @@ export const useDataTable = (data: any, columns: any) => {
       sorting,
       columnFilters,
       columnVisibility,
+      rowSelection: options?.rowSelection || rowSelection,
     },
   })
 
