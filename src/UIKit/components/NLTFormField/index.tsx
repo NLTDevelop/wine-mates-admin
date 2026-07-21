@@ -31,13 +31,13 @@ export function NLTFormField<T extends FieldValues>({ form, formLabel, type = 't
       name={name}
       render={({ field }) => (
         <FormItem className="space-y-1">
-          <FormLabel className="font-normal text-base leading-5">
+          <FormLabel>
             {formLabel}
             {required && '*'}
           </FormLabel>
           <FormControl>
             {textArea ? (
-              <Textarea className="font-normal text-base leading-5" placeholder={placeholder} disabled={disabled} maxLength={maxLength} style={{ height: textAreaMinHeight }} {...field} />
+              <Textarea className="font-normal text-base leading-5 bg-background" placeholder={placeholder} disabled={disabled} maxLength={maxLength} style={{ height: textAreaMinHeight }} {...field} />
             ) : (
               <div className="relative">
                 <Input
@@ -60,7 +60,7 @@ export function NLTFormField<T extends FieldValues>({ form, formLabel, type = 't
               </div>
             )}
           </FormControl>
-          <FormMessage />
+          <FormMessage className='text-sm text-red-500 mt-1'/>
         </FormItem>
       )}
     />

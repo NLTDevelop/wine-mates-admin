@@ -20,8 +20,10 @@ export const useWineryRegistrationForm = () => {
   const { countries = [] } = useCountryOptions({})
   const { setActiveTab, setFilters } = useWineryStore()
 
+  const schema = wineryRegistrationSchema()
+
   const form = useForm<WineryRegistrationFormValues, object, WineryRegistrationFormData>({
-    resolver: zodResolver(wineryRegistrationSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       email: '',
       password: '',
@@ -42,7 +44,7 @@ export const useWineryRegistrationForm = () => {
     ...wineryCreateQueries.register(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wineries', 'list'] })
-      setActiveTab(WINERY_STATUS.PENDING)
+      setActiveTab(WINERY_STATUS.APPROVED)
       setFilters({ search: '', page: 1, countryId: null, regionId: null })
       toast({
         title: t('winery_created'),

@@ -1,7 +1,6 @@
-/* eslint-disable react/react-in-jsx-scope */
 import { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/UIKit/shadcn/ui/form'
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/UIKit/shadcn/ui/form'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { DatePicker } from '@/UIKit/app-components/date-picker'
@@ -12,6 +11,10 @@ import { useCountryOptions } from '@/modules/wine/create-wine/presenters/useCoun
 import { useRegionOptions } from '@/modules/wine/create-wine/presenters/useRegionOptions'
 import { WineryRegistrationFormData, WineryRegistrationFormValues } from '../../presenters/winery-registration-schema'
 import { useEffect } from 'react'
+import { IMaskInput } from 'react-imask'
+import { NLTTooltip } from '@/UIKit/components/NLTTooltip'
+import { AlertCircle } from 'lucide-react'
+import { InputWithTooltip } from '@/UIKit/app-components/input-with-tooltip'
 
 interface WineryRegistrationFormProps {
   form: UseFormReturn<WineryRegistrationFormValues, object, WineryRegistrationFormData>
@@ -52,9 +55,64 @@ export const WineryRegistrationForm = ({ form, onSubmit, onCancel, isSubmitting 
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-foreground">{t('form.owner_section')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <NLTFormField form={form} name="email" formLabel={t('form.email')} type="email" placeholder={t('form.email_placeholder')} required />
-                <NLTFormField form={form} name="password" formLabel={t('form.password')} type="password" placeholder={t('form.password_placeholder')} required />
-                <NLTFormField form={form} name="phoneNumber" formLabel={t('form.phone_number')} type="tel" placeholder={t('form.phone_number_placeholder')} required />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>{t('form.email')} *</FormLabel>
+                        <FormControl>
+                          <InputWithTooltip placeholder={t('form.email_placeholder')} {...field} error={form.formState.errors.email?.message as string} />
+                        </FormControl>
+                      </FormItem>
+                    )
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>{t('form.password')} *</FormLabel>
+                        <FormControl>
+                          <InputWithTooltip type="password" placeholder={t('form.password_placeholder')} {...field} error={form.formState.errors.password?.message as string} />
+                        </FormControl>
+                      </FormItem>
+                    )
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name="phoneNumber"
+                  render={({ field }) => {
+                    const error = form.formState.errors.phoneNumber?.message as string
+                    return (
+                      <FormItem>
+                        <FormLabel>{t('form.phone_number') + '*'}</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <IMaskInput
+                              mask="+38 (000) 000-00-00"
+                              value={field.value || ''}
+                              onAccept={(value: any) => field.onChange(value)}
+                              onBlur={field.onBlur}
+                              lazy={false}
+                              placeholder="+38 (___) ___-__-__"
+                              className="h-11 border px-3 text-base shadow-sm transition-colors rounded-md input-focus placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm bg-background text-foreground border-input w-full"
+                            />
+                            {error && (
+                              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                                <NLTTooltip delay={500} message={error} className="bg-red-500 max-w-75" trigger={<AlertCircle className="h-4 w-4 text-red-400" />} />
+                              </div>
+                            )}
+                          </div>
+                        </FormControl>
+                      </FormItem>
+                    )
+                  }}
+                />
                 <FormFieldCombobox
                   form={form}
                   formLabel={t('form.user_country')}
@@ -76,12 +134,12 @@ export const WineryRegistrationForm = ({ form, onSubmit, onCancel, isSubmitting 
                           value={field.value || ''}
                           onChange={field.onChange}
                           placeholder={t('form.birthday_placeholder')}
+                          minDate={new Date(1926, 0, 1)}
                           maxDate={new Date()}
                           error={form.formState.errors.birthday?.message as string}
                           isCompact
                         />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -91,7 +149,20 @@ export const WineryRegistrationForm = ({ form, onSubmit, onCancel, isSubmitting 
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-foreground">{t('form.winery_section')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <NLTFormField form={form} name="name" formLabel={t('form.winery_name')} placeholder={t('form.winery_name_placeholder')} required />
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>{t('form.winery_name')} *</FormLabel>
+                        <FormControl>
+                          <InputWithTooltip placeholder={t('form.winery_name_placeholder') + '...'} {...field} error={form.formState.errors.name?.message as string} />
+                        </FormControl>
+                      </FormItem>
+                    )
+                  }}
+                />
                 <YearPickerFormField
                   form={form}
                   name="foundedYear"
