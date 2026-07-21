@@ -1,5 +1,5 @@
 import { keepPreviousData,  useQuery, UseQueryResult } from '@tanstack/react-query'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useDebounce } from '@/hooks/ui/useDebounce'
 import { useParams } from 'react-router-dom'
 import { wineryWineListQueries } from '../entities/wine-list-queries'
@@ -11,6 +11,12 @@ export const useWineListEmptyWinery = () => {
   const { id } = useParams<{ id: string }>()
 
   const [searchValue, setSearchValue] = useState<string>('')
+
+  useEffect(() => {
+    if (searchValue !== (emptyWineryFilters.search || '')) {
+      setSearchValue(emptyWineryFilters.search || '')
+    }
+  }, [emptyWineryFilters.search])
 
   const wineListEmptyWineryQuery: UseQueryResult<WinesResponse | undefined, Error> = useQuery({
     ...wineryWineListQueries.listWineEmptyWinery({ ...emptyWineryFilters, wineryId: parseInt(id!) }),

@@ -71,23 +71,7 @@ export const AddWineToWineryView = () => {
     },
   })
 
-  useEffect(() => {
-    if (selectedWines?.length && winesEmptyWinery?.length) {
-      const newSelection: RowSelectionState = {}
-      winesEmptyWinery?.forEach((wine, index) => {
-        if (selectedWines.some(selected => selected.id === wine.id)) {
-          newSelection[index] = true
-        }
-      })
-      setRowSelection(newSelection)
-    } else {
-      const hasSelectedOnCurrentPage = winesEmptyWinery?.some(wine => selectedWines?.some(selected => selected.id === wine.id))
-      if (!hasSelectedOnCurrentPage) {
-        setRowSelection({})
-      }
-    }
-  }, [winesEmptyWinery, selectedWines])
-
+ 
   const handleRowClick = (row: any) => {
     const wineId = row.original.id
     navigate(getWineDetailPath(wineId))

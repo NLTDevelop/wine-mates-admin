@@ -1,4 +1,4 @@
-import { BarChart3, Barrel, Beaker, Cog, HelpCircle, MapPinned, MessagesSquare, Users, Wine } from 'lucide-react'
+import { BarChart3, Barrel, Beaker, Cog, HelpCircle, MapPinned, MessagesSquare, Users, Wine, type LucideIcon } from 'lucide-react'
 import { generateLinks } from '@/lib/generate-links'
 import { PATHS } from '@/navigation/paths'
 
@@ -9,7 +9,7 @@ export interface NavSubItem {
 }
 
 export interface NavItem extends NavSubItem {
-  icon?: React.ForwardRefExoticComponent<any>
+  icon?: LucideIcon
   items?: NavSubItem[]
   isActive?: boolean
 }
@@ -40,7 +40,7 @@ export const LINKS = {
       { titleKey: 'creating', title: 'creating', url: PATHS.WINE_CREATING },
     ],
   }),
-  wineries: generateLinks('wineries', { hasList: true, hasDetail: true }),
+  wineries: generateLinks('wineries', { hasList: true, hasCreate: true, hasDetail: true }),
   user_requests: generateLinks('user_requests', { hasList: true, hasDetail: true }),
   stats: generateLinks('stats'),
   analysis: generateLinks('analysis', { hasList: true, hasDetail: true }),
@@ -57,7 +57,7 @@ export const NAV_LINKS = [
   { ...LINKS.users.root, icon: Users, isActive: false, items: [LINKS.users.list] as NavSubItem[] },
   { ...LINKS.features.root, icon: Cog, isActive: false, items: [LINKS.features.list, ...Object.values(LINKS.features.additional || {})] as NavSubItem[] },
   { ...LINKS.wines.root, icon: Wine, isActive: false, items: [LINKS.wines.list, ...Object.values(LINKS.wines.additional || {})] as NavSubItem[] },
-  { ...LINKS.wineries.root, icon: Barrel, isActive: false, items: [LINKS.wineries.list] as NavSubItem[] },
+  { ...LINKS.wineries.root, icon: Barrel, isActive: false, items: [LINKS.wineries.list, LINKS.wineries.create] as NavSubItem[] },
   { ...LINKS.stats.root, icon: BarChart3, isActive: false },
   { ...LINKS.analysis.root, icon: Beaker, isActive: false, items: [LINKS.analysis.list] as NavSubItem[] },
   { ...LINKS.events.root, icon: MapPinned, isActive: false, items: [LINKS.events.list, ...Object.values(LINKS.events.additional || {})] as NavSubItem[] },

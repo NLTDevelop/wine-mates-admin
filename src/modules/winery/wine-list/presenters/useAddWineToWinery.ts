@@ -10,7 +10,8 @@ export const useAddWineToWinery = () => {
   const { t } = useTranslation('winery')
   const { id } = useParams<{ id: string }>()
   const queryClient = useQueryClient()
-  const { selectedWines, setSelectedWines } = useAddWinesStore()
+
+  const { selectedWines, setSelectedWines, resetEmptyWineryFilters  } = useAddWinesStore()
 
   const addWineMutation = useMutation({
     ...wineryWineListQueries.addWine(),
@@ -19,6 +20,7 @@ export const useAddWineToWinery = () => {
       toast({ title: t('wines_added', { count }), variant: 'success' })
 
       setSelectedWines([])
+      resetEmptyWineryFilters() 
 
       queryClient.invalidateQueries({ queryKey: ['wineryWineList', 'list'] })
 

@@ -35,6 +35,7 @@ export const DatePicker = ({ value, onChange, placeholder, disabled, minDate, ma
     }
     setOpen(false)
   }
+  
 
   return (
     <div className="relative">
