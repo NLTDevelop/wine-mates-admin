@@ -23,6 +23,7 @@ interface IRow {
   firstName: string
   lastName: string
   file: IFile
+  photos: IFile[]
 }
 
 const COLUMN_WIDTHS = {
@@ -127,32 +128,6 @@ export const useUserRequestsColumns = ({ onDelete }: { onDelete?: (requestId: nu
         meta: { cellClassName: 'text-start' },
       }),
 
-      columnHelper.display({
-        id: 'images',
-        header: () => <span>{t('table.file')}</span>,
-        cell: ({ row }) => {
-          const doc = row.original
-
-          if (doc.file) {
-            return <img src={doc.file.smallUrl} alt={doc.file.name} className="w-8 h-12 object-cover" />
-          }
-
-          return <div className="w-8 h-12 bg-inherit flex items-center justify-center text-gray-400 text-xs">-</div>
-        },
-        minSize: COLUMN_WIDTHS.IMAGES,
-        maxSize: COLUMN_WIDTHS.IMAGES,
-        size: COLUMN_WIDTHS.IMAGES,
-        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.IMAGES}px]` },
-      }),
-
-      columnHelper.accessor('adminComment', {
-        header: () => t('table.adminComment'),
-        cell: info => info.getValue() || '-',
-        minSize: COLUMN_WIDTHS.COMMENT,
-        maxSize: COLUMN_WIDTHS.COMMENT,
-        size: COLUMN_WIDTHS.COMMENT,
-        meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.COMMENT}px] break-words` },
-      }),
 
       columnHelper.display({
         id: 'actions',
