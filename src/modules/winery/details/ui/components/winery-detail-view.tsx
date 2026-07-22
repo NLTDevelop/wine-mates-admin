@@ -109,7 +109,7 @@ export const WineryDetailView: React.FC = () => {
             </Card>
           </div>
         </div>
-        {winery.application.status !== WINERY_STATUS.REJECTED && (
+        {winery.application.status === WINERY_STATUS.APPROVED && (
           <div className={cn('flex justify-end items-center gap-2 min-h-10')}>
             <Button onClick={() => navigate(getWineryDetailAddWinePath(id))}>{t('button.add_wines')}</Button>
           </div>
