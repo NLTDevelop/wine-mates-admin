@@ -873,6 +873,7 @@ export const uk = {
     wineries: 'Список виноробень',
     winery_detail: 'Виноробня',
     create_winery: 'Створення виноробні',
+    edit_winery: 'Редагування виноробні',
     add_wines_to_winery: 'Додавання вина до виноробні',
     select_wines: 'Оберіть одне або кілька вин',
     not_approved: 'Причина, з якої виноробня буда не підтверждена: {{slug}}',
@@ -880,7 +881,9 @@ export const uk = {
     wine_deleted: 'Вино видалено зі списку виноробні',
     wines_added: 'Вино додано до списку виноробні',
     winery_created: 'Виноробню успішно створено',
+    winery_updated: 'Виноробню успішно оновлено',
     error_creating_winery: 'Помилка створення виноробні',
+    error_updating_winery: 'Помилка оновлення виноробні',
     country_code_required: 'Для країни користувача відсутній код',
     error_adding_wines: 'При додаванні вина до списку виноробні сталася помилка',
     types: {
@@ -890,6 +893,7 @@ export const uk = {
     },
     button: {
       go_list: 'Назад до списку',
+      edit: 'Редагувати',
       confirm: 'Підтвердити виноробню',
       reject: 'Скасувати підтвердження',
       add_wines: 'Додати вина',
@@ -897,6 +901,7 @@ export const uk = {
       confirm_add: 'Додати до списку',
       cancel: 'Скасувати',
       delete: 'Видалити',
+      go_detail: 'Детальний екран',
     },
     table: {
       actions: 'Дія',

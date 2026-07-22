@@ -174,7 +174,7 @@ export const WineryRegistrationForm = ({ form, onSubmit, onCancel, isSubmitting 
                 />
                 <FormFieldCombobox
                   form={form}
-                  formLabel={t('form.winery_country')}
+                  formLabel={t('form.winery_country')+"*"}
                   name="wineryCountryId"
                   placeholder={countriesLoading ? tc('loading') : t('form.winery_country_placeholder')}
                   searchLabel={tc('search')}

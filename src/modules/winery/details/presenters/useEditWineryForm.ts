@@ -1,0 +1,91 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMemo } from 'react'
+import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { useToast } from '@/hooks/shadcn/use-toast'
+import { useFormChanges } from '@/modules/wine/create-wine/presenters/useFormChanges'
+import { useWineryStore } from '../../list/entities/wineries-list-store'
+import { IWineryDetail, UpdateWineryData } from '../entities/types'
+import { wineryQueries } from '../entities/winery-queries'
+import { WineryEditFormData, WineryEditFormValues, wineryEditSchema } from './winery-edit-schema'
+
+interface UseEditWineryFormProps {
+  winery: IWineryDetail
+  onSuccess?: () => void
+}
+
+const mapWineryToFormValues = (winery: IWineryDetail): WineryEditFormValues => ({
+  name: winery.name || '',
+  foundedYear: winery.foundedYear || new Date().getFullYear(),
+  description: winery.description || '',
+  countryId: winery.country?.id?.toString() || '',
+  regionId: winery.region?.id?.toString() || null,
+  links: winery.links?.join('\n') || '',
+})
+
+export const useEditWineryForm = ({ winery, onSuccess }: UseEditWineryFormProps) => {
+  const { toast } = useToast()
+  const { t } = useTranslation('winery')
+  const queryClient = useQueryClient()
+  const { filters } = useWineryStore()
+
+  const initialFormData = useMemo(() => mapWineryToFormValues(winery), [winery])
+
+  const form = useForm<WineryEditFormValues, object, WineryEditFormData>({
+    resolver: zodResolver(wineryEditSchema),
+    defaultValues: initialFormData,
+    mode: 'onChange',
+  })
+
+  const updateMutation = useMutation({
+    ...wineryQueries.update(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['winery', 'detail', winery.id.toString()] })
+      queryClient.invalidateQueries({ queryKey: ['wineries', 'list', filters] })
+      toast({
+        title: t('winery_updated'),
+        variant: 'default',
+      })
+      onSuccess?.()
+    },
+    onError: () => {
+      toast({
+        title: t('error_updating_winery'),
+        variant: 'destructive',
+      })
+    },
+  })
+
+  const { hasChanges, resetChanges } = useFormChanges(form, initialFormData)
+
+  const onSubmit = async (data: WineryEditFormData) => {
+    const links = data.links
+      ?.split(/[\n,]+/)
+      .map(link => link.trim())
+      .filter(Boolean)
+
+    const payload: UpdateWineryData = {
+      name: data.name.trim(),
+      foundedYear: data.foundedYear,
+      description: data.description.trim(),
+      countryId: data.countryId,
+      regionId: data.regionId,
+      links: links || [],
+    }
+
+    await updateMutation.mutateAsync({
+      id: winery.id,
+      data: payload,
+    })
+    resetChanges()
+  }
+
+  return {
+    form,
+    isSubmitting: updateMutation.isPending,
+    hasChanges,
+    onSubmit,
+    resetForm: resetChanges,
+  }
+}
