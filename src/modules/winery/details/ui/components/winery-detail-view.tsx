@@ -158,7 +158,7 @@ export const WineryDetailView: React.FC = () => {
           </div>
         </ConfirmModal>
       </ContentLayout>
-      <WineOfWinery />
+      {!isEditing && <WineOfWinery />}
     </>
   )
 }

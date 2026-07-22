@@ -1,4 +1,3 @@
-/* eslint-disable react/react-in-jsx-scope */
 import { ContentLayout } from '@/layout/components/content-layout'
 import { useTranslation } from 'react-i18next'
 import { useWineryRegistrationForm } from '../../presenters/useWineryRegistrationForm'

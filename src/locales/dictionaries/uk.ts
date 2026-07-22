@@ -901,6 +901,7 @@ export const uk = {
       confirm_add: 'Додати до списку',
       cancel: 'Скасувати',
       delete: 'Видалити',
+      go_detail: 'Детальний екран',
     },
     table: {
       actions: 'Дія',

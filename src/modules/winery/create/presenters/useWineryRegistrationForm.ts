@@ -31,7 +31,7 @@ export const useWineryRegistrationForm = () => {
       userCountryId: '',
       birthday: '',
       name: '',
-      foundedYear: new Date().getFullYear(),
+      foundedYear: "",
       description: '',
       wineryCountryId: '',
       regionId: null,
