@@ -44,6 +44,20 @@ export interface ConfirmWineryParams {
   body: IConfirmWineryBody
 }
 
+export interface UpdateWineryParams {
+  id: string | number
+  data: UpdateWineryData
+}
+
+export interface UpdateWineryData {
+  name: string
+  foundedYear: number
+  description: string
+  countryId: number
+  regionId: number | null
+  links: string[]
+}
+
 export interface IConfirmWineryBody {
   status: WineriesType
   rejectionReason?: string
@@ -54,5 +68,3 @@ export interface ListWineFilters {
   page: number
   search?: string
 }
-
-

@@ -1,3 +1,4 @@
+/* global FormData, localStorage */
 import { API_CONFIG } from '@/config'
 import { ADMIN_TOKEN } from '@/constatnts/locale-storage'
 
@@ -15,17 +16,7 @@ api.interceptors.request.use(config => {
     config.headers.Authorization = `Bearer ${token}`
   }
   if (config.data instanceof FormData) {
-    let hasFiles = false
-    for (const value of config.data.values()) {
-      if (value instanceof File) {
-        hasFiles = true
-        break
-      }
-    }
-
-    if (hasFiles) {
-      delete config.headers['Content-Type']
-    }
+    delete config.headers['Content-Type']
   }
   return config
 })

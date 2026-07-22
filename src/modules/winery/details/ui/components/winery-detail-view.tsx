@@ -1,4 +1,6 @@
-import { useNavigate, useParams } from 'react-router-dom'
+/* global URLSearchParams */
+import React from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Card } from '@/UIKit/shadcn/ui/card'
 import { Button } from '@/UIKit/shadcn/ui/button'
@@ -11,9 +13,10 @@ import { useCallback, useMemo, useState } from 'react'
 import { WineryDetailActions } from './winery-detail-actions'
 import { WineryDetailHeader } from './winery-detail-header'
 import { WineOfWinery } from '../../../wine-list/ui/components/wine-of-winery'
-import { getWineryDetailAddWinePath } from '@/navigation/paths'
+import { getWineryDetailAddWinePath, getWineryDetailPath } from '@/navigation/paths'
 import { useAddWinesStore } from '@/modules/winery/wine-list/entities/wine-list-store'
 import { WINERY_STATUS } from '@/modules/winery/list/entities/types'
+import { EditWineryForm } from './winery-edit-form'
 
 type ModalAction = 'confirm' | 'reject' | null
 
@@ -21,10 +24,14 @@ export const WineryDetailView: React.FC = () => {
   const { t } = useTranslation('winery')
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  const startEditing = params.get('edit') === 'true'
 
   const [modalAction, setModalAction] = useState<ModalAction>(null)
+  const [isEditing, setIsEditing] = useState(startEditing)
 
-  const { winery, isLoading, handleBack, confirmWinery, rejectWinery, confirmModal, wineryToConfirm } = useWineryDetail(id!)
+  const { winery, isLoading, refetch, handleBack, confirmWinery, rejectWinery, confirmModal, wineryToConfirm } = useWineryDetail(id!)
   const { setSelectedWines } = useAddWinesStore()
 
   const modalConfig = useMemo(() => {
@@ -76,12 +83,27 @@ export const WineryDetailView: React.FC = () => {
 
       setModalAction(null)
     },
-    [wineryToConfirm.status, confirmWinery, rejectWinery]
+    [wineryToConfirm, modalAction, confirmWinery, rejectWinery]
   )
 
   const handleGoBack = () => {
     handleBack()
     setSelectedWines([])
+  }
+
+  const handleEdit = () => {
+    setIsEditing(true)
+  }
+
+  const handleEditSuccess = () => {
+    setIsEditing(false)
+    refetch()
+    navigate(getWineryDetailPath(id), { replace: true })
+  }
+
+  const handleEditCancel = () => {
+    setIsEditing(false)
+    navigate(getWineryDetailPath(id), { replace: true })
   }
 
   if (isLoading) {
@@ -101,15 +123,23 @@ export const WineryDetailView: React.FC = () => {
 
   return (
     <>
-      <ContentLayout title={t('winery_detail')} btn={<WineryDetailActions onBack={handleGoBack} onConfirm={handleConfirm} onReject={handleReject} wineryStatus={winery.application.status} />} isGoBack>
+      <ContentLayout
+        title={isEditing ? t('edit_winery') : t('winery_detail')}
+        btn={<WineryDetailActions onBack={handleGoBack} onConfirm={handleConfirm} onReject={handleReject} onEdit={handleEdit} wineryStatus={winery.application.status} isEditing={isEditing} />}
+        isGoBack
+      >
         <div className={cn('mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-6xl', !isLoading ? 'fade-in' : '')}>
-          <div className="space-y-6">
-            <Card className="p-6">
-              <WineryDetailHeader winery={winery} />
-            </Card>
-          </div>
+          {isEditing ? (
+            <EditWineryForm winery={winery} onSuccess={handleEditSuccess} onCancel={handleEditCancel} />
+          ) : (
+            <div className="space-y-6">
+              <Card className="p-6">
+                <WineryDetailHeader winery={winery} />
+              </Card>
+            </div>
+          )}
         </div>
-        {winery.application.status === WINERY_STATUS.APPROVED && (
+        {!isEditing && winery.application.status === WINERY_STATUS.APPROVED && (
           <div className={cn('flex justify-end items-center gap-2 min-h-10')}>
             <Button onClick={() => navigate(getWineryDetailAddWinePath(id))}>{t('button.add_wines')}</Button>
           </div>
