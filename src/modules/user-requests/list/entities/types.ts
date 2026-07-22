@@ -25,7 +25,8 @@ export interface IUserRequest {
   closedAt: string
   createdAt: string
   user: IUserOfUserRequest
-  file: UserRequestFile
+  photos: UserRequestFile
+  files: UserRequestFile
   userId?: number
 }
 

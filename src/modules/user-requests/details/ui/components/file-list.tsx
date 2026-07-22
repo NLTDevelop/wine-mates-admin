@@ -10,7 +10,7 @@ export const FileList: React.FC = () => {
   const userRequestDetails = useUserRequest()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const filesData = userRequestDetails?.userRequest?.file || userRequestDetails?.userRequest?.file
+  const filesData = userRequestDetails?.userRequest?.photos || userRequestDetails?.userRequest?.files
 
   if (!filesData) {
     return <span>{t('no_files')}</span>
