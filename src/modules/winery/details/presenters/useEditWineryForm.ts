@@ -1,6 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '@/hooks/shadcn/use-toast'
@@ -15,14 +14,16 @@ interface UseEditWineryFormProps {
   onSuccess?: () => void
 }
 
-const mapWineryToFormValues = (winery: IWineryDetail): WineryEditFormValues => ({
-  name: winery.name || '',
-  foundedYear: winery.foundedYear || new Date().getFullYear(),
-  description: winery.description || '',
-  countryId: winery.country?.id || 0,
-  regionId: winery.region?.id || null,
-  links: winery.links?.join('\n') || '',
-})
+const mapWineryToFormValues = (winery: IWineryDetail): WineryEditFormValues => {
+  return {
+    name: winery.name || '',
+    foundedYear: winery.foundedYear || new Date().getFullYear(),
+    description: winery.description || '',
+    countryId: winery.country?.id ? String(winery.country.id) : null,
+    regionId: winery.region?.id ? String(winery.region.id) : null,
+    links: winery.links?.join('\n') || '',
+  }
+}
 
 export const useEditWineryForm = ({ winery, onSuccess }: UseEditWineryFormProps) => {
   const { toast } = useToast()
@@ -30,7 +31,7 @@ export const useEditWineryForm = ({ winery, onSuccess }: UseEditWineryFormProps)
   const queryClient = useQueryClient()
   const { filters } = useWineryStore()
 
-  const initialFormData = useMemo(() => mapWineryToFormValues(winery), [winery])
+  const initialFormData = mapWineryToFormValues(winery)
   const schema = wineryEditSchema()
 
   const form = useForm<WineryEditFormValues, object, WineryEditFormData>({
@@ -70,8 +71,8 @@ export const useEditWineryForm = ({ winery, onSuccess }: UseEditWineryFormProps)
       name: data.name.trim(),
       foundedYear: data.foundedYear,
       description: data.description.trim(),
-      countryId: data.countryId,
-      regionId: data.regionId,
+      countryId: data.countryId ? Number(data.countryId) : null,
+      regionId: data.regionId ? Number(data.regionId) : null,
       links: links || [],
     }
 

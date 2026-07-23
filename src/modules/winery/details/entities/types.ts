@@ -53,7 +53,7 @@ export interface UpdateWineryData {
   name: string
   foundedYear: number
   description: string
-  countryId: number
+  countryId: number | null
   regionId: number | null
   links: string[]
 }
