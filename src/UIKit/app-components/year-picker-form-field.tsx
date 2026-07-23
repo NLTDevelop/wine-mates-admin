@@ -29,8 +29,8 @@ export const YearPickerFormField: FC<YearPickerFormFieldProps> = ({ form, name, 
             <YearPicker
               value={field.value ?? undefined}
               onChange={(value) => {
-                 if (value === undefined || value === null) {
-                  field.onChange(undefined)
+               if (value === undefined || value === null) {
+                  field.onChange(null)
                 } else {
                   field.onChange(value)
                 }
