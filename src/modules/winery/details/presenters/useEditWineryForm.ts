@@ -19,8 +19,8 @@ const mapWineryToFormValues = (winery: IWineryDetail): WineryEditFormValues => (
   name: winery.name || '',
   foundedYear: winery.foundedYear || new Date().getFullYear(),
   description: winery.description || '',
-  countryId: winery.country?.id?.toString() || '',
-  regionId: winery.region?.id?.toString() || null,
+  countryId: winery.country?.id || 0,
+  regionId: winery.region?.id || null,
   links: winery.links?.join('\n') || '',
 })
 
@@ -31,9 +31,10 @@ export const useEditWineryForm = ({ winery, onSuccess }: UseEditWineryFormProps)
   const { filters } = useWineryStore()
 
   const initialFormData = useMemo(() => mapWineryToFormValues(winery), [winery])
+  const schema = wineryEditSchema()
 
   const form = useForm<WineryEditFormValues, object, WineryEditFormData>({
-    resolver: zodResolver(wineryEditSchema),
+    resolver: zodResolver(schema) as any,
     defaultValues: initialFormData,
     mode: 'onChange',
   })

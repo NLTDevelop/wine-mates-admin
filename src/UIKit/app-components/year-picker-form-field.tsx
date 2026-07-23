@@ -27,8 +27,14 @@ export const YearPickerFormField: FC<YearPickerFormFieldProps> = ({ form, name, 
           </FormLabel>
           <FormControl>
             <YearPicker
-              value={field.value}
-              onChange={field.onChange}
+              value={field.value ?? undefined}
+              onChange={(value) => {
+                 if (value === undefined || value === null) {
+                  field.onChange(undefined)
+                } else {
+                  field.onChange(value)
+                }
+              }}
               onBlur={field.onBlur}
               disabled={disabled}
               placeholder={placeholder}
