@@ -1,4 +1,3 @@
-/* eslint-disable react/react-in-jsx-scope */
 import { useEffect, useMemo } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -34,24 +33,36 @@ const WineryProfileForm = ({ form, onSubmit, onCancel, onReset, isSubmitting = f
   const { t: tc } = useTranslation('common')
 
   const countryId = form.watch('countryId')
+  const regionId = form.watch('regionId')
+
+  const countryValue = countryId ? Number(countryId) : null
+
   const { fetchOptions: fetchCountryOptions, isLoading: countriesLoading, countries = [] } = useCountryOptions({})
   const {
     fetchOptions: fetchRegionOptions,
     isLoading: regionsLoading,
     regions = [],
   } = useRegionOptions({
-    countryId: countryId ? Number(countryId) : null,
+    countryId: countryValue,
   })
 
+  const selectedCountry = useMemo(() => countries.find(c => c.id.toString() === countryId || String(c.id) === countryId), [countries, countryId])
+
+  const selectedRegion = useMemo(() => regions.find(r => r.id.toString() === regionId || String(r.id) === regionId), [regions, regionId])
+
   useEffect(() => {
-    const subscription = form.watch((_, { name }) => {
+    const subscription = form.watch((value, { name }) => {
       if (name === 'countryId') {
-        form.setValue('regionId', null)
+        const newCountryId = value.countryId
+        const currentCountryId = countryValue
+        if (newCountryId !== currentCountryId && regionId) {
+          form.setValue('regionId', null)
+        }
       }
     })
 
     return () => subscription.unsubscribe()
-  }, [form])
+  }, [form, countryValue, regionId])
 
   const countryOptions = useMemo<IOption[]>(
     () =>
@@ -70,6 +81,22 @@ const WineryProfileForm = ({ form, onSubmit, onCancel, onReset, isSubmitting = f
       })),
     [regions]
   )
+
+  useEffect(() => {
+    if (countryOptions.length > 0 && countryId) {
+      form.setValue('countryId', countryId, { shouldValidate: true })
+    }
+  }, [countryOptions, countryId, form])
+
+  useEffect(() => {
+    if (regionOptions.length > 0 && regionId) {
+      form.setValue('regionId', regionId, { shouldValidate: true })
+    }
+  }, [regionOptions, regionId, form])
+
+  const countryPlaceholder = selectedCountry ? selectedCountry.name : countriesLoading ? tc('loading') : t('form.winery_country_placeholder')
+
+  const regionPlaceholder = selectedRegion ? selectedRegion.name : regionsLoading ? tc('loading') : t('form.region_placeholder')
 
   const handleSubmit = (data: WineryEditFormData) => {
     onSubmit(data)
@@ -93,9 +120,9 @@ const WineryProfileForm = ({ form, onSubmit, onCancel, onReset, isSubmitting = f
               />
               <FormFieldCombobox
                 form={form}
-                formLabel={t('form.winery_country')}
+                formLabel={t('form.winery_country') + '*'}
                 name="countryId"
-                placeholder={countriesLoading ? tc('loading') : t('form.winery_country_placeholder')}
+                placeholder={countryPlaceholder}
                 searchLabel={tc('search')}
                 fetchOptions={fetchCountryOptions}
                 options={countryOptions}
@@ -106,7 +133,7 @@ const WineryProfileForm = ({ form, onSubmit, onCancel, onReset, isSubmitting = f
                 form={form}
                 formLabel={t('form.region')}
                 name="regionId"
-                placeholder={regionsLoading ? tc('loading') : t('form.region_placeholder')}
+                placeholder={regionPlaceholder}
                 searchLabel={tc('search')}
                 fetchOptions={fetchRegionOptions}
                 options={regionOptions}
