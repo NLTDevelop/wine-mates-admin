@@ -49,39 +49,10 @@ export const WineryDetailHeader: React.FC<WineryDetailHeaderProps> = ({ winery }
   const [activeImageIndex, setActiveImageIndex] = useState(0)
 
   const allImages = React.useMemo<WineImage[]>(() => {
-    return [
-      {
-        name: 'winery-cellar.jpg',
-        originalName: 'wine-barrels-cellar.jpg',
-        mimetype: 'image/jpeg',
-        size: 850000,
-        smallUrl: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=400&q=80',
-        mediumUrl: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=800&q=80',
-        originalUrl: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1600&q=90',
-      },
-      {
-        name: 'winery-bottles.jpg',
-        originalName: 'premium-wine-bottles.jpg',
-        mimetype: 'image/jpeg',
-        size: 920120,
-        smallUrl: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=400&q=80',
-        mediumUrl: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=800&q=80',
-        originalUrl: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=1600&q=90',
-      },
-      {
-        name: 'winery-tasting.jpg',
-        originalName: 'wine-tasting-glass.jpg',
-        mimetype: 'image/jpeg',
-        size: 730000,
-        smallUrl: 'https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?auto=format&fit=crop&w=400&q=80',
-        mediumUrl: 'https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?auto=format&fit=crop&w=800&q=80',
-        originalUrl: 'https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?auto=format&fit=crop&w=1600&q=90',
-      },
-    ]
-    // const list: WineImage[] = []
-    // if (winery.mainPhoto) list.push(winery.mainPhoto)
-    // if (winery.gallery && winery.gallery.length > 0) list.push(...winery.gallery)
-    // return list
+    const list: WineImage[] = []
+    if (winery.mainPhoto) list.push(winery.mainPhoto)
+    if (winery.gallery && winery.gallery.length > 0) list.push(...winery.gallery)
+    return list
   }, [winery.mainPhoto, winery.gallery])
 
   const modalImages = React.useMemo(() => {
