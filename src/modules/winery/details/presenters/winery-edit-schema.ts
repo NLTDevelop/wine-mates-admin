@@ -2,6 +2,7 @@ import i18n from 'i18next'
 import { z } from 'zod'
 
 const currentYear = new Date().getFullYear()
+export const MAX_WINERY_GALLERY_PHOTOS = 4
 
 const urlListSchema = () =>
   z
@@ -47,6 +48,9 @@ export const wineryEditSchema = () =>
       .nullable()
       .transform(v => (v ? String(v) : null)),
     links: urlListSchema(),
+    mainPhoto: z.any().nullable().optional(),
+    gallery: z.array(z.any()).max(MAX_WINERY_GALLERY_PHOTOS, i18n.t('messages:max_winery_gallery_photos')).optional(),
+    removeGalleryFileIds: z.array(z.number()).optional(),
   })
 
 export type WineryEditFormValues = z.infer<ReturnType<typeof wineryEditSchema>>

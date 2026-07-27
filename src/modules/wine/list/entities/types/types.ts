@@ -1,3 +1,4 @@
+/* global File */
 import { BaseWineColor } from '@/modules/wine/create/general/entities/types'
 import { WineFormData } from '@/modules/wine/create-wine/presenters/wine-form-schema'
 import { TasteCharacteristic, TopAroma, TopColor, TopFlavor } from './statistics-types'
@@ -95,10 +96,11 @@ export interface Image {
   mimeType?: string
   preview?: string
   _isExistingImage?: boolean
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface WineImage {
+  id?: number | string
   name: string
   originalName: string
   mimetype: string
