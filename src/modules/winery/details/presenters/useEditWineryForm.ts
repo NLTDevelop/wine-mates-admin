@@ -1,6 +1,7 @@
+/* global File */
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useForm } from 'react-hook-form'
+import { Resolver, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '@/hooks/shadcn/use-toast'
 import { useFormChanges } from '@/modules/wine/create-wine/presenters/useFormChanges'
@@ -22,6 +23,9 @@ const mapWineryToFormValues = (winery: IWineryDetail): WineryEditFormValues => {
     countryId: winery.country?.id ? String(winery.country.id) : null,
     regionId: winery.region?.id ? String(winery.region.id) : null,
     links: winery.links?.join('\n') || '',
+    mainPhoto: winery.mainPhoto || null,
+    gallery: winery.gallery || [],
+    removeGalleryFileIds: [],
   }
 }
 
@@ -35,7 +39,7 @@ export const useEditWineryForm = ({ winery, onSuccess }: UseEditWineryFormProps)
   const schema = wineryEditSchema()
 
   const form = useForm<WineryEditFormValues, object, WineryEditFormData>({
-    resolver: zodResolver(schema) as any,
+    resolver: zodResolver(schema) as unknown as Resolver<WineryEditFormValues, object, WineryEditFormData>,
     defaultValues: initialFormData,
     mode: 'onChange',
   })
@@ -78,7 +82,13 @@ export const useEditWineryForm = ({ winery, onSuccess }: UseEditWineryFormProps)
 
     await updateMutation.mutateAsync({
       id: winery.id,
-      data: payload,
+      data: {
+        winery: payload,
+        image: data.mainPhoto instanceof File ? data.mainPhoto : null,
+        files: data.gallery?.filter((file): file is File => file instanceof File) || [],
+        removeMainPhoto: Boolean(winery.mainPhoto && data.mainPhoto === null),
+        removeGalleryFileIds: data.removeGalleryFileIds || [],
+      },
     })
     resetChanges()
   }

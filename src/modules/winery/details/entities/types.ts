@@ -1,3 +1,4 @@
+/* global File */
 import { WineImage } from '@/modules/wine/list/entities/types/types'
 import { WineriesType } from '../../list/entities/types'
 import { IAvatar } from '@/modules/users/entities/IUser'
@@ -46,7 +47,7 @@ export interface ConfirmWineryParams {
 
 export interface UpdateWineryParams {
   id: string | number
-  data: UpdateWineryData
+  data: UpdateWineryRequest
 }
 
 export interface UpdateWineryData {
@@ -56,6 +57,14 @@ export interface UpdateWineryData {
   countryId: number | null
   regionId: number | null
   links: string[]
+}
+
+export interface UpdateWineryRequest {
+  winery: UpdateWineryData
+  image?: File | null
+  files?: File[]
+  removeMainPhoto?: boolean
+  removeGalleryFileIds?: number[]
 }
 
 export interface IConfirmWineryBody {
