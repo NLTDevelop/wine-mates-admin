@@ -1,9 +1,8 @@
 /* eslint-disable react/react-in-jsx-scope */
-/* global HTMLInputElement */
-import { ColumnDef, createColumnHelper } from '@tanstack/react-table'
+/* global HTMLInputElement, URL */
 import { useQuery } from '@tanstack/react-query'
-import { ChangeEvent, useMemo, useState } from 'react'
-import { Edit, Image, Plus, Trash2 } from 'lucide-react'
+import { ChangeEvent, useCallback, useMemo, useState } from 'react'
+import { Image, Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
@@ -19,6 +18,8 @@ import { useCurrencyOptions } from '@/modules/events/presenters/useCurrencyOptio
 import { eventsService } from '@/modules/events/entities/events-service'
 import { WineSearchItem } from '@/modules/events/entities/types/wine-search.dto'
 import { cn } from '@/lib/utils'
+import { useWineListColumns } from '@/modules/winery/details/presenters/useWineListColumns'
+import { WineOfWinery } from '@/modules/winery/wine-list/entities/types'
 import { usePartnerWineOffers } from '../../presenters/usePartnerWineOffers'
 import { PartnerWineOffer } from '../../entities/partner-wine-offer-types'
 
@@ -28,6 +29,8 @@ interface OfferFormState {
   wineId: string
   price: string
   currency: string
+  websiteUrl: string
+  quantity: string
 }
 
 interface OfferModalState {
@@ -40,9 +43,7 @@ interface PartnerWineOffersProps {
   partnerId: number
 }
 
-const columnHelper = createColumnHelper<PartnerWineOffer>()
-
-const getWineImageUrl = (offer: PartnerWineOffer) => offer.wine?.image?.smallUrl || offer.wine?.defaultImage?.smallUrl || ''
+const WINE_SEARCH_LIMIT = 10
 
 const getLocationName = (location?: { name?: string } | string | null) => {
   if (!location) return ''
@@ -54,13 +55,22 @@ const getWineName = (offer?: PartnerWineOffer | null) => {
   const wine = offer.wine
   if (!wine) return 'Без назви'
 
-  return [wine.name, wine.grapeVariety, wine.vintage].filter(Boolean).join(', ') || 'Без назви'
+  return wine.name || wine.producer || [wine.grapeVariety, wine.vintage].filter(Boolean).join(', ') || 'Без назви'
 }
 
 const normalizePrice = (price: string | number) => {
   const numericPrice = Number(price)
   if (Number.isNaN(numericPrice)) return String(price)
   return numericPrice.toFixed(2)
+}
+
+const isValidWebsiteUrl = (value: string) => {
+  try {
+    const url = new URL(value)
+    return ['http:', 'https:'].includes(url.protocol)
+  } catch {
+    return false
+  }
 }
 
 const getSearchWineImageUrl = (wine: WineSearchItem) => wine.image?.smallUrl || wine.image?.mediumUrl || wine.image?.originalUrl || ''
@@ -119,35 +129,59 @@ export const PartnerWineOffers = ({ partnerId }: PartnerWineOffersProps) => {
   const { currencies, isLoading: currenciesLoading } = useCurrencyOptions()
 
   const [modal, setModal] = useState<OfferModalState>({ isOpen: false, mode: 'create', offer: null })
-  const [formState, setFormState] = useState<OfferFormState>({ wineId: '', price: '', currency: 'UAH' })
+  const [formState, setFormState] = useState<OfferFormState>({ wineId: '', price: '', currency: 'UAH', websiteUrl: '', quantity: '' })
   const [formError, setFormError] = useState('')
   const [wineSearch, setWineSearch] = useState('')
+  const [wineSearchPage, setWineSearchPage] = useState(1)
+  const [selectedWineDetails, setSelectedWineDetails] = useState<WineSearchItem | null>(null)
 
   const currencyOptions = currencies.length ? currencies : ['UAH']
   const isCreateModal = modal.isOpen && modal.mode === 'create'
 
   const wineSearchQuery = useQuery({
-    queryKey: ['partners', 'wine-search', wineSearch],
-    queryFn: () => eventsService.search({ query: wineSearch, limit: 20, offset: 0 }),
+    queryKey: ['partners', 'wine-search', wineSearch, wineSearchPage],
+    queryFn: () => eventsService.search({ query: wineSearch, limit: WINE_SEARCH_LIMIT, offset: (wineSearchPage - 1) * WINE_SEARCH_LIMIT }),
     enabled: isCreateModal,
     staleTime: 2000,
   })
 
   const wineOptions = wineSearchQuery.data?.rows || []
-  const selectedWine = wineOptions.find(wine => String(wine.id) === formState.wineId)
+  const wineSearchTotalCount = wineSearchQuery.data?.count || 0
+  const selectedWine = selectedWineDetails && String(selectedWineDetails.id) === formState.wineId ? selectedWineDetails : wineOptions.find(wine => String(wine.id) === formState.wineId)
+  const offerRows = useMemo<WineOfWinery[]>(
+    () =>
+      offers.map(offer => ({
+        id: offer.wineId,
+        offerId: offer.id,
+        name: offer.wine?.name || '',
+        producer: offer.wine?.producer,
+        vintage: offer.wine?.vintage,
+        grapeVariety: offer.wine?.grapeVariety,
+        image: offer.wine?.image || offer.wine?.defaultImage || undefined,
+        price: offer.price,
+        currency: offer.currency,
+        quantity: offer.quantity,
+        websiteUrl: offer.websiteUrl,
+      })),
+    [offers]
+  )
 
   const closeModal = () => {
     setModal({ isOpen: false, mode: 'create', offer: null })
-    setFormState({ wineId: '', price: '', currency: 'UAH' })
+    setFormState({ wineId: '', price: '', currency: 'UAH', websiteUrl: '', quantity: '' })
     setFormError('')
     setWineSearch('')
+    setWineSearchPage(1)
+    setSelectedWineDetails(null)
   }
 
   const openCreateModal = () => {
     setModal({ isOpen: true, mode: 'create', offer: null })
-    setFormState({ wineId: '', price: '', currency: currencyOptions.includes('UAH') ? 'UAH' : currencyOptions[0] || 'UAH' })
+    setFormState({ wineId: '', price: '', currency: currencyOptions.includes('UAH') ? 'UAH' : currencyOptions[0] || 'UAH', websiteUrl: '', quantity: '' })
     setFormError('')
     setWineSearch('')
+    setWineSearchPage(1)
+    setSelectedWineDetails(null)
   }
 
   const openEditModal = (offer: PartnerWineOffer) => {
@@ -156,6 +190,8 @@ export const PartnerWineOffers = ({ partnerId }: PartnerWineOffersProps) => {
       wineId: String(offer.wineId),
       price: String(offer.price || ''),
       currency: offer.currency || 'UAH',
+      websiteUrl: offer.websiteUrl || '',
+      quantity: offer.quantity === null || offer.quantity === undefined ? '' : String(offer.quantity),
     })
     setFormError('')
   }
@@ -164,12 +200,37 @@ export const PartnerWineOffers = ({ partnerId }: PartnerWineOffersProps) => {
     setFormState(prev => ({ ...prev, price: event.target.value }))
   }
 
+  const getOfferByRow = useCallback((wine: WineOfWinery) => offers.find(offer => offer.id === wine.offerId) || offers.find(offer => offer.wineId === Number(wine.id)), [offers])
+
   const handleSubmit = async () => {
     const price = Number(formState.price)
+    const websiteUrl = formState.websiteUrl.trim()
+    const quantity = formState.quantity.trim() ? Number(formState.quantity) : undefined
 
     if (Number.isNaN(price) || price <= 0) {
       setFormError(t('offers.price_required'))
       return
+    }
+
+    if (!websiteUrl) {
+      setFormError(t('offers.link_required'))
+      return
+    }
+
+    if (!isValidWebsiteUrl(websiteUrl)) {
+      setFormError(t('offers.link_invalid'))
+      return
+    }
+
+    if (quantity !== undefined && (!Number.isInteger(quantity) || quantity < 0)) {
+      setFormError(t('offers.quantity_invalid'))
+      return
+    }
+
+    const offerPayload = {
+      price,
+      websiteUrl,
+      ...(quantity !== undefined ? { quantity } : {}),
     }
 
     if (modal.mode === 'create') {
@@ -183,7 +244,7 @@ export const PartnerWineOffers = ({ partnerId }: PartnerWineOffersProps) => {
       await createOffer({
         partnerId,
         wineId,
-        price,
+        ...offerPayload,
         currency: formState.currency || 'UAH',
       })
       closeModal()
@@ -191,75 +252,27 @@ export const PartnerWineOffers = ({ partnerId }: PartnerWineOffersProps) => {
     }
 
     if (modal.offer) {
-      await updateOffer({ id: modal.offer.id, data: { price } })
+      await updateOffer({ id: modal.offer.id, data: offerPayload })
       closeModal()
     }
   }
 
-  const columns = useMemo(
-    () =>
-      [
-        columnHelper.display({
-          id: 'wine',
-          header: () => t('offers.table.wine'),
-          cell: ({ row }) => {
-            const imageUrl = getWineImageUrl(row.original)
-            return (
-              <div className="flex items-center gap-3 text-start">
-                {imageUrl ? (
-                  <img src={imageUrl} alt={getWineName(row.original)} className="h-11 w-11 rounded-md object-cover" />
-                ) : (
-                  <div className="flex h-11 w-11 items-center justify-center rounded-md bg-muted">
-                    <Image className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                )}
-                <div className="min-w-0">
-                  <p className="break-words font-medium">{getWineName(row.original)}</p>
-                  <p className="text-xs text-muted-foreground">{[getLocationName(row.original.wine?.country), getLocationName(row.original.wine?.region)].filter(Boolean).join(', ') || '-'}</p>
-                </div>
-              </div>
-            )
-          },
-          minSize: 360,
-          size: 360,
-          meta: { cellClassName: 'text-start w-[360px]' },
-        }),
-        columnHelper.accessor('price', {
-          header: () => t('offers.table.price'),
-          cell: ({ row }) => `${normalizePrice(row.original.price)} ${row.original.currency}`,
-          minSize: 140,
-          size: 140,
-          meta: { cellClassName: 'text-start w-[140px]' },
-        }),
-        columnHelper.accessor('updatedAt', {
-          header: () => t('offers.table.updated_at'),
-          cell: info => (info.getValue() ? new Date(info.getValue() as string).toLocaleDateString('uk-UA') : '-'),
-          minSize: 140,
-          size: 140,
-          meta: { cellClassName: 'text-start w-[140px]' },
-        }),
-        columnHelper.display({
-          id: 'actions',
-          header: () => <p className="text-center">{t('offers.table.actions')}</p>,
-          cell: ({ row }) => (
-            <div className="flex items-center justify-center gap-2">
-              <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => openEditModal(row.original)}>
-                <Edit className="h-4 w-4 text-green-600" />
-              </Button>
-              <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => deleteModal.onOpen(row.original)}>
-                <Trash2 className="h-4 w-4 text-red-700" />
-              </Button>
-            </div>
-          ),
-          minSize: 100,
-          size: 100,
-          meta: { cellClassName: 'text-center' },
-        }),
-      ] as ColumnDef<PartnerWineOffer>[],
-    [deleteModal, t]
-  )
+  const columns = useWineListColumns({
+    showCheckbox: false,
+    showDelete: true,
+    showEdit: true,
+    showOfferColumns: true,
+    onEdit: wine => {
+      const offer = getOfferByRow(wine)
+      if (offer) openEditModal(offer)
+    },
+    onDelete: (_wineId, _wineName, wine) => {
+      const offer = getOfferByRow(wine)
+      if (offer) deleteModal.onOpen(offer)
+    },
+  })
 
-  const { table } = useDataTable(offers, columns)
+  const { table } = useDataTable(offerRows, columns)
 
   return (
     <Card>
@@ -284,56 +297,68 @@ export const PartnerWineOffers = ({ partnerId }: PartnerWineOffersProps) => {
         title={modal.mode === 'create' ? t('offers.add_wine') : t('offers.edit_price')}
         isOpen={modal.isOpen}
         onClose={closeModal}
-        className={modal.mode === 'create' ? 'sm:max-w-[860px]' : 'sm:max-w-[620px]'}
+        className={modal.mode === 'create' ? 'sm:max-w-[1080px]' : 'sm:max-w-[720px]'}
       >
         <div className="space-y-4 px-1">
           {modal.mode === 'create' ? (
-            <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
               <div className="space-y-3">
                 <div className="space-y-2">
                   <Label>{t('offers.form.wine')} *</Label>
                   <Input
                     value={wineSearch}
-                    onChange={event => setWineSearch(event.target.value)}
+                    onChange={event => {
+                      setWineSearch(event.target.value)
+                      setWineSearchPage(1)
+                    }}
                     placeholder={t('offers.form.wine_search_placeholder')}
                     variant="search"
                     showClearButton
-                    onClear={() => setWineSearch('')}
+                    onClear={() => {
+                      setWineSearch('')
+                      setWineSearchPage(1)
+                    }}
                   />
                 </div>
-                <div className="max-h-96 space-y-1.5 overflow-y-auto rounded-md border border-input bg-background p-2">
-                  {wineSearchQuery.isLoading ? <p className="py-6 text-center text-sm text-muted-foreground">{tc('loading')}</p> : null}
-                  {!wineSearchQuery.isLoading && wineOptions.length === 0 ? <p className="py-6 text-center text-sm text-muted-foreground">{tc('no_results')}</p> : null}
-                  {wineOptions.map(wine => {
-                    const imageUrl = getSearchWineImageUrl(wine)
-                    const isSelected = formState.wineId === String(wine.id)
+                <div className="space-y-3">
+                  <div className="h-[460px] max-h-[58vh] space-y-1.5 overflow-y-auto rounded-md border border-input bg-background p-2">
+                    {wineSearchQuery.isLoading ? <p className="py-6 text-center text-sm text-muted-foreground">{tc('loading')}</p> : null}
+                    {!wineSearchQuery.isLoading && wineOptions.length === 0 ? <p className="py-6 text-center text-sm text-muted-foreground">{tc('no_results')}</p> : null}
+                    {wineOptions.map(wine => {
+                      const imageUrl = getSearchWineImageUrl(wine)
+                      const isSelected = formState.wineId === String(wine.id)
 
-                    return (
-                      <button
-                        key={wine.id}
-                        type="button"
-                        className={cn(
-                          'w-full rounded-md border border-transparent p-2 text-left transition-colors hover:bg-muted/50',
-                          isSelected ? 'border-sidebar-accent bg-muted/60' : 'bg-background'
-                        )}
-                        onClick={() => {
-                          setFormState(prev => ({ ...prev, wineId: String(wine.id) }))
-                          setFormError('')
-                        }}
-                      >
-                        <WineInfoPreview
-                          imageUrl={imageUrl}
-                          name={wine.name}
-                          producer={wine.producer}
-                          grapeVariety={wine.grapeVariety}
-                          vintage={wine.vintage}
-                          country={getLocationName(wine.country)}
-                          region={getLocationName(wine.region)}
-                          compact
-                        />
-                      </button>
-                    )
-                  })}
+                      return (
+                        <button
+                          key={wine.id}
+                          type="button"
+                          className={cn(
+                            'w-full rounded-md border border-transparent p-2 text-left transition-colors hover:bg-muted/50',
+                            isSelected ? 'border-sidebar-accent bg-muted/60' : 'bg-background'
+                          )}
+                          onClick={() => {
+                            setFormState(prev => ({ ...prev, wineId: String(wine.id) }))
+                            setSelectedWineDetails(wine)
+                            setFormError('')
+                          }}
+                        >
+                          <WineInfoPreview
+                            imageUrl={imageUrl}
+                            name={wine.name}
+                            producer={wine.producer}
+                            grapeVariety={wine.grapeVariety}
+                            vintage={wine.vintage}
+                            country={getLocationName(wine.country)}
+                            region={getLocationName(wine.region)}
+                            compact
+                          />
+                        </button>
+                      )
+                    })}
+                  </div>
+                  {wineSearchTotalCount > WINE_SEARCH_LIMIT ? (
+                    <NLTTablePagination limit={WINE_SEARCH_LIMIT} page={wineSearchPage} totalRows={wineSearchTotalCount} setPage={setWineSearchPage} />
+                  ) : null}
                 </div>
               </div>
 
@@ -377,6 +402,16 @@ export const PartnerWineOffers = ({ partnerId }: PartnerWineOffersProps) => {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  <div className="space-y-2">
+                    <Label>{t('offers.form.website_url')} *</Label>
+                    <Input value={formState.websiteUrl} onChange={event => setFormState(prev => ({ ...prev, websiteUrl: event.target.value }))} placeholder="https://example.com/wine" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>{t('offers.form.quantity')}</Label>
+                    <Input type="number" min="0" step="1" value={formState.quantity} onChange={event => setFormState(prev => ({ ...prev, quantity: event.target.value }))} placeholder="50" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -403,7 +438,7 @@ export const PartnerWineOffers = ({ partnerId }: PartnerWineOffersProps) => {
                 />
               </div>
 
-              <div className="rounded-md border border-input bg-background p-4">
+              <div className="space-y-4 rounded-md border border-input bg-background p-4">
                 <div className="space-y-2">
                   <Label>{t('offers.form.new_price')} *</Label>
                   <div className="relative">
@@ -413,6 +448,18 @@ export const PartnerWineOffers = ({ partnerId }: PartnerWineOffersProps) => {
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground">{t('offers.form.price_hint')}</p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_150px]">
+                  <div className="space-y-2">
+                    <Label>{t('offers.form.website_url')} *</Label>
+                    <Input value={formState.websiteUrl} onChange={event => setFormState(prev => ({ ...prev, websiteUrl: event.target.value }))} placeholder="https://example.com/wine" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>{t('offers.form.quantity')}</Label>
+                    <Input type="number" min="0" step="1" value={formState.quantity} onChange={event => setFormState(prev => ({ ...prev, quantity: event.target.value }))} placeholder="50" />
+                  </div>
                 </div>
               </div>
             </div>

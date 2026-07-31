@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 /* global URLSearchParams */
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { ArrowLeft } from 'lucide-react'
@@ -24,24 +24,28 @@ const PartnerLogo = ({ image, label }: { image?: PartnerImage | null; label: str
   const url = getImageUrl(image)
 
   return (
-    <div className="flex aspect-square h-40 w-40 shrink-0 items-center justify-center overflow-hidden rounded-md border border-input bg-muted p-4 sm:h-44 sm:w-44">
+    <div className="flex aspect-square h-32 w-32 shrink-0 items-center justify-center overflow-hidden rounded-md sm:h-36 sm:w-36">
       {url ? <img src={url} alt={label} className="h-full w-full object-contain" /> : <span className="text-sm text-muted-foreground">-</span>}
     </div>
   )
 }
 
-const PartnerCoverImage = ({ image, label }: { image?: PartnerImage | null; label: string }) => {
+const PartnerPreviewImage = ({ image, label }: { image?: PartnerImage | null; label: string }) => {
   const url = getImageUrl(image)
 
   return (
-    <div className="space-y-2">
-      <p className="text-sm font-medium text-muted-foreground">{label}</p>
-      <div className="flex h-64 w-full items-center justify-center overflow-hidden rounded-md bg-muted">
-        {url ? <img src={url} alt={label} className="h-full w-full object-cover" /> : <span className="text-sm text-muted-foreground">-</span>}
-      </div>
+    <div className="flex aspect-[16/10] w-full items-center justify-center overflow-hidden rounded-md bg-muted lg:max-h-44">
+      {url ? <img src={url} alt={label} className="h-full w-full object-cover" /> : <span className="text-sm text-muted-foreground">-</span>}
     </div>
   )
 }
+
+const PartnerInfoField = ({ label, children }: { label: string; children: ReactNode }) => (
+  <div className="space-y-1">
+    <p className="text-sm font-medium text-muted-foreground">{label}</p>
+    <div className="min-h-6">{children}</div>
+  </div>
+)
 
 export const PartnerDetailView = () => {
   const { t } = useTranslation('partners')
@@ -109,41 +113,58 @@ export const PartnerDetailView = () => {
         ) : (
           <div className="space-y-6">
             <Card>
-              <CardContent className="space-y-6 sm:px-0">
-                <div className="flex flex-col gap-6 md:flex-row md:items-start">
-                  <PartnerLogo image={partner.logo} label={t('form.logo')} />
+              <CardContent className="sm:px-0">
+                <div className="grid gap-5 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px]">
+                  <div className="flex flex-col gap-4 sm:flex-row">
+                    <PartnerLogo image={partner.logo} label={t('form.logo')} />
 
-                  <div className="min-w-0 flex-1 space-y-5">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0 flex-1 space-y-4">
                       <div className="min-w-0">
-                        <h2 className="break-words text-2xl font-semibold leading-tight">{partner.name}</h2>
-                        {partner.website ? (
-                          <a href={partner.website} target="_blank" rel="noreferrer" className="break-words text-blue-600 underline-offset-4 hover:text-blue-700 hover:underline">
-                            {partner.website}
-                          </a>
-                        ) : (
-                          <p className="text-sm text-muted-foreground">{t('no_website')}</p>
-                        )}
+                        <h2 className="break-words text-2xl font-semibold leading-tight text-foreground">{partner.name}</h2>
                       </div>
-                      <Badge className={cn('w-fit shrink-0', partner.status === PARTNER_STATUS.ACTIVE ? 'bg-green-600 hover:bg-green-600' : 'bg-slate-600 hover:bg-slate-600')}>
-                        {t(`status.${partner.status}`)}
-                      </Badge>
-                    </div>
 
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <div className="rounded-md border border-input bg-background p-4">
-                        <p className="text-sm font-medium text-muted-foreground">{t('table.status')}</p>
-                        <p className="mt-1 font-medium">{t(`status.${partner.status}`)}</p>
+                      <div className="space-y-4">
+                        <PartnerInfoField label={t('form.website')}>
+                          {partner.website ? (
+                            <a href={partner.website} target="_blank" rel="noreferrer" className="break-words text-sm font-medium text-blue-600 underline-offset-4 hover:text-blue-700 hover:underline">
+                              {partner.website}
+                            </a>
+                          ) : (
+                            <span className="text-sm text-muted-foreground">{t('no_website')}</span>
+                          )}
+                        </PartnerInfoField>
+
+                        <PartnerInfoField label={t('form.status')}>
+                          <Badge className={cn('w-fit', partner.status === PARTNER_STATUS.ACTIVE ? 'bg-green-600 hover:bg-green-600' : 'bg-slate-600 hover:bg-slate-600')}>
+                            {t(`status.${partner.status}`)}
+                          </Badge>
+                        </PartnerInfoField>
                       </div>
-                      <div className="rounded-md border border-input bg-background p-4">
-                        <p className="text-sm font-medium text-muted-foreground">{t('form.countries')}</p>
-                        <p className="mt-1 break-words font-medium">{partner.countries?.map(country => country.name).join(', ') || partner.countryIds?.join(', ') || '-'}</p>
-                      </div>
+
+                      <PartnerInfoField label={t('form.countries')}>
+                        <div className="flex flex-wrap gap-2">
+                          {partner.countries?.length ? (
+                            partner.countries.map(country => (
+                              <Badge key={country.id} variant="outline" className="border-input bg-background font-medium">
+                                {country.name}
+                              </Badge>
+                            ))
+                          ) : partner.countryIds?.length ? (
+                            partner.countryIds.map(countryId => (
+                              <Badge key={countryId} variant="outline" className="border-input bg-background font-medium">
+                                {countryId}
+                              </Badge>
+                            ))
+                          ) : (
+                            <span className="text-sm text-muted-foreground">-</span>
+                          )}
+                        </div>
+                      </PartnerInfoField>
                     </div>
                   </div>
-                </div>
 
-                <PartnerCoverImage image={partner.image} label={t('form.image')} />
+                  <PartnerPreviewImage image={partner.image} label={t('form.image')} />
+                </div>
               </CardContent>
             </Card>
 

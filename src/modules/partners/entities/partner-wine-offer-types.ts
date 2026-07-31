@@ -56,10 +56,14 @@ export interface CreatePartnerWineOfferPayload {
   partnerId: number
   price: number
   currency: string
+  websiteUrl: string
+  quantity?: number
 }
 
 export interface UpdatePartnerWineOfferPayload {
   price: number
+  websiteUrl: string
+  quantity?: number
 }
 
 export interface UpdatePartnerWineOfferParams {
