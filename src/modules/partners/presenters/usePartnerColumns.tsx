@@ -1,4 +1,3 @@
-/* eslint-disable react/react-in-jsx-scope */
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table'
 import { MouseEvent, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -6,13 +5,20 @@ import { Button } from '@/UIKit/shadcn/ui/button'
 import { Badge } from '@/UIKit/shadcn/ui/badge'
 import { Edit, Image, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { IPartner, PARTNER_STATUS } from '../entities/types'
+import { IPartner, PARTNER_STATUS, PartnerFilters } from '../entities/types'
+import { FilterableHeader } from '@/UIKit/app-components/table-headers/filterable-header'
 
 const columnHelper = createColumnHelper<IPartner>()
+
+export interface IFilterParams {
+  handleColumnFilter: (column: string, value: any) => void
+  filters?: PartnerFilters | null
+}
 
 interface PartnerTableProps {
   onEdit: (partner: IPartner) => void
   onDelete: (partnerId: number, name: string) => void
+  filterParams: IFilterParams
 }
 
 const COLUMN_WIDTHS = {
@@ -24,7 +30,7 @@ const COLUMN_WIDTHS = {
   COUNTRIES: 320,
 } as const
 
-export const usePartnerColumns = ({ onEdit, onDelete }: PartnerTableProps) => {
+export const usePartnerColumns = ({ onEdit, onDelete, filterParams }: PartnerTableProps) => {
   const { t } = useTranslation('partners')
 
   return useMemo(
@@ -108,7 +114,18 @@ export const usePartnerColumns = ({ onEdit, onDelete }: PartnerTableProps) => {
           meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.WEBSITE}px] break-words` },
         }),
         columnHelper.accessor('status', {
-          header: () => t('table.status'),
+          header: () => (
+            <FilterableHeader
+              column="status"
+              label={t('table.status')}
+              onFilter={filterParams.handleColumnFilter}
+              filterOptions={[
+                { value: PARTNER_STATUS.ACTIVE, label: t('status.active') },
+                { value: PARTNER_STATUS.INACTIVE, label: t('status.inactive') },
+              ]}
+              currentFilter={filterParams.filters?.status}
+            />
+          ),
           cell: info => {
             const status = info.getValue()
             return <Badge className={cn('capitalize', status === PARTNER_STATUS.ACTIVE ? 'bg-green-600 hover:bg-green-600' : 'bg-slate-600 hover:bg-slate-600')}>{t(`status.${status}`)}</Badge>

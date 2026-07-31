@@ -4,6 +4,7 @@ import { FC } from 'react'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { useTranslation } from 'react-i18next'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/UIKit/shadcn/ui/select'
+import { cn } from '@/lib/utils'
 
 interface IProps {
   limit: number
@@ -11,9 +12,10 @@ interface IProps {
   totalRows: number
   setLimit?: (limit: number) => void
   setPage: (page: number) => void
+  className?: string
 }
 
-export const NLTTablePagination: FC<IProps> = ({ page, limit, totalRows, setLimit, setPage }) => {
+export const NLTTablePagination: FC<IProps> = ({ page, limit, totalRows, setLimit, setPage, className }) => {
   const { t } = useTranslation('common')
 
   const currentPage = page
@@ -40,12 +42,12 @@ export const NLTTablePagination: FC<IProps> = ({ page, limit, totalRows, setLimi
   }
 
   return (
-    <div className="flex items-center justify-end space-x-2 pb-4">
+    <div className={cn("flex items-center justify-end space-x-2 pb-4", className)}>
       {setLimit && (
         <div className="flex items-center space-x-2">
           <span className="text-sm">{t('rowsPerPage')}</span>
           <Select value={limit?.toString()} onValueChange={onChangeLimit}>
-            <SelectTrigger className="w-[70px]">
+            <SelectTrigger className="w-17.5">
               <SelectValue placeholder="6" />
             </SelectTrigger>
             <SelectContent>

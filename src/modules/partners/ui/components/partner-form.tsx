@@ -1,4 +1,3 @@
-/* global File, HTMLInputElement, URL */
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -9,11 +8,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/UIKit/shadcn/ui/select'
 import { Label } from '@/UIKit/shadcn/ui/label'
-import { NLTFormField } from '@/UIKit/components/NLTFormField'
 import { useCountryOptions } from '@/modules/wine/create-wine/presenters/useCountryOptions'
 import { cn } from '@/lib/utils'
 import { IPartner, PARTNER_STATUS, PartnerImage } from '../../entities/types'
 import { PartnerFormData, PartnerFormValues } from '../../presenters/partner-form-schema'
+import { InputWithTooltip } from '@/UIKit/app-components/input-with-tooltip'
 
 type PartnerImageValue = File | PartnerImage
 
@@ -187,9 +186,31 @@ export const PartnerForm = ({ form, mode, partner, onSubmit, onCancel, isSubmitt
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <NLTFormField form={form} name="name" formLabel={t('form.name')} placeholder={t('form.name_placeholder')} required />
-              <NLTFormField form={form} name="website" formLabel={t('form.website')} placeholder={t('form.website_placeholder')} />
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('form.name') + '*'}</FormLabel>
+                    <FormControl>
+                      <InputWithTooltip {...field} placeholder={t('form.name_placeholder')} error={form.formState.errors.name?.message as string} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
+              <FormField
+                control={form.control}
+                name="website"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('form.website')}</FormLabel>
+                    <FormControl>
+                      <InputWithTooltip {...field} placeholder={t('form.website_placeholder')} error={form.formState.errors.website?.message as string} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
               {mode === 'edit' && (
                 <FormField
                   control={form.control}
@@ -199,7 +220,7 @@ export const PartnerForm = ({ form, mode, partner, onSubmit, onCancel, isSubmitt
                       <FormLabel>{t('form.status')}</FormLabel>
                       <Select value={field.value} onValueChange={field.onChange} disabled={isSubmitting}>
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="h-12 bg-background">
                             <SelectValue placeholder={t('form.status_placeholder')} />
                           </SelectTrigger>
                         </FormControl>
@@ -231,9 +252,9 @@ export const PartnerForm = ({ form, mode, partner, onSubmit, onCancel, isSubmitt
                         disabled={countriesLoading || isSubmitting}
                         mode="multiple"
                         enablePagination
+                        error={form.formState.errors.countryIds?.message as string}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />

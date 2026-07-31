@@ -2,12 +2,13 @@ import * as React from 'react'
 import { Popover, PopoverTrigger, PopoverContent } from './popover'
 import { Button } from './button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './command'
-import { Check, ChevronsUpDown, X, Plus } from 'lucide-react'
+import { Check, ChevronsUpDown, X, Plus, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 
 import { NLTProgress } from '@/UIKit/components/NLTProgress/nlt-progress'
 import { useDebounce } from '@/hooks/ui/useDebounce'
+import { NLTTooltip } from '@/UIKit/components/NLTTooltip'
 
 interface MultiSelectOption {
   value: string
@@ -45,6 +46,7 @@ interface MultiSelectProps {
   popoverClassName?: string
   showSelectAll?: boolean
   enablePagination?: boolean
+  error?: string
 }
 
 export const MultiSelect: React.FC<MultiSelectProps> = ({
@@ -63,6 +65,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   popoverClassName,
   showSelectAll = true,
   enablePagination = false,
+  error,
 }) => {
   const { t } = useTranslation('common')
   const [open, setOpen] = React.useState(false)
@@ -373,6 +376,8 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
               'multi-select-trigger inline-flex items-center whitespace-nowrap rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 shadow-sm',
               'flex px-3 py-2 rounded-md h-auto items-center justify-between bg-background hover:bg-inherit [&_svg]:pointer-events-auto min-h-12',
               'w-full justify-between font-normal text-sm',
+              'relative',
+              error ? 'border-red-500 pr-8' : '',
               open ? 'border-2 border-sidebar-accent' : 'border border-border',
               disabled && 'opacity-50 cursor-not-allowed',
               className
@@ -472,6 +477,11 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                 ) : (
                   <ChevronsUpDown className="opacity-50 w-4 h-4 transition-transform duration-200" />
                 )}
+              </div>
+            )}
+            {error && (
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                <NLTTooltip delay={500} message={error} className="bg-red-500 max-w-75" trigger={<AlertCircle className="h-4 w-4 text-red-400" />} />
               </div>
             )}
           </Button>

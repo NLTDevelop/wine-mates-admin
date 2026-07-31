@@ -1049,6 +1049,7 @@ export const uk = {
       error_deleting_offer: 'Помилка видалення пропозиції',
       price_required: 'Вкажіть коректну ціну',
       wine_required: 'Оберіть вино',
+      not_chose_wine: 'Вино не обрано',
       link_required: 'Додайте посилання на пропозицію',
       link_invalid: 'Вкажіть коректне посилання з http:// або https://',
       quantity_invalid: 'Кількість має бути цілим числом від 0',

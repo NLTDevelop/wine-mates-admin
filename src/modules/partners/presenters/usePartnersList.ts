@@ -1,4 +1,3 @@
-/* global HTMLInputElement */
 import { keepPreviousData, useMutation, useQuery, UseQueryResult } from '@tanstack/react-query'
 import { ChangeEvent, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -6,7 +5,7 @@ import { useDebounce } from '@/hooks/ui/useDebounce'
 import { useToast } from '@/hooks/shadcn/use-toast'
 import { partnerQueries } from '../entities/partner-queries'
 import { usePartnerStore } from '../entities/partner-store'
-import { PartnerStatus, PartnersResponse } from '../entities/types'
+import {  PartnersResponse } from '../entities/types'
 
 export const usePartnersList = () => {
   const { filters, setFilters, resetFilters } = usePartnerStore()
@@ -57,12 +56,27 @@ export const usePartnersList = () => {
     [setFilters]
   )
 
-  const handleStatusChange = useCallback(
-    (status: string) => {
-      setFilters({ status: status === 'all' ? null : (status as PartnerStatus), page: 1 })
+  const handleColumnFilter = useCallback(
+    (column: string, value: any) => {
+      let filterColumn = column
+
+      setFilters({
+        [filterColumn]: value,
+        page: 1,
+      })
     },
     [setFilters]
   )
+
+  const clearColumnFilters = useCallback(() => {
+    const filtersToClear = ['status']
+
+    filtersToClear.forEach(filter => {
+      handleColumnFilter(filter, null)
+    })
+
+    setFilters({ page: 1 })
+  }, [handleColumnFilter, setFilters])
 
   const openDeleteModal = useCallback((partnerId: number, name: string) => {
     setDeleteModal({ isOpen: true, partnerId, name })
@@ -88,7 +102,8 @@ export const usePartnersList = () => {
     onChangeSearch,
     handleClearSearch,
     onChangePagination,
-    handleStatusChange,
+    handleColumnFilter,
+    clearColumnFilters,
     deletePartner: openDeleteModal,
     deleteModal: {
       ...deleteModal,

@@ -1,5 +1,3 @@
-/* eslint-disable react/react-in-jsx-scope */
-/* global URLSearchParams */
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ReactNode, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
@@ -15,8 +13,11 @@ import { cn } from '@/lib/utils'
 import { partnerQueries } from '../../entities/partner-queries'
 import { PARTNER_STATUS, PartnerImage } from '../../entities/types'
 import { usePartnerForm } from '../../presenters/usePartnerForm'
+import { usePartnerWineOffers } from '../../presenters/usePartnerWineOffers'
+import { useCurrencyOptions } from '@/modules/events/presenters/useCurrencyOptions'
 import { PartnerForm } from './partner-form'
 import { PartnerWineOffers } from './partner-wine-offers'
+import { WineOfferButton } from './wine-offer-button'
 
 const getImageUrl = (image?: PartnerImage | null) => image?.mediumUrl || image?.smallUrl || image?.originalUrl || ''
 
@@ -34,7 +35,7 @@ const PartnerPreviewImage = ({ image, label }: { image?: PartnerImage | null; la
   const url = getImageUrl(image)
 
   return (
-    <div className="flex aspect-[16/10] w-full items-center justify-center overflow-hidden rounded-md bg-muted lg:max-h-44">
+    <div className="flex aspect-16/10 w-full items-center justify-center overflow-hidden rounded-md bg-muted lg:max-h-44">
       {url ? <img src={url} alt={label} className="h-full w-full object-cover" /> : <span className="text-sm text-muted-foreground">-</span>}
     </div>
   )
@@ -58,7 +59,15 @@ export const PartnerDetailView = () => {
 
   const partnerQuery = useQuery(partnerQueries.detail(id))
   const partner = partnerQuery.data
-  const { form, onSubmit, isSubmitting } = usePartnerForm({
+
+  const { offers, totalCount, page, limit, setPage, createOffer, updateOffer, isSubmitting, deleteModal } = usePartnerWineOffers(Number(id))
+  const { currencies, isLoading: currenciesLoading } = useCurrencyOptions()
+
+  const {
+    form,
+    onSubmit,
+    isSubmitting: isFormSubmitting,
+  } = usePartnerForm({
     partner,
     mode: 'edit',
     onSuccess: () => {
@@ -70,6 +79,12 @@ export const PartnerDetailView = () => {
   const handleCancel = () => {
     setIsEditing(false)
     navigate(id ? getPartnerDetailPath(id) : PATHS.PARTNERS_LIST, { replace: true })
+  }
+
+  const currencyOptions = currencies.length ? currencies : ['UAH']
+
+  const handleCreateOffer = async (data: { partnerId: number; wineId: number; price: number; currency: string; websiteUrl: string; quantity?: number }) => {
+    await createOffer(data)
   }
 
   if (partnerQuery.isLoading) {
@@ -87,91 +102,106 @@ export const PartnerDetailView = () => {
   }
 
   return (
-    <ContentLayout
-      title={isEditing ? t('edit_partner') : t('partner_detail')}
-      isGoBack
-      handleGoBack={() => navigate(PATHS.PARTNERS_LIST)}
-      btn={
-        <div className="flex w-full flex-col justify-between gap-2 sm:flex-row">
-          <Button variant="outline" onClick={() => navigate(PATHS.PARTNERS_LIST)}>
-            <ArrowLeft />
-            <p>{tc('go_back')}</p>
-          </Button>
-          {!isEditing ? (
-            <Button type="button" onClick={() => setIsEditing(true)}>
-              {t('button.edit')}
+    <>
+      <ContentLayout
+        title={isEditing ? t('edit_partner') : t('partner_detail')}
+        isGoBack
+        handleGoBack={() => navigate(PATHS.PARTNERS_LIST)}
+        btn={
+          <div className="flex w-full flex-col justify-between gap-2 sm:flex-row">
+            <Button variant="outline" onClick={() => navigate(PATHS.PARTNERS_LIST)}>
+              <ArrowLeft />
+              <p>{tc('go_back')}</p>
             </Button>
-          ) : null}
-        </div>
-      }
-    >
-      <div className={cn('mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-6xl', !partnerQuery.isLoading ? 'fade-in' : '')}>
-        {isEditing ? (
-          <div className="mx-auto w-full max-w-4xl">
-            <PartnerForm form={form} mode="edit" partner={partner} onSubmit={onSubmit} onCancel={handleCancel} isSubmitting={isSubmitting} />
+            {!isEditing ? (
+              <Button type="button" onClick={() => setIsEditing(true)}>
+                {t('button.edit')}
+              </Button>
+            ) : null}
           </div>
-        ) : (
-          <div className="space-y-6">
-            <Card>
-              <CardContent className="sm:px-0">
-                <div className="grid gap-5 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px]">
-                  <div className="flex flex-col gap-4 sm:flex-row">
-                    <PartnerLogo image={partner.logo} label={t('form.logo')} />
+        }
+      >
+        <div className={cn('mx-auto sm:px-4 px-1 sm:py-6 py-1 max-w-6xl', !partnerQuery.isLoading ? 'fade-in' : '')}>
+          {isEditing ? (
+            <div className="mx-auto w-full max-w-4xl">
+              <PartnerForm form={form} mode="edit" partner={partner} onSubmit={onSubmit} onCancel={handleCancel} isSubmitting={isFormSubmitting} />
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <Card>
+                <CardContent className="sm:px-0">
+                  <div className="grid gap-5 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px]">
+                    <div className="flex flex-col gap-4 sm:flex-row">
+                      <PartnerLogo image={partner.logo} label={t('form.logo')} />
 
-                    <div className="min-w-0 flex-1 space-y-4">
-                      <div className="min-w-0">
-                        <h2 className="break-words text-2xl font-semibold leading-tight text-foreground">{partner.name}</h2>
-                      </div>
-
-                      <div className="space-y-4">
-                        <PartnerInfoField label={t('form.website')}>
-                          {partner.website ? (
-                            <a href={partner.website} target="_blank" rel="noreferrer" className="break-words text-sm font-medium text-blue-600 underline-offset-4 hover:text-blue-700 hover:underline">
-                              {partner.website}
-                            </a>
-                          ) : (
-                            <span className="text-sm text-muted-foreground">{t('no_website')}</span>
-                          )}
-                        </PartnerInfoField>
-
-                        <PartnerInfoField label={t('form.status')}>
-                          <Badge className={cn('w-fit', partner.status === PARTNER_STATUS.ACTIVE ? 'bg-green-600 hover:bg-green-600' : 'bg-slate-600 hover:bg-slate-600')}>
-                            {t(`status.${partner.status}`)}
-                          </Badge>
-                        </PartnerInfoField>
-                      </div>
-
-                      <PartnerInfoField label={t('form.countries')}>
-                        <div className="flex flex-wrap gap-2">
-                          {partner.countries?.length ? (
-                            partner.countries.map(country => (
-                              <Badge key={country.id} variant="outline" className="border-input bg-background font-medium">
-                                {country.name}
-                              </Badge>
-                            ))
-                          ) : partner.countryIds?.length ? (
-                            partner.countryIds.map(countryId => (
-                              <Badge key={countryId} variant="outline" className="border-input bg-background font-medium">
-                                {countryId}
-                              </Badge>
-                            ))
-                          ) : (
-                            <span className="text-sm text-muted-foreground">-</span>
-                          )}
+                      <div className="min-w-0 flex-1 space-y-4">
+                        <div className="min-w-0">
+                          <h2 className="wrap-break-word text-2xl font-semibold leading-tight text-foreground">{partner.name}</h2>
                         </div>
-                      </PartnerInfoField>
+
+                        <div className="space-y-4">
+                          <PartnerInfoField label={t('form.website')}>
+                            {partner.website ? (
+                              <a
+                                href={partner.website}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="wrap-break-word text-sm font-medium text-blue-600 underline-offset-4 hover:text-blue-700 hover:underline"
+                              >
+                                {partner.website}
+                              </a>
+                            ) : (
+                              <span className="text-sm text-muted-foreground">{t('no_website')}</span>
+                            )}
+                          </PartnerInfoField>
+
+                          <PartnerInfoField label={t('form.status')}>
+                            <Badge className={cn('w-fit', partner.status === PARTNER_STATUS.ACTIVE ? 'bg-green-600 hover:bg-green-600' : 'bg-slate-600 hover:bg-slate-600')}>
+                              {t(`status.${partner.status}`)}
+                            </Badge>
+                          </PartnerInfoField>
+                        </div>
+
+                        <PartnerInfoField label={t('form.countries')}>
+                          <div className="flex flex-wrap gap-2">
+                            {partner.countries?.length ? (
+                              partner.countries.map(country => (
+                                <Badge key={country.id} variant="outline" className="border-input bg-background font-medium">
+                                  {country.name}
+                                </Badge>
+                              ))
+                            ) : partner.countryIds?.length ? (
+                              partner.countryIds.map(countryId => (
+                                <Badge key={countryId} variant="outline" className="border-input bg-background font-medium">
+                                  {countryId}
+                                </Badge>
+                              ))
+                            ) : (
+                              <span className="text-sm text-muted-foreground">-</span>
+                            )}
+                          </div>
+                        </PartnerInfoField>
+                      </div>
                     </div>
+
+                    {partner.image && <PartnerPreviewImage image={partner.image} label={t('form.image')} />}
                   </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </div>
 
-                  <PartnerPreviewImage image={partner.image} label={t('form.image')} />
-                </div>
-              </CardContent>
-            </Card>
-
-            <PartnerWineOffers partnerId={partner.id} />
+        {!isEditing && (
+          <div className="flex justify-end">
+            <WineOfferButton partnerId={Number(id)} currencyOptions={currencyOptions} currenciesLoading={currenciesLoading} onSuccess={handleCreateOffer} isSubmitting={isSubmitting} />
           </div>
         )}
-      </div>
-    </ContentLayout>
+      </ContentLayout>
+
+      {!isEditing && (
+        <PartnerWineOffers offers={offers} totalCount={totalCount} page={page} limit={limit} setPage={setPage} updateOffer={updateOffer} isSubmitting={isSubmitting} deleteModal={deleteModal} />
+      )}
+    </>
   )
 }

@@ -1,4 +1,3 @@
-/* global File */
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
@@ -53,10 +52,10 @@ export const usePartnerForm = ({ partner, mode, onSuccess }: UsePartnerFormProps
 
   const createMutation = useMutation({
     ...partnerQueries.create(),
-    onSuccess: createdPartner => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['partners', 'list'] })
       toast({ title: t('partner_created'), variant: 'default' })
-      navigate(createdPartner?.id ? getPartnerDetailPath(createdPartner.id) : PATHS.PARTNERS_LIST)
+      navigate(PATHS.PARTNERS_LIST)
       onSuccess?.()
     },
     onError: () => {
