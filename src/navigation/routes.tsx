@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import Layout from '@/layout'
 import { FC } from 'react'
 import { Navigate, Outlet, useRoutes } from 'react-router-dom'
@@ -21,6 +22,7 @@ import { faq } from '@/modules/faq/entities/faq-routes'
 import { CuisineView } from '@/modules/snack-cuisine/ui'
 import { wineriesRoutes } from '@/modules/winery/winery-routers'
 import { userRequestsRoutes } from '@/modules/user-requests/user-requests-routes'
+import { partnerRoutes } from '@/modules/partners/partner-routes'
 
 const usersRoutes = [
   { path: PATHS.USERS, element: <UsersView /> },
@@ -63,6 +65,7 @@ export const Router: FC = () => {
         ...featuresRoutes,
         ...winesRoutes,
         ...wineriesRoutes,
+        ...partnerRoutes,
         ...userRequestsRoutes,
         ...winesStats,
         ...winesAnalysis,

@@ -1,52 +1,81 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table'
 import { Button } from '@/UIKit/shadcn/ui/button'
-import { Trash2 } from 'lucide-react'
-import { useMemo } from 'react'
+import { Edit, ExternalLink, Trash2 } from 'lucide-react'
+import { MouseEvent, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { WineOfWinery } from '../../wine-list/entities/types'
-import { useWineListOfWinery } from '../../wine-list/presenters/useWineListOfWinery'
+import { getWineryWineOffer } from '../../wine-list/entities/wine-offer-helpers'
 import { Checkbox } from '@radix-ui/react-checkbox'
 
 const columnHelper = createColumnHelper<WineOfWinery>()
 
 interface WineTableProps {
-  onDelete?: (wineId: string, name: string) => void
+  onDelete?: (wineId: string, name: string, wine: WineOfWinery) => void
+  onEdit?: (wine: WineOfWinery) => void
   showCheckbox?: boolean
   showDelete?: boolean
+  showEdit?: boolean
+  showOfferColumns?: boolean
 }
 
 const COLUMN_WIDTHS = {
   ACTIONS: 100,
-  NAME: 200,
+  NAME: 220,
   PRODUCER: 180,
   GRAPE: 180,
   VINTAGE: 100,
   IMAGES: 120,
+  PRICE: 140,
+  QUANTITY: 120,
+  WEBSITE: 220,
 } as const
 
-export const useWineListColumns = ({ onDelete, showCheckbox, showDelete }: WineTableProps) => {
+const normalizePrice = (price?: string | number | null) => {
+  if (price === null || price === undefined || price === '') return '-'
+  const numericPrice = Number(price)
+  if (Number.isNaN(numericPrice)) return String(price)
+  return numericPrice.toFixed(2)
+}
+
+const getWineImageUrl = (wine: WineOfWinery) => wine.image?.smallUrl || wine.image?.mediumUrl || wine.image?.originalUrl || wine.image?.originUrl || ''
+
+export const useWineListColumns = ({ onDelete, onEdit, showCheckbox, showDelete, showEdit, showOfferColumns }: WineTableProps) => {
   const { t } = useTranslation('wines')
 
-  const { filters } = useWineListOfWinery()
-
-  return useMemo(
-    () => [
+  return useMemo(() => {
+    const columns: ColumnDef<WineOfWinery>[] = [
       columnHelper.display({
         id: 'actions',
         header: () => <p className="text-center">{t('table.actions')}</p>,
         cell: ({ row }) => {
-          const handleDeleteWine = (e: React.MouseEvent) => {
+          const wineName = row.original.name || row.original.producer || t('not_known_wine')
+
+          const handleEditWine = (e: MouseEvent) => {
             e.stopPropagation()
             e.preventDefault()
-            row.original.id && onDelete?.(row.original.id, row.original.name || t('not_known_wine'))
+            onEdit?.(row.original)
+          }
+
+          const handleDeleteWine = (e: MouseEvent) => {
+            e.stopPropagation()
+            e.preventDefault()
+            if (row.original.id) {
+              onDelete?.(String(row.original.id), wineName, row.original)
+            }
           }
 
           return (
-            <div className="flex items-center justify-around">
+            <div className="flex items-center justify-around gap-1">
               {showCheckbox && (
                 <div className="pt-1 pr-3">
                   <Checkbox checked={row.getIsSelected()} onCheckedChange={value => row.toggleSelected(!!value)} aria-label="Select row" className="h-5 w-5" />
                 </div>
+              )}
+              {showEdit && (
+                <Button variant="ghost" size="sm" onClick={handleEditWine} className="h-8 w-8 p-0">
+                  <Edit className="h-4 w-4 text-green-600" />
+                </Button>
               )}
               {showDelete && (
                 <Button variant="ghost" size="sm" onClick={handleDeleteWine} className="h-8 w-8 p-0 text-destructive">
@@ -62,36 +91,40 @@ export const useWineListColumns = ({ onDelete, showCheckbox, showDelete }: WineT
         meta: { cellClassName: 'text-center' },
       }),
 
-      columnHelper.accessor('name', {
+      columnHelper.display({
+        id: 'name',
         header: () => t('table.winename'),
-        cell: info => info.getValue() || '-',
+        cell: ({ row }) => row.original.name || row.original.producer || '-',
         minSize: COLUMN_WIDTHS.NAME,
         maxSize: COLUMN_WIDTHS.NAME,
         size: COLUMN_WIDTHS.NAME,
         meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.NAME}px] break-words` },
       }),
 
-      columnHelper.accessor('producer', {
+      columnHelper.display({
+        id: 'producer',
         header: () => t('table.producertitle'),
-        cell: info => info.getValue() || '-',
+        cell: ({ row }) => row.original.producer || '-',
         minSize: COLUMN_WIDTHS.PRODUCER,
         maxSize: COLUMN_WIDTHS.PRODUCER,
         size: COLUMN_WIDTHS.PRODUCER,
         meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.PRODUCER}px] break-words` },
       }),
 
-      columnHelper.accessor('grapeVariety', {
+      columnHelper.display({
+        id: 'grapeVariety',
         header: () => t('table.grapevariety'),
-        cell: info => info.getValue() || '-',
+        cell: ({ row }) => row.original.grapeVariety || '-',
         minSize: COLUMN_WIDTHS.GRAPE,
         maxSize: COLUMN_WIDTHS.GRAPE,
         size: COLUMN_WIDTHS.GRAPE,
         meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.GRAPE}px] break-words` },
       }),
 
-      columnHelper.accessor('vintage', {
+      columnHelper.display({
+        id: 'vintage',
         header: () => t('table.vintageconfig'),
-        cell: info => info.getValue() || '-',
+        cell: ({ row }) => row.original.vintage || '-',
         minSize: COLUMN_WIDTHS.VINTAGE,
         maxSize: COLUMN_WIDTHS.VINTAGE,
         size: COLUMN_WIDTHS.VINTAGE,
@@ -102,20 +135,73 @@ export const useWineListColumns = ({ onDelete, showCheckbox, showDelete }: WineT
         id: 'images',
         header: () => <span>{t('table.images')}</span>,
         cell: ({ row }) => {
-          const wine = row.original
+          const imageUrl = getWineImageUrl(row.original)
 
-          if (wine.image) {
-            return <img src={wine.image.smallUrl} alt={wine.image.name} className="w-8 h-12 object-cover" />
+          if (imageUrl) {
+            return <img src={imageUrl} alt={row.original.name || row.original.producer || 'Wine image'} className="h-12 w-8 rounded-sm object-cover" />
           }
 
-          return <div className="w-8 h-12 bg-gray-100 flex items-center justify-center text-gray-400 text-xs">-</div>
+          return <div className="flex h-12 w-8 items-center justify-center bg-gray-100 text-xs text-gray-400">-</div>
         },
         minSize: COLUMN_WIDTHS.IMAGES,
         maxSize: COLUMN_WIDTHS.IMAGES,
         size: COLUMN_WIDTHS.IMAGES,
         meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.IMAGES}px]` },
       }),
-    ],
-    [onDelete, t, filters]
-  ) as ColumnDef<WineOfWinery>[]
+    ]
+
+    if (showOfferColumns) {
+      columns.push(
+        columnHelper.display({
+          id: 'price',
+          header: () => t('table.price'),
+          cell: ({ row }) => {
+            const offer = getWineryWineOffer(row.original)
+            const price = normalizePrice(offer?.price)
+            return price === '-' ? '-' : `${price} ${offer?.currency || 'UAH'}`
+          },
+          minSize: COLUMN_WIDTHS.PRICE,
+          maxSize: COLUMN_WIDTHS.PRICE,
+          size: COLUMN_WIDTHS.PRICE,
+          meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.PRICE}px]` },
+        }),
+        columnHelper.display({
+          id: 'quantity',
+          header: () => t('table.quantity'),
+          cell: ({ row }) => getWineryWineOffer(row.original)?.quantity ?? '-',
+          minSize: COLUMN_WIDTHS.QUANTITY,
+          maxSize: COLUMN_WIDTHS.QUANTITY,
+          size: COLUMN_WIDTHS.QUANTITY,
+          meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.QUANTITY}px]` },
+        }),
+        columnHelper.display({
+          id: 'websiteUrl',
+          header: () => t('table.website'),
+          cell: ({ row }) => {
+            const websiteUrl = getWineryWineOffer(row.original)?.websiteUrl
+
+            return websiteUrl ? (
+              <a
+                href={websiteUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex max-w-full items-center gap-1 break-all text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline"
+              >
+                <span className="truncate">{websiteUrl}</span>
+                <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+              </a>
+            ) : (
+              '-'
+            )
+          },
+          minSize: COLUMN_WIDTHS.WEBSITE,
+          maxSize: COLUMN_WIDTHS.WEBSITE,
+          size: COLUMN_WIDTHS.WEBSITE,
+          meta: { cellClassName: `text-start w-[${COLUMN_WIDTHS.WEBSITE}px]` },
+        })
+      )
+    }
+
+    return columns
+  }, [onDelete, onEdit, showCheckbox, showDelete, showEdit, showOfferColumns, t]) as ColumnDef<WineOfWinery>[]
 }
