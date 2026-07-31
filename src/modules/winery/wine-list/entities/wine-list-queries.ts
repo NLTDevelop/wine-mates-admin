@@ -1,4 +1,4 @@
-import { CreateWineOfferForWineryParams, DeleteWineFromWineryParams, UpdateWineOfferForWineryParams, WineListEmptyWineryFilters, WineListFilters } from './types'
+import { AddWineToWineryParams, CreateWineOfferForWineryParams, DeleteWineFromWineryParams, UpdateWineOfferForWineryParams, WineListEmptyWineryFilters, WineListFilters } from './types'
 import { wineryWineListService } from './wine-list-service'
 
 export const wineryWineListQueries = {
@@ -14,7 +14,7 @@ export const wineryWineListQueries = {
 
   addWine: () => ({
     mutationKey: ['wineryWineList', 'addWine'],
-    mutationFn: (offers: CreateWineOfferForWineryParams[]) => wineryWineListService.create_offers(offers),
+    mutationFn: (body: AddWineToWineryParams) => wineryWineListService.add_wine(body),
   }),
 
   createOffer: () => ({
