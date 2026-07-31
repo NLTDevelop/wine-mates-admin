@@ -13,6 +13,9 @@ export const PATHS = {
   WINERY_CREATE: '/wineries/create',
   WINERY_DETAIL: '/winery/:id',
   WINERY_ADD_WINE: '/winery/:id/add-wine',
+  PARTNERS_LIST: '/partners',
+  PARTNER_CREATE: '/partners/create',
+  PARTNER_DETAIL: '/partners/:id',
   WINE_USER_PROPOSITIONS: '/wines/user-propositions',
   WINE_CREATING: '/wines/creating',
   STATS: '/stats',
@@ -32,5 +35,6 @@ export const PATHS = {
 export const getWineDetailPath = (id?: number | string) => `/wines/${id}`
 export const getWineryDetailPath = (id?: number | string) => `/winery/${id}`
 export const getWineryDetailAddWinePath = (id?: number | string) => `/winery/${id}/add-wine`
+export const getPartnerDetailPath = (id?: number | string) => `/partners/${id}`
 export const getUserRequestDetailPath = (id?: number | string) => `/user_requests/${id}`
 export const getEventDetailPath = (id?: number | string) => `/events/${id}`
