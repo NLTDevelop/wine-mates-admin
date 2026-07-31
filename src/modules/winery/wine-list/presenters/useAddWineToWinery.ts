@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router-dom'
 import { wineryWineListQueries } from '../entities/wine-list-queries'
 import { useAddWinesStore } from '../entities/wine-list-store'
-import { WineryWineOfferPayload } from '../entities/types'
 
 export const useAddWineToWinery = () => {
   const { toast } = useToast()
@@ -17,7 +16,7 @@ export const useAddWineToWinery = () => {
   const addWineMutation = useMutation({
     ...wineryWineListQueries.addWine(),
     onSuccess: (_, variables) => {
-      const count = variables.length
+     const count = variables.wineIds.length
       toast({ title: t('wines_added', { count }), variant: 'success' })
 
       setSelectedWines([])
@@ -32,30 +31,17 @@ export const useAddWineToWinery = () => {
     },
   })
 
-  const addWines = async (offerData: WineryWineOfferPayload) => {
-    const wineryId = Number(id)
+  const addWines = async () => {
+    if (!id) return
 
-    if (!wineryId || Number.isNaN(wineryId)) {
-      toast({ title: t('offer.winery_id_missing'), variant: 'destructive' })
-      return false
-    }
+    if (!selectedWines || selectedWines.length === 0) return
 
-    if (!selectedWines || selectedWines.length === 0) return false
+    const wineIds = selectedWines.map(wine => wine.id).filter(id => typeof id === 'number' && !isNaN(id))
 
-    const wineIds = selectedWines.map(wine => Number(wine.id)).filter(wineId => !Number.isNaN(wineId))
-
-    if (wineIds.length === 0) {
-      toast({ title: t('offer.wine_id_missing'), variant: 'destructive' })
-      return false
-    }
-
-    const offers = wineIds.map(wineId => ({
-      wineryId,
-      wineId,
-      ...offerData,
-    }))
-
-    await addWineMutation.mutateAsync(offers)
+    await addWineMutation.mutateAsync({
+      wineryId: parseInt(id),
+      wineIds,
+    })
     return true
   }
 
