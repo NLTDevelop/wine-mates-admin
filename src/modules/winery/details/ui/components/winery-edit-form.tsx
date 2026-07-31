@@ -15,6 +15,7 @@ import { useRegionOptions } from '@/modules/wine/create-wine/presenters/useRegio
 import { IWineryDetail } from '../../entities/types'
 import { useEditWineryForm } from '../../presenters/useEditWineryForm'
 import { MAX_WINERY_GALLERY_PHOTOS, WineryEditFormData, WineryEditFormValues } from '../../presenters/winery-edit-schema'
+import { ImageModal } from '@/modals/imagesModal'
 
 type WineryImageValue = File | NonNullable<IWineryDetail['mainPhoto']>
 
@@ -30,6 +31,7 @@ const getImageId = (image: WineryImageValue): number | null => {
 
 const ImagePreview = ({ image, className = 'h-36' }: { image: WineryImageValue; className?: string }) => {
   const [previewUrl, setPreviewUrl] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     if (image instanceof File) {
@@ -38,18 +40,45 @@ const ImagePreview = ({ image, className = 'h-36' }: { image: WineryImageValue; 
       return () => URL.revokeObjectURL(url)
     }
 
-    setPreviewUrl(image.smallUrl || image.mediumUrl || image.originalUrl || '')
+    setPreviewUrl( image.originalUrl || image.smallUrl || image.mediumUrl ||'')
   }, [image])
 
-  if (!previewUrl) {
-    return (
-      <div className={`${className} flex items-center justify-center rounded-md bg-muted`}>
-        <Image className="h-8 w-8 text-muted-foreground" />
-      </div>
-    )
+  const modalImages = React.useMemo(() => {
+    if (image instanceof File) {
+      return [
+        {
+          url: URL.createObjectURL(image),
+          alt: image.name || 'Winery image',
+        },
+      ]
+    }
+
+    return [
+      {
+        url: image?.originalUrl,
+        alt: image?.originalName || 'Winery image',
+      },
+    ]
+  }, [image])
+
+  const handleZoom = () => {
+    setIsModalOpen(true)
   }
 
-  return <img src={previewUrl} alt={getImageName(image)} className={`${className} w-full rounded-md object-cover`} />
+  return (
+    <>
+      {!previewUrl ? (
+        <div className={`${className} flex items-center justify-center rounded-md bg-muted cursor-pointer`} onClick={handleZoom}>
+          <Image className="h-8 w-8 text-muted-foreground" />
+        </div>
+      ) : (
+        <div className={`${className} w-full flex items-center justify-center rounded-md bg-muted/40 overflow-hidden`} >
+          <img src={previewUrl} alt={getImageName(image)} className="h-full w-full object-cover cursor-pointer" onClick={handleZoom} />
+        </div>
+      )}
+      <ImageModal images={modalImages} initialIndex={0} open={isModalOpen} onOpenChange={setIsModalOpen} />
+    </>
+  )
 }
 
 interface WineryProfileFormProps {
@@ -188,39 +217,30 @@ const WineryProfileForm = ({ form, onSubmit, onCancel, onReset, isSubmitting = f
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <Card className="rounded-t-none bg-input/50">
-          <CardContent className="space-y-6 sm:px-0">
+        <Card className="rounded-t-none bg-input/50 ">
+          <CardContent className="space-y-6 sm:px-0 ">
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-foreground">{t('form.media_section')}</h2>
 
               <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-4">
                 <div className="space-y-2">
                   <Label>{t('form.main_photo')}</Label>
-                  <Card className="p-3 bg-background">
+                  <Card className="p-1 bg-background">
                     <input ref={mainPhotoInputRef} type="file" accept={acceptedImageTypes} onChange={handleMainPhotoChange} className="hidden" />
                     {mainPhoto ? (
-                      <div className="space-y-3">
-                        <div className="relative">
-                          <ImagePreview image={mainPhoto} />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="icon"
-                            className="absolute right-2 top-2 h-8 w-8 bg-background"
-                            onClick={() => form.setValue('mainPhoto', null, { shouldDirty: true, shouldValidate: true })}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
+                      <div className="relative">
+                        <ImagePreview image={mainPhoto} />
                         <Button
                           type="button"
                           variant="outline"
-                          className="w-full min-w-0 gap-2 px-3 text-sm leading-tight whitespace-normal"
-                          onClick={() => mainPhotoInputRef.current?.click()}
-                          disabled={isSubmitting}
+                          size="icon"
+                          className="absolute right-2 top-1 rounded-full h-6 w-6 bg-background"
+                          onClick={() => form.setValue('mainPhoto', null, { shouldDirty: true, shouldValidate: true })}
                         >
-                          <Upload className="h-4 w-4 shrink-0" />
-                          {t('form.change_main_photo')}
+                          <X className="h-4 w-4" />
+                        </Button>
+                        <Button type="button" variant="outline" className="absolute left-2 bottom-1 h-7 w-7 bg-background" onClick={() => mainPhotoInputRef.current?.click()} disabled={isSubmitting}>
+                          <Upload className="h-4 w-4" />
                         </Button>
                       </div>
                     ) : (
@@ -238,14 +258,16 @@ const WineryProfileForm = ({ form, onSubmit, onCancel, onReset, isSubmitting = f
                 </div>
 
                 <div className="space-y-2">
-                  <Label>{t('form.gallery')}</Label>
-                  <Card className="p-3 bg-background">
+                  <Label>
+                    {t('form.gallery')} ({t('form.gallery_limit')})
+                  </Label>
+                  <Card className="p-1 bg-background">
                     <input ref={galleryInputRef} type="file" accept={acceptedImageTypes} onChange={handleGalleryChange} multiple className="hidden" />
                     <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
                       {gallery.map((image, index) => (
                         <div key={`${getImageName(image)}-${index}`} className="relative">
-                          <ImagePreview image={image} className="h-28" />
-                          <Button type="button" variant="outline" size="icon" className="absolute right-2 top-2 h-7 w-7 bg-background" onClick={() => handleRemoveGalleryImage(image)}>
+                          <ImagePreview image={image}/>
+                          <Button type="button" variant="outline" size="icon" className="absolute right-1 top-1 rounded-full h-6 w-6 bg-background" onClick={() => handleRemoveGalleryImage(image)}>
                             <X className="h-4 w-4" />
                           </Button>
                         </div>
@@ -253,7 +275,7 @@ const WineryProfileForm = ({ form, onSubmit, onCancel, onReset, isSubmitting = f
                       {gallery.length < MAX_WINERY_GALLERY_PHOTOS && (
                         <button
                           type="button"
-                          className="flex h-28 flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed border-input text-sm text-muted-foreground hover:bg-muted/50"
+                          className="flex h-36 flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed border-input text-sm text-muted-foreground hover:bg-muted/50"
                           onClick={() => galleryInputRef.current?.click()}
                           disabled={isSubmitting}
                         >
@@ -262,9 +284,8 @@ const WineryProfileForm = ({ form, onSubmit, onCancel, onReset, isSubmitting = f
                         </button>
                       )}
                     </div>
-                    <p className="mt-3 text-sm text-muted-foreground">{t('form.gallery_limit')}</p>
+
                     {form.formState.errors.gallery?.message && <p className="mt-2 text-sm text-destructive">{form.formState.errors.gallery.message as string}</p>}
-                    {gallery.length === 0 && <p className="mt-3 text-sm text-muted-foreground">{t('form.gallery_empty')}</p>}
                   </Card>
                 </div>
               </div>
