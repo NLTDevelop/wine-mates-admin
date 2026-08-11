@@ -34,6 +34,7 @@ export interface WineOfWinery {
   producer?: string
   vintage?: string | number
   grapeVariety?: string
+  color?: string | { name?: string } | null
   image?: WineListImage | null
   price?: number | string | null
   currency?: string | null

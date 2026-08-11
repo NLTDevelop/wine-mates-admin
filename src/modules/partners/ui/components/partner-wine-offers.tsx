@@ -1,3 +1,5 @@
+/* eslint-disable react/react-in-jsx-scope */
+/* global HTMLInputElement, URL */
 import { ChangeEvent, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Input } from '@/UIKit/shadcn/ui/input'
@@ -229,6 +231,7 @@ export const PartnerWineOffers = ({ offers, totalCount, page, limit, setPage, up
         producer: offer.wine?.producer,
         vintage: offer.wine?.vintage,
         grapeVariety: offer.wine?.grapeVariety,
+        color: offer.wine?.color,
         image: offer.wine?.image || offer.wine?.defaultImage || undefined,
         price: offer.price,
         currency: offer.currency,

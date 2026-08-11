@@ -40,6 +40,13 @@ const normalizePrice = (price?: string | number | null) => {
 
 const getWineImageUrl = (wine: WineOfWinery) => wine.image?.smallUrl || wine.image?.mediumUrl || wine.image?.originalUrl || wine.image?.originUrl || ''
 
+const getWineColorName = (wine: WineOfWinery) => {
+  if (!wine.color) return ''
+  return typeof wine.color === 'string' ? wine.color : wine.color.name || ''
+}
+
+const getWineDisplayName = (wine: WineOfWinery, fallback: string) => [wine.name || wine.producer || fallback, getWineColorName(wine)].filter(Boolean).join(', ')
+
 export const useWineListColumns = ({ onDelete, onEdit, showCheckbox, showDelete, showEdit, showOfferColumns }: WineTableProps) => {
   const { t } = useTranslation('wines')
 
@@ -49,7 +56,7 @@ export const useWineListColumns = ({ onDelete, onEdit, showCheckbox, showDelete,
         id: 'actions',
         header: () => <p className="text-center">{t('table.actions')}</p>,
         cell: ({ row }) => {
-          const wineName = row.original.name || row.original.producer || t('not_known_wine')
+          const wineName = getWineDisplayName(row.original, t('not_known_wine'))
 
           const handleEditWine = (e: MouseEvent) => {
             e.stopPropagation()
@@ -94,7 +101,7 @@ export const useWineListColumns = ({ onDelete, onEdit, showCheckbox, showDelete,
       columnHelper.display({
         id: 'name',
         header: () => t('table.winename'),
-        cell: ({ row }) => row.original.name || row.original.producer || '-',
+        cell: ({ row }) => getWineDisplayName(row.original, '-') || '-',
         minSize: COLUMN_WIDTHS.NAME,
         maxSize: COLUMN_WIDTHS.NAME,
         size: COLUMN_WIDTHS.NAME,
@@ -136,9 +143,10 @@ export const useWineListColumns = ({ onDelete, onEdit, showCheckbox, showDelete,
         header: () => <span>{t('table.images')}</span>,
         cell: ({ row }) => {
           const imageUrl = getWineImageUrl(row.original)
+          const imageAlt = getWineDisplayName(row.original, 'Wine image')
 
           if (imageUrl) {
-            return <img src={imageUrl} alt={row.original.name || row.original.producer || 'Wine image'} className="h-12 w-8 rounded-sm object-cover" />
+            return <img src={imageUrl} alt={imageAlt} className="h-12 w-8 rounded-sm object-cover" />
           }
 
           return <div className="flex h-12 w-8 items-center justify-center bg-gray-100 text-xs text-gray-400">-</div>

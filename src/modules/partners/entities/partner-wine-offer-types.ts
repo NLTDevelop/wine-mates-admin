@@ -11,6 +11,7 @@ export interface PartnerWineOfferWine {
   producer?: string
   grapeVariety?: string
   vintage?: number
+  color?: string | { name?: string } | null
   country?: PartnerWineOfferLocation | string | null
   region?: PartnerWineOfferLocation | string | null
   image?: WineImage | null
