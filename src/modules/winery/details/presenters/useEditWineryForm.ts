@@ -22,6 +22,7 @@ const mapWineryToFormValues = (winery: IWineryDetail): WineryEditFormValues => {
     description: winery.description || '',
     countryId: winery.country?.id ? String(winery.country.id) : null,
     regionId: winery.region?.id ? String(winery.region.id) : null,
+    sellerCountryIds: winery.sellerCountries?.map(sellerCountry => sellerCountry.country.id) || winery.countries?.map(country => country.id) || [],
     links: winery.links?.join('\n') || '',
     mainPhoto: winery.mainPhoto || null,
     gallery: winery.gallery || [],
@@ -77,6 +78,7 @@ export const useEditWineryForm = ({ winery, onSuccess }: UseEditWineryFormProps)
       description: data.description.trim(),
       countryId: data.countryId ? Number(data.countryId) : null,
       regionId: data.regionId ? Number(data.regionId) : null,
+      sellerCountryIds: data.sellerCountryIds,
       links: links || [],
     }
 

@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/UIKit/shadcn/ui/form'
@@ -5,6 +6,7 @@ import { Button } from '@/UIKit/shadcn/ui/button'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
 import { DatePicker } from '@/UIKit/app-components/date-picker'
 import { FormFieldCombobox } from '@/UIKit/app-components/form-field-combobox'
+import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
 import { YearPickerFormField } from '@/UIKit/app-components/year-picker-form-field'
 import { NLTFormField } from '@/UIKit/components/NLTFormField'
 import { useCountryOptions } from '@/modules/wine/create-wine/presenters/useCountryOptions'
@@ -15,6 +17,7 @@ import { IMaskInput } from 'react-imask'
 import { NLTTooltip } from '@/UIKit/components/NLTTooltip'
 import { AlertCircle } from 'lucide-react'
 import { InputWithTooltip } from '@/UIKit/app-components/input-with-tooltip'
+import { useMemo } from 'react'
 
 interface WineryRegistrationFormProps {
   form: UseFormReturn<WineryRegistrationFormValues, object, WineryRegistrationFormData>
@@ -28,10 +31,32 @@ export const WineryRegistrationForm = ({ form, onSubmit, onCancel, isSubmitting 
   const { t: tc } = useTranslation('common')
 
   const wineryCountryId = form.watch('wineryCountryId')
-  const { fetchOptions: fetchCountryOptions, isLoading: countriesLoading } = useCountryOptions({})
+  const watchedCountryIds = form.watch('countryIds')
+  const countryIds = useMemo(() => watchedCountryIds || [], [watchedCountryIds])
+  const { fetchOptions: fetchCountryOptions, isLoading: countriesLoading, countries = [] } = useCountryOptions({})
   const { fetchOptions: fetchRegionOptions, isLoading: regionsLoading } = useRegionOptions({
     countryId: wineryCountryId ? Number(wineryCountryId) : null,
   })
+
+  const selectedCountryOptions = useMemo(
+    () =>
+      countries
+        .filter(country => countryIds.includes(country.id))
+        .map(country => ({
+          value: String(country.id),
+          label: country.name,
+        })),
+    [countries, countryIds]
+  )
+
+  const handleCountriesChange = (value: string | string[]) => {
+    const values = Array.isArray(value) ? value : [value]
+    form.setValue(
+      'countryIds',
+      values.map(countryId => Number(countryId)).filter(countryId => !Number.isNaN(countryId)),
+      { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+    )
+  }
 
   useEffect(() => {
     const subscription = form.watch((_, { name }) => {
@@ -96,7 +121,7 @@ export const WineryRegistrationForm = ({ form, onSubmit, onCancel, isSubmitting 
                             <IMaskInput
                               mask="+38 (000) 000-00-00"
                               value={field.value || ''}
-                              onAccept={(value: any) => field.onChange(value)}
+                              onAccept={(value: string) => field.onChange(value)}
                               onBlur={field.onBlur}
                               lazy={false}
                               placeholder="+38 (___) ___-__-__"
@@ -174,7 +199,7 @@ export const WineryRegistrationForm = ({ form, onSubmit, onCancel, isSubmitting 
                 />
                 <FormFieldCombobox
                   form={form}
-                  formLabel={t('form.winery_country')+"*"}
+                  formLabel={t('form.winery_country') + '*'}
                   name="wineryCountryId"
                   placeholder={countriesLoading ? tc('loading') : t('form.winery_country_placeholder')}
                   searchLabel={tc('search')}
@@ -190,6 +215,29 @@ export const WineryRegistrationForm = ({ form, onSubmit, onCancel, isSubmitting 
                   searchLabel={tc('search')}
                   fetchOptions={fetchRegionOptions}
                   disabled={!wineryCountryId || regionsLoading}
+                />
+                <FormField
+                  control={form.control}
+                  name="countryIds"
+                  render={() => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel>{t('form.working_countries')} *</FormLabel>
+                      <FormControl>
+                        <MultiSelect
+                          value={countryIds.map(String)}
+                          onChange={handleCountriesChange}
+                          placeholder={countriesLoading ? tc('loading') : t('form.working_countries_placeholder')}
+                          searchLabel={tc('search')}
+                          fetchOptions={fetchCountryOptions}
+                          itemOptions={selectedCountryOptions}
+                          disabled={countriesLoading || isSubmitting}
+                          mode="multiple"
+                          enablePagination
+                          error={form.formState.errors.countryIds?.message as string}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
                 />
                 <div className="md:col-span-2">
                   <NLTFormField

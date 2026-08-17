@@ -47,6 +47,7 @@ export const wineryEditSchema = () =>
       .union([z.string(), z.number()])
       .nullable()
       .transform(v => (v ? String(v) : null)),
+    sellerCountryIds: z.array(z.number()).min(1, i18n.t('messages:field_require')),
     links: urlListSchema(),
     mainPhoto: z.any().nullable().optional(),
     gallery: z.array(z.any()).max(MAX_WINERY_GALLERY_PHOTOS, i18n.t('messages:max_winery_gallery_photos')).optional(),

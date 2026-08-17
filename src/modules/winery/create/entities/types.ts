@@ -12,6 +12,7 @@ export interface RegisterWineryDataDto {
   description: string
   countryId: number
   regionId?: number
+  countryIds: number[]
   links?: string[]
 }
 

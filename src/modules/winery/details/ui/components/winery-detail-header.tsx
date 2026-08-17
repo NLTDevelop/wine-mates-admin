@@ -1,3 +1,4 @@
+/* global URL */
 import React, { useState } from 'react'
 import { MapPin, Calendar, Instagram, Facebook, Globe, Twitter, AtSign } from 'lucide-react'
 import { Badge } from '@/UIKit/shadcn/ui/badge'
@@ -62,6 +63,10 @@ export const WineryDetailHeader: React.FC<WineryDetailHeaderProps> = ({ winery }
     }))
   }, [allImages])
 
+  const sellerCountries = React.useMemo(() => {
+    return winery.sellerCountries?.map(sellerCountry => sellerCountry.country).filter(Boolean) || winery.countries || []
+  }, [winery.sellerCountries, winery.countries])
+
   const handleZoom = (url: string) => {
     const index = allImages.findIndex(img => img.originalUrl === url)
     setActiveImageIndex(index !== -1 ? index : 0)
@@ -109,6 +114,19 @@ export const WineryDetailHeader: React.FC<WineryDetailHeaderProps> = ({ winery }
             <div className="flex items-center gap-1.5">
               <Calendar size={16} />
               <span>{t('founded_year', { slug: winery.foundedYear })}</span>
+            </div>
+          )}
+
+          {sellerCountries.length > 0 && (
+            <div className="space-y-1 pt-1">
+              <span className="text-xs font-medium text-foreground">{t('form.working_countries')}</span>
+              <div className="flex flex-wrap gap-1.5">
+                {sellerCountries.map(country => (
+                  <Badge key={country.id} variant="secondary" className="rounded-md border border-border/60 bg-background text-foreground">
+                    {country.name}
+                  </Badge>
+                ))}
+              </div>
             </div>
           )}
 

@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next'
 import { Image, Upload, X } from 'lucide-react'
 import { Button } from '@/UIKit/shadcn/ui/button'
 import { Card, CardContent } from '@/UIKit/shadcn/ui/card'
-import { Form } from '@/UIKit/shadcn/ui/form'
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/UIKit/shadcn/ui/form'
 import { FormFieldCombobox, IOption } from '@/UIKit/app-components/form-field-combobox'
+import { MultiSelect } from '@/UIKit/shadcn/ui/multi-select'
 import { YearPickerFormField } from '@/UIKit/app-components/year-picker-form-field'
 import { NLTFormField } from '@/UIKit/components/NLTFormField'
 import { Label } from '@/UIKit/shadcn/ui/label'
@@ -104,6 +105,8 @@ const WineryProfileForm = ({ form, onSubmit, onCancel, onReset, isSubmitting = f
 
   const countryId = form.watch('countryId')
   const regionId = form.watch('regionId')
+  const watchedSellerCountryIds = form.watch('sellerCountryIds')
+  const sellerCountryIds = useMemo(() => watchedSellerCountryIds || [], [watchedSellerCountryIds])
   const mainPhoto = form.watch('mainPhoto') as WineryImageValue | null
   const gallery = (form.watch('gallery') || []) as WineryImageValue[]
   const removeGalleryFileIds = form.watch('removeGalleryFileIds') || []
@@ -122,6 +125,17 @@ const WineryProfileForm = ({ form, onSubmit, onCancel, onReset, isSubmitting = f
   const selectedCountry = useMemo(() => countries.find(c => c.id.toString() === countryId || String(c.id) === countryId), [countries, countryId])
 
   const selectedRegion = useMemo(() => regions.find(r => r.id.toString() === regionId || String(r.id) === regionId), [regions, regionId])
+
+  const selectedWorkingCountryOptions = useMemo(
+    () =>
+      countries
+        .filter(country => sellerCountryIds.includes(country.id))
+        .map(country => ({
+          value: String(country.id),
+          label: country.name,
+        })),
+    [countries, sellerCountryIds]
+  )
 
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
@@ -154,6 +168,15 @@ const WineryProfileForm = ({ form, onSubmit, onCancel, onReset, isSubmitting = f
       })),
     [regions]
   )
+
+  const handleCountriesChange = (value: string | string[]) => {
+    const values = Array.isArray(value) ? value : [value]
+    form.setValue(
+      'sellerCountryIds',
+      values.map(countryId => Number(countryId)).filter(countryId => !Number.isNaN(countryId)),
+      { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+    )
+  }
 
   useEffect(() => {
     if (countryOptions.length > 0 && countryId) {
@@ -322,6 +345,29 @@ const WineryProfileForm = ({ form, onSubmit, onCancel, onReset, isSubmitting = f
                 fetchOptions={fetchRegionOptions}
                 options={regionOptions}
                 disabled={!countryId || regionsLoading}
+              />
+              <FormField
+                control={form.control}
+                name="sellerCountryIds"
+                render={() => (
+                  <FormItem className="md:col-span-2">
+                    <FormLabel>{t('form.working_countries')} *</FormLabel>
+                    <FormControl>
+                      <MultiSelect
+                        value={sellerCountryIds.map(String)}
+                        onChange={handleCountriesChange}
+                        placeholder={countriesLoading ? tc('loading') : t('form.working_countries_placeholder')}
+                        searchLabel={tc('search')}
+                        fetchOptions={fetchCountryOptions}
+                        itemOptions={selectedWorkingCountryOptions}
+                        disabled={countriesLoading || isSubmitting}
+                        mode="multiple"
+                        enablePagination
+                        error={form.formState.errors.sellerCountryIds?.message as string}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
               />
               <div className="md:col-span-2">
                 <NLTFormField

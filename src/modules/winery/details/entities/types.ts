@@ -11,6 +11,8 @@ export interface IWineryDetail {
   links: string[]
   createdAt: string
   country: IOption
+  sellerCountries?: ISellerCountry[]
+  countries?: IOption[]
   region: IOption
   mainPhoto: WineImage
   gallery: WineImage[]
@@ -21,6 +23,13 @@ export interface IWineryDetail {
 interface IOption {
   id: number
   name: string
+  code?: string
+}
+
+interface ISellerCountry {
+  id: number
+  countryId: number
+  country: IOption
 }
 
 interface IApplication {
@@ -56,6 +65,7 @@ export interface UpdateWineryData {
   description: string
   countryId: number | null
   regionId: number | null
+  sellerCountryIds: number[]
   links: string[]
 }
 

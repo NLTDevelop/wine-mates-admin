@@ -973,6 +973,8 @@ export const uk = {
       founded_year_placeholder: 'Оберіть рік заснування',
       winery_country: 'Країна виноробні',
       winery_country_placeholder: 'Оберіть країну виноробні',
+      working_countries: 'Країни роботи',
+      working_countries_placeholder: 'Оберіть країни роботи',
       region: 'Регіон',
       region_placeholder: 'Оберіть регіон',
       description: 'Опис',
